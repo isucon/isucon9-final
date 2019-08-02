@@ -37,6 +37,7 @@ message ExecutePaymentRequest {
 
 message ExecutePaymentResponse {
     string payment_id = 1;
+    bool is_ok = 2;
 }
 
 message CancelPaymentRequest {
@@ -53,4 +54,5 @@ message GetPaymentInformationRequest {
 
 message GetPaymentInformationResponse {
     PaymentInformation payment_information = 1;
+    bool is_ok = 2;
 }
