@@ -1,0 +1,56 @@
+syntax = "proto3";
+package paymentpb;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+service PaymentService {
+	//決済を行う
+	rpc ExecutePayment(ExecutePaymentRequest) returns (ExecutePaymentResponse) {
+		option (google.api.http) = {
+			post: "/payment"
+			body: "*"
+		};
+	}
+
+	//決済をキャンセルする
+	rpc CancelPayment(CancelPaymentRequest) returns (CancelPaymentResponse) {
+		option (google.api.http).delete = "/payment/{payment_id}";
+	}
+
+	//決済情報を取得する
+	rpc GetPaymentInformation(GetPaymentInformationRequest) returns (GetPaymentInformationResponse) {
+		option (google.api.http).get = "/payment/{payment_id}";
+	}
+}
+
+message PaymentInformation {
+    string card_number = 1;
+    google.protobuf.Timestamp datetime = 2;
+    string cvv = 3;
+    int32 amount = 4;
+}
+
+message ExecutePaymentRequest {
+    PaymentInformation payment_information = 1;
+}
+
+message ExecutePaymentResponse {
+    string payment_id = 1;
+}
+
+message CancelPaymentRequest {
+    string payment_id = 1;
+}
+
+message CancelPaymentResponse {
+    bool is_ok = 1;
+}
+
+message GetPaymentInformationRequest {
+    string payment_id = 1;
+}
+
+message GetPaymentInformationResponse {
+    PaymentInformation payment_information = 1;
+}
