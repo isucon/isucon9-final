@@ -1,6 +1,11 @@
 import random
 import datetime
 
+'''
+    10分に1本 -> 1日192本
+    192 * 366日 -> 70272レコード
+'''
+
 train_name = ['最速', '中間', '遅いやつ']
 train_probability = [0.5, 0.25, 0.25]
 src_dest = [
@@ -10,8 +15,9 @@ src_dest = [
     ('東京', '大阪'),
 ]
 
+print('BEGIN;')
 date = datetime.datetime(2020,1,1)
-for day in range(365):
+for day in range(366):
     departure_time = [datetime.time(6, 0, 0), datetime.time(6, 0, 0)]
     for i in range(1, 193):
         # name = train_name[2]
@@ -30,3 +36,4 @@ for day in range(365):
 
         print('INSERT INTO train_master(date,train_class,train_name,departure_at,start_station,last_station) VALUES ("%s","%s",%d,"%s","%s","%s");' % (date.strftime("%Y-%m-%d"), name,i,t, dest[0],dest[1]))
     date = date + datetime.timedelta(days=1)
+print('COMMIT;')
