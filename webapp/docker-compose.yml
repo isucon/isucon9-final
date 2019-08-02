@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+  nginx:
+    image: nginx:1.17
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./public:/opt/isucon/public
+    ports:
+      - "8080:80"
+    links:
+      - "webapp"
+
+  mysql:
+    image: mysql:8
+    environment:
+      - "TZ=Asia/Tokyo"
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+      - ./mysql/conf.d:/etc/mysql/conf.d
+    # development only
+    ports:
+      - "13306:3306"
+
+volumes:
+  mysql:
