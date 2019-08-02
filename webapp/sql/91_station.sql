@@ -24,7 +24,7 @@ INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('鯉秋寺',284.952294,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('伍出',291.499545,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('杏高公園',310.086023,0,0,1);
-INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('竹利台',325.553902,1,1,1);
+INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('名古屋',325.553902,1,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('磯川',334.561908,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('茶川',343.842013,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('八実学園',355.192588,0,1,1);
@@ -67,7 +67,7 @@ INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('荻葛ヶ丘',839.298450,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('雨墨',853.080719,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('桂綾寺',863.842723,0,1,1);
-INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('笠霞海岸',869.266132,1,1,1);
+INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('京都',869.266132,1,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('塚手海岸',878.247393,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('垣通海岸',893.724394,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('雨稲ヶ丘',900.098745,0,1,1);
