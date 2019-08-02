@@ -56,7 +56,8 @@ CREATE TABLE `station_master` (
 
 DROP TABLE IF EXISTS `train_master`;
 CREATE TABLE `train_master` (
-  `date` datetime NOT NULL,
+  `date` date NOT NULL,
+  `departure_at` time NOT NULL,
   `train_class` varchar(100) NOT NULL,
   `train_name` varchar(100) NOT NULL,
   `start_station` varchar(100) NOT NULL,
