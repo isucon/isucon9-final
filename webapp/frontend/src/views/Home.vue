@@ -3,7 +3,11 @@
     <section class="home">
 
       <article class="reserve">
-        <p><a>予約</a></p>
+        <p>
+          <router-link to="/reservation">
+            <a>予約</a>
+          </router-link>
+        </p>
       </article>
 
       <article class="inquiry">
@@ -37,13 +41,8 @@
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
   name: 'home',
-  components: {
-    HelloWorld
-  }
+  components: {}
 }
 </script>

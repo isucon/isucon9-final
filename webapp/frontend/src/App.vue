@@ -10,7 +10,7 @@
       <div class="title">
     		<h1>メニュー</h1>
     		<ul>
-      		<li class="b1"><a href="#">メニュー</a></li>
+      		<li class="b1"><router-link to="/"><a>メニュー</a></router-link></li>
       		<li class="b2"><a href="#">ログアウト</a></li>
     		</ul>
     	</div>
@@ -163,6 +163,10 @@ header div.title ul li.b2 a:hover{
 	background:		#B7C5D2;
 }
 
+
+# Home
+
+
 .home article {
   display: block;
   opacity: 1;
@@ -184,6 +188,11 @@ header div.title ul li.b2 a:hover{
 	font-style:		normal;
 	text-decoration:	none;
 	letter-spacing:		2px;
+}
+
+.home article a {
+  color: #ffffff;
+  text-decoration: none;
 }
 
 .home article.reserve{
