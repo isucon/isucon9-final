@@ -29,7 +29,7 @@ message PaymentInformation {
     google.protobuf.Timestamp datetime = 2;
     string cvv = 3;
     int32 amount = 4;
-    bool is_cancelled = 5;
+    bool is_canceled = 5;
 }
 
 message ExecutePaymentRequest {
