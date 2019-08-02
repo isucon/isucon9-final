@@ -8,7 +8,7 @@ INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('初野',80.517696,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('樺威学園',96.053004,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('塩鮫公園',112.665386,0,1,1);
-INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('奥山',119.444708,0,0,1);
+INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('山田',119.444708,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('表岡',131.462232,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('並取',149.826976,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('細野',166.909255,0,0,1);
