@@ -16,6 +16,8 @@ services:
     image: mysql:8
     environment:
       - "TZ=Asia/Tokyo"
+    env_file:
+      - ".env"
     volumes:
       - mysql:/var/lib/mysql
       - ./sql:/docker-entrypoint-initdb.d
@@ -23,6 +25,21 @@ services:
     # development only
     ports:
       - "13306:3306"
+
+  # development only
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    links:
+      - mysql
+    ports:
+       - 8081:80
+    volumes:
+       - /sessions
 
 volumes:
   mysql:
