@@ -14,15 +14,18 @@ const (
 	TicketVendingMachine PaymentMethod = "ticket-vending-machine"
 )
 
+// ReservationStatus は予約状態です
 type ReservationStatus string
 
 const (
+	// Pending は予約が確定していない状態です
 	Pending ReservationStatus = "pending"
-	Ok      ReservationStatus = "ok"
+	// Ok は予約が確定した状態です
+	Ok ReservationStatus = "ok"
 )
 
-// Reservation は予約です
-type Reservation struct {
+// SeatReservation は座席予約です
+type SeatReservation struct {
 	// ID は採番された予約IDです
 	ID int `json:"id"`
 	// PaymentMethod は決済種別です
@@ -33,4 +36,5 @@ type Reservation struct {
 	ReserveAt time.Time `json:"reserve_at"`
 }
 
-type Reservations []*Reservation
+// SeatReservations は座席一覧です
+type SeatReservations []*SeatReservation
