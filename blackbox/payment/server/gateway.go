@@ -12,6 +12,9 @@ import (
 )
 
 func newGateway(c *config.Config, ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
+	opts = []runtime.ServeMuxOption{
+		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
+	}
 	mux := runtime.NewServeMux(opts...)
 	dialOpts := []grpc.DialOption{grpc.WithInsecure()}
 	conn, err := grpc.Dial(c.GrpcPort, dialOpts...)
