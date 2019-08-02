@@ -1,0 +1,71 @@
+use `isutrain`;
+
+DROP TABLE IF EXISTS `distance_fare_master`;
+CREATE TABLE `distance_fare_master` (
+  `distance` double NOT NULL,
+  `fare` int unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `fare_master`;
+CREATE TABLE `fare_master` (
+  `train_class` varchar(100) NOT NULL,
+  `seat_class` varchar(100) NOT NULL,
+  `start_date` datetime NOT NULL,
+  `fare_multiplier` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `reservations`;
+CREATE TABLE `reservations` (
+  `reservation_id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `user_id` bigint NOT NULL,
+  `payment_method` varchar(100) NOT NULL,
+  `status` enum('requesting', 'done', 'rejected') NOT NULL,
+  `payment_id` bigint NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `seat_master`;
+CREATE TABLE `seat_master` (
+  `train_class` varchar(100) NOT NULL,
+  `car_number` int(11) NOT NULL,
+  `seat_column` enum('A', 'B', 'C', 'D', 'E') NOT NULL,
+  `seat_row` int(11) NOT NULL,
+  `seat_class` enum('premium', 'reserved', 'non-reserved') NOT NULL,
+  `is_smoking_seat` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `seat_reservations`;
+CREATE TABLE `seat_reservations` (
+  `reservation_id` bigint NOT NULL,
+  `date` datetime NOT NULL,
+  `train_class` varchar(100) NOT NULL,
+  `train_name` varchar(100) NOT NULL,
+  `car_number` int unsigned NOT NULL,
+  `seat_row` int unsigned NOT NULL,
+  `seat_column` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `station_master`;
+CREATE TABLE `station_master` (
+  `id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `distance` double NOT NULL,
+  `name` varchar(100) NOT NULL UNIQUE,
+  `is_stop_express` tinyint(1) NOT NULL,
+  `is_stop_semi_express` tinyint(1) NOT NULL,
+  `is_stop_local` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `train_master`;
+CREATE TABLE `train_master` (
+  `date` datetime NOT NULL,
+  `train_class` varchar(100) NOT NULL,
+  `train_name` varchar(100) NOT NULL,
+  `start_station` varchar(100) NOT NULL,
+  `last_station` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `email` varchar(300) NOT NULL,
+  `super_secure_password` varbinary(256) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
