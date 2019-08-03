@@ -2,11 +2,15 @@
   <div>
     <section class="search">
 
-      <article class="date">
+      <article class="year">
+        <div>{{ year }}年</div>
         <select class="year" v-model="year">
           <option value="2020">2020年</option>
           <option value="2021">2021年</option>
         </select>
+      </article>
+      <article class="month">
+        <div>{{ month }}月</div>
         <select class="month" v-model="month">
           <option value="1">1月</option>
           <option value="2">2月</option>
@@ -21,6 +25,9 @@
           <option value="11">11月</option>
           <option value="12">12月</option>
         </select>
+      </article>
+      <article class="day">
+        <div>{{ day }}日</div>
         <select class="day" v-model="day">
           <option value="1">1日</option>
           <option value="2">2日</option>
@@ -56,26 +63,35 @@
         </select>
       </article>
 
-      <article class="station">
-        <select class="from" v-model="from">
+      <article class="from">
+        <div>{{ from_station }}</div>
+        <select class="from" v-model="from_station">
           <option>新大阪</option>
           <option>東京</option>
         </select>
-        <span>→</span>
-        <select class="to" v-model="to">
+      </article>
+      <article class="arrow">
+        <div>→</div>
+      </article>
+      <article class="to">
+        <div>{{ to_station }}</div>
+        <select class="to" v-model="to_station">
           <option>新大阪</option>
           <option>東京</option>
         </select>
       </article>
 
-      <article class="person">
+      <article class="adult">
+        <div>おとな{{ adult }}名</div>
         <select class="adult" v-model="adult">
           <option value="0">おとな0名</option>
           <option value="1">おとな1名</option>
           <option value="2">おとな2名</option>
           <option value="3">おとな3名</option>
         </select>
-
+      </article>
+      <article class="child">
+        <div>こども{{ child }}名</div>
         <select class="child" v-model="child">
           <option value="0">こども0名</option>
           <option value="1">こども1名</option>
@@ -111,11 +127,11 @@ export default {
   components: {},
   data () {
     return {
-      year: "2020",
-      month: "1",
+      year: 2020,
+      month: 1,
       day: "1",
-      from: "",
-      to: "",
+      from_station: "東京",
+      to_station: "新大阪",
       adult: "1",
       child: "0"
     }
@@ -125,55 +141,73 @@ export default {
 
 <style>
 
-.search select {
-    height: 50px;
-    font-size: 24px;
-    cursor: pointer;
-    background: #0057D3;
-    color: #ffffff;
-    text-align: center;
-}
-
 .search {
+  width: 640px;
+  margin: 0;
   float: left;
 }
 
-.search .date .year {
-    width: 214px;
-}
-
-.search .date .month {
-    width: 213px;
-}
-
-.search .date .day {
-    width: 213px;
-}
-
-.search .station .to,
-.search .station .from {
-    width: 300px;
-}
-
-.search .station span {
-  vertical-align: top;
-  padding: 0;
-  margin: 0;
-  height: 50px;
-  width: 40px;
+.search article {
+  position: relative;
   display: inline-block;
-  text-align: center;
-  font-size: 24px;
-  background: #0057D3;
+  height: 50px;
+  cursor: pointer;
+  vertical-align: top;
   color: #ffffff;
+  font-size: 24px;
 }
 
-.search .person .adult,
-.search .person .child {
-    width: 320px;
+.search article div {
+  padding-top: 10px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.search select {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 50px;
+  font-size: 24px;
+  opacity: 0;
+  z-index: 5;
+  cursor: pointer;
+  width: 100%;
+}
+
+article.year {
+  width: 214px;
+  background: #0057D3;
 }
 
 
+article.month {
+  width: 213px;
+  background: #0057D3;
+}
+
+article.day {
+  width: 213px;
+  background: #0057D3;
+}
+
+article.from ,
+article.to {
+  background: #0057D3;
+  width: 300px;
+}
+
+article.arrow {
+  background: #0057D3;
+  width: 40px;
+}
+
+
+article.adult ,
+article.child {
+  background: #0057D3;
+  width: 320px;
+}
 
 
 .subcontent {
@@ -184,7 +218,7 @@ export default {
 .subcontent article {
     margin: 0;
     padding: 13px 19px;
-    width: 279px;
+    width: 270px;
     background:		#FFEAB4;
     height: 200px;
 }
