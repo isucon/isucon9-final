@@ -77,6 +77,8 @@
         <div>{{ to_station }}</div>
         <select class="to" v-model="to_station">
           <option>新大阪</option>
+          <option>京都</option>
+          <option>名古屋</option>
           <option>東京</option>
         </select>
       </article>
@@ -123,6 +125,7 @@
 
 <script>
 import Router from '@/router.js'
+import ApiService from '@/services/api.js'
 
 export default {
   name: 'reservation',

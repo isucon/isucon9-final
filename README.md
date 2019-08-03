@@ -28,3 +28,5 @@ cd isucon9-final/webapp
 docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yml build
 docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yml up
 ```
+
+フロントエンドが必要な場合は、 `cd frontend && npm run serve` でフロントエンドを起動させる。

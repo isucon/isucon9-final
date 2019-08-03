@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Router from '../router.js'
 
-const API_BASE = "/api";
+const API_BASE = "";
 
 class ErrorHandler {
     handle (error) {
