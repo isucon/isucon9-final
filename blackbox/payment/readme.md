@@ -17,3 +17,21 @@ test(needs root privilege)
 ```
 make test
 ```
+
+test data
+```
+{
+	"card_information": {
+		"card_number": "12345678",
+		"cvv": "339",
+		"expiry_date": "11/22"
+	}
+}
+
+{
+	"payment_information": {
+		"card_token": "here",
+		"amount": 123456789
+	}
+}
+```
