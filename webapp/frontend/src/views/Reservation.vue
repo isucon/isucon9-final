@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="search">
     <section class="search">
 
       <article class="year">
@@ -150,13 +150,13 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
-.search {
-  width: 640px;
-  margin: 0;
-  float: left;
-}
+  section.search {
+    width: 640px;
+    margin: 0;
+    float: left;
+  }
 
 .search article {
   position: relative;
