@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"os"
 	// "sync"
 )
 
@@ -74,7 +75,7 @@ func fare_calc(date time.Time, depStation, destStation, trainClass, seatClass st
 		// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
 	//
 
-	
+
 	rows, err := db.Query("SELECT * FROM fare_master")
 	if err != nil {
 		panic(err)
@@ -91,7 +92,7 @@ func fare_calc(date time.Time, depStation, destStation, trainClass, seatClass st
 			panic(err)
 		}
 
-		// if 
+		// if
 
 		fmt.Fprintf(w, "1234\n")
 	}
@@ -107,7 +108,7 @@ func train_search_handler(w http.ResponseWriter, r *http.Request) {
 	/*
 		列車検索
 			GET /train/search?use_at=<ISO8601形式の時刻> & from=東京 & to=大阪
-		
+
 		return
 			料金
 			空席情報
@@ -122,7 +123,7 @@ func train_search_handler(w http.ResponseWriter, r *http.Request) {
 	from := r.URL.Query().Get("from")
 	to := r.URL.Query().Get("to")
 
-	rows, err := db.Query("SELECT departure_at,train_class,train_name,start_station,last_station FROM train_master WHERE date=?", 
+	rows, err := db.Query("SELECT departure_at,train_class,train_name,start_station,last_station FROM train_master WHERE date=?",
 		date.Format("2006-01-02"))
 	if err != nil {
 		panic(err)
@@ -137,11 +138,11 @@ func train_search_handler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		
+
 		var from_station_at, to_station_at float64
 		db.QueryRow("SELECT distance FROM station_master WHERE name=?", from).Scan(&from_station_at)
 		db.QueryRow("SELECT distance FROM station_master WHERE name=?", to).Scan(&to_station_at)
-		
+
 		// fmt.Println(from_station_at)
 		// fmt.Println(to_station_at)
 
@@ -168,7 +169,7 @@ func train_search_handler(w http.ResponseWriter, r *http.Request) {
 				if v == start_station {
 					seeked_from_station = true
 				} else {
-					continue	
+					continue
 				}
 			}
 
@@ -236,7 +237,7 @@ func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	rows, err := db.Query("SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?", 
+	rows, err := db.Query("SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?",
 		train_class, car_number)
 	if err != nil {
 		panic(err)
@@ -255,17 +256,17 @@ func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 		var result int
 		db.QueryRow("SELECT COUNT(*) FROM seat_reservations WHERE date=? AND train_class=? AND train_name=? AND car_number=? AND seat_row=? AND seat_column=?",
 			date,
-			train_class, 
-			train_name, 
-			car_number, 
-			seat_row, 
+			train_class,
+			train_name,
+			car_number,
+			seat_row,
 			seat_column).Scan(&result)
 		s := TrainSeat{seat_row, seat_column, seat_class, is_smoking_seat, false}
 		if result == 1 {
 			s.IsOccupied = true
 		}
 		seats = append(seats, s)
-		
+
 		// fmt.Fprintf(w, "%d,%d\n", distance, fare)
 	}
 	c := CarInformation{date, train_class, train_name, car_number, seats}
@@ -285,7 +286,42 @@ func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	// MySQL関連のお膳立て
 	var err error
-	db, err = sql.Open("mysql", "isucon:isucon@tcp(127.0.0.1:3306)/isutrain")
+
+	host := os.Getenv("MYSQL_HOSTNAME")
+	if host == "" {
+		host = "127.0.0.1"
+	}
+	port := os.Getenv("MYSQL_PORT")
+	if port == "" {
+		port = "3306"
+	}
+	_, err = strconv.Atoi(port)
+	if err != nil {
+		port = "3306"
+	}
+	user := os.Getenv("MYSQL_USER")
+	if user == "" {
+		user = "isutrain"
+	}
+	dbname := os.Getenv("MYSQL_DATABASE")
+	if dbname == "" {
+		dbname = "isutrain"
+	}
+	password := os.Getenv("MYSQL_PASSWORD")
+	if password == "" {
+		password = "isutrain"
+	}
+
+	dsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=Local",
+		user,
+		password,
+		host,
+		port,
+		dbname,
+	)
+
+	db, err = sql.Open("mysql", dsn)
 	if err != nil {
 		panic(err)
 	}
@@ -293,7 +329,7 @@ func main() {
 
 	// HTTP
 	http.HandleFunc("/", handler)
-	
+
 	http.HandleFunc("/train/search", train_search_handler)
 	http.HandleFunc("/train/seats", train_seats_handler)
 

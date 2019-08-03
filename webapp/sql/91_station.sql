@@ -1,3 +1,7 @@
+SET CHARACTER_SET_CLIENT = utf8;
+SET CHARACTER_SET_CONNECTION = utf8;
+
+BEGIN;
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('東京',0.000000,1,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('古岡',12.745608,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('絵寒町',32.107649,0,0,1);
@@ -24,7 +28,7 @@ INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('鯉秋寺',284.952294,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('伍出',291.499545,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('杏高公園',310.086023,0,0,1);
-INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('名古屋',325.553902,1,1,1);
+INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('荒川',325.553902,1,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('磯川',334.561908,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('茶川',343.842013,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('八実学園',355.192588,0,1,1);
@@ -67,7 +71,7 @@ INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('荻葛ヶ丘',839.298450,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('雨墨',853.080719,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('桂綾寺',863.842723,0,1,1);
-INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('京都',869.266132,1,1,1);
+INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('宇治',869.266132,1,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('塚手海岸',878.247393,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('垣通海岸',893.724394,0,0,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('雨稲ヶ丘',900.098745,0,1,1);
@@ -80,3 +84,4 @@ INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('条川',990.339004,1,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('菊岡',1005.597665,0,1,1);
 INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES('大阪',1024.983484,1,1,1);
+COMMIT;
