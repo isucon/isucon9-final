@@ -9,7 +9,7 @@ CREATE TABLE `distance_fare_master` (
 DROP TABLE IF EXISTS `fare_master`;
 CREATE TABLE `fare_master` (
   `train_class` varchar(100) NOT NULL,
-  `seat_class` varchar(100) NOT NULL,
+  `seat_class` enum('premium', 'reserved', 'non-reserved') NOT NULL,
   `start_date` datetime NOT NULL,
   `fare_multiplier` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -56,7 +56,8 @@ CREATE TABLE `station_master` (
 
 DROP TABLE IF EXISTS `train_master`;
 CREATE TABLE `train_master` (
-  `date` datetime NOT NULL,
+  `date` date NOT NULL,
+  `departure_at` time NOT NULL,
   `train_class` varchar(100) NOT NULL,
   `train_name` varchar(100) NOT NULL,
   `start_station` varchar(100) NOT NULL,
