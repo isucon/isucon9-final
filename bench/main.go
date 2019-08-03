@@ -30,6 +30,7 @@ func cliMain() int {
 
 	app.Commands = []cli.Command{
 		subcmd.Bench,
+		subcmd.PreTest,
 	}
 
 	app.Action = func(cliCtx *cli.Context) error {

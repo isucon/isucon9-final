@@ -6,12 +6,16 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/consts"
-	"github.com/chibiegg/isucon9-final/bench/util"
+	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/jarcoal/httpmock"
 )
 
 // Mock は `isutrain` のモック実装です
 type Mock struct{}
+
+func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
+	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
+}
 
 // Register はユーザ登録を行います
 func (m *Mock) Register(req *http.Request) ([]byte, int) {
@@ -76,8 +80,8 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 	}
 
 	b, err := json.Marshal(&Trains{
-		&Train{Class: "のぞみ", Name: "96号", StartStationID: 1, EndStationID: 2},
-		&Train{Class: "こだま", Name: "96号", StartStationID: 3, EndStationID: 4},
+		&Train{Class: "のぞみ", Name: "96号", Start: 1, Last: 2},
+		&Train{Class: "こだま", Name: "96号", Start: 3, Last: 4},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
@@ -103,8 +107,8 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 	}
 
 	// 適当な席を返す
-	b, err := json.Marshal(&Seats{
-		&Seat{},
+	b, err := json.Marshal(&TrainSeats{
+		&TrainSeat{},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
@@ -169,22 +173,8 @@ func (m *Mock) ListReservations(req *http.Request) ([]byte, int) {
 
 // RegisterMockEndpoints はhttpmockのエンドポイントを登録する
 // NOTE: httpmock.Activate, httpmock.Deactivateは別途実施する必要があります
-func RegisterMockEndpoints() (*Mock, []string) {
-	var (
-		m = &Mock{}
-		// FIXME: endpoints と Responderの２箇所書き換えるのダメダメなので、いい感じにする
-		// 構造体ベースにして、いてレートしてRegisterResponderする
-		endpoints = []string{
-			"/register",
-			"/login",
-			"/train/search",
-			"/train/seats",
-			"/reserve",
-			"/reservation",
-			"/reservation/:id/commit",
-			"/reservation/:id/cancel",
-		}
-	)
+func RegisterMockEndpoints() {
+	var m *Mock
 
 	// GET
 	httpmock.RegisterResponder("GET", consts.SearchTrainsPath, func(req *http.Request) (*http.Response, error) {
@@ -201,6 +191,10 @@ func RegisterMockEndpoints() (*Mock, []string) {
 	})
 
 	// POST
+	httpmock.RegisterResponder("POST", consts.InitializePath, func(req *http.Request) (*http.Response, error) {
+		body, status := m.Initialize(req)
+		return httpmock.NewBytesResponse(status, body), nil
+	})
 	httpmock.RegisterResponder("POST", consts.RegisterPath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.Register(req)
 		return httpmock.NewBytesResponse(status, body), nil
@@ -224,5 +218,5 @@ func RegisterMockEndpoints() (*Mock, []string) {
 		return httpmock.NewBytesResponse(status, body), nil
 	})
 
-	return m, endpoints
+	return
 }

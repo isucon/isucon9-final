@@ -9,9 +9,10 @@ const (
 	ListReservationsPath = "/reservation"
 
 	// POST
-	RegisterPath = "/register"
-	LoginPath    = "/login"
-	ReservePath  = "/reserve"
+	InitializePath = "/initialize"
+	RegisterPath   = "/register"
+	LoginPath      = "/login"
+	ReservePath    = "/reserve"
 )
 
 var (

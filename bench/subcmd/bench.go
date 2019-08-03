@@ -1,15 +1,21 @@
 package subcmd
 
-import (
-	"github.com/urfave/cli"
+const (
+	StatusSuccess = "success"
+	StatusFailed  = "failed"
+	StatusTimeout = "timeout"
 )
 
-var Bench = cli.Command{
-	Name:      "bench",
-	Aliases:   []string{"b"},
-	Usage:     "ベンチマーク実行",
-	ArgsUsage: " ",
-	Action: func(cliCtx *cli.Context) error {
-		return nil
-	},
+// execBench(ベンチマーカーを外部コマンド実行)関連
+type (
+	BenchmarkerParams struct {
+		PaymentURI string
+		TargetURI  string
+		DataDir    string
+		StaticDir  string
+	}
+)
+
+func runBenchmarker(cliCtx *cli.Context) error {
+	return nil
 }

@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/consts"
-	"github.com/chibiegg/isucon9-final/bench/util"
+	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 )
@@ -27,11 +27,18 @@ func TestScenario(t *testing.T) {
 
 	RegisterMockEndpoints()
 
+	// 初期化する
+	req, err := http.NewRequest(http.MethodPost, consts.InitializePath, nil)
+	assert.NoError(t, err)
+
+	_, err = client.Do(req)
+	assert.NoError(t, err)
+
 	// 登録する
 	form = url.Values{}
 	form.Set("username", "hoge")
 	form.Set("password", "hoge")
-	req, err := http.NewRequest(http.MethodPost, consts.RegisterPath, bytes.NewBufferString(form.Encode()))
+	req, err = http.NewRequest(http.MethodPost, consts.RegisterPath, bytes.NewBufferString(form.Encode()))
 	assert.NoError(t, err)
 
 	_, err = client.Do(req)
