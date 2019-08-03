@@ -27,6 +27,22 @@ services:
     ports:
       - "13306:3306"
 
+  payment:
+    image: golang:1.12
+    volumes:
+      - ../blackbox/payment:/go/src/payment
+    environment:
+      - "GO111MODULE=on"
+    command:
+      - go
+      - run
+      - main.go
+    working_dir: /go/src/payment
+    env_file:
+      - ".env"
+    ports:
+      - "5000:5000"
+
   # development only
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
