@@ -230,26 +230,26 @@ article.child {
     margin: 0;
     padding: 13px 19px;
     width: 270px;
-    background:		#FFEAB4;
+    background:    #FFEAB4;
     height: 200px;
 }
 
 .subcontent article.notice h2{
-	margin:			0 0 8px 0;
-	padding:		0 0 8px 0;
-	font-size:		18px;
-	color:			#000000;
-	line-height:		1.1;
-	font-weight:		normal;
-	border-bottom:		1px dashed #666666;
+  margin:      0 0 8px 0;
+  padding:    0 0 8px 0;
+  font-size:    18px;
+  color:      #000000;
+  line-height:    1.1;
+  font-weight:    normal;
+  border-bottom:    1px dashed #666666;
 }
 
 .subcontent article.notice p{
-	margin:			0;
-	padding:		0;
-	font-size:		13px;
-	color:			#666666;
-	line-height:		1.4;
+  margin:      0;
+  padding:    0;
+  font-size:    13px;
+  color:      #666666;
+  line-height:    1.4;
 }
 
 

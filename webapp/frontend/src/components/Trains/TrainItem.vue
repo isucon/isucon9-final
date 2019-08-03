@@ -6,20 +6,20 @@
       </div>
 
       <div class="train">
-      	<div class="departure">
-      		<span class="time">{{ item.departure_at.getHours() }}時{{ item.departure_at.getMinutes() }}分 発</span>
-      		<span class="station">{{ condition.from_station }}</span>
-      	</div>
+        <div class="departure">
+          <span class="time">{{ item.departure_at.getHours() }}時{{ item.departure_at.getMinutes() }}分 発</span>
+          <span class="station">{{ condition.from_station }}</span>
+        </div>
 
-      	<div class="name">
-      		<span class="name">{{ item.train_class }} {{ item.car_number }} 号</span>
-      		<span class="type">N700系/全席禁煙</span>
-      	</div>
+        <div class="name">
+          <span class="name">{{ item.train_class }} {{ item.car_number }} 号</span>
+          <span class="type">N700系/全席禁煙</span>
+        </div>
 
-      	<div class="arrival">
-      		<span class="time">{{ item.arrival_at.getHours() }}時{{ item.arrival_at.getMinutes() }}分 着</span>
-      		<span class="station">{{ condition.to_station }}</span>
-      	</div>
+        <div class="arrival">
+          <span class="time">{{ item.arrival_at.getHours() }}時{{ item.arrival_at.getMinutes() }}分 着</span>
+          <span class="station">{{ condition.to_station }}</span>
+        </div>
       </div>
 
       <div class="available">
@@ -49,13 +49,13 @@ export default {
 <style scoped>
 
 .train-item .header{
-  margin:			0;
-  padding:		0 0 0 20px;
-  height:			30px;
-  font-size:		12px;
-  color:			#ffffff;
-  line-height:		30px;
-  font-weight:		normal;
+  margin:      0;
+  padding:    0 0 0 20px;
+  height:      30px;
+  font-size:    12px;
+  color:      #ffffff;
+  line-height:    30px;
+  font-weight:    normal;
   background: #1a65eb;
 }
 
@@ -67,12 +67,12 @@ export default {
 
 .train-item div.departure,
 .train-item div.arrival {
-	margin:			0;
-	padding:		0;
-	height:			30px;
-	font-size:		17px;
-	color:			#ffffff;
-	line-height:		30px;
+  margin:      0;
+  padding:    0;
+  height:      30px;
+  font-size:    17px;
+  color:      #ffffff;
+  line-height:    30px;
 }
 
 .train-item .station {
@@ -82,11 +82,11 @@ export default {
 }
 
 .train-item div.departure {
-	border-bottom:		1px solid #161B60;
+  border-bottom:    1px solid #161B60;
 }
 
 .train-item div.arrival {
-	border-top:		1px solid #161B60;
+  border-top:    1px solid #161B60;
 }
 
 .train-item div.name span {
