@@ -2,19 +2,19 @@ package main
 
 import (
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 	"fmt"
 	"net/http"
 )
 
-var db sql.DB
+var db *sql.DB
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, World")
 }
 
-func fares_handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World")
-	rows, err := db.Query("SELECT * FROM fares_master")
+func distance_fare_handler(w http.ResponseWriter, r *http.Request) {
+	rows, err := db.Query("SELECT * FROM distance_fare_master")
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +39,8 @@ func fares_handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// MySQL関連のお膳立て
-	db, err := sql.Open("mysql", "isucon:isucon@tcp(127.0.0.1:3306)/isutrain")
+	var err error
+	db, err = sql.Open("mysql", "isucon:isucon@tcp(127.0.0.1:3306)/isutrain")
 	if err != nil {
 		panic(err)
 	}
@@ -47,7 +48,7 @@ func main() {
 
 	// HTTP
 	http.HandleFunc("/", handler)
-	http.HandleFunc("/fares", fares_handler)
+	http.HandleFunc("/distance_fare", distance_fare_handler)
 
 	http.ListenAndServe(":8000", nil)
 }
