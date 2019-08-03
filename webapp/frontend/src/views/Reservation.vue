@@ -114,7 +114,7 @@
     <section class="ui" style="float: none;">
       <article class="button-area" style="">
         <button>戻る</button>
-        <button>予約を続ける</button>
+        <button v-on:click="search()">予約を続ける</button>
       </article>
     </section>
 
@@ -122,6 +122,9 @@
 </template>
 
 <script>
+
+import { apiService } from '../services/api.js'
+
 export default {
   name: 'reservation',
   components: {},
@@ -134,6 +137,14 @@ export default {
       to_station: "新大阪",
       adult: "1",
       child: "0"
+    }
+  },
+  methods: {
+    search() {
+      const year = this.year;
+      const month = this.month;
+      const day = this.day;
+      apiService.getTrains(year, month, day);
     }
   }
 }
