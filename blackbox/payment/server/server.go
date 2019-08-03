@@ -5,8 +5,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/chibiegg/isucon9-final/blackbox/payment/config"
-	pb "github.com/chibiegg/isucon9-final/blackbox/payment/pb"
+	"payment/config"
+	pb "payment/pb"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/rs/xid"
 	"google.golang.org/grpc/status"
@@ -32,7 +32,7 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 		return nil,nil
 	}
 	guid := xid.New()
-	
+
 	info := &pb.PaymentInformation{
 		CardNumber: req.PaymentInformation.CardNumber,
 		Datetime: date,
@@ -57,7 +57,7 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 			IsOk: true,
 		},nil
 	}
-	
+
 	return &pb.CancelPaymentResponse{
 		IsOk: false,
 	},status.Errorf(codes.NotFound,"PaymenID Not Found")
