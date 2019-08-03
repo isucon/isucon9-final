@@ -122,8 +122,7 @@
 </template>
 
 <script>
-
-import { apiService } from '../services/api.js'
+import Router from '@/router.js'
 
 export default {
   name: 'reservation',
@@ -141,10 +140,16 @@ export default {
   },
   methods: {
     search() {
-      const year = this.year;
-      const month = this.month;
-      const day = this.day;
-      apiService.getTrains(year, month, day);
+      var query = {
+        year: this.year,
+        month: this.month,
+        day: this.day,
+        from_station: this.from_station,
+        to_station: this.to_station,
+        adult: this.adult,
+        child: this.child
+      }
+      Router.push({ path: '/reservation/trains', query: query})
     }
   }
 }

@@ -1,5 +1,9 @@
 <template>
-  <div class="trains">
+  <div class="loading" v-if="!items">
+    読み込み中
+  </div>
+
+  <div class="trains" v-else>
     <section class="subcontent">
       <article class="condition">
         <div class="date">{{year}}年{{month}}月{{day}}日</div>
@@ -124,29 +128,16 @@ import TrainItem from '@/components/Trains/TrainItem.vue'
 export default {
   data: function() {
     return {
-      year: 2020,
-      month: 10,
-      day: 3,
-      from_station: "東京",
-      to_station: "新大阪",
-      adult: 1,
-      child: 2,
+      year: null,
+      month: null,
+      day: null,
+      from_station: null,
+      to_station: null,
+      adult: null,
+      child: null,
       position: "指定しない",
       selectedItem: null,
-      items: [
-        {
-          "train_class": "のぞみ",
-          "car_number": 95,
-          "departure_at": new Date("2019-10-03 10:50:00"),
-          "arrival_at": new Date("2019-10-03 12:32:00")
-        },
-        {
-          "train_class": "こだま",
-          "car_number": 50,
-          "departure_at": new Date("2019-10-03 11:03:00"),
-          "arrival_at": new Date("2019-10-03 12:52:00")
-        }
-      ],
+      items: null,
     }
   },
   components: {TrainItem},
@@ -173,6 +164,30 @@ export default {
     select(item) {
       this.selectedItem = item;
     }
+  },
+  mounted() {
+    this.year = this.$route.query.year
+    this.month = this.$route.query.month
+    this.day = this.$route.query.day
+    this.adult = this.$route.query.adult
+    this.child = this.$route.query.child
+    this.from_station = this.$route.query.from_station
+    this.to_station = this.$route.query.to_station
+
+    this.items = [
+      {
+        "train_class": "のぞみ",
+        "car_number": 95,
+        "departure_at": new Date("2019-10-03 10:50:00"),
+        "arrival_at": new Date("2019-10-03 12:32:00")
+      },
+      {
+        "train_class": "こだま",
+        "car_number": 50,
+        "departure_at": new Date("2019-10-03 11:03:00"),
+        "arrival_at": new Date("2019-10-03 12:52:00")
+      }
+    ]
   }
 }
 </script>
