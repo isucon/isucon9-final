@@ -5,6 +5,14 @@ import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 service PaymentService {
+	//クレジットカードのトークン発行(非保持化対応)
+	rpc RegistCard(RegistCardRequest) returns (RegistCardResponse) {
+		option (google.api.http) = {
+			post: "/card"
+			body: "*"
+		};
+	}
+
 	//決済を行う
 	rpc ExecutePayment(ExecutePaymentRequest) returns (ExecutePaymentResponse) {
 		option (google.api.http) = {
@@ -24,10 +32,23 @@ service PaymentService {
 	}
 }
 
+message CardInformation {
+	string card_number = 1;
+	string cvv = 2;
+	string expiry_date = 3;
+}
+
+message RegistCardRequest {
+	CardInformation card_informtion = 1;
+}
+
+message RegistCardResponse {
+	string card_token = 1;
+	bool is_ok = 2;
+}
+
 message PaymentInformation {
-    string card_number = 1;
-    google.protobuf.Timestamp datetime = 2;
-    string cvv = 3;
+    string card_token = 1;
     int32 amount = 4;
     bool is_canceled = 5;
 }
