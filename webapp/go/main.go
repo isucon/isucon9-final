@@ -169,7 +169,8 @@ func train_search_handler(w http.ResponseWriter, r *http.Request) {
 			// fmt.Println(v)
 
 			if !seeked_from_station {
-				// 駅リストを発駅まで読み飛ばして頭出しをする
+				// 駅リストを列車の発駅まで読み飛ばして頭出しをする
+				// 列車の発駅以前は止まらないので無視して良い
 				if v == start_station {
 					seeked_from_station = true
 				} else {
@@ -336,8 +337,6 @@ func main() {
 	defer db.Close()
 
 	// HTTP
-	http.HandleFunc("/", handler)
-
 	http.HandleFunc("/api/train/search", train_search_handler)
 	http.HandleFunc("/api/train/seats", train_seats_handler)
 
