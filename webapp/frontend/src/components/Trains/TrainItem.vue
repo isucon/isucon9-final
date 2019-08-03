@@ -32,16 +32,13 @@
 
 <script>
 export default {
-  props: ['itemCount', 'itemIndex', 'item', 'condition'],
+  props: ['itemCount', 'itemIndex', 'item', 'condition', 'select'],
   data: function() {
     return {
     }
   },
   components: {},
   methods: {
-    select() {
-      alert("Selected")
-    }
   }
 }
 </script>
