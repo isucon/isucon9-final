@@ -6,16 +6,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 var db *sql.DB
+
+type CarInformation struct {
+	Date time.Time
+	TrainClass string
+	TrainName string
+	CarNumber int
+	SeatList []TrainSeat
+}
 
 type TrainSeat struct {
 	Row int
 	Column string
 	Class string
 	IsSmokingSeat bool
+	IsOccupied bool
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +70,19 @@ func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 		指定した列車の座席列挙
 		GET /train/seats?train_class=のぞみ && train_name=96号
 	*/
-	rows, err := db.Query("SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?", r.URL.Query().Get("train_class"), r.URL.Query().Get("car_num"))
+	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("date"))
+	if err != nil {
+		panic(err)
+	}
+	train_class := r.URL.Query().Get("train_class")
+	train_name := r.URL.Query().Get("train_name")
+	car_number, err := strconv.Atoi(r.URL.Query().Get("car_num"))
+	if err != nil {
+		panic(err)
+	}
+
+	rows, err := db.Query("SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?", 
+		train_class, car_number)
 	if err != nil {
 		panic(err)
 	}
@@ -75,12 +97,24 @@ func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		s := TrainSeat{seat_row, seat_column, seat_class, is_smoking_seat}
+		var result int
+		db.QueryRow("SELECT COUNT(*) FROM seat_reservations WHERE date=? AND train_class=? AND train_name=? AND car_number=? AND seat_row=? AND seat_column=?",
+			date,
+			train_class, 
+			train_name, 
+			car_number, 
+			seat_row, 
+			seat_column).Scan(&result)
+		s := TrainSeat{seat_row, seat_column, seat_class, is_smoking_seat, false}
+		if result == 1 {
+			s.IsOccupied = true
+		}
 		seats = append(seats, s)
 		
 		// fmt.Fprintf(w, "%d,%d\n", distance, fare)
 	}
-	resp, err := json.Marshal(s)
+	c := CarInformation{date, train_class, train_name, car_number, seats}
+	resp, err := json.Marshal(c)
 	if err != nil {
 		panic(err)
 }
