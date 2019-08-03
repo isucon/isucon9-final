@@ -124,6 +124,7 @@
 
 <script>
 import TrainItem from '@/components/Trains/TrainItem.vue'
+import { apiService } from '../services/api.js'
 
 export default {
   data: function() {
@@ -163,6 +164,24 @@ export default {
     },
     select(item) {
       this.selectedItem = item;
+    },
+    search() {
+      apiService.getTrains(this.condition).then((res) => {
+        console.log(res)
+        var items = []
+
+        res.forEach(function(value){
+          var item = {
+            "train_class": value.Class,
+            "car_number": value.Name,
+            "departure_at": new Date("2019-10-03 11:03:00"),
+            "arrival_at": new Date("2019-10-03 12:52:00")
+          }
+          items.push(item)
+        });
+
+        this.items = items
+      })
     }
   },
   mounted() {
@@ -174,20 +193,7 @@ export default {
     this.from_station = this.$route.query.from_station
     this.to_station = this.$route.query.to_station
 
-    this.items = [
-      {
-        "train_class": "のぞみ",
-        "car_number": 95,
-        "departure_at": new Date("2019-10-03 10:50:00"),
-        "arrival_at": new Date("2019-10-03 12:32:00")
-      },
-      {
-        "train_class": "こだま",
-        "car_number": 50,
-        "departure_at": new Date("2019-10-03 11:03:00"),
-        "arrival_at": new Date("2019-10-03 12:52:00")
-      }
-    ]
+    return this.search();
   }
 }
 </script>
