@@ -3,9 +3,9 @@ package isutrain
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/consts"
 	"github.com/chibiegg/isucon9-final/bench/util"
 	"github.com/jarcoal/httpmock"
 )
@@ -132,7 +132,7 @@ func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	_, err := strconv.ParseInt(req.Form.Get("reservation_id"), 10, 64)
+	_, err := httpmock.GetSubmatchAsUint(req, 1)
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
@@ -147,10 +147,8 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	var (
-		reservationID = req.Form.Get("reservation_id")
-	)
-	if len(reservationID) == 0 {
+	_, err := httpmock.GetSubmatchAsUint(req, 1)
+	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
@@ -189,39 +187,39 @@ func RegisterMockEndpoints() (*Mock, []string) {
 	)
 
 	// GET
-	httpmock.RegisterResponder("GET", "/train/search", func(req *http.Request) (*http.Response, error) {
+	httpmock.RegisterResponder("GET", consts.SearchTrainsPath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.SearchTrains(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
-	httpmock.RegisterResponder("GET", "/train/seats", func(req *http.Request) (*http.Response, error) {
+	httpmock.RegisterResponder("GET", consts.ListTrainSeatsPath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.ListTrainSeats(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
-	httpmock.RegisterResponder("GET", "/reservation", func(req *http.Request) (*http.Response, error) {
+	httpmock.RegisterResponder("GET", consts.ListReservationsPath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.ListReservations(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
 
 	// POST
-	httpmock.RegisterResponder("POST", "/register", func(req *http.Request) (*http.Response, error) {
+	httpmock.RegisterResponder("POST", consts.RegisterPath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.Register(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
-	httpmock.RegisterResponder("POST", "/login", func(req *http.Request) (*http.Response, error) {
+	httpmock.RegisterResponder("POST", consts.LoginPath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.Login(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
-	httpmock.RegisterResponder("POST", "/reserve", func(req *http.Request) (*http.Response, error) {
+	httpmock.RegisterResponder("POST", consts.ReservePath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.Reserve(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
-	httpmock.RegisterResponder("POST", `=~^/reservation/\d+/commit\z`, func(req *http.Request) (*http.Response, error) {
+	httpmock.RegisterResponder("POST", consts.MockCommitReservationPath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.CommitReservation(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
 
 	// DELETE
-	httpmock.RegisterResponder("DELETE", `=~^/reservation/\d+/cancel\z`, func(req *http.Request) (*http.Response, error) {
+	httpmock.RegisterResponder("DELETE", consts.MockCancelReservationPath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.CancelReservation(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})

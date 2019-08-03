@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/consts"
 	"github.com/chibiegg/isucon9-final/bench/util"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
@@ -30,21 +31,21 @@ func TestScenario(t *testing.T) {
 	form = url.Values{}
 	form.Set("username", "hoge")
 	form.Set("password", "hoge")
-	req, err := http.NewRequest(http.MethodPost, "/register", bytes.NewBufferString(form.Encode()))
+	req, err := http.NewRequest(http.MethodPost, consts.RegisterPath, bytes.NewBufferString(form.Encode()))
 	assert.NoError(t, err)
 
 	_, err = client.Do(req)
 	assert.NoError(t, err)
 
 	// ログインする
-	req, err = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(form.Encode()))
+	req, err = http.NewRequest(http.MethodPost, consts.LoginPath, bytes.NewBufferString(form.Encode()))
 	assert.NoError(t, err)
 
 	_, err = client.Do(req)
 	assert.NoError(t, err)
 
 	// 列車を検索
-	req, err = http.NewRequest(http.MethodGet, "/train/search", nil)
+	req, err = http.NewRequest(http.MethodGet, consts.SearchTrainsPath, nil)
 	assert.NoError(t, err)
 
 	query = req.URL.Query()
@@ -57,7 +58,7 @@ func TestScenario(t *testing.T) {
 	assert.NoError(t, err)
 
 	// どれか選んで座席を列挙
-	req, err = http.NewRequest(http.MethodGet, "/train/seats", nil)
+	req, err = http.NewRequest(http.MethodGet, consts.ListTrainSeatsPath, nil)
 	assert.NoError(t, err)
 
 	query = req.URL.Query()
@@ -70,21 +71,21 @@ func TestScenario(t *testing.T) {
 
 	// 座席を選び、予約
 	form = url.Values{}
-	req, err = http.NewRequest(http.MethodPost, "/reserve", bytes.NewBufferString(form.Encode()))
+	req, err = http.NewRequest(http.MethodPost, consts.ReservePath, bytes.NewBufferString(form.Encode()))
 	assert.NoError(t, err)
 
 	_, err = client.Do(req)
 	assert.NoError(t, err)
 
 	// 予約を確定
-	req, err = http.NewRequest(http.MethodPost, "/reservation/1111/commit", nil)
+	req, err = http.NewRequest(http.MethodPost, consts.BuildCommitReservationPath(1111), nil)
 	assert.NoError(t, err)
 
 	_, err = client.Do(req)
 	assert.NoError(t, err)
 
 	// 予約を確認
-	req, err = http.NewRequest(http.MethodGet, "/reservation", nil)
+	req, err = http.NewRequest(http.MethodGet, consts.ListReservationsPath, nil)
 	assert.NoError(t, err)
 
 	resp, err := client.Do(req)
@@ -99,7 +100,7 @@ func TestScenario(t *testing.T) {
 	assert.Len(t, reservations, 1)
 
 	// 予約をキャンセル
-	req, err = http.NewRequest(http.MethodDelete, "/reservation/1111/cancel", nil)
+	req, err = http.NewRequest(http.MethodDelete, consts.BuildCancelReservationPath(1111), nil)
 	assert.NoError(t, err)
 
 	_, err = client.Do(req)
