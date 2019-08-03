@@ -1,3 +1,7 @@
+SET CHARACTER_SET_CLIENT = utf8;
+SET CHARACTER_SET_CONNECTION = utf8;
+
+BEGIN;
 INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-01-01",15.000);
 INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-01-01",9.375);
 INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-01-01",7.500);
@@ -79,3 +83,4 @@ INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUE
 INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-12-25",8.000);
 INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-12-25",5.000);
 INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-12-25",4.000);
+COMMIT;
