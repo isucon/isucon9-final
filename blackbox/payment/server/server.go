@@ -126,3 +126,20 @@ func (s *Server) GetPaymentInformation(ctx context.Context, req *pb.GetPaymentIn
 		return &pb.GetPaymentInformationResponse{PaymentInformation: nil, IsOk: false}, err
 	}
 }
+
+//メモリ初期化
+func (s *Server) Initialize(ctx context.Context, req *pb.InitializeRequest) (*pb.InitializeResponse, error) {
+	done := make(chan struct{}, 1)
+	ec := make(chan error, 1)
+	go func(){
+			s.PayInfoMap = make(map[string]*pb.PaymentInformation, 1000000)
+			s.CardInfoMap = make(map[string]*pb.CardInformation, 1000000)
+			done <- struct{}{}
+	}()
+	select {
+	case <-done:
+		return &pb.InitializeResponse{IsOk: true}, nil
+	case err := <- ec:
+		return &pb.InitializeResponse{IsOk: false}, err
+	}
+}

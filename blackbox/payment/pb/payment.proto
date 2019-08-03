@@ -30,6 +30,11 @@ service PaymentService {
 	rpc GetPaymentInformation(GetPaymentInformationRequest) returns (GetPaymentInformationResponse) {
 		option (google.api.http).get = "/payment/{payment_id}";
 	}
+
+	//メモリ初期化
+	rpc Initialize(InitializeRequest) returns (InitializeResponse) {
+		option (google.api.http).post = "/initialize";
+	}
 }
 
 message CardInformation {
@@ -78,4 +83,11 @@ message GetPaymentInformationRequest {
 message GetPaymentInformationResponse {
     PaymentInformation payment_information = 1;
     bool is_ok = 2;
+}
+
+message InitializeRequest {
+	
+}
+message InitializeResponse {
+	bool is_ok = 1;
 }
