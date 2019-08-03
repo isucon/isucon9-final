@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+
+  nginx:
+    image: nginx:1.17
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./public:/opt/isucon/public
+    ports:
+      - "8080:80"
+    links:
+      - "webapp"
+
+  mysql:
+    image: mysql:8
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      - "TZ=Asia/Tokyo"
+    env_file:
+      - ".env"
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+      - ./mysql/conf.d:/etc/mysql/conf.d
+    # development only
+    ports:
+      - "13306:3306"
+
+  # development only
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    links:
+      - mysql
+    ports:
+       - 8081:80
+    volumes:
+       - /sessions
+
+volumes:
+  mysql:

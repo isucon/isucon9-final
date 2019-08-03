@@ -25,6 +25,6 @@ cd isucon9-final/webapp
 実装言語を指定してBuildとUpをする。
 
 ```bash
-docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yaml build
-docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yaml up
+docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yml build
+docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yml up
 ```

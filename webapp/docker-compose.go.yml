@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+
+  webapp:
+    build: ./go
+    volumes:
+      - ./go:/go/src/webapp
+    env_file:
+      - ".env"
