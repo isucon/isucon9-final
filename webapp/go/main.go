@@ -16,26 +16,26 @@ var db *sql.DB
 // var mu sync.Mutex
 
 type CarInformation struct {
-	Date time.Time
-	TrainClass string
-	TrainName string
-	CarNumber int
-	SeatList []TrainSeat
+	Date       time.Time   `json:"date"`
+	TrainClass string      `json:"train_class"`
+	TrainName  string      `json:"train_name"`
+	CarNumber  int         `json:"car_number"`
+	SeatList   []TrainSeat `json:"seats"`
 }
 
 type Train struct {
-	Class string
-	Name string
-	Start string
-	Last string
+	Class string `json:"train_class"`
+	Name  string `json:"train_name"`
+	Start string `json:"start"`
+	Last  string `json:"last"`
 }
 
 type TrainSeat struct {
-	Row int
-	Column string
-	Class string
-	IsSmokingSeat bool
-	IsOccupied bool
+	Row           int    `json:"row"`
+	Column        string `json:"column"`
+	Class         string `json:"class"`
+	IsSmokingSeat bool   `json:"is_smoking_seat"`
+	IsOccupied    bool   `json:"is_occupied"`
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
