@@ -2,6 +2,7 @@ package isutrain
 
 import "time"
 
+
 // TODO: Statusのconst
 
 // PaymentMethod は決済方法です
