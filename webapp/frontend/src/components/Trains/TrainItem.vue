@@ -2,32 +2,49 @@
   <article class="train-item">
     <div class="wrap">
       <div class="header">
-          候補 1/6
+          候補 {{ itemIndex }}/{{ itemCount }}
       </div>
 
       <div class="train">
       	<div class="departure">
-      		<span class="time">11時53分 発</span>
-      		<span class="station">新大阪</span>
+      		<span class="time">{{ item.departure_at.getHours() }}時{{ item.departure_at.getMinutes() }}分 発</span>
+      		<span class="station">{{ condition.from_station }}</span>
       	</div>
 
       	<div class="name">
-      		<span class="name">のぞみ 156 号</span>
+      		<span class="name">{{ item.train_class }} {{ item.car_number }} 号</span>
       		<span class="type">N700系/全席禁煙</span>
       	</div>
 
       	<div class="arrival">
-      		<span class="time">14時03分 着</span>
-      		<span class="station">東京</span>
+      		<span class="time">{{ item.arrival_at.getHours() }}時{{ item.arrival_at.getMinutes() }}分 着</span>
+      		<span class="station">{{ condition.to_station }}</span>
       	</div>
       </div>
 
       <div class="available">
-        <p class="start">この候補を選択</p>
+        <p class="start" v-on:click="select">この候補を選択</p>
       </div>
     </div>
   </article>
 </template>
+
+
+<script>
+export default {
+  props: ['itemCount', 'itemIndex', 'item', 'condition'],
+  data: function() {
+    return {
+    }
+  },
+  components: {},
+  methods: {
+    select() {
+      alert("Selected")
+    }
+  }
+}
+</script>
 
 <style scoped>
 
@@ -93,6 +110,7 @@
   line-height: 42px;
   padding-left: 20px;
   background: #e59836;
+  cursor: pointer;
 }
 
 

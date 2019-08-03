@@ -9,16 +9,13 @@
     </section>
 
     <section class="trains">
-      <TrainItem/>
-      <TrainItem/>
-      <TrainItem/>
-      <TrainItem/>
-      <TrainItem/>
-      <TrainItem/>
-      <TrainItem/>
-      <TrainItem/>
-      <TrainItem/>
-      <TrainItem/>
+      <TrainItem
+        v-for="(item, index) in items"
+        v-bind:item="item"
+        v-bind:itemCount="itemCount"
+        v-bind:itemIndex="index+1"
+        v-bind:condition="condition"
+      />
     </section>
 
     <section class="information">
@@ -50,10 +47,40 @@ export default {
       from_station: "東京",
       to_station: "新大阪",
       adult: 1,
-      child: 2
+      child: 2,
+      items: [
+        {
+          "train_class": "のぞみ",
+          "car_number": 95,
+          "departure_at": new Date("2019-10-03 10:50:00"),
+          "arrival_at": new Date("2019-10-03 12:32:00")
+        },
+        {
+          "train_class": "こだま",
+          "car_number": 50,
+          "departure_at": new Date("2019-10-03 11:03:00"),
+          "arrival_at": new Date("2019-10-03 12:52:00")
+        }
+      ],
     }
   },
   components: {TrainItem},
+  computed: {
+    itemCount () {
+      return this.items.length;
+    },
+    condition () {
+      return {
+        year: this.year,
+        month: this.month,
+        day: this.day,
+        from_station: this.from_station,
+        to_station: this.to_station,
+        adult: this.adult,
+        child: this.child,
+      }
+    }
+  }
 }
 </script>
 
