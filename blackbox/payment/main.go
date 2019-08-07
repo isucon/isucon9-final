@@ -7,14 +7,14 @@ import (
 	"net"
 	_ "net/http/pprof"
 
-	"github.com/chibiegg/isucon9-final/blackbox/payment/config"
-	pb "github.com/chibiegg/isucon9-final/blackbox/payment/pb"
-	"github.com/chibiegg/isucon9-final/blackbox/payment/server"
+	"payment/config"
+	pb "payment/pb"
+	"payment/server"
 	"google.golang.org/grpc"
 )
 
 var (
-	banner = `　　　　 ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+	banner = `　　　　 ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
 	||P |||a |||y |||m |||e |||n |||t |||A |||P |||I ||
 	||__|||__|||__|||__|||__|||__|||__|||__|||__|||__||
 	|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|`
@@ -26,7 +26,7 @@ func main() {
 	fmt.Println(banner)
 
 	//setup config
-	configFile := flag.String("config-file", "/etc/paymentapi/config.yml", "config file path")
+	configFile := flag.String("config-file", "config.yml", "config file path")
 	flag.Parse()
 	c, err := config.LoadFile(*configFile)
 	if err != nil {

@@ -6,8 +6,8 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/chibiegg/isucon9-final/blackbox/payment/config"
-	pb "github.com/chibiegg/isucon9-final/blackbox/payment/pb"
+	"payment/config"
+	pb "payment/pb"
 	"google.golang.org/grpc"
 )
 

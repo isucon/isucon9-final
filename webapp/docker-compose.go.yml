@@ -8,3 +8,5 @@ services:
       - ./go:/go/src/webapp
     env_file:
       - ".env"
+    links:
+      - payment
