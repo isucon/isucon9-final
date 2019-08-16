@@ -5,6 +5,14 @@ import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 service PaymentService {
+	//クレジットカードのトークン発行(非保持化対応)
+	rpc RegistCard(RegistCardRequest) returns (RegistCardResponse) {
+		option (google.api.http) = {
+			post: "/card"
+			body: "*"
+		};
+	}
+
 	//決済を行う
 	rpc ExecutePayment(ExecutePaymentRequest) returns (ExecutePaymentResponse) {
 		option (google.api.http) = {
@@ -18,18 +26,50 @@ service PaymentService {
 		option (google.api.http).delete = "/payment/{payment_id}";
 	}
 
+	//決済をバルクでキャンセルする
+	rpc BulkCancelPayment(BulkCancelPaymentRequest) returns (BulkCancelPaymentResponse) {
+		option (google.api.http) = {
+			post: "/payment/_bulk"
+			body: "*"
+		};
+	}
+
 	//決済情報を取得する
 	rpc GetPaymentInformation(GetPaymentInformationRequest) returns (GetPaymentInformationResponse) {
 		option (google.api.http).get = "/payment/{payment_id}";
 	}
+
+	//メモリ初期化
+	rpc Initialize(InitializeRequest) returns (InitializeResponse) {
+		option (google.api.http).post = "/initialize";
+	}
+
+	//ベンチマーカー用結果取得API
+	rpc GetResult(GetResultRequest) returns (GetResultResponse) {
+		option (google.api.http).get = "/result";
+	}
+}
+
+message CardInformation {
+	string card_number = 1;
+	string cvv = 2;
+	string expiry_date = 3;
+}
+
+message RegistCardRequest {
+	CardInformation card_information = 1;
+}
+
+message RegistCardResponse {
+	string card_token = 1;
+	bool is_ok = 2;
 }
 
 message PaymentInformation {
-    string card_number = 1;
-    google.protobuf.Timestamp datetime = 2;
-    string cvv = 3;
-    int32 amount = 4;
-    bool is_canceled = 5;
+	string card_token = 1;
+	google.protobuf.Timestamp datetime = 2;
+    int32 amount = 3;
+    bool is_canceled = 4;
 }
 
 message ExecutePaymentRequest {
@@ -49,6 +89,14 @@ message CancelPaymentResponse {
     bool is_ok = 1;
 }
 
+message BulkCancelPaymentRequest {
+	repeated string payment_id = 1;
+}
+
+message BulkCancelPaymentResponse {
+	bool is_ok = 1;
+}
+
 message GetPaymentInformationRequest {
     string payment_id = 1;
 }
@@ -56,4 +104,25 @@ message GetPaymentInformationRequest {
 message GetPaymentInformationResponse {
     PaymentInformation payment_information = 1;
     bool is_ok = 2;
+}
+
+message InitializeRequest {
+
+}
+message InitializeResponse {
+	bool is_ok = 1;
+}
+
+message GetResultRequest {
+
+}
+
+message RawData {
+	PaymentInformation payment_information = 1;
+	CardInformation card_information = 2;
+}
+
+message GetResultResponse {
+	repeated RawData raw_data = 1;
+	bool is_ok = 2;
 }
