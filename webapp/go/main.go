@@ -330,8 +330,8 @@ func main() {
 	// HTTP
 	http.HandleFunc("/", handler)
 
-	http.HandleFunc("/train/search", train_search_handler)
-	http.HandleFunc("/train/seats", train_seats_handler)
+	http.HandleFunc("/api/train/search", train_search_handler)
+	http.HandleFunc("/api/train/seats", train_seats_handler)
 
 	http.ListenAndServe(":8000", nil)
 }

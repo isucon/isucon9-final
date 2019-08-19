@@ -18,7 +18,7 @@ class ApiService {
           adult: condition.adult,
           child: condition.child
         }
-        return await this.httpService.get('/train/search', {"params": params})
+        return await this.httpService.get('/api/train/search', {"params": params})
     }
 }
 
