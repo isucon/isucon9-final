@@ -2,17 +2,18 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"encoding/json"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
-	"os"
 	// "sync"
 )
 
 var db *sql.DB
+
 // var mu sync.Mutex
 
 type CarInformation struct {
@@ -65,7 +66,6 @@ func distance_fare_handler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 }
-
 
 /*
 func fare_calc(date time.Time, depStation, destStation, trainClass, seatClass string)
@@ -218,13 +218,11 @@ func train_search_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(resp)
 
-
 	err = rows.Err()
 	if err != nil {
 		panic(err)
 	}
 }
-
 
 func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 	/*
@@ -284,7 +282,6 @@ func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	w.Write(resp)
-
 
 	err = rows.Err()
 	if err != nil {
