@@ -19,7 +19,7 @@ TBD
 
 ```bash
 git clone git@github.com:chibiegg/isucon9-final.git
-cd isucon9-final/webapp
+cd isucon9-final
 ```
 
 実装言語を指定してBuildとUpをする。
