@@ -115,10 +115,14 @@ func train_search_handler(w http.ResponseWriter, r *http.Request) {
 			発駅と着駅の到着時刻
 
 	*/
+
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("use_at"))
 	if err != nil {
 		panic(err)
 	}
+	date = date.In(jst)
+
 	train_class := r.URL.Query().Get("train_class")
 	from := r.URL.Query().Get("from")
 	to := r.URL.Query().Get("to")
@@ -226,10 +230,14 @@ func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 		指定した列車の座席列挙
 		GET /train/seats?train_class=のぞみ && train_name=96号
 	*/
-	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("date"))
+
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("use_at"))
 	if err != nil {
 		panic(err)
 	}
+	date = date.In(jst)
+
 	train_class := r.URL.Query().Get("train_class")
 	train_name := r.URL.Query().Get("train_name")
 	car_number, err := strconv.Atoi(r.URL.Query().Get("car_num"))
