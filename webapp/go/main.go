@@ -2,40 +2,41 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"encoding/json"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
-	"os"
 	// "sync"
 )
 
 var db *sql.DB
+
 // var mu sync.Mutex
 
 type CarInformation struct {
-	Date time.Time
-	TrainClass string
-	TrainName string
-	CarNumber int
-	SeatList []TrainSeat
+	Date       time.Time   `json:"date"`
+	TrainClass string      `json:"train_class"`
+	TrainName  string      `json:"train_name"`
+	CarNumber  int         `json:"car_number"`
+	SeatList   []TrainSeat `json:"seats"`
 }
 
 type Train struct {
-	Class string
-	Name string
-	Start string
-	Last string
+	Class string `json:"train_class"`
+	Name  string `json:"train_name"`
+	Start string `json:"start"`
+	Last  string `json:"last"`
 }
 
 type TrainSeat struct {
-	Row int
-	Column string
-	Class string
-	IsSmokingSeat bool
-	IsOccupied bool
+	Row           int    `json:"row"`
+	Column        string `json:"column"`
+	Class         string `json:"class"`
+	IsSmokingSeat bool   `json:"is_smoking_seat"`
+	IsOccupied    bool   `json:"is_occupied"`
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +66,6 @@ func distance_fare_handler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 }
-
 
 /*
 func fare_calc(date time.Time, depStation, destStation, trainClass, seatClass string)
@@ -169,7 +169,8 @@ func train_search_handler(w http.ResponseWriter, r *http.Request) {
 			// fmt.Println(v)
 
 			if !seeked_from_station {
-				// 駅リストを発駅まで読み飛ばして頭出しをする
+				// 駅リストを列車の発駅まで読み飛ばして頭出しをする
+				// 列車の発駅以前は止まらないので無視して良い
 				if v == start_station {
 					seeked_from_station = true
 				} else {
@@ -217,13 +218,11 @@ func train_search_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(resp)
 
-
 	err = rows.Err()
 	if err != nil {
 		panic(err)
 	}
 }
-
 
 func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 	/*
@@ -284,7 +283,6 @@ func train_seats_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(resp)
 
-
 	err = rows.Err()
 	if err != nil {
 		panic(err)
@@ -336,8 +334,6 @@ func main() {
 	defer db.Close()
 
 	// HTTP
-	http.HandleFunc("/", handler)
-
 	http.HandleFunc("/api/train/search", train_search_handler)
 	http.HandleFunc("/api/train/seats", train_seats_handler)
 
