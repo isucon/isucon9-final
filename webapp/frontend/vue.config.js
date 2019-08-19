@@ -5,7 +5,7 @@ module.exports = {
     port: 8081,
     disableHostCheck: true,
     proxy: {
-      "/train": {
+      "/api": {
         target: "http://127.0.0.1:8080"
       }
     }
