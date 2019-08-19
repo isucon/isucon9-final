@@ -40,6 +40,16 @@ type TrainSeat struct {
 	IsOccupied    bool   `json:"is_occupied"`
 }
 
+type TrainSearchResponse struct {
+	Train
+	Departure     string    `json:"departure"`
+	Destination   string    `json:"destination"`
+	DepartureTime time.Time `json:"departure_time"`
+	ArrivalTime   time.Time `json:"arrival_time"`
+	SeatAvailability map[string]string `json:"seat_availability"`
+	Fare map[string]int `json:"seat_fare"`
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, World")
 }
@@ -207,10 +217,34 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		stations.Close()
 		if isContainsOriginStation && isContainsDestStation {
-			// TODO: 料金計算
-			// TODO: 空席情報
+			// 列車情報
+			train := Train{trainClass, trainName, startStation, lastStation}
+
 			// TODO: 所要時間計算
-			trainList = append(trainList, Train{trainClass, trainName, startStation, lastStation})
+			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
+			departureAt := time.Now()
+			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
+			arrivalAt := time.Now()
+			
+			// TODO: 空席情報
+			seatAvailability := map[string]string {
+				"premium": "○",
+				"premium_smoke": "×",
+				"reserved": "△",
+				"reserved_smoke": "○",
+				"non_reserved": "○",
+			}
+
+			// TODO: 料金計算
+			fareInformation := map[string]int {
+				"premium": 24000,
+				"premium_smoke": 24500,
+				"reserved": 19000,
+				"reserved_smoke": 19500,
+				"non_reserved": 15000,
+			}
+			
+			trainList = append(trainList, TrainSearchResponse{train, from, to, departureAt, arrivalAt, seatAvailability, fareInformation})
 		}
 	}
 	resp, err := json.Marshal(trainList)
