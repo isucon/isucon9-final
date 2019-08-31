@@ -39,6 +39,12 @@ func (s *Server) RegistCard(ctx context.Context, req *pb.RegistCardRequest) (*pb
 			ec <- status.Errorf(codes.InvalidArgument, "Invalid POST data")
 			return
 		}
+		err := s.ValidateCardInformation(req)
+		if err != nil {
+			ec <- status.Errorf(codes.InvalidArgument, err.Error())
+			return
+		}
+
 		id, err := uuid.NewV4()
 		if err != nil {
 			ec <- status.Errorf(codes.Internal, "Internal Error, Generate UUID")
