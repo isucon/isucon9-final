@@ -18,7 +18,7 @@ import (
 type Server struct {
 	PayInfoMap  map[string]pb.PaymentInformation
 	CardInfoMap map[string]pb.CardInformation
-	mu sync.Mutex
+	mu sync.RWMutex
 }
 
 func NewNetworkServer(c *config.Config) (*Server, error) {
@@ -67,9 +67,11 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 			ec <- status.Errorf(codes.InvalidArgument, "Invalid POST data")
 			return
 		}
-		s.mu.Lock()
-		if _, ok := s.CardInfoMap[req.PaymentInformation.CardToken]; ok {
-			s.mu.Unlock()
+
+		s.mu.RLock()
+		_, ok := s.CardInfoMap[req.PaymentInformation.CardToken]
+		s.mu.RUnlock()
+		if ok {
 			date, err := ptypes.TimestampProto(time.Now())
 			if err != nil {
 				ec <- err
@@ -103,13 +105,14 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 	done := make(chan struct{}, 1)
 	ec := make(chan error, 1)
 	go func(){
-		s.mu.Lock()
-		if val, ok := s.PayInfoMap[req.PaymentId]; ok {
-			val.IsCanceled = true
-			s.mu.Unlock()
-
+		s.mu.RLock()
+		id, ok := s.PayInfoMap[req.PaymentId]
+		s.mu.RUnlock()
+		if ok {
+			id.IsCanceled = true
 			done <- struct{}{}
 		}
+
 		ec <- status.Errorf(codes.NotFound, "PaymentID Not Found")
 	}()
 	select {
@@ -130,11 +133,13 @@ func (s *Server) GetPaymentInformation(ctx context.Context, req *pb.GetPaymentIn
 	done := make(chan *pb.GetPaymentInformationResponse, 1)
 	ec := make(chan error, 1)
 	go func(){
-		s.mu.Lock()
-		if val, ok := s.PayInfoMap[req.PaymentId]; ok {
-			s.mu.Unlock()
-			done <- &pb.GetPaymentInformationResponse{PaymentInformation: &val, IsOk: true}
+		s.mu.RLock()
+		id, ok := s.PayInfoMap[req.PaymentId]
+		s.mu.RUnlock()
+		if ok {
+			done <- &pb.GetPaymentInformationResponse{PaymentInformation: &id, IsOk: true}
 		}
+
 		ec <- status.Errorf(codes.NotFound, "PaymentID Not Found")
 	}()
 	select {
@@ -150,10 +155,12 @@ func (s *Server) Initialize(ctx context.Context, req *pb.InitializeRequest) (*pb
 	done := make(chan struct{}, 1)
 	ec := make(chan error, 1)
 	go func(){
+		s.mu.Lock()
 		s.PayInfoMap = nil
 		s.CardInfoMap = nil
 		s.PayInfoMap = make(map[string]pb.PaymentInformation, 1000000)
 		s.CardInfoMap = make(map[string]pb.CardInformation, 1000000)
+		s.mu.Unlock()
 		done <- struct{}{}
 	}()
 	select {
@@ -175,7 +182,7 @@ func (s *Server) GetResult(ctx context.Context, req *pb.GetResultRequest) (*pb.G
 		payinfo := &pb.PaymentInformation{}
 		cardinfo := &pb.CardInformation{}
 		raw := []*pb.RawData{}
-		s.mu.Lock()
+		s.mu.RLock()
 		for k, v := range s.PayInfoMap {
 			payinfo.CardToken = k
 			payinfo.Datetime =  v.Datetime
@@ -192,7 +199,7 @@ func (s *Server) GetResult(ctx context.Context, req *pb.GetResultRequest) (*pb.G
 			}
 			raw = append(raw, rawdata)
 		}
-		s.mu.Unlock()
+		s.mu.RUnlock()
 		done <- &pb.GetResultResponse{RawData: raw, IsOk: true}
 	}()
 	select {
