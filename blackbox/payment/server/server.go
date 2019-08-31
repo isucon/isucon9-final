@@ -11,6 +11,7 @@ import (
 	pb "payment/pb"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/rs/xid"
+	"github.com/nu7hatch/gouuid"
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/codes"
 )
@@ -38,17 +39,21 @@ func (s *Server) RegistCard(ctx context.Context, req *pb.RegistCardRequest) (*pb
 			ec <- status.Errorf(codes.InvalidArgument, "Invalid POST data")
 			return
 		}
-		guid := xid.New()
+		id, err := uuid.NewV4()
+		if err != nil {
+			ec <- status.Errorf(codes.Internal, "Internal Error, Generate UUID")
+			return
+		}
 
 		s.mu.Lock()
-		s.CardInfoMap[guid.String()] = pb.CardInformation{
+		s.CardInfoMap[id.String()] = pb.CardInformation{
 			CardNumber: req.CardInformation.CardNumber,
 			Cvv:        req.CardInformation.Cvv,
 			ExpiryDate: req.CardInformation.ExpiryDate,
 		}
 		s.mu.Unlock()
 
-		done <- &pb.RegistCardResponse{CardToken: guid.String(), IsOk: true}
+		done <- &pb.RegistCardResponse{CardToken: id.String(), IsOk: true}
 	}()
 	select {
 	case r := <-done:
