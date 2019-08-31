@@ -117,10 +117,10 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 	ec := make(chan error, 1)
 	go func(){
 		s.mu.RLock()
-		id, ok := s.PayInfoMap[req.PaymentId]
+		paydata, ok := s.PayInfoMap[req.PaymentId]
 		s.mu.RUnlock()
 		if ok {
-			id.IsCanceled = true
+			paydata.IsCanceled = true
 			done <- struct{}{}
 		}
 
@@ -136,6 +136,37 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 
 //バルクで決済をキャンセルする
 func (s *Server) BulkCancelPayment(ctx context.Context, req *pb.BulkCancelPaymentRequest) (*pb.BulkCancelPaymentResponse, error) {
+	done := make(chan int32, 1)
+	ec := make(chan int32, 1)
+	go func(){
+		s.mu.Lock()
+		if len(req.PaymentId) < 1 {
+			ec <- 0
+			return
+		}
+
+		var i int32
+		for _, v := range req.PaymentId {
+			paydata, ok := s.PayInfoMap[v]
+			if ok {
+				paydata.IsCanceled = true
+			} else {
+				i--
+			}
+			i++
+		}
+		done <- i
+	}()
+	select {
+	case num := <- done:
+		s.mu.Unlock()
+		time.Sleep(time.Second * 1)
+		return &pb.BulkCancelPaymentResponse{Deleted: num}, nil
+	case num := <- ec:
+		s.mu.Unlock()
+		time.Sleep(time.Second * 1)
+		return &pb.BulkCancelPaymentResponse{Deleted: num}, nil
+	}
 	return nil,nil
 }
 

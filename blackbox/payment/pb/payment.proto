@@ -94,7 +94,7 @@ message BulkCancelPaymentRequest {
 }
 
 message BulkCancelPaymentResponse {
-	bool is_ok = 1;
+	int32 deleted = 1;
 }
 
 message GetPaymentInformationRequest {
