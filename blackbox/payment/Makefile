@@ -1,4 +1,4 @@
-.PHONY: build lint vet test coverhtml bench gen clean deps
+.PHONY: build  test
 
 PKG_NAME=$(shell basename `pwd`)
 PKG_LIST := ./config ./server
