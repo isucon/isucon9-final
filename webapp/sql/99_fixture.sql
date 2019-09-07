@@ -1,3 +1,5 @@
+use `isutrain`;
+
 INSERT INTO distance_fare_master(distance, fare) VALUES (0, 2500);
 INSERT INTO distance_fare_master(distance, fare) VALUES (50, 3000);
 INSERT INTO distance_fare_master(distance, fare) VALUES (75, 3700);
