@@ -20,7 +20,7 @@ CREATE TABLE `reservations` (
   `user_id` bigint NOT NULL,
   `payment_method` varchar(100) NOT NULL,
   `status` enum('requesting', 'done', 'rejected') NOT NULL,
-  `payment_id` bigint NOT NULL
+  `payment_id` bigint
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `seat_master`;

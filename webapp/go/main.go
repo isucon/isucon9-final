@@ -8,6 +8,8 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"context"
+	// "io"
 
 	_ "github.com/go-sql-driver/mysql"
 	// "sync"
@@ -48,6 +50,32 @@ type TrainSearchResponse struct {
 	ArrivalTime   time.Time `json:"arrival_time"`
 	SeatAvailability map[string]string `json:"seat_availability"`
 	Fare map[string]int `json:"seat_fare"`
+}
+
+type TrainReservationRequest struct {
+	Date string `json:"date"`
+	TrainClass string `json:"train_class"`
+	TrainName string `json:"train_name"`
+	CarNum int `json:"car_num"`
+	SeatClass string `json:"seat_class"`
+	Origin string `json:"origin"`
+	Destination string `json:"destination"`
+	UserId int `json:"user_id"`
+	Payment string `json:"payment"`
+	Child int `json:"child"`
+	Adult int `json:"adult"`
+	Type string `json:"type"`
+	Seats []Seat `json:"seats"`
+}
+
+type Seat struct {
+	Row int `json:"row"`
+	Column string `json:"column"`
+}
+
+type TrainReservationResponse struct {
+	ReservationId string `json:"reservation_id"`
+	IsOk bool `json:"is_ok"`
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -324,6 +352,152 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func trainReservationHandler(w http.ResponseWriter, r *http.Request){
+	/*
+		列車の席予約API　支払いはまだ
+		POST /api/train/reservation
+		{
+			"date": "2020-01-01T08:00:00+09:00", 
+			"train_class": "のぞみ",
+			"train_name": "99号",
+			"car_num": 4,
+			"seat_class": "reserved",
+			"origin": "東京",
+			"destination": "大阪",
+			"user_id": 3,
+			"payment": "creditcard",
+			"child": 1,
+			"adult": 1,
+			"type": "isle",
+			"seats": [
+				{
+					"row": 1,
+					"column": "E"
+				}
+			]
+		}
+
+		レスポンスで予約IDを返す
+	*/
+	if r.Method != http.MethodPost {
+		w.WriteHeader(405)
+		w.Write([]byte("Method not allowed."))
+		return
+	} 
+
+	rsv := new(TrainReservationRequest)
+	err := json.NewDecoder(r.Body).Decode(&rsv)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// if rsv.Type != "seat" {
+		
+	// }
+
+	ctx := context.Background()
+	tx, err := db.BeginTx(ctx,nil)
+	if err != nil {
+		panic(err)
+	}
+
+	// 重複検索
+	_, err = tx.Exec("LOCK TABLES seat_reservations WRITE")
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	var result int
+	for _,v := range rsv.Seats {
+		tx.QueryRow("select COUNT(*) from seat_reservations where train_class=? AND train_name=? AND car_number=? AND seat_row=? AND seat_column=?",
+		rsv.TrainClass,
+		rsv.TrainName,
+		rsv.CarNum,
+		v.Row,
+		v.Column,
+		).Scan(&result)
+		if result != 0 {
+			tx.Exec("UNLOCK TABLES")
+			tx.Rollback()
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("リクエストに既に予約された席が含まれています。"))
+			return
+		}
+	}
+	_, err = tx.Exec("UNLOCK TABLES")
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+
+	//予約ID発行と予約情報登録
+	_, err = tx.Exec("LOCK TABLES reservations WRITE")
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	a, err := tx.Exec("INSERT INTO reservations (`user_id`, `payment_method`, `status`) VALUES (?, ?, ?)",
+	rsv.UserId,
+	rsv.Payment,
+	"requesting",
+	)
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	id, err := a.LastInsertId()
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	_, err = tx.Exec("UNLOCK TABLES")
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+
+	//席の予約情報登録
+	_, err = tx.Exec("LOCK TABLES seat_reservations WRITE")
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	t, _ := time.Parse(time.RFC3339, rsv.Date)
+	for _,v := range rsv.Seats {
+		_, err = tx.Exec("INSERT INTO seat_reservations (`reservation_id`, `date`, `train_class`, `train_name`, `car_number`, `seat_row`, `seat_column`) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		id,
+		t,
+		rsv.TrainClass,
+		rsv.TrainName,
+		rsv.CarNum,
+		v.Row,
+		v.Column,
+		)
+		if err != nil {
+			tx.Rollback()
+			panic(err)
+		}
+	}
+	_, err = tx.Exec("UNLOCK TABLES")
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	
+	tx.Commit()
+	
+	i := strconv.Itoa(int(id))
+	resp := TrainReservationResponse{
+		ReservationId: i,
+		IsOk: true,
+	}
+	json, err := json.Marshal(resp)
+	w.WriteHeader(http.StatusOK)  
+	w.Write(json)
+}
+
+
 func main() {
 	// MySQL関連のお膳立て
 	var err error
@@ -371,6 +545,7 @@ func main() {
 	// HTTP
 	http.HandleFunc("/api/train/search", trainSearchHandler)
 	http.HandleFunc("/api/train/seats", trainSeatsHandler)
+	http.HandleFunc("/api/train/reservation", trainReservationHandler)
 
 	http.ListenAndServe(":8000", nil)
 }
