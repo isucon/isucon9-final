@@ -64,22 +64,22 @@
       </article>
 
       <article class="from">
-        <div>{{ from_station }}</div>
+        <div>{{ from_station_name }}</div>
         <select class="from" v-model="from_station">
-          <option>新大阪</option>
-          <option>東京</option>
+          <option v-for="station in stations" v-bind:key="station.id" :value="station.id">
+            {{ station.name }}
+          </option>
         </select>
       </article>
       <article class="arrow">
         <div>→</div>
       </article>
       <article class="to">
-        <div>{{ to_station }}</div>
+        <div>{{ to_station_name }}</div>
         <select class="to" v-model="to_station">
-          <option>新大阪</option>
-          <option>京都</option>
-          <option>名古屋</option>
-          <option>東京</option>
+          <option v-for="station in stations" v-bind:key="station.id" :value="station.id">
+            {{ station.name }}
+          </option>
         </select>
       </article>
 
@@ -125,7 +125,7 @@
 
 <script>
 import Router from '@/router.js'
-import ApiService from '@/services/api.js'
+import { apiService } from '../services/api.js'
 
 export default {
   name: 'reservation',
@@ -136,12 +136,47 @@ export default {
       month: 1,
       day: "1",
       from_station: "東京",
-      to_station: "新大阪",
+      to_station: "大阪",
       adult: "1",
-      child: "0"
+      child: "0",
+      stations: []
     }
   },
+  computed: {
+    from_station_name() {
+      var ret = ""
+      var station_id = this.from_station
+
+      this.stations.forEach(function(value){
+        if(value.id == station_id){
+          ret = value.name
+        }
+      })
+
+      return ret;
+    },
+    to_station_name() {
+      var ret = ""
+      var station_id = this.to_station
+
+      this.stations.forEach(function(value){
+        if(value.id == station_id){
+          ret = value.name
+        }
+      })
+
+      return ret;
+    },
+  },
   methods: {
+    loadStations() {
+      apiService.getStations().then((res) => {
+        console.log(res)
+        this.stations = res
+        this.from_station = res[0].id
+        this.to_station = res[res.length-1].id
+      })
+    },
     search() {
       var query = {
         year: this.year,
@@ -154,6 +189,9 @@ export default {
       }
       Router.push({ path: '/reservation/trains', query: query})
     }
+  },
+  mounted(){
+    this.loadStations()
   }
 }
 </script>
