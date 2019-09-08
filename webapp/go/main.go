@@ -8,14 +8,32 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	// "sync"
 )
 
 var db *sql.DB
+var dbx *sqlx.DB
 
 // var mu sync.Mutex
+
+
+// DB定義
+
+type Station struct {
+	ID 		int 		`json:"id" db:"id"`
+	Name 	string  `json:"name" db:"name"`
+	Distance float64 `json:"-" db:"distance"`
+	IsStopExpress bool `json:"is_stop_express" db:"is_stop_express"`
+	IsStopSemiExpress bool `json:"is_stop_semi_express" db:"is_stop_semi_express"`
+	IsStopLocal bool `json:"is_stop_local" db:"is_stop_local"`
+}
+
+
+// 未整理
 
 type CarInformation struct {
 	Date       time.Time   `json:"date"`
@@ -114,6 +132,27 @@ func fare_calc(date time.Time, depStation, destStation, trainClass, seatClass st
 	}
 }
 */
+
+
+func getStationsHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		駅一覧
+			GET /api/stations
+
+		return []Station{}
+	*/
+
+		stations := []Station{}
+
+		query := "SELECT * FROM station_master ORDER BY id"
+		err := dbx.Select(&stations, query)
+		if err != nil {
+			panic(err)
+		}
+
+		w.Header().Set("Content-Type", "application/json;charset=utf-8")
+		json.NewEncoder(w).Encode(stations)
+}
 
 func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	/*
@@ -225,7 +264,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			departureAt := time.Now()
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			arrivalAt := time.Now()
-			
+
 			// TODO: 空席情報
 			seatAvailability := map[string]string {
 				"premium": "○",
@@ -243,7 +282,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				"reserved_smoke": 19500,
 				"non_reserved": 15000,
 			}
-			
+
 			trainList = append(trainList, TrainSearchResponse{train, from, to, departureAt, arrivalAt, seatAvailability, fareInformation})
 		}
 	}
@@ -364,11 +403,18 @@ func main() {
 
 	db, err = sql.Open("mysql", dsn)
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed to connect to DB: %s.", err.Error())
 	}
 	defer db.Close()
 
+	dbx, err = sqlx.Open("mysql", dsn)
+	if err != nil {
+		log.Fatalf("failed to connect to DB: %s.", err.Error())
+	}
+	defer dbx.Close()
+
 	// HTTP
+	http.HandleFunc("/api/stations", getStationsHandler)
 	http.HandleFunc("/api/train/search", trainSearchHandler)
 	http.HandleFunc("/api/train/seats", trainSeatsHandler)
 
