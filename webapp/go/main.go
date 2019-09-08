@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
-	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -20,18 +20,16 @@ var dbx *sqlx.DB
 
 // var mu sync.Mutex
 
-
 // DB定義
 
 type Station struct {
-	ID 		int 		`json:"id" db:"id"`
-	Name 	string  `json:"name" db:"name"`
-	Distance float64 `json:"-" db:"distance"`
-	IsStopExpress bool `json:"is_stop_express" db:"is_stop_express"`
-	IsStopSemiExpress bool `json:"is_stop_semi_express" db:"is_stop_semi_express"`
-	IsStopLocal bool `json:"is_stop_local" db:"is_stop_local"`
+	ID                int     `json:"id" db:"id"`
+	Name              string  `json:"name" db:"name"`
+	Distance          float64 `json:"-" db:"distance"`
+	IsStopExpress     bool    `json:"is_stop_express" db:"is_stop_express"`
+	IsStopSemiExpress bool    `json:"is_stop_semi_express" db:"is_stop_semi_express"`
+	IsStopLocal       bool    `json:"is_stop_local" db:"is_stop_local"`
 }
-
 
 // 未整理
 
@@ -60,12 +58,12 @@ type TrainSeat struct {
 
 type TrainSearchResponse struct {
 	Train
-	Departure     string    `json:"departure"`
-	Destination   string    `json:"destination"`
-	DepartureTime time.Time `json:"departure_time"`
-	ArrivalTime   time.Time `json:"arrival_time"`
+	Departure        string            `json:"departure"`
+	Destination      string            `json:"destination"`
+	DepartureTime    time.Time         `json:"departure_time"`
+	ArrivalTime      time.Time         `json:"arrival_time"`
 	SeatAvailability map[string]string `json:"seat_availability"`
-	Fare map[string]int `json:"seat_fare"`
+	Fare             map[string]int    `json:"seat_fare"`
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -133,7 +131,6 @@ func fare_calc(date time.Time, depStation, destStation, trainClass, seatClass st
 }
 */
 
-
 func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		駅一覧
@@ -142,16 +139,16 @@ func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 		return []Station{}
 	*/
 
-		stations := []Station{}
+	stations := []Station{}
 
-		query := "SELECT * FROM station_master ORDER BY id"
-		err := dbx.Select(&stations, query)
-		if err != nil {
-			panic(err)
-		}
+	query := "SELECT * FROM station_master ORDER BY id"
+	err := dbx.Select(&stations, query)
+	if err != nil {
+		panic(err)
+	}
 
-		w.Header().Set("Content-Type", "application/json;charset=utf-8")
-		json.NewEncoder(w).Encode(stations)
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	json.NewEncoder(w).Encode(stations)
 }
 
 func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -266,21 +263,21 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			arrivalAt := time.Now()
 
 			// TODO: 空席情報
-			seatAvailability := map[string]string {
-				"premium": "○",
-				"premium_smoke": "×",
-				"reserved": "△",
+			seatAvailability := map[string]string{
+				"premium":        "○",
+				"premium_smoke":  "×",
+				"reserved":       "△",
 				"reserved_smoke": "○",
-				"non_reserved": "○",
+				"non_reserved":   "○",
 			}
 
 			// TODO: 料金計算
-			fareInformation := map[string]int {
-				"premium": 24000,
-				"premium_smoke": 24500,
-				"reserved": 19000,
+			fareInformation := map[string]int{
+				"premium":        24000,
+				"premium_smoke":  24500,
+				"reserved":       19000,
 				"reserved_smoke": 19500,
-				"non_reserved": 15000,
+				"non_reserved":   15000,
 			}
 
 			trainList = append(trainList, TrainSearchResponse{train, from, to, departureAt, arrivalAt, seatAvailability, fareInformation})
