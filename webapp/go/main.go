@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
-	"math"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -102,7 +102,7 @@ func getDistanceFare(origToDestDistance float64) int {
 		panic(err)
 	}
 	defer rows.Close()
-	
+
 	var distance, fare int
 	lastDistance := 0
 	lastFare := 0
@@ -113,7 +113,7 @@ func getDistanceFare(origToDestDistance float64) int {
 		}
 		fmt.Println(origToDestDistance, distance, fare)
 		if float64(lastDistance) < origToDestDistance && origToDestDistance < float64(distance) {
-			break 
+			break
 		}
 		lastDistance = distance
 		lastFare = fare
@@ -124,16 +124,16 @@ func getDistanceFare(origToDestDistance float64) int {
 
 func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass string) int {
 	//
-		// 料金計算メモ
-		// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
+	// 料金計算メモ
+	// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
 	//
-	
+
 	// distance_fare_master
-	
+
 	var fromStationAt, toStationAt float64
 	db.QueryRow("SELECT distance FROM station_master WHERE name=?", depStation).Scan(&fromStationAt)
 	db.QueryRow("SELECT distance FROM station_master WHERE name=?", destStation).Scan(&toStationAt)
-	fmt.Println("distance", math.Abs(toStationAt - fromStationAt))
+	fmt.Println("distance", math.Abs(toStationAt-fromStationAt))
 	distFare := getDistanceFare(math.Abs(toStationAt - fromStationAt))
 	fmt.Println("distFare", distFare)
 
@@ -145,7 +145,7 @@ func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass str
 		panic(err)
 	}
 	defer rows.Close()
-	
+
 	var m float64 // multiplier
 	var s string
 	for rows.Next() {
@@ -158,7 +158,7 @@ func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass str
 
 		fmt.Println(s, m)
 	}
-	
+
 	fmt.Println("%%%%%%%%%%%%%%%%%%%")
 
 	err = rows.Err()
@@ -300,7 +300,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			departureAt := time.Now()
-			
+
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			arrivalAt := time.Now()
 
@@ -314,12 +314,12 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// TODO: 料金計算
-			fareInformation := map[string]int {
-				"premium": fareCalc(date, from, to, trainClass, "premium"),
-				"premium_smoke": fareCalc(date, from, to, trainClass, "premium_smoke"),
-				"reserved": fareCalc(date, from, to, trainClass, "reserved"),
+			fareInformation := map[string]int{
+				"premium":        fareCalc(date, from, to, trainClass, "premium"),
+				"premium_smoke":  fareCalc(date, from, to, trainClass, "premium_smoke"),
+				"reserved":       fareCalc(date, from, to, trainClass, "reserved"),
 				"reserved_smoke": fareCalc(date, from, to, trainClass, "reserved_smoke"),
-				"non_reserved": fareCalc(date, from, to, trainClass, "non_reserved"),
+				"non_reserved":   fareCalc(date, from, to, trainClass, "non_reserved"),
 			}
 
 			trainList = append(trainList, TrainSearchResponse{train, from, to, departureAt, arrivalAt, seatAvailability, fareInformation})
