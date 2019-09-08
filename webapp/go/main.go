@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
@@ -94,42 +95,81 @@ func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/*
-func fare_calc(date time.Time, depStation, destStation, trainClass, seatClass string)
-{
-	//
-		// 料金計算メモ
-		// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
-	//
+func getDistanceFare(origToDestDistance float64) int {
 
-
-	rows, err := db.Query("SELECT * FROM fare_master")
+	rows, err := db.Query("SELECT distance,fare FROM distance_fare_master ORDER BY distance")
 	if err != nil {
 		panic(err)
 	}
 	defer rows.Close()
 
-	var tc int
-	var sc int
-	var d time.Time
-	var m float
+	var distance, fare int
+	lastDistance := 0
+	lastFare := 0
 	for rows.Next() {
-		err := rows.Scan(&tc, &sc, &d, &m)
+		err := rows.Scan(&distance, &fare)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(origToDestDistance, distance, fare)
+		if float64(lastDistance) < origToDestDistance && origToDestDistance < float64(distance) {
+			break
+		}
+		lastDistance = distance
+		lastFare = fare
+	}
+
+	return lastFare
+}
+
+func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass string) int {
+	//
+	// 料金計算メモ
+	// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
+	//
+
+	// distance_fare_master
+
+	var fromStationAt, toStationAt float64
+	db.QueryRow("SELECT distance FROM station_master WHERE name=?", depStation).Scan(&fromStationAt)
+	db.QueryRow("SELECT distance FROM station_master WHERE name=?", destStation).Scan(&toStationAt)
+	fmt.Println("distance", math.Abs(toStationAt-fromStationAt))
+	distFare := getDistanceFare(math.Abs(toStationAt - fromStationAt))
+	fmt.Println("distFare", distFare)
+
+	// 期間・車両・座席クラス倍率
+	stmt, err := db.Prepare("SELECT start_date,fare_multiplier FROM fare_master WHERE train_class=? AND seat_class=? ORDER BY start_date")
+	defer stmt.Close()
+	rows, err := stmt.Query(trainClass, seatClass)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	var m float64 // multiplier
+	var s string
+	for rows.Next() {
+		// TODO: start_dateをちゃんと見る必要がある
+
+		err := rows.Scan(&s, &m)
 		if err != nil {
 			panic(err)
 		}
 
-		// if
-
-		fmt.Fprintf(w, "1234\n")
+		fmt.Println(s, m)
 	}
+
+	fmt.Println("%%%%%%%%%%%%%%%%%%%")
 
 	err = rows.Err()
 	if err != nil {
 		panic(err)
 	}
+
+	// TODO: 端数の扱い考える
+	// TODO: start_dateをちゃんと見る必要がある
+	return int(float64(distFare) * m)
 }
-*/
 
 func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 	/*
@@ -257,8 +297,10 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			train := Train{trainClass, trainName, startStation, lastStation}
 
 			// TODO: 所要時間計算
+
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			departureAt := time.Now()
+
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			arrivalAt := time.Now()
 
@@ -273,11 +315,11 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			// TODO: 料金計算
 			fareInformation := map[string]int{
-				"premium":        24000,
-				"premium_smoke":  24500,
-				"reserved":       19000,
-				"reserved_smoke": 19500,
-				"non_reserved":   15000,
+				"premium":        fareCalc(date, from, to, trainClass, "premium"),
+				"premium_smoke":  fareCalc(date, from, to, trainClass, "premium_smoke"),
+				"reserved":       fareCalc(date, from, to, trainClass, "reserved"),
+				"reserved_smoke": fareCalc(date, from, to, trainClass, "reserved_smoke"),
+				"non_reserved":   fareCalc(date, from, to, trainClass, "non_reserved"),
 			}
 
 			trainList = append(trainList, TrainSearchResponse{train, from, to, departureAt, arrivalAt, seatAvailability, fareInformation})
