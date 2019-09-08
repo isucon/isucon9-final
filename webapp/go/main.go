@@ -95,7 +95,7 @@ func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func get_distance_fare(origToDestDistance float64) int {
+func getDistanceFare(origToDestDistance float64) int {
 
 	rows, err := db.Query("SELECT distance,fare FROM distance_fare_master ORDER BY distance")
 	if err != nil {
@@ -134,7 +134,7 @@ func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass str
 	db.QueryRow("SELECT distance FROM station_master WHERE name=?", depStation).Scan(&fromStationAt)
 	db.QueryRow("SELECT distance FROM station_master WHERE name=?", destStation).Scan(&toStationAt)
 	fmt.Println("distance", math.Abs(toStationAt - fromStationAt))
-	distFare := get_distance_fare(math.Abs(toStationAt - fromStationAt))
+	distFare := getDistanceFare(math.Abs(toStationAt - fromStationAt))
 	fmt.Println("distFare", distFare)
 
 	// 期間・車両・座席クラス倍率
@@ -149,15 +149,13 @@ func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass str
 	var m float64 // multiplier
 	var s string
 	for rows.Next() {
+		// TODO: start_dateをちゃんと見る必要がある
+
 		err := rows.Scan(&s, &m)
 		if err != nil {
 			panic(err)
 		}
 
-		
-		// if seatClass == sc {
-		// 	return 500
-		// }
 		fmt.Println(s, m)
 	}
 	
@@ -169,6 +167,7 @@ func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass str
 	}
 
 	// TODO: 端数の扱い考える
+	// TODO: start_dateをちゃんと見る必要がある
 	return int(float64(distFare) * m)
 }
 
@@ -401,29 +400,6 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func getSeatAvailability(date, trainClass, trainName, carNumber, seatClass string){
-	/*
-		DROP TABLE IF EXISTS `seat_reservations`;
-		CREATE TABLE `seat_reservations` (
-			`reservation_id` bigint NOT NULL,
-			`date` datetime NOT NULL,
-			`train_class` varchar(100) NOT NULL,
-			`train_name` varchar(100) NOT NULL,
-			`car_number` int unsigned NOT NULL,
-			`seat_row` int unsigned NOT NULL,
-			`seat_column` varchar(100) NOT NULL
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-	*/
-	SELECT 
-	
-	var fromStationAt, toStationAt float64
-	db.QueryRow("SELECT distance FROM station_master WHERE name=?", depStation).Scan(&fromStationAt)
-	db.QueryRow("SELECT distance FROM station_master WHERE name=?", destStation).Scan(&toStationAt)
-	rows, err := db.Query("SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?",
-
-	rows, err := db.Query("SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?",
 }
 
 func main() {
