@@ -6,7 +6,7 @@ services:
     image: nginx:1.17
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./public:/opt/isucon/public
+      - ./frontend/dist:/opt/isucon/public
     ports:
       - "8080:80"
     links:
