@@ -403,6 +403,29 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getSeatAvailability(date, trainClass, trainName, carNumber, seatClass string){
+	/*
+		DROP TABLE IF EXISTS `seat_reservations`;
+		CREATE TABLE `seat_reservations` (
+			`reservation_id` bigint NOT NULL,
+			`date` datetime NOT NULL,
+			`train_class` varchar(100) NOT NULL,
+			`train_name` varchar(100) NOT NULL,
+			`car_number` int unsigned NOT NULL,
+			`seat_row` int unsigned NOT NULL,
+			`seat_column` varchar(100) NOT NULL
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+	*/
+	SELECT 
+	
+	var fromStationAt, toStationAt float64
+	db.QueryRow("SELECT distance FROM station_master WHERE name=?", depStation).Scan(&fromStationAt)
+	db.QueryRow("SELECT distance FROM station_master WHERE name=?", destStation).Scan(&toStationAt)
+	rows, err := db.Query("SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?",
+
+	rows, err := db.Query("SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?",
+}
+
 func main() {
 	// MySQL関連のお膳立て
 	var err error
