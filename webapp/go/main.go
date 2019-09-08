@@ -122,7 +122,7 @@ func get_distance_fare(origToDestDistance float64) int {
 	return lastFare
 }
 
-func fare_calc(date time.Time, depStation, destStation, trainClass, seatClass string) int {
+func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass string) int {
 	//
 		// 料金計算メモ
 		// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
@@ -316,11 +316,11 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			// TODO: 料金計算
 			fareInformation := map[string]int {
-				"premium": fare_calc(date, from, to, trainClass, "premium"),
-				"premium_smoke": fare_calc(date, from, to, trainClass, "premium_smoke"),
-				"reserved": fare_calc(date, from, to, trainClass, "reserved"),
-				"reserved_smoke": fare_calc(date, from, to, trainClass, "reserved_smoke"),
-				"non_reserved": fare_calc(date, from, to, trainClass, "non_reserved"),
+				"premium": fareCalc(date, from, to, trainClass, "premium"),
+				"premium_smoke": fareCalc(date, from, to, trainClass, "premium_smoke"),
+				"reserved": fareCalc(date, from, to, trainClass, "reserved"),
+				"reserved_smoke": fareCalc(date, from, to, trainClass, "reserved_smoke"),
+				"non_reserved": fareCalc(date, from, to, trainClass, "non_reserved"),
 			}
 
 			trainList = append(trainList, TrainSearchResponse{train, from, to, departureAt, arrivalAt, seatAvailability, fareInformation})
