@@ -26,6 +26,7 @@ TBD
 ```bash
 git clone git@github.com:chibiegg/isucon9-final.git
 cd isucon9-final
+(cd webapp/frontend && make)
 ```
 
 実装言語を指定してBuildとUpをする。
@@ -35,4 +36,4 @@ docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}
 docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yml up
 ```
 
-フロントエンドが必要な場合は、 `cd frontend && npm run serve` でフロントエンドを起動させる。
+http://127.0.0.1:8080
