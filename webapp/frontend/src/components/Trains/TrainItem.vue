@@ -7,18 +7,18 @@
 
       <div class="train">
         <div class="departure">
-          <span class="time">{{ item.departure_at.getHours() }}時{{ item.departure_at.getMinutes() }}分 発</span>
-          <span class="station">{{ condition.from_station }}</span>
+          <span class="time">{{ item.departure_time.getHours() }}時{{ item.departure_time.getMinutes() }}分 発</span>
+          <span class="station">{{ item.departure.name }}</span>
         </div>
 
         <div class="name">
-          <span class="name">{{ item.train_class }} {{ item.car_number }} 号</span>
+          <span class="name">{{ item.train_class }} {{ item.train_name }} 号</span>
           <span class="type">N700系/全席禁煙</span>
         </div>
 
         <div class="arrival">
-          <span class="time">{{ item.arrival_at.getHours() }}時{{ item.arrival_at.getMinutes() }}分 着</span>
-          <span class="station">{{ condition.to_station }}</span>
+          <span class="time">{{ item.arrival_time.getHours() }}時{{ item.arrival_time.getMinutes() }}分 着</span>
+          <span class="station">{{ item.destination.name }}</span>
         </div>
       </div>
 

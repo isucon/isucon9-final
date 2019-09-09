@@ -177,13 +177,13 @@ export default {
         var items = []
 
         res.forEach(function(value){
-          var item = {
-            "train_class": value.Class,
-            "car_number": value.Name,
-            "departure_at": new Date("2019-10-03 11:03:00"),
-            "arrival_at": new Date("2019-10-03 12:52:00")
-          }
-          items.push(item)
+
+          value["departure"] = apiService.getStation(value["departure"])
+          value["destination"] = apiService.getStation(value["destination"])
+          value["departure_time"] = new Date(value["departure_time"])
+          value["arrival_time"] = new Date(value["arrival_time"])
+
+          items.push(value)
         });
 
         this.items = items
