@@ -58,8 +58,8 @@ type TrainSeat struct {
 
 type TrainSearchResponse struct {
 	Train
-	Departure        string            `json:"departure"`
-	Destination      string            `json:"destination"`
+	Departure        int               `json:"departure"`
+	Destination      int               `json:"destination"`
 	DepartureTime    time.Time         `json:"departure_time"`
 	ArrivalTime      time.Time         `json:"arrival_time"`
 	SeatAvailability map[string]string `json:"seat_availability"`
@@ -171,8 +171,8 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	date = date.In(jst)
 
 	trainClass := r.URL.Query().Get("train_class")
-	from := r.URL.Query().Get("from")
-	to := r.URL.Query().Get("to")
+	from_id, _ := strconv.Atoi(r.URL.Query().Get("from"))
+	to_id, _ := strconv.Atoi(r.URL.Query().Get("to"))
 
 	rows, err := db.Query("SELECT departure_at,train_class,train_name,start_station,last_station FROM train_master WHERE date=?",
 		date.Format("2006-01-02"))
@@ -191,49 +191,49 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var fromStationAt, toStationAt float64
-		db.QueryRow("SELECT distance FROM station_master WHERE name=?", from).Scan(&fromStationAt)
-		db.QueryRow("SELECT distance FROM station_master WHERE name=?", to).Scan(&toStationAt)
+		db.QueryRow("SELECT distance FROM station_master WHERE id=?", from_id).Scan(&fromStationAt)
+		db.QueryRow("SELECT distance FROM station_master WHERE id=?", to_id).Scan(&toStationAt)
 
 		// fmt.Println(from_station_at)
 		// fmt.Println(to_station_at)
 
-		query := "SELECT name FROM station_master ORDER BY distance"
+		query := "SELECT * FROM station_master ORDER BY distance"
 		if fromStationAt > toStationAt {
 			// 上りだったら駅リストを逆にする
 			query += " DESC"
 		}
-		stations, err := db.Query(query)
+
+		stations := []Station{}
+		err = dbx.Select(&stations, query)
 		if err != nil {
 			panic(err)
 		}
+
 		isSeekedToFirstStation := false
 		isContainsOriginStation := false
 		isContainsDestStation := false
 		i := 0
-		for stations.Next() {
-			var v string
-			stations.Scan(&v)
-			// fmt.Println(v)
+		for _, station := range stations {
 
 			if !isSeekedToFirstStation {
 				// 駅リストを列車の発駅まで読み飛ばして頭出しをする
 				// 列車の発駅以前は止まらないので無視して良い
-				if v == startStation {
+				if station.Name == startStation {
 					isSeekedToFirstStation = true
 				} else {
 					continue
 				}
 			}
 
-			if v == from {
+			if station.ID == from_id {
 				// 発駅を経路中に持つ編成の場合フラグを立てる
 				isContainsOriginStation = true
-				fmt.Println(v)
+				fmt.Println(station.Name)
 			}
-			if v == to {
+			if station.ID == to_id {
 				if isContainsOriginStation {
 					// 発駅と着駅を経路中に持つ編成の場合
-					fmt.Println(v)
+					fmt.Println(station.Name)
 					fmt.Println("---------")
 					isContainsDestStation = true
 					break
@@ -245,13 +245,13 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 			}
-			if v == lastStation {
+			if station.Name == lastStation {
 				// 駅が見つからないまま当該編成の終点に着いてしまったとき
 				break
 			}
 			i++
 		}
-		stations.Close()
+
 		if isContainsOriginStation && isContainsDestStation {
 			// 列車情報
 			train := Train{trainClass, trainName, startStation, lastStation}
@@ -280,7 +280,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				"non_reserved":   15000,
 			}
 
-			trainList = append(trainList, TrainSearchResponse{train, from, to, departureAt, arrivalAt, seatAvailability, fareInformation})
+			trainList = append(trainList, TrainSearchResponse{train, from_id, to_id, departureAt, arrivalAt, seatAvailability, fareInformation})
 		}
 	}
 	resp, err := json.Marshal(trainList)
