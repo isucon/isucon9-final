@@ -7,7 +7,7 @@
     <section class="subcontent">
       <article class="condition">
         <div class="date">{{year}}年{{month}}月{{day}}日</div>
-        <div class="station">{{ from_station }}→{{ to_station }}</div>
+        <div class="station">{{ from_station.name }}→{{ to_station.name }}</div>
         <div class="person">おとな {{ adult }} 名 こども {{ child }} 名</div>
       </article>
     </section>
@@ -132,8 +132,8 @@ export default {
       year: null,
       month: null,
       day: null,
-      from_station: null,
-      to_station: null,
+      from_station_id: null,
+      to_station_id: null,
       adult: null,
       child: null,
       position: "指定しない",
@@ -146,13 +146,19 @@ export default {
     itemCount () {
       return this.items.length;
     },
+    from_station() {
+      return apiService.getStation(this.from_station_id)
+    },
+    to_station() {
+      return apiService.getStation(this.to_station_id)
+    },
     condition () {
       return {
         year: this.year,
         month: this.month,
         day: this.day,
-        from_station: this.from_station,
-        to_station: this.to_station,
+        from_station: this.from_station_id,
+        to_station: this.to_station_id,
         adult: this.adult,
         child: this.child,
       }
@@ -190,8 +196,8 @@ export default {
     this.day = this.$route.query.day
     this.adult = this.$route.query.adult
     this.child = this.$route.query.child
-    this.from_station = this.$route.query.from_station
-    this.to_station = this.$route.query.to_station
+    this.from_station_id = this.$route.query.from_station
+    this.to_station_id = this.$route.query.to_station
 
     return this.search();
   }
