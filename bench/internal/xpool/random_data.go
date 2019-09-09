@@ -1,7 +1,6 @@
 package isutrain
 
-import "math/rand"
-
+// station
 var (
 	stations = []string{
 		"東京",
@@ -89,7 +88,12 @@ var (
 	}
 )
 
-func GetRandomStation() string {
-	idx := rand.Intn(len(stations))
-	return stations[idx]
-}
+// train
+
+var (
+	trainClasses = []string{
+		"遅いやつ",
+		"中間",
+		"最速",
+	}
+)

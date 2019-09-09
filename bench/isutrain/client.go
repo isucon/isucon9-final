@@ -10,6 +10,7 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/consts"
+	"github.com/chibiegg/isucon9-final/bench/internal/session"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 )
 
@@ -24,21 +25,21 @@ func NewIsutrain(baseURL string) *Isutrain {
 	}
 }
 
-func (i *Isutrain) Initialize(ctx context.Context) (*http.Response, error) {
+func (i *Isutrain) Initialize(ctx context.Context, sess *session.Session) (*http.Response, error) {
 	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.InitializePath)
 
 	ctx, cancel := context.WithTimeout(ctx, config.InitializeTimeout)
 	defer cancel()
 
-	req, err := util.NewIsutrainRequest(http.MethodPost, uri, nil)
+	req, err := sess.NewRequest(ctx, http.MethodPost, uri, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return http.DefaultClient.Do(req.WithContext(ctx))
+	return sess.Do(req)
 }
 
-func (i *Isutrain) Register(ctx context.Context, username, password string) (*http.Response, error) {
+func (i *Isutrain) Register(ctx context.Context, sess *session.Session, username, password string) (*http.Response, error) {
 	var (
 		uri  = fmt.Sprintf("%s%s", i.BaseURL, consts.RegisterPath)
 		form = url.Values{}
@@ -46,18 +47,15 @@ func (i *Isutrain) Register(ctx context.Context, username, password string) (*ht
 	form.Set("username", username)
 	form.Set("password", password)
 
-	ctx, cancel := context.WithTimeout(ctx, config.IsutrainAPITimeout)
-	defer cancel()
-
-	req, err := util.NewIsutrainRequest(http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
+	req, err := sess.NewRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
 	if err != nil {
 		return nil, err
 	}
 
-	return http.DefaultClient.Do(req.WithContext(ctx))
+	return sess.Do(req)
 }
 
-func (i *Isutrain) Login(ctx context.Context, username, password string) (*http.Response, error) {
+func (i *Isutrain) Login(ctx context.Context, sess *session.Session, username, password string) (*http.Response, error) {
 	var (
 		uri  = fmt.Sprintf("%s%s", i.BaseURL, consts.LoginPath)
 		form = url.Values{}
@@ -65,25 +63,19 @@ func (i *Isutrain) Login(ctx context.Context, username, password string) (*http.
 	form.Set("username", username)
 	form.Set("password", password)
 
-	ctx, cancel := context.WithTimeout(ctx, config.IsutrainAPITimeout)
-	defer cancel()
-
-	req, err := util.NewIsutrainRequest(http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
+	req, err := sess.NewRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
 	if err != nil {
 		return nil, err
 	}
 
-	return http.DefaultClient.Do(req.WithContext(ctx))
+	return sess.Do(req)
 }
 
 // SearchTrains は 列車検索APIです
-func (i *Isutrain) SearchTrains(ctx context.Context, useAt time.Time, from, to string) (*http.Response, error) {
+func (i *Isutrain) SearchTrains(ctx context.Context, sess *session.Session, useAt time.Time, from, to string) (*http.Response, error) {
 	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.SearchTrainsPath)
 
-	ctx, cancel := context.WithTimeout(ctx, config.IsutrainAPITimeout)
-	defer cancel()
-
-	req, err := util.NewIsutrainRequest(http.MethodGet, uri, nil)
+	req, err := sess.NewRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -95,16 +87,13 @@ func (i *Isutrain) SearchTrains(ctx context.Context, useAt time.Time, from, to s
 	query.Set("to", to)
 	req.URL.RawQuery = query.Encode()
 
-	return http.DefaultClient.Do(req.WithContext(ctx))
+	return sess.Do(req)
 }
 
-func (i *Isutrain) ListTrainSeats(ctx context.Context, train_class, train_name string) (*http.Response, error) {
+func (i *Isutrain) ListTrainSeats(ctx context.Context, sess *session.Session, train_class, train_name string) (*http.Response, error) {
 	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.ListTrainSeatsPath)
 
-	ctx, cancel := context.WithTimeout(ctx, config.IsutrainAPITimeout)
-	defer cancel()
-
-	req, err := util.NewIsutrainRequest(http.MethodGet, uri, nil)
+	req, err := sess.NewRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -114,65 +103,52 @@ func (i *Isutrain) ListTrainSeats(ctx context.Context, train_class, train_name s
 	query.Set("train_name", train_name)
 	req.URL.RawQuery = query.Encode()
 
-	return http.DefaultClient.Do(req.WithContext(ctx))
+	return sess.Do(req)
 }
 
-func (i *Isutrain) Reserve(ctx context.Context) (*http.Response, error) {
+func (i *Isutrain) Reserve(ctx context.Context, sess *session.Session) (*http.Response, error) {
 	var (
 		uri = fmt.Sprintf("%s%s", i.BaseURL, consts.ReservePath)
 		// form = url.Values{}
 	)
 
-	ctx, cancel := context.WithTimeout(ctx, config.IsutrainAPITimeout)
-	defer cancel()
-
-	req, err := util.NewIsutrainRequest(http.MethodPost, uri, nil)
+	req, err := sess.NewRequest(ctx, http.MethodPost, uri, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return http.DefaultClient.Do(req.WithContext(ctx))
+	return sess.Do(req)
 }
 
-func (i *Isutrain) CommitReservation(ctx context.Context, reservationID int) (*http.Response, error) {
+func (i *Isutrain) CommitReservation(ctx context.Context, sess *session.Session, reservationID int) (*http.Response, error) {
 	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.BuildCommitReservationPath(reservationID))
 
-	ctx, cancel := context.WithTimeout(ctx, config.IsutrainAPITimeout)
-	defer cancel()
-
-	req, err := http.NewRequest(http.MethodPost, uri, nil)
+	req, err := sess.NewRequest(ctx, http.MethodPost, uri, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return http.DefaultClient.Do(req.WithContext(ctx))
+	return sess.Do(req)
 }
 
-func (i *Isutrain) ListReservations(ctx context.Context) (*http.Response, error) {
+func (i *Isutrain) ListReservations(ctx context.Context, sess *session.Session) (*http.Response, error) {
 	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.ListReservationsPath)
 
-	ctx, cancel := context.WithTimeout(ctx, config.IsutrainAPITimeout)
-	defer cancel()
-
-	// TODO: クッキー
-	req, err := http.NewRequest(http.MethodGet, uri, nil)
+	req, err := sess.NewRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return http.DefaultClient.Do(req.WithContext(ctx))
+	return sess.Do(req)
 }
 
-func (i *Isutrain) CancelReservation(ctx context.Context, reservationID int) (*http.Response, error) {
+func (i *Isutrain) CancelReservation(ctx context.Context, sess *session.Session, reservationID int) (*http.Response, error) {
 	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.BuildCancelReservationPath(reservationID))
 
-	ctx, cancel := context.WithTimeout(ctx, config.IsutrainAPITimeout)
-	defer cancel()
-
-	req, err := http.NewRequest(http.MethodDelete, uri, nil)
+	req, err := sess.NewRequest(ctx, http.MethodDelete, uri, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return http.DefaultClient.Do(req.WithContext(ctx))
+	return sess.Do(req)
 }

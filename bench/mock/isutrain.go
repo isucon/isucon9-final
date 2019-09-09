@@ -1,24 +1,36 @@
-package isutrain
+package mock
 
 import (
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/chibiegg/isucon9-final/bench/internal/consts"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
+	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/jarcoal/httpmock"
 )
 
 // Mock は `isutrain` のモック実装です
-type Mock struct{}
+type Mock struct {
+	delay time.Duration
+}
+
+func (m *Mock) SetDelay(d time.Duration) {
+	m.delay = d
+}
+
+func (m *Mock) Delay() time.Duration {
+	return m.delay
+}
 
 func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
+	<-time.After(m.delay)
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
 
 // Register はユーザ登録を行います
 func (m *Mock) Register(req *http.Request) ([]byte, int) {
+	<-time.After(m.delay)
 	if err := req.ParseForm(); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
@@ -37,6 +49,7 @@ func (m *Mock) Register(req *http.Request) ([]byte, int) {
 
 // Login はログイン処理結果を返します
 func (m *Mock) Login(req *http.Request) ([]byte, int) {
+	<-time.After(m.delay)
 	if err := req.ParseForm(); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
@@ -54,6 +67,7 @@ func (m *Mock) Login(req *http.Request) ([]byte, int) {
 
 // SearchTrains は新幹線検索結果を返します
 func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
+	<-time.After(m.delay)
 	query := req.URL.Query()
 	if query == nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
@@ -79,9 +93,9 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	b, err := json.Marshal(&Trains{
-		&Train{Class: "のぞみ", Name: "96号", Start: 1, Last: 2},
-		&Train{Class: "こだま", Name: "96号", Start: 3, Last: 4},
+	b, err := json.Marshal(&isutrain.Trains{
+		&isutrain.Train{Class: "のぞみ", Name: "96号", Start: 1, Last: 2},
+		&isutrain.Train{Class: "こだま", Name: "96号", Start: 3, Last: 4},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
@@ -92,6 +106,7 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 
 // ListTrainSeats は列車の席一覧を返します
 func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
+	<-time.After(m.delay)
 	q := req.URL.Query()
 	if q == nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
@@ -107,8 +122,8 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 	}
 
 	// 適当な席を返す
-	b, err := json.Marshal(&TrainSeats{
-		&TrainSeat{},
+	b, err := json.Marshal(&isutrain.TrainSeats{
+		&isutrain.TrainSeat{},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
@@ -119,6 +134,7 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 
 // Reserve は座席予約を実施し、結果を返します
 func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
+	<-time.After(m.delay)
 	// 予約情報を受け取って、予約できたかを返す
 
 	// FIXME: ユーザID
@@ -131,6 +147,7 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 
 // CommitReservation は予約を確定します
 func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
+	<-time.After(m.delay)
 	// 予約IDを受け取って、確定するだけ
 	if err := req.ParseForm(); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
@@ -146,6 +163,7 @@ func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
 
 // CancelReservation は予約をキャンセルします
 func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
+	<-time.After(m.delay)
 	// 予約IDを受け取って
 	if err := req.ParseForm(); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
@@ -161,62 +179,13 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 
 // ListReservations はアカウントにひもづく予約履歴を返します
 func (m *Mock) ListReservations(req *http.Request) ([]byte, int) {
-	b, err := json.Marshal(SeatReservations{
-		&SeatReservation{ID: 1111, PaymentMethod: string(CreditCard), Status: string(Pending), ReserveAt: time.Now()},
+	<-time.After(m.delay)
+	b, err := json.Marshal(isutrain.SeatReservations{
+		&isutrain.SeatReservation{ID: 1111, PaymentMethod: string(isutrain.CreditCard), Status: string(isutrain.Pending), ReserveAt: time.Now()},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
 	return b, http.StatusOK
-}
-
-// RegisterMockEndpoints はhttpmockのエンドポイントを登録する
-// NOTE: httpmock.Activate, httpmock.Deactivateは別途実施する必要があります
-func RegisterMockEndpoints() {
-	var m *Mock
-
-	// GET
-	httpmock.RegisterResponder("GET", consts.SearchTrainsPath, func(req *http.Request) (*http.Response, error) {
-		body, status := m.SearchTrains(req)
-		return httpmock.NewBytesResponse(status, body), nil
-	})
-	httpmock.RegisterResponder("GET", consts.ListTrainSeatsPath, func(req *http.Request) (*http.Response, error) {
-		body, status := m.ListTrainSeats(req)
-		return httpmock.NewBytesResponse(status, body), nil
-	})
-	httpmock.RegisterResponder("GET", consts.ListReservationsPath, func(req *http.Request) (*http.Response, error) {
-		body, status := m.ListReservations(req)
-		return httpmock.NewBytesResponse(status, body), nil
-	})
-
-	// POST
-	httpmock.RegisterResponder("POST", consts.InitializePath, func(req *http.Request) (*http.Response, error) {
-		body, status := m.Initialize(req)
-		return httpmock.NewBytesResponse(status, body), nil
-	})
-	httpmock.RegisterResponder("POST", consts.RegisterPath, func(req *http.Request) (*http.Response, error) {
-		body, status := m.Register(req)
-		return httpmock.NewBytesResponse(status, body), nil
-	})
-	httpmock.RegisterResponder("POST", consts.LoginPath, func(req *http.Request) (*http.Response, error) {
-		body, status := m.Login(req)
-		return httpmock.NewBytesResponse(status, body), nil
-	})
-	httpmock.RegisterResponder("POST", consts.ReservePath, func(req *http.Request) (*http.Response, error) {
-		body, status := m.Reserve(req)
-		return httpmock.NewBytesResponse(status, body), nil
-	})
-	httpmock.RegisterResponder("POST", consts.MockCommitReservationPath, func(req *http.Request) (*http.Response, error) {
-		body, status := m.CommitReservation(req)
-		return httpmock.NewBytesResponse(status, body), nil
-	})
-
-	// DELETE
-	httpmock.RegisterResponder("DELETE", consts.MockCancelReservationPath, func(req *http.Request) (*http.Response, error) {
-		body, status := m.CancelReservation(req)
-		return httpmock.NewBytesResponse(status, body), nil
-	})
-
-	return
 }

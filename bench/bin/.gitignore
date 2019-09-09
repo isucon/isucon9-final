@@ -1,2 +1,4 @@
-isutrain_darwin_amd64
-isutrain_linux_amd64
+bench_darwin
+bench_linux
+benchworker_darwin
+benchworker_linux

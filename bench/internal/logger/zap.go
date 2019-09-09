@@ -1,35 +1,30 @@
 package logger
 
 import (
-	"bytes"
-	"io"
-
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
+const loggerName = "isutrain-benchmarker"
+
 // InitZapLogger はzapロガーを初期化します
-func InitZapLogger(w io.Writer) *zap.SugaredLogger {
+func InitZapLogger() (*zap.SugaredLogger, error) {
 	config := zap.NewProductionConfig()
+	config.Encoding = "console"
 	config.DisableCaller = true
 	config.DisableStacktrace = true
-	config.Level = zap.NewAtomicLevelAt(zapcore.InfoLevel)
+	config.Level = zap.NewAtomicLevelAt(zapcore.WarnLevel)
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	config.EncoderConfig.LevelKey = ""
 	config.OutputPaths = []string{"stderr"}
 	config.ErrorOutputPaths = []string{"stderr"}
 
-	var (
-		enc    = zapcore.NewConsoleEncoder(config.EncoderConfig)
-		syncer = zapcore.AddSync(w)
-	)
+	l, err := config.Build()
+	if err != nil {
+		return nil, err
+	}
 
-	l := zap.New(zapcore.NewCore(enc, syncer, config.Level)).Named("isutrain-benchmarker")
-	zap.ReplaceGlobals(l)
+	zap.ReplaceGlobals(l.Named(loggerName))
 
-	return l.Sugar()
-}
-
-// InitBufferedZapLogger は内部ログバッファに書き出すzapロガーを初期化します
-func InitBufferedZapLogger(buf *bytes.Buffer) *zap.SugaredLogger {
-	return InitZapLogger(io.Writer(buf))
+	return zap.S(), nil
 }

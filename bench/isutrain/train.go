@@ -1,7 +1,5 @@
 package isutrain
 
-import "math/rand"
-
 // Train は新幹線列車です
 type Train struct {
 	// Class は列車種別です
@@ -119,16 +117,3 @@ type TrainSearchResponse struct {
 //     * １つ見つかったら、予約済み(IsOccupied) フラグを立てる
 //     * 席は予約済みかそうでないかにかかわらず結果として追加
 //     * CarInformationを返す
-
-var (
-	trainClasses = []string{
-		"遅いやつ",
-		"中間",
-		"最速",
-	}
-)
-
-func GetRandomTrainClass() string {
-	idx := rand.Intn(len(trainClasses))
-	return trainClasses[idx]
-}

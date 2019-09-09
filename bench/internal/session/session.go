@@ -1,6 +1,8 @@
 package session
 
 import (
+	"context"
+	"crypto/tls"
 	"errors"
 	"io"
 	"net"
@@ -29,8 +31,13 @@ func NewSession() (*Session, error) {
 
 	return &Session{
 		httpClient: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					ServerName: "", // FIXME: ServerName設定
+				},
+			},
 			Jar:     jar,
-			Timeout: config.IsutrainAPITimeout,
+			Timeout: config.APITimeout,
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
 				return ErrRedirect
 			},
@@ -39,25 +46,30 @@ func NewSession() (*Session, error) {
 }
 
 func NewSessionForInitialize() (*Session, error) {
-	sess, err := NewSession()
-	if err != nil {
-		return nil, err
-	}
-
-	sess.httpClient.Jar = nil
-	sess.httpClient.Timeout = config.InitializeTimeout
-
-	return sess, nil
+	return &Session{
+		httpClient: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					ServerName: "", // FIXME: ServerName設定
+				},
+			},
+			Timeout: config.InitializeTimeout,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return ErrRedirect
+			},
+		},
+	}, nil
 }
 
 // NOTE: GETクエリパラメータをURLにくっつける処理は、utilityなどのURLを扱う側で実装
 // NOTE: Content-Type など、他のHTTPメソッドで必要なヘッダについては適宜Setする
-func (sess *Session) NewRequest(method, uri string, body io.Reader) (*http.Request, error) {
+func (sess *Session) NewRequest(ctx context.Context, method, uri string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, uri, body)
 	if err != nil {
 		return nil, err
 	}
 
+	req.WithContext(ctx)
 	req.Header.Add("User-Agent", consts.UserAgent)
 
 	return req, nil

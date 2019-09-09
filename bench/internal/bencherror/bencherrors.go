@@ -7,6 +7,7 @@ import (
 
 var (
 	BenchmarkErrs = new(BenchErrors)
+	PreTestErrs   = new(BenchErrors)
 	PostTestErrs  = new(BenchErrors)
 )
 

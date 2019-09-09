@@ -6,7 +6,6 @@ import (
 
 // Scenario isutrain のベンチマークシナリオ
 type Scenario interface {
-	RequestResultStream() <-chan *RequestResult
 	Run(ctx context.Context) error
 }
 

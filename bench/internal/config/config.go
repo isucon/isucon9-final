@@ -5,13 +5,9 @@ import "time"
 const (
 	Concurrency = 10
 
-	MinErrCountThreshold = 20
-	MaxErrCountThreshold = 50
-
 	BenchmarkerLevelInterval = 5 * time.Second
 
-	BenchmarkTimeout = 60 * time.Second
-
-	InitializeTimeout  = 30 * time.Second
-	IsutrainAPITimeout = 15 * time.Second
+	InitializeTimeout = 20 * time.Second
+	APITimeout        = 10 * time.Second
+	BenchmarkTimeout  = 180 * time.Second
 )

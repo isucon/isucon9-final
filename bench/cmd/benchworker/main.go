@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/chibiegg/isucon9-final/bench/subcmd"
 	"github.com/urfave/cli"
 )
 
@@ -29,8 +28,7 @@ func cliMain() int {
 	app.HelpName = "isutrainbench"
 
 	app.Commands = []cli.Command{
-		subcmd.Bench,
-		subcmd.PreTest,
+		benchWorker,
 	}
 
 	app.Action = func(cliCtx *cli.Context) error {
