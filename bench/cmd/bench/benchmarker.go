@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"log"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/logger"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -27,13 +27,20 @@ func newBenchmarker(baseURL string) (*benchmarker, error) {
 	return benchmarker, nil
 }
 
-func (b *benchmarker) run(ctx context.Context) error {
-	for {
-		select {
-		case <-ctx.Done():
-			log.Println("canceled")
-		}
-	}
+// ベンチ負荷の１単位. これの回転数を上げていく
+func (b *benchmarker) load(ctx context.Context) error {
 
 	return nil
+}
+
+func (b *benchmarker) run(ctx context.Context) error {
+	lgr := zap.S()
+
+	// 負荷１
+	b.eg.Go(func() error {
+		lgr.Warn("run load 1")
+		return b.load(ctx)
+	})
+
+	return b.eg.Wait()
 }

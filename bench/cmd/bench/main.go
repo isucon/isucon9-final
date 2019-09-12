@@ -28,7 +28,7 @@ func cliMain() int {
 	app.HelpName = "isutrainbench"
 
 	app.Commands = []cli.Command{
-		bench,
+		run,
 		preTest,
 	}
 

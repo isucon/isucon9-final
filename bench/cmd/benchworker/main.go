@@ -28,7 +28,7 @@ func cliMain() int {
 	app.HelpName = "isutrainbench"
 
 	app.Commands = []cli.Command{
-		benchWorker,
+		run,
 	}
 
 	app.Action = func(cliCtx *cli.Context) error {

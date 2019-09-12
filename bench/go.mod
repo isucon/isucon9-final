@@ -3,6 +3,7 @@ module github.com/chibiegg/isucon9-final/bench
 go 1.12
 
 require (
+	github.com/eapache/go-resiliency v1.2.0
 	github.com/jarcoal/httpmock v1.0.4
 	github.com/morikuni/failure v0.11.0
 	github.com/pkg/errors v0.8.1 // indirect

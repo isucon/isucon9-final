@@ -1,16 +1,10 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"time"
+	"log"
 
-	"github.com/chibiegg/isucon9-final/bench/internal/config"
-	"github.com/chibiegg/isucon9-final/bench/internal/session"
-	"github.com/chibiegg/isucon9-final/bench/isutrain"
-	"github.com/chibiegg/isucon9-final/bench/mock"
-	"github.com/chibiegg/isucon9-final/bench/scenario"
 	"github.com/urfave/cli"
 )
 
@@ -24,8 +18,8 @@ var (
 	debug bool
 )
 
-var bench = cli.Command{
-	Name:  "bench",
+var run = cli.Command{
+	Name:  "run",
 	Usage: "ベンチマーク実行",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
@@ -54,54 +48,66 @@ var bench = cli.Command{
 		},
 	},
 	Action: func(cliCtx *cli.Context) error {
-		if debug {
-			m := mock.Register()
-			m.SetDelay(10 * time.Second)
-		}
+		// if debug {
+		// 	m := mock.Register()
+		// 	m.SetDelay(10 * time.Second)
+		// }
 
-		client := isutrain.NewIsutrain("http://127.0.0.1:8000/")
+		// client := isutrain.NewIsutrain("http://127.0.0.1:8000/")
 
-		// initialize
-		initSess, err := session.NewSessionForInitialize()
-		if err != nil {
-			return cli.NewExitError(err, 1)
-		}
-		_, err = client.Initialize(context.Background(), initSess)
-		if err != nil {
-			return cli.NewExitError(err, 1)
-		}
+		// // initialize
+		// initSess, err := session.NewSessionForInitialize()
+		// if err != nil {
+		// 	return cli.NewExitError(err, 1)
+		// }
+		// _, err = client.Initialize(context.Background(), initSess)
+		// if err != nil {
+		// 	return cli.NewExitError(err, 1)
+		// }
 
-		// pretest
-		err = scenario.PreTest()
-		if err != nil {
-			return cli.NewExitError(err, 1)
-		}
+		// // pretest
+		// err = scenario.PreTest()
+		// if err != nil {
+		// 	return cli.NewExitError(err, 1)
+		// }
 
-		// bench
-		ctx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
-		defer cancel()
+		// // bench
+		// ctx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
+		// defer cancel()
 
-		benchmarker := newBenchmarker("http://127.0.0.1:8000/")
-		err = benchmarker.run(ctx)
-		if err != nil {
-			return cli.NewExitError(err, 1)
-		}
+		// benchmarker, err := newBenchmarker("http://127.0.0.1:8000/")
+		// if err != nil {
+		// 	return cli.NewExitError(err, 1)
+		// }
+		// err = benchmarker.run(ctx)
+		// if err != nil {
+		// 	return cli.NewExitError(err, 1)
+		// }
 
-		// posttest
-		err = scenario.PostTest()
-		if err != nil {
-			return cli.NewExitError(err, 1)
-		}
+		// // posttest
+		// err = scenario.PostTest()
+		// if err != nil {
+		// 	return cli.NewExitError(err, 1)
+		// }
+
+		log.Printf("payment   = %s\n", paymentURI)
+		log.Printf("target    = %s\n", targetURI)
+		log.Printf("datadir   = %s\n", dataDir)
+		log.Printf("staticdir = %s\n", staticDir)
 
 		// 最終結果をstdoutへ書き出す
-		fmt.Println(json.Marshal(map[string]interface{}{
+		resultBytes, err := json.Marshal(map[string]interface{}{
 			"pass":  true,
 			"score": 0,
 			"messages": []string{
 				"hoge",
 				"fuga",
 			},
-		}))
+		})
+		if err != nil {
+			return cli.NewExitError(err, 1)
+		}
+		fmt.Println(string(resultBytes))
 
 		return nil
 	},

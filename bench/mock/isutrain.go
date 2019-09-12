@@ -2,6 +2,7 @@ package mock
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -25,6 +26,7 @@ func (m *Mock) Delay() time.Duration {
 
 func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 	<-time.After(m.delay)
+	log.Println("[mock] Initialize")
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
 
@@ -43,6 +45,7 @@ func (m *Mock) Register(req *http.Request) ([]byte, int) {
 	if len(username) == 0 || len(password) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+	log.Printf("[mock] Register: username=%s, password=%s\n", username, password)
 
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
@@ -61,6 +64,7 @@ func (m *Mock) Login(req *http.Request) ([]byte, int) {
 	if len(username) == 0 || len(password) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+	log.Printf("[mock] Login: username=%s, password=%s\n", username, password)
 
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
@@ -92,6 +96,7 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 	if len(from) == 0 || len(to) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+	log.Printf("[mock] SearchTrains: use_at=%s, from=%s, to=%s\n", query.Get("use_at"), query.Get("from"), query.Get("to"))
 
 	b, err := json.Marshal(&isutrain.Trains{
 		&isutrain.Train{Class: "のぞみ", Name: "96号", Start: 1, Last: 2},
@@ -120,6 +125,7 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 	if len(trainClass) == 0 || len(trainName) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+	log.Printf("[mock] ListTrainSeats: trainClass=%s, trainName=%s\n", trainClass, trainName)
 
 	// 適当な席を返す
 	b, err := json.Marshal(&isutrain.TrainSeats{
@@ -141,6 +147,8 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 	// 複数の座席指定で予約するかもしれない
 	// なので、予約には複数の座席予約が紐づいている
 
+	log.Println("[mock] Reserve")
+
 	// NOTE: とりあえず、パラメータガン無視でPOSTできるところ先にやる
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
@@ -152,6 +160,7 @@ func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
 	if err := req.ParseForm(); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+	log.Println("[mock] CommitReservation")
 
 	_, err := httpmock.GetSubmatchAsUint(req, 1)
 	if err != nil {
@@ -168,6 +177,7 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 	if err := req.ParseForm(); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+	log.Println("[mock] CancelReservation")
 
 	_, err := httpmock.GetSubmatchAsUint(req, 1)
 	if err != nil {
@@ -180,6 +190,7 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 // ListReservations はアカウントにひもづく予約履歴を返します
 func (m *Mock) ListReservations(req *http.Request) ([]byte, int) {
 	<-time.After(m.delay)
+	log.Println("[mock] ListReservations")
 	b, err := json.Marshal(isutrain.SeatReservations{
 		&isutrain.SeatReservation{ID: 1111, PaymentMethod: string(isutrain.CreditCard), Status: string(isutrain.Pending), ReserveAt: time.Now()},
 	})

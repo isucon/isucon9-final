@@ -43,7 +43,12 @@ type (
 		IsPassed bool   `json:"is_passed"`
 		Reason   string `json:"reason"`
 		Stdout   string `json:"stdout"`
-		Stderr   string `json:"stderr`
+		Stderr   string `json:"stderr"`
+	}
+	BenchResult struct {
+		Pass     bool     `json:"pass"`
+		Score    int      `json:"score"`
+		Messages []string `json:"messages"`
 	}
 )
 
@@ -88,6 +93,8 @@ func report(ctx context.Context, jobID int, result *Result) error {
 	if err != nil {
 		return err
 	}
+
+	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req.WithContext(ctx))
 	if err != nil {
