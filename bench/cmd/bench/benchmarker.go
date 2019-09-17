@@ -17,11 +17,14 @@ type benchmarker struct {
 func newBenchmarker(baseURL string) *benchmarker {
 	return &benchmarker{
 		BaseURL: baseURL,
+		eg:      &errgroup.Group{},
 	}
 }
 
 // ベンチ負荷の１単位. これの回転数を上げていく
 func (b *benchmarker) load(ctx context.Context) error {
+	return nil
+	// TODO: Load１単位で同期ポイント
 	scenario, err := scenario.NewBasicScenario(b.BaseURL)
 	if err != nil {
 		return err

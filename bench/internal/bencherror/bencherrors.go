@@ -7,10 +7,9 @@ import (
 )
 
 var (
-	InitializeErrs = new(BenchErrors)
-	PreTestErrs    = new(BenchErrors)
-	BenchmarkErrs  = new(BenchErrors)
-	PostTestErrs   = new(BenchErrors)
+	InitializeErrs = NewBenchErrors()
+	PreTestErrs    = NewBenchErrors()
+	BenchmarkErrs  = NewBenchErrors()
 )
 
 type BenchErrors struct {
@@ -22,6 +21,12 @@ type BenchErrors struct {
 	applicationCnt uint64
 	timeoutCnt     uint64
 	temporaryCnt   uint64
+}
+
+func NewBenchErrors() *BenchErrors {
+	return &BenchErrors{
+		Msgs: []string{},
+	}
 }
 
 // IsError は、エラーが発生したか否かを返します
@@ -66,7 +71,7 @@ func (errs *BenchErrors) AddError(err error) {
 	errs.mu.Lock()
 	defer errs.mu.Unlock()
 
-	if err != nil {
+	if err == nil {
 		return
 	}
 

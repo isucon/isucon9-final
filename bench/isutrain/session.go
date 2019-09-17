@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"net/http/cookiejar"
@@ -79,7 +78,6 @@ func (sess *session) newRequest(ctx context.Context, method, uri string, body io
 func (sess *session) do(req *http.Request) (*http.Response, error) {
 	resp, err := sess.httpClient.Do(req)
 	if err != nil {
-		log.Printf("[session] do: %+v\n", err)
 		var netErr net.Error
 		if xerrors.As(err, &netErr) {
 			if netErr.Timeout() {

@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -51,7 +50,6 @@ func (c *Client) ReplaceMockTransport() {
 
 func (c *Client) Initialize(ctx context.Context) {
 	uri := fmt.Sprintf("%s%s", c.baseURL, consts.InitializePath)
-	log.Printf("[Initialize] %s\n", uri)
 
 	ctx, cancel := context.WithTimeout(ctx, config.InitializeTimeout)
 	defer cancel()
@@ -70,9 +68,8 @@ func (c *Client) Initialize(ctx context.Context) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		log.Printf("resp = %+v\n", resp)
-		bencherror.InitializeErrs.AddError(bencherror.NewHTTPStatusCodeError(resp, http.StatusOK))
+	if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusAccepted); err != nil {
+		bencherror.InitializeErrs.AddError(err)
 		return
 	}
 
@@ -94,7 +91,6 @@ func (c *Client) Register(ctx context.Context, username, password string) error 
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		log.Printf("do error: %+v\n", err)
 		return err
 	}
 	defer resp.Body.Close()
@@ -241,7 +237,7 @@ func (c *Client) Reserve(ctx context.Context) (*ReservationResponse, error) {
 	return reservation, nil
 }
 
-func (c *Client) CommitReservation(ctx context.Context, reservationID int) error {
+func (c *Client) CommitReservation(ctx context.Context, reservationID string) error {
 	uri := fmt.Sprintf("%s%s", c.baseURL, consts.BuildCommitReservationPath(reservationID))
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, nil)
@@ -284,7 +280,7 @@ func (c *Client) ListReservations(ctx context.Context) ([]*SeatReservation, erro
 	return reservations, nil
 }
 
-func (c *Client) CancelReservation(ctx context.Context, reservationID int) error {
+func (c *Client) CancelReservation(ctx context.Context, reservationID string) error {
 	uri := fmt.Sprintf("%s%s", c.baseURL, consts.BuildCancelReservationPath(reservationID))
 
 	req, err := c.sess.newRequest(ctx, http.MethodDelete, uri, nil)

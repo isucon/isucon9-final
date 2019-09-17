@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/logger"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/mock"
 	"github.com/chibiegg/isucon9-final/bench/scenario"
+	"github.com/jarcoal/httpmock"
 	"github.com/urfave/cli"
 	"go.uber.org/zap"
 )
@@ -51,12 +52,12 @@ var run = cli.Command{
 		},
 		cli.StringFlag{
 			Name:        "payment",
-			Value:       "http://127.0.0.1",
+			Value:       "http://localhost:5000",
 			Destination: &paymentURI,
 		},
 		cli.StringFlag{
 			Name:        "target",
-			Value:       "http://127.0.0.1",
+			Value:       "http://localhost",
 			Destination: &targetURI,
 		},
 		cli.StringFlag{
@@ -77,55 +78,58 @@ var run = cli.Command{
 			return cli.NewExitError(err, 1)
 		}
 
+		initClient, err := isutrain.NewClientForInitialize(targetURI)
+		if err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
+
+		testClient, err := isutrain.NewClient(targetURI)
+		if err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
+
 		if debug {
-			m := mock.Register()
-			log.Println(m.Delay())
+			httpmock.Activate()
+			defer httpmock.DeactivateAndReset()
+
+			mock.Register()
+			initClient.ReplaceMockTransport()
+			testClient.ReplaceMockTransport()
 		}
 
 		// TODO: 初期データのロードなど用意
 
 		// initialize
-		initClient, err := isutrain.NewClientForInitialize("http://127.0.0.1:8000/")
-		if err != nil {
-			dumpFailedResult([]string{})
-			return cli.NewExitError(err, 1)
-		}
 		initClient.Initialize(context.Background())
-		if err != nil {
-			dumpFailedResult([]string{})
+		if bencherror.InitializeErrs.IsError() {
+			dumpFailedResult(bencherror.InitializeErrs.Msgs)
 			return cli.NewExitError(err, 1)
 		}
 
 		// pretest (まず、正しく動作できているかチェック. エラーが見つかったら、採点しようがないのでFAILにする)
-		testClient, err := isutrain.NewClient("http://127.0.0.1:8000/")
-		if err != nil {
-			dumpFailedResult([]string{})
-			return cli.NewExitError(err, 1)
-		}
-		scenario.PreTest(testClient)
+
+		scenario.Pretest(testClient)
 		if bencherror.PreTestErrs.IsError() {
-			dumpFailedResult([]string{})
+			dumpFailedResult(bencherror.PreTestErrs.Msgs)
 			return cli.NewExitError(err, 1)
 		}
 
 		// bench (ISUCOIN売り上げ計上と、減点カウントを行う)
-		// ctx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
-		// defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
+		defer cancel()
 
-		// benchmarker, err := newBenchmarker("http://127.0.0.1:8000/")
-		// if err != nil {
-		// 	return cli.NewExitError(err, 1)
-		// }
-		// err = benchmarker.run(ctx)
-		// if err != nil {
-		// 	return cli.NewExitError(err, 1)
-		// }
-
-		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
-		scenario.PostTest(testClient)
-		if bencherror.PostTestErrs.IsError() {
+		benchmarker := newBenchmarker(targetURI)
+		if err = benchmarker.run(ctx); err != nil {
 			return cli.NewExitError(err, 1)
 		}
+
+		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
+		// FIXME: 課金用のクライアントを作り、それを渡す様に変更
+		score := scenario.FinalCheck(testClient)
+
+		// TODO: エラーカウントから、スコアを減点していく
 
 		lgr.Infof("payment   = %s", paymentURI)
 		lgr.Infof("target    = %s", targetURI)
@@ -134,12 +138,9 @@ var run = cli.Command{
 
 		// 最終結果をstdoutへ書き出す
 		resultBytes, err := json.Marshal(map[string]interface{}{
-			"pass":  true,
-			"score": 0,
-			"messages": []string{
-				"hoge",
-				"fuga",
-			},
+			"pass":     true,
+			"score":    score,
+			"messages": bencherror.BenchmarkErrs.Msgs,
 		})
 		if err != nil {
 			return cli.NewExitError(err, 1)

@@ -97,7 +97,6 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	// ベンチ結果をUnmarshal
 	var result *BenchResult
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
-		log.Printf("json unmarshal error: %+v\n", err)
 		log.Println(string(stdout.Bytes()))
 		return nil, err
 	}
@@ -156,7 +155,6 @@ var run = cli.Command{
 				job, err := dequeue(ctx)
 				if err != nil {
 					// dequeueが失敗しても終了しない
-					// log.Println(err)
 					continue
 				}
 

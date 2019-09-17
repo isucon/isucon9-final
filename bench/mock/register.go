@@ -11,7 +11,7 @@ import (
 // RegisterMockEndpoints はhttpmockのエンドポイントを登録する
 // NOTE: httpmock.Activate, httpmock.Deactivateは別途実施する必要があります
 func Register() *Mock {
-	m := &Mock{}
+	m := NewMock()
 	baseURL := "http://localhost"
 
 	// GET

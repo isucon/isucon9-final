@@ -18,6 +18,15 @@ type Mock struct {
 	delay      time.Duration
 	forceDelay bool
 	callCount  uint64
+	injectFunc func(path string) error
+}
+
+func NewMock() *Mock {
+	return &Mock{
+		injectFunc: func(path string) error {
+			return nil
+		},
+	}
 }
 
 func (m *Mock) SetDelay(second int) {
@@ -37,8 +46,15 @@ func (m *Mock) Delay() time.Duration {
 	return m.delay
 }
 
+func (m *Mock) Inject(f func(path string) error) {
+	m.injectFunc = f
+}
+
 func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 	<-time.After(m.delay)
+	if err := m.injectFunc(req.URL.Path); err != nil {
+		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
+	}
 	log.Println("[mock] Initialize")
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
