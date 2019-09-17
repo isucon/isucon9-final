@@ -4,25 +4,27 @@ import "fmt"
 
 const (
 	// GET
+	ListStationsPath     = "/stations"
 	SearchTrainsPath     = "/train/search"
 	ListTrainSeatsPath   = "/train/seats"
 	ListReservationsPath = "/reservation"
 
 	// POST
-	RegisterPath = "/register"
-	LoginPath    = "/login"
-	ReservePath  = "/reserve"
+	InitializePath = "/initialize"
+	RegisterPath   = "/register"
+	LoginPath      = "/login"
+	ReservePath    = "/reserve"
 )
 
 var (
 	// POST
-	BuildCommitReservationPath = func(id int) string {
-		return fmt.Sprintf("/reservation/%d/commit", id)
+	BuildCommitReservationPath = func(id string) string {
+		return fmt.Sprintf("/reservation/%s/commit", id)
 	}
 
 	// DELETE
-	BuildCancelReservationPath = func(id int) string {
-		return fmt.Sprintf("/reservation/%d/cancel", id)
+	BuildCancelReservationPath = func(id string) string {
+		return fmt.Sprintf("/reservation/%s/cancel", id)
 	}
 )
 
