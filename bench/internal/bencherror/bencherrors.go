@@ -3,6 +3,7 @@ package bencherror
 import (
 	"sync"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/consts"
 	"go.uber.org/zap"
 )
 
@@ -48,21 +49,18 @@ func (errs *BenchErrors) IsFailure() bool {
 	return false
 }
 
-// UniqueMsgs は重複除去したメッセージ配列を返します
-func (errs *BenchErrors) UniqueMsgs() (msgs []string) {
+func (errs *BenchErrors) Penalty() uint64 {
 	errs.mu.RLock()
 	defer errs.mu.RUnlock()
 
-	dedup := map[string]struct{}{}
-	for _, msg := range errs.Msgs {
-		if _, ok := dedup[msg]; ok {
-			continue
-		}
-		dedup[msg] = struct{}{}
-		msgs = append(msgs, msg)
+	penalty := consts.ApplicationPenaltyWeight * errs.applicationCnt
+
+	trivialCnt := errs.timeoutCnt + errs.temporaryCnt
+	if trivialCnt > consts.TrivialPenaltyThreshold {
+		penalty += consts.TrivialPenaltyWeight * (1 + (trivialCnt-consts.TrivialPenaltyThreshold)/consts.TrivialPenaltyPerCount)
 	}
 
-	return
+	return penalty
 }
 
 func (errs *BenchErrors) AddError(err error) {
