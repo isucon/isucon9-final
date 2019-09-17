@@ -1,5 +1,7 @@
 package isutrain
 
+import "time"
+
 // Train は新幹線列車です
 type Train struct {
 	// Class は列車種別です
@@ -98,17 +100,15 @@ func (fi FareInformation) Value() int {
 //     * 引っ張れた駅名をイテレーションし、発駅、着駅を経路に持っているか調べ上げる
 //     * 発駅、着駅を含むなら、列車リストに列車を追加
 //   * 列車リストを返す(TranSearchResponse, 未定義)
-/*
 type TrainSearchResponse struct {
 	Train
-	Departure     string    `json:"departure"`
-	Destination   string    `json:"destination"`
-	DepartureTime time.Time `json:"departure_time"`
-	ArrivalTime   time.Time `json:"arrival_time"`
+	Departure        string            `json:"departure"`
+	Destination      string            `json:"destination"`
+	DepartedAt       time.Time         `json:"departure_time"`
+	ArrivedAt        time.Time         `json:"arrival_time"`
 	SeatAvailability map[string]string `json:"seat_availability"`
-	Fare map[string]int `json:"seat_fare"`
+	Fare             map[string]int    `json:"seat_fare"`
 }
-*/
 
 // NOTE: 座席API use_at=<RFC3339形式の時刻>&train_class=<列車クラス>&train_name=<列車名>&car_num=<>
 // * 流れ

@@ -3,7 +3,9 @@ package mock
 import (
 	"encoding/json"
 	"log"
+	"math"
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
@@ -13,11 +15,22 @@ import (
 
 // Mock は `isutrain` のモック実装です
 type Mock struct {
-	delay time.Duration
+	delay      time.Duration
+	forceDelay bool
+	callCount  uint64
 }
 
-func (m *Mock) SetDelay(d time.Duration) {
-	m.delay = d
+func (m *Mock) SetDelay(second int) {
+	m.delay = time.Duration(second) * time.Second
+	m.forceDelay = true
+}
+
+func (m *Mock) updateDelay() {
+	if !m.forceDelay {
+		delayMagnification := math.Pow(2, float64(m.callCount))
+		m.delay = time.Duration(delayMagnification) * time.Nanosecond
+		atomic.AddUint64(&m.callCount, 1)
+	}
 }
 
 func (m *Mock) Delay() time.Duration {
@@ -67,6 +80,19 @@ func (m *Mock) Login(req *http.Request) ([]byte, int) {
 	log.Printf("[mock] Login: username=%s, password=%s\n", username, password)
 
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
+}
+
+func (m *Mock) ListStations(req *http.Request) ([]byte, int) {
+	<-time.After(m.delay)
+	b, err := json.Marshal([]*isutrain.Station{
+		&isutrain.Station{ID: 1, Name: "isutrain1", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: false},
+	})
+	if err != nil {
+		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
+	}
+	log.Printf("[mock] ListStations: stations=%s\n", string(b))
+
+	return b, http.StatusOK
 }
 
 // SearchTrains は新幹線検索結果を返します
@@ -135,6 +161,8 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
 	}
 
+	m.updateDelay()
+
 	return b, http.StatusOK
 }
 
@@ -149,8 +177,16 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 
 	log.Println("[mock] Reserve")
 
+	b, err := json.Marshal(isutrain.ReservationResponse{
+		ReservationID: "1111111111",
+		IsOk:          true,
+	})
+	if err != nil {
+		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
+	}
+
 	// NOTE: とりあえず、パラメータガン無視でPOSTできるところ先にやる
-	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
+	return b, http.StatusAccepted
 }
 
 // CommitReservation は予約を確定します

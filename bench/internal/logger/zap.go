@@ -13,9 +13,8 @@ func InitZapLogger() (*zap.SugaredLogger, error) {
 	config.Encoding = "console"
 	config.DisableCaller = true
 	config.DisableStacktrace = true
-	config.Level = zap.NewAtomicLevelAt(zapcore.WarnLevel)
+	config.Level = zap.NewAtomicLevelAt(zapcore.InfoLevel)
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	config.EncoderConfig.LevelKey = ""
 	config.OutputPaths = []string{"stderr"}
 	config.ErrorOutputPaths = []string{"stderr"}
 

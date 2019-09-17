@@ -1,4 +1,4 @@
-package isutrain
+package xpool
 
 import "math/rand"
 

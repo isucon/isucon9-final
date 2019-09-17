@@ -1,14 +1,16 @@
 package bencherror
 
 import (
-	"log"
 	"sync"
+
+	"go.uber.org/zap"
 )
 
 var (
-	BenchmarkErrs = new(BenchErrors)
-	PreTestErrs   = new(BenchErrors)
-	PostTestErrs  = new(BenchErrors)
+	InitializeErrs = new(BenchErrors)
+	PreTestErrs    = new(BenchErrors)
+	BenchmarkErrs  = new(BenchErrors)
+	PostTestErrs   = new(BenchErrors)
 )
 
 type BenchErrors struct {
@@ -59,6 +61,8 @@ func (errs *BenchErrors) UniqueMsgs() (msgs []string) {
 }
 
 func (errs *BenchErrors) AddError(err error) {
+	lgr := zap.S()
+
 	errs.mu.Lock()
 	defer errs.mu.Unlock()
 
@@ -66,7 +70,7 @@ func (errs *BenchErrors) AddError(err error) {
 		return
 	}
 
-	log.Printf("%+v", err)
+	lgr.Warn("エラーを追加", zap.Error(err))
 
 	// エラーに応じたメッセージを追加し、カウンタをインクリメント
 	if msg, code, ok := extractCode(err); ok {

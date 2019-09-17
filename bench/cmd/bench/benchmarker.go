@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/chibiegg/isucon9-final/bench/internal/logger"
+	"github.com/chibiegg/isucon9-final/bench/scenario"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
@@ -14,23 +14,20 @@ type benchmarker struct {
 	eg *errgroup.Group
 }
 
-func newBenchmarker(baseURL string) (*benchmarker, error) {
-	benchmarker := &benchmarker{
+func newBenchmarker(baseURL string) *benchmarker {
+	return &benchmarker{
 		BaseURL: baseURL,
 	}
-
-	_, err := logger.InitZapLogger()
-	if err != nil {
-		return nil, err
-	}
-
-	return benchmarker, nil
 }
 
 // ベンチ負荷の１単位. これの回転数を上げていく
 func (b *benchmarker) load(ctx context.Context) error {
+	scenario, err := scenario.NewBasicScenario(b.BaseURL)
+	if err != nil {
+		return err
+	}
 
-	return nil
+	return scenario.Run(ctx)
 }
 
 func (b *benchmarker) run(ctx context.Context) error {
@@ -38,7 +35,7 @@ func (b *benchmarker) run(ctx context.Context) error {
 
 	// 負荷１
 	b.eg.Go(func() error {
-		lgr.Warn("run load 1")
+		lgr.Info("run load 1")
 		return b.load(ctx)
 	})
 

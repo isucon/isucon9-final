@@ -1,43 +1,61 @@
 package scenario
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/chibiegg/isucon9-final/bench/isutrain"
+	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+)
 
 // Guest訪問
 var (
 	ErrInitialTrainDatasetCount = errors.New("列車初期データセットの件数が一致しません")
 )
 
-func PreTest() error {
-	if err := preTestGuestVisitation(); err != nil {
-		return err
+// PreTest は、ベンチマーク前のアプリケーションが正常に動作できているか検証し、できていなければFAILとします
+func PreTest(client *isutrain.Client) {
+	// 正常系
+	if err := preTestNormalReservation(client); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
 	}
-
-	if err := preTestAccountVisitation(); err != nil {
-		return err
+	if err := preTestNormalCancelReservation(client); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
 	}
-
-	if err := preTestInitialDataset(); err != nil {
-		return err
+	if err := preTestNormalSearch(client); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
 	}
+	// 異常系
+	if err := preTestAbnormalLogin(client); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+}
+
+// 正常系
+
+// preTestNormalReservation は予約までの一連の流れを検証します
+func preTestNormalReservation(client *isutrain.Client) error {
 
 	return nil
 }
 
-// PreTestGuestVisitation はゲスト訪問を検証します
-func preTestGuestVisitation() error {
-	// トップページに訪問可能
-
-	// ~に訪問可能
-
+// PreTestNormalCancelReservation は予約を行ったのち、キャンセルして一覧チェックするまでの一連の流れを検証します
+func preTestNormalCancelReservation(client *isutrain.Client) error {
 	return nil
 }
 
-// PreTestAccountVisitation はログイン済みアカウントの訪問を検証します
-func preTestAccountVisitation() error {
+// PreTestNormalSearch は検索条件を細かく指定して検索します
+func preTestNormalSearch(client *isutrain.Client) error {
 	return nil
 }
 
-// PreTestInitialDataset は初期データセット件数を検証します
-func preTestInitialDataset() error {
+// 異常系
+
+// PreTestAbnormalLogin は不正なパスワードでのログインを試みます
+func preTestAbnormalLogin(client *isutrain.Client) error {
 	return nil
 }
+

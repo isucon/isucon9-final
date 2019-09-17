@@ -3,81 +3,168 @@ package isutrain
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/consts"
-	"github.com/chibiegg/isucon9-final/bench/internal/session"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 )
 
-// FIXME: Isutrain -> Client
-type Isutrain struct {
-	BaseURL string
+type Client struct {
+	sess    *session
+	baseURL string
 }
 
-func NewIsutrain(baseURL string) *Isutrain {
-	return &Isutrain{
-		BaseURL: baseURL,
+func NewClient(targetBaseURL string) (*Client, error) {
+	sess, err := newSession()
+	if err != nil {
+		return nil, err
 	}
+	return &Client{
+		sess:    sess,
+		baseURL: targetBaseURL,
+	}, nil
 }
 
-func (i *Isutrain) Initialize(ctx context.Context, sess *session.Session) (*http.Response, error) {
-	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.InitializePath)
+func NewClientForInitialize(targetBaseURL string) (*Client, error) {
+	sess, err := newSessionForInitialize()
+	if err != nil {
+		return nil, err
+	}
+	return &Client{
+		sess:    sess,
+		baseURL: targetBaseURL,
+	}, nil
+}
+
+// ReplaceMockTransport は、clientの利用するhttp.RoundTripperを、DefaultTransportに差し替えます
+// NOTE: httpmockはhttp.DefaultTransportを利用するため、モックテストの時この関数を利用する
+func (c *Client) ReplaceMockTransport() {
+	c.sess.httpClient.Transport = http.DefaultTransport
+}
+
+func (c *Client) Initialize(ctx context.Context) {
+	uri := fmt.Sprintf("%s%s", c.baseURL, consts.InitializePath)
+	log.Printf("[Initialize] %s\n", uri)
 
 	ctx, cancel := context.WithTimeout(ctx, config.InitializeTimeout)
 	defer cancel()
 
-	req, err := sess.NewRequest(ctx, http.MethodPost, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, nil)
 	if err != nil {
-		return nil, err
+		bencherror.InitializeErrs.AddError(err)
+		return
 	}
 
-	return sess.Do(req)
+	// TODO: 言語を返すようにしたり、キャンペーンを返すようにする場合、ちゃんと設定されていなかったらFAILにする
+	resp, err := c.sess.do(req)
+	if err != nil {
+		bencherror.InitializeErrs.AddError(err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("resp = %+v\n", resp)
+		bencherror.InitializeErrs.AddError(bencherror.NewHTTPStatusCodeError(resp, http.StatusOK))
+		return
+	}
+
+	return
 }
 
-func (i *Isutrain) Register(ctx context.Context, sess *session.Session, username, password string) (*http.Response, error) {
+func (c *Client) Register(ctx context.Context, username, password string) error {
 	var (
-		uri  = fmt.Sprintf("%s%s", i.BaseURL, consts.RegisterPath)
+		uri  = fmt.Sprintf("%s%s", c.baseURL, consts.RegisterPath)
 		form = url.Values{}
 	)
 	form.Set("username", username)
 	form.Set("password", password)
 
-	req, err := sess.NewRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
+	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return sess.Do(req)
+	resp, err := c.sess.do(req)
+	if err != nil {
+		log.Printf("do error: %+v\n", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusCreated {
+		// FIXME: 実装
+	}
+
+	return nil
 }
 
-func (i *Isutrain) Login(ctx context.Context, sess *session.Session, username, password string) (*http.Response, error) {
+func (c *Client) Login(ctx context.Context, username, password string) error {
 	var (
-		uri  = fmt.Sprintf("%s%s", i.BaseURL, consts.LoginPath)
+		uri  = fmt.Sprintf("%s%s", c.baseURL, consts.LoginPath)
 		form = url.Values{}
 	)
 	form.Set("username", username)
 	form.Set("password", password)
 
-	req, err := sess.NewRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
+	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return sess.Do(req)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// FIXME: 実装
+	}
+
+	return nil
+}
+
+// ListStations は駅一覧列挙APIです
+func (c *Client) ListStations(ctx context.Context) ([]*Station, error) {
+	uri := fmt.Sprintf("%s%s", c.baseURL, consts.ListStationsPath)
+
+	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
+	if err != nil {
+		return []*Station{}, err
+	}
+
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return []*Station{}, err
+	}
+	defer resp.Body.Close()
+
+	var stations []*Station
+	if err := json.NewDecoder(resp.Body).Decode(&stations); err != nil {
+		// FIXME: 実装
+		return []*Station{}, err
+	}
+
+	return stations, nil
 }
 
 // SearchTrains は 列車検索APIです
-func (i *Isutrain) SearchTrains(ctx context.Context, sess *session.Session, useAt time.Time, from, to string) (*http.Response, error) {
-	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.SearchTrainsPath)
+func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to string) ([]*TrainSearchResponse, error) {
+	uri := fmt.Sprintf("%s%s", c.baseURL, consts.SearchTrainsPath)
 
-	req, err := sess.NewRequest(ctx, http.MethodGet, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
-		return nil, err
+		return []*TrainSearchResponse{}, err
 	}
 
 	query := req.URL.Query()
@@ -87,15 +174,27 @@ func (i *Isutrain) SearchTrains(ctx context.Context, sess *session.Session, useA
 	query.Set("to", to)
 	req.URL.RawQuery = query.Encode()
 
-	return sess.Do(req)
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return []*TrainSearchResponse{}, err
+	}
+	defer resp.Body.Close()
+
+	var trains []*TrainSearchResponse
+	if err := json.NewDecoder(resp.Body).Decode(&trains); err != nil {
+		// FIXME: 実装
+		return []*TrainSearchResponse{}, err
+	}
+
+	return trains, nil
 }
 
-func (i *Isutrain) ListTrainSeats(ctx context.Context, sess *session.Session, train_class, train_name string) (*http.Response, error) {
-	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.ListTrainSeatsPath)
+func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name string) (TrainSeats, error) {
+	uri := fmt.Sprintf("%s%s", c.baseURL, consts.ListTrainSeatsPath)
 
-	req, err := sess.NewRequest(ctx, http.MethodGet, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
-		return nil, err
+		return TrainSeats{}, err
 	}
 
 	query := req.URL.Query()
@@ -103,52 +202,105 @@ func (i *Isutrain) ListTrainSeats(ctx context.Context, sess *session.Session, tr
 	query.Set("train_name", train_name)
 	req.URL.RawQuery = query.Encode()
 
-	return sess.Do(req)
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return TrainSeats{}, err
+	}
+	defer resp.Body.Close()
+
+	var seats TrainSeats
+	if err := json.NewDecoder(resp.Body).Decode(&seats); err != nil {
+		return TrainSeats{}, err
+	}
+
+	return seats, nil
 }
 
-func (i *Isutrain) Reserve(ctx context.Context, sess *session.Session) (*http.Response, error) {
+func (c *Client) Reserve(ctx context.Context) (*ReservationResponse, error) {
 	var (
-		uri = fmt.Sprintf("%s%s", i.BaseURL, consts.ReservePath)
+		uri = fmt.Sprintf("%s%s", c.baseURL, consts.ReservePath)
 		// form = url.Values{}
 	)
 
-	req, err := sess.NewRequest(ctx, http.MethodPost, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return sess.Do(req)
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var reservation *ReservationResponse
+	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
+		return nil, err
+	}
+
+	return reservation, nil
 }
 
-func (i *Isutrain) CommitReservation(ctx context.Context, sess *session.Session, reservationID int) (*http.Response, error) {
-	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.BuildCommitReservationPath(reservationID))
+func (c *Client) CommitReservation(ctx context.Context, reservationID int) error {
+	uri := fmt.Sprintf("%s%s", c.baseURL, consts.BuildCommitReservationPath(reservationID))
 
-	req, err := sess.NewRequest(ctx, http.MethodPost, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return sess.Do(req)
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusAccepted {
+		// FIXME: 実装
+	}
+
+	return nil
 }
 
-func (i *Isutrain) ListReservations(ctx context.Context, sess *session.Session) (*http.Response, error) {
-	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.ListReservationsPath)
+func (c *Client) ListReservations(ctx context.Context) ([]*SeatReservation, error) {
+	uri := fmt.Sprintf("%s%s", c.baseURL, consts.ListReservationsPath)
 
-	req, err := sess.NewRequest(ctx, http.MethodGet, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
-		return nil, err
+		return []*SeatReservation{}, err
 	}
 
-	return sess.Do(req)
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return []*SeatReservation{}, err
+	}
+	defer resp.Body.Close()
+
+	var reservations []*SeatReservation
+	if err := json.NewDecoder(resp.Body).Decode(&reservations); err != nil {
+		return []*SeatReservation{}, err
+	}
+
+	return reservations, nil
 }
 
-func (i *Isutrain) CancelReservation(ctx context.Context, sess *session.Session, reservationID int) (*http.Response, error) {
-	uri := fmt.Sprintf("%s%s", i.BaseURL, consts.BuildCancelReservationPath(reservationID))
+func (c *Client) CancelReservation(ctx context.Context, reservationID int) error {
+	uri := fmt.Sprintf("%s%s", c.baseURL, consts.BuildCancelReservationPath(reservationID))
 
-	req, err := sess.NewRequest(ctx, http.MethodDelete, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodDelete, uri, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return sess.Do(req)
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent {
+		// FIXME: 実装
+	}
+
+	return nil
 }

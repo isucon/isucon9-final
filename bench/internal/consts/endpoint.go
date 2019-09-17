@@ -4,6 +4,7 @@ import "fmt"
 
 const (
 	// GET
+	ListStationsPath     = "/stations"
 	SearchTrainsPath     = "/train/search"
 	ListTrainSeatsPath   = "/train/seats"
 	ListReservationsPath = "/reservation"

@@ -1,10 +1,11 @@
-package session
+package isutrain
 
 import (
 	"context"
 	"crypto/tls"
 	"errors"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"net/http/cookiejar"
@@ -19,17 +20,17 @@ var (
 	ErrRedirect = errors.New("redirectが検出されました")
 )
 
-type Session struct {
+type session struct {
 	httpClient *http.Client
 }
 
-func NewSession() (*Session, error) {
+func newSession() (*session, error) {
 	jar, err := cookiejar.New(&cookiejar.Options{})
 	if err != nil {
 		return nil, err
 	}
 
-	return &Session{
+	return &session{
 		httpClient: &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
@@ -45,8 +46,8 @@ func NewSession() (*Session, error) {
 	}, nil
 }
 
-func NewSessionForInitialize() (*Session, error) {
-	return &Session{
+func newSessionForInitialize() (*session, error) {
+	return &session{
 		httpClient: &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
@@ -63,7 +64,7 @@ func NewSessionForInitialize() (*Session, error) {
 
 // NOTE: GETクエリパラメータをURLにくっつける処理は、utilityなどのURLを扱う側で実装
 // NOTE: Content-Type など、他のHTTPメソッドで必要なヘッダについては適宜Setする
-func (sess *Session) NewRequest(ctx context.Context, method, uri string, body io.Reader) (*http.Request, error) {
+func (sess *session) newRequest(ctx context.Context, method, uri string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, uri, body)
 	if err != nil {
 		return nil, err
@@ -75,15 +76,16 @@ func (sess *Session) NewRequest(ctx context.Context, method, uri string, body io
 	return req, nil
 }
 
-func (sess *Session) Do(req *http.Request) (*http.Response, error) {
+func (sess *session) do(req *http.Request) (*http.Response, error) {
 	resp, err := sess.httpClient.Do(req)
 	if err != nil {
+		log.Printf("[session] do: %+v\n", err)
 		var netErr net.Error
 		if xerrors.As(err, &netErr) {
 			if netErr.Timeout() {
-				return nil, bencherror.NewTimeoutError(err)
+				return nil, bencherror.NewTimeoutError(err, "")
 			} else if netErr.Temporary() {
-				return nil, bencherror.NewTemporaryError(err)
+				return nil, bencherror.NewTemporaryError(err, "")
 			}
 		}
 

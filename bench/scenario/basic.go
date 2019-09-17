@@ -2,73 +2,74 @@ package scenario
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"time"
 
-	"github.com/chibiegg/isucon9-final/bench/internal/session"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
-	"golang.org/x/xerrors"
 )
 
 // BasicScenario は基本的な予約フローのシナリオです
 type BasicScenario struct {
-	client *isutrain.Isutrain
+	client *isutrain.Client
 }
 
-func NewBasicScenario(baseURL string) *BasicScenario {
-	return &BasicScenario{
-		client: isutrain.NewIsutrain(baseURL),
+func NewBasicScenario(targetBaseURL string) (*BasicScenario, error) {
+	client, err := isutrain.NewClient(targetBaseURL)
+	if err != nil {
+		return nil, err
 	}
-}
 
-// FIXME: 結果やエラーの共有は、共有オブジェクトを介するように
+	return &BasicScenario{
+		client: client,
+	}, nil
+}
 
 func (s *BasicScenario) Run(ctx context.Context) error {
-	sess, err := session.NewSession()
+	err := s.client.Register(ctx, "hoge", "hoge")
 	if err != nil {
-		return err
+		return fmt.Errorf("ユーザ登録ができません: %w", err)
 	}
 
-	_, err = s.client.Register(ctx, sess, "hoge", "hoge")
-	err = xerrors.Errorf("ユーザ登録ができません: %w", err)
+	err = s.client.Login(ctx, "hoge", "hoge")
 	if err != nil {
-		return err
+		return fmt.Errorf("ユーザログインができません: %w", err)
 	}
 
-	_, err = s.client.Login(ctx, sess, "hoge", "hoge")
-	err = xerrors.Errorf("ユーザログインができません: %w", err)
+	stations, err := s.client.ListStations(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("駅一覧を取得できません: %w", err)
+	}
+	log.Println(stations)
+
+	trains, err := s.client.SearchTrains(ctx, time.Now(), "東京", "大阪")
+	if err != nil {
+		return fmt.Errorf("列車検索ができません: %w", err)
+	}
+	log.Println(trains)
+
+	seats, err := s.client.ListTrainSeats(ctx, "こだま", "96号")
+	if err != nil {
+		return fmt.Errorf("列車の座席座席列挙できません: %w", err)
+	}
+	log.Println(seats)
+
+	reservation, err := s.client.Reserve(ctx)
+	if err != nil {
+		return fmt.Errorf("予約ができません: %w", err)
+	}
+	log.Println(reservation)
+
+	err = s.client.CommitReservation(ctx, 1111)
+	if err != nil {
+		return fmt.Errorf("予約を確定できませんでした: %w", err)
 	}
 
-	_, err = s.client.SearchTrains(ctx, sess, time.Now(), "東京", "大阪")
-	err = xerrors.Errorf("列車検索ができません: %w", err)
+	reservations, err := s.client.ListReservations(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("予約を列挙できませんでした: %w", err)
 	}
-
-	_, err = s.client.ListTrainSeats(ctx, sess, "こだま", "96号")
-	err = xerrors.Errorf("列車の座席座席列挙できません: %w", err)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.client.Reserve(ctx, sess)
-	err = xerrors.Errorf("予約ができません: %w", err)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.client.CommitReservation(ctx, sess, 1111)
-	err = xerrors.Errorf("予約を確定できませんでした: %w", err)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.client.ListReservations(ctx, sess)
-	err = xerrors.Errorf("予約を列挙できませんでした: %w", err)
-	if err != nil {
-		return err
-	}
+	log.Println(reservations)
 
 	return nil
 }

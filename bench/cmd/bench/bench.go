@@ -1,11 +1,18 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/logger"
+	"github.com/chibiegg/isucon9-final/bench/isutrain"
+	"github.com/chibiegg/isucon9-final/bench/mock"
+	"github.com/chibiegg/isucon9-final/bench/scenario"
 	"github.com/urfave/cli"
+	"go.uber.org/zap"
 )
 
 var (
@@ -17,6 +24,22 @@ var (
 	// デバッグフラグ
 	debug bool
 )
+
+func dumpFailedResult(messages []string) {
+	lgr := zap.S()
+
+	b, err := json.Marshal(map[string]interface{}{
+		"pass":     false,
+		"score":    0,
+		"messages": messages,
+	})
+	if err != nil {
+		lgr.Warn("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました", zap.Error(err))
+		fmt.Println(`{"pass": false, "score": 0, "messages": []}`)
+	}
+
+	fmt.Println(string(b))
+}
 
 var run = cli.Command{
 	Name:  "run",
@@ -48,30 +71,44 @@ var run = cli.Command{
 		},
 	},
 	Action: func(cliCtx *cli.Context) error {
-		// if debug {
-		// 	m := mock.Register()
-		// 	m.SetDelay(10 * time.Second)
-		// }
+		lgr, err := logger.InitZapLogger()
+		if err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
 
-		// client := isutrain.NewIsutrain("http://127.0.0.1:8000/")
+		if debug {
+			m := mock.Register()
+			log.Println(m.Delay())
+		}
 
-		// // initialize
-		// initSess, err := session.NewSessionForInitialize()
-		// if err != nil {
-		// 	return cli.NewExitError(err, 1)
-		// }
-		// _, err = client.Initialize(context.Background(), initSess)
-		// if err != nil {
-		// 	return cli.NewExitError(err, 1)
-		// }
+		// TODO: 初期データのロードなど用意
 
-		// // pretest
-		// err = scenario.PreTest()
-		// if err != nil {
-		// 	return cli.NewExitError(err, 1)
-		// }
+		// initialize
+		initClient, err := isutrain.NewClientForInitialize("http://127.0.0.1:8000/")
+		if err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
+		initClient.Initialize(context.Background())
+		if err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
 
-		// // bench
+		// pretest (まず、正しく動作できているかチェック. エラーが見つかったら、採点しようがないのでFAILにする)
+		testClient, err := isutrain.NewClient("http://127.0.0.1:8000/")
+		if err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
+		scenario.PreTest(testClient)
+		if bencherror.PreTestErrs.IsError() {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
+
+		// bench (ISUCOIN売り上げ計上と、減点カウントを行う)
 		// ctx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		// defer cancel()
 
@@ -84,16 +121,16 @@ var run = cli.Command{
 		// 	return cli.NewExitError(err, 1)
 		// }
 
-		// // posttest
-		// err = scenario.PostTest()
-		// if err != nil {
-		// 	return cli.NewExitError(err, 1)
-		// }
+		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
+		scenario.PostTest(testClient)
+		if bencherror.PostTestErrs.IsError() {
+			return cli.NewExitError(err, 1)
+		}
 
-		log.Printf("payment   = %s\n", paymentURI)
-		log.Printf("target    = %s\n", targetURI)
-		log.Printf("datadir   = %s\n", dataDir)
-		log.Printf("staticdir = %s\n", staticDir)
+		lgr.Infof("payment   = %s", paymentURI)
+		lgr.Infof("target    = %s", targetURI)
+		lgr.Infof("datadir   = %s", dataDir)
+		lgr.Infof("staticdir = %s", staticDir)
 
 		// 最終結果をstdoutへ書き出す
 		resultBytes, err := json.Marshal(map[string]interface{}{
