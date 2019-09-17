@@ -64,8 +64,8 @@
       </article>
 
       <article class="from">
-        <div>{{ from_station_name }}</div>
-        <select class="from" v-model="from_station">
+        <div>{{ from_station.name }}</div>
+        <select class="from" v-model="from_station_id">
           <option v-for="station in stations" v-bind:key="station.id" :value="station.id">
             {{ station.name }}
           </option>
@@ -75,8 +75,8 @@
         <div>→</div>
       </article>
       <article class="to">
-        <div>{{ to_station_name }}</div>
-        <select class="to" v-model="to_station">
+        <div>{{ to_station.name }}</div>
+        <select class="to" v-model="to_station_id">
           <option v-for="station in stations" v-bind:key="station.id" :value="station.id">
             {{ station.name }}
           </option>
@@ -135,37 +135,19 @@ export default {
       year: 2020,
       month: 1,
       day: "1",
-      from_station: "東京",
-      to_station: "大阪",
+      from_station_id: 0,
+      to_station_id: 0,
       adult: "1",
       child: "0",
       stations: []
     }
   },
   computed: {
-    from_station_name() {
-      var ret = ""
-      var station_id = this.from_station
-
-      this.stations.forEach(function(value){
-        if(value.id == station_id){
-          ret = value.name
-        }
-      })
-
-      return ret;
+    from_station() {
+      return apiService.getStation(this.from_station_id)
     },
-    to_station_name() {
-      var ret = ""
-      var station_id = this.to_station
-
-      this.stations.forEach(function(value){
-        if(value.id == station_id){
-          ret = value.name
-        }
-      })
-
-      return ret;
+    to_station() {
+      return apiService.getStation(this.to_station_id)
     },
   },
   methods: {
@@ -173,8 +155,8 @@ export default {
       apiService.getStations().then((res) => {
         console.log(res)
         this.stations = res
-        this.from_station = res[0].id
-        this.to_station = res[res.length-1].id
+        this.from_station_id = res[0].id
+        this.to_station_id = res[res.length-1].id
       })
     },
     search() {
@@ -182,8 +164,8 @@ export default {
         year: this.year,
         month: this.month,
         day: this.day,
-        from_station: this.from_station,
-        to_station: this.to_station,
+        from_station: this.from_station_id,
+        to_station: this.to_station_id,
         adult: this.adult,
         child: this.child
       }

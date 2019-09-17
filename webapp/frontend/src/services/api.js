@@ -5,6 +5,7 @@ class ApiService {
 
     constructor () {
         this.httpService = httpService
+        this.stations = []
     }
 
     // 列車検索
@@ -22,7 +23,25 @@ class ApiService {
     }
 
     async getStations () {
-      return await this.httpService.get('/api/stations')
+      var self = this
+      if (this.stations.length > 0){
+        console.log("using cache")
+        return this.stations
+      }
+      return await this.httpService.get('/api/stations').then(function(stations){
+        self.stations = stations
+        return self.stations
+      });
+    }
+
+    getStation(id) {
+      var ret = {"name": ""}
+      this.stations.forEach(function(value){
+        if(value.id == id){
+          ret = value
+        }
+      })
+      return ret
     }
 }
 
