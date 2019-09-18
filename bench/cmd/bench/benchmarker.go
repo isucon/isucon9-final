@@ -41,6 +41,7 @@ func (b *benchmarker) load(ctx context.Context) error {
 }
 
 func (b *benchmarker) run(ctx context.Context) error {
+	return nil
 	lgr := zap.S()
 	for {
 		select {

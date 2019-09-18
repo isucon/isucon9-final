@@ -2,7 +2,11 @@ package mock
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"path/filepath"
+	"runtime"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/jarcoal/httpmock"
@@ -58,6 +62,53 @@ func Register() *Mock {
 	httpmock.RegisterResponder("DELETE", config.MockCancelReservationPath, func(req *http.Request) (*http.Response, error) {
 		body, status := m.CancelReservation(req)
 		return httpmock.NewBytesResponse(status, body), nil
+	})
+
+	// Assets
+	_, file, _, _ := runtime.Caller(0)
+	testDir := filepath.Join(filepath.Dir(file), "testdata")
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/css/app.css", baseURL), func(req *http.Request) (*http.Response, error) {
+		b, err := ioutil.ReadFile(filepath.Join(testDir, "/css/app.css"))
+		if err != nil {
+			return httpmock.NewBytesResponse(http.StatusInternalServerError, []byte(http.StatusText(http.StatusInternalServerError))), err
+		}
+		return httpmock.NewBytesResponse(http.StatusOK, b), nil
+	})
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/img/logo.svg", baseURL), func(req *http.Request) (*http.Response, error) {
+		b, err := ioutil.ReadFile(filepath.Join(testDir, "/img/logo.svg"))
+		if err != nil {
+			return httpmock.NewBytesResponse(http.StatusInternalServerError, []byte(http.StatusText(http.StatusInternalServerError))), err
+		}
+		return httpmock.NewBytesResponse(http.StatusOK, b), nil
+	})
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/js/app.js", baseURL), func(req *http.Request) (*http.Response, error) {
+		b, err := ioutil.ReadFile(filepath.Join(testDir, "/js/app.js"))
+		if err != nil {
+			return httpmock.NewBytesResponse(http.StatusInternalServerError, []byte(http.StatusText(http.StatusInternalServerError))), err
+		}
+		return httpmock.NewBytesResponse(http.StatusOK, b), nil
+	})
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/js/chunk.js", baseURL), func(req *http.Request) (*http.Response, error) {
+		b, err := ioutil.ReadFile(filepath.Join(testDir, "/js/chunk.js"))
+		if err != nil {
+			return httpmock.NewBytesResponse(http.StatusInternalServerError, []byte(http.StatusText(http.StatusInternalServerError))), err
+		}
+		log.Println(string(b))
+		return httpmock.NewBytesResponse(http.StatusOK, b), nil
+	})
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/favicon.ico", baseURL), func(req *http.Request) (*http.Response, error) {
+		b, err := ioutil.ReadFile(filepath.Join(testDir, "/favicon.ico"))
+		if err != nil {
+			return httpmock.NewBytesResponse(http.StatusInternalServerError, []byte(http.StatusText(http.StatusInternalServerError))), err
+		}
+		return httpmock.NewBytesResponse(http.StatusOK, b), nil
+	})
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/index.html", baseURL), func(req *http.Request) (*http.Response, error) {
+		b, err := ioutil.ReadFile(filepath.Join(testDir, "/index.html"))
+		if err != nil {
+			return httpmock.NewBytesResponse(http.StatusInternalServerError, []byte(http.StatusText(http.StatusInternalServerError))), err
+		}
+		return httpmock.NewBytesResponse(http.StatusOK, b), nil
 	})
 
 	return m

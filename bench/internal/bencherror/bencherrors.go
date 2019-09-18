@@ -62,13 +62,13 @@ func (errs *BenchErrors) Penalty() uint64 {
 	)
 
 	penalty := config.ApplicationPenaltyWeight * errs.applicationCnt
-	lgr.Infof("アプリのエラーによるペナルティ減算後: %d", penalty)
+	lgr.Infof("アプリのエラーによる減算後ペナルティ: %d", penalty)
 
 	trivialCnt := errs.timeoutCnt + errs.temporaryCnt
 	if trivialCnt > config.TrivialPenaltyThreshold {
 		lgr.Warn("タイムアウトや一時的なエラーが閾値を超えています")
 		penalty += config.TrivialPenaltyWeight * (1 + (trivialCnt-config.TrivialPenaltyThreshold)/config.TrivialPenaltyPerCount)
-		lgr.Infof("タイムアウトや一時的なエラーによるペナルティ減算後: %d", penalty)
+		lgr.Infof("タイムアウトや一時的なエラーによる減算後ペナルティ: %d", penalty)
 	}
 
 	return penalty

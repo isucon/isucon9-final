@@ -2,10 +2,12 @@ package scenario
 
 import (
 	"context"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/assets"
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"golang.org/x/sync/errgroup"
@@ -14,29 +16,30 @@ import (
 // Guest訪問
 var (
 	ErrInitialTrainDatasetCount = errors.New("列車初期データセットの件数が一致しません")
+	ErrInvalidAssetHash         = errors.New("静的ファイルの内容が正しくありません")
 )
 
 // Pretest は、ベンチマーク前のアプリケーションが正常に動作できているか検証し、できていなければFAILとします
-func Pretest(client *isutrain.Client, staticDir string) {
+func Pretest(ctx context.Context, client *isutrain.Client, assets []*assets.Asset) {
 	pretestGrp, _ := errgroup.WithContext(context.Background())
 
 	// 静的ファイル
 	pretestGrp.Go(func() error {
-		pretestStaticFiles(staticDir)
+		pretestStaticFiles(ctx, client, assets)
 		return nil
 	})
 	// 正常系
 	pretestGrp.Go(func() error {
-		pretestNormalReservation(client)
+		pretestNormalReservation(ctx, client)
 		return nil
 	})
 	pretestGrp.Go(func() error {
-		pretestNormalSearch(client)
+		pretestNormalSearch(ctx, client)
 		return nil
 	})
 	// 異常系
 	pretestGrp.Go(func() error {
-		pretestAbnormalLogin(client)
+		pretestAbnormalLogin(ctx, client)
 		return nil
 	})
 
@@ -44,16 +47,29 @@ func Pretest(client *isutrain.Client, staticDir string) {
 }
 
 // 静的ファイル
-func pretestStaticFiles(staticDir string) error {
+func pretestStaticFiles(ctx context.Context, client *isutrain.Client, assets []*assets.Asset) error {
+	for _, asset := range assets {
+		b, err := client.DownloadAsset(ctx, asset.Path)
+		if err != nil {
+			bencherror.PreTestErrs.AddError(err)
+			return err
+		}
+
+		hash := sha256.Sum256(b)
+
+		if hash != asset.Hash {
+			err := bencherror.NewApplicationError(ErrInvalidAssetHash, "filename=%s, want=%s, but got=%s", asset.Path, asset.Hash, hash)
+			bencherror.PreTestErrs.AddError(err)
+			return err
+		}
+	}
 	return nil
 }
 
 // 正常系
 
 // preTestNormalReservation は予約までの一連の流れを検証します
-func pretestNormalReservation(client *isutrain.Client) {
-	ctx := context.Background()
-
+func pretestNormalReservation(ctx context.Context, client *isutrain.Client) {
 	if err := client.Register(ctx, "hoge", "hoge", nil); err != nil {
 		pretestErr := fmt.Errorf("ユーザ登録ができません: %w", err)
 		bencherror.PreTestErrs.AddError(pretestErr)
@@ -108,15 +124,13 @@ func pretestNormalReservation(client *isutrain.Client) {
 }
 
 // PreTestNormalSearch は検索条件を細かく指定して検索します
-func pretestNormalSearch(client *isutrain.Client) {
+func pretestNormalSearch(ctx context.Context, client *isutrain.Client) {
 }
 
 // 異常系
 
 // PreTestAbnormalLogin は不正なパスワードでのログインを試みます
-func pretestAbnormalLogin(client *isutrain.Client) {
-	ctx := context.Background()
-
+func pretestAbnormalLogin(ctx context.Context, client *isutrain.Client) {
 	if err := client.Login(ctx, "username", "password", nil); err != nil {
 
 	}

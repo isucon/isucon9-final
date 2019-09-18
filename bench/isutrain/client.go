@@ -5,8 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
@@ -20,12 +22,12 @@ type ClientOption struct {
 }
 
 type Client struct {
-	sess    *session
+	sess    *Session
 	baseURL string
 }
 
 func NewClient(targetBaseURL string) (*Client, error) {
-	sess, err := newSession()
+	sess, err := NewSession()
 	if err != nil {
 		return nil, err
 	}
@@ -146,6 +148,8 @@ func (c *Client) Login(ctx context.Context, username, password string, opts *Cli
 			return err
 		}
 	}
+
+	// pool.PutLoggedIn(c.sess)
 
 	return nil
 }
@@ -398,4 +402,32 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID string, op
 	}
 
 	return nil
+}
+
+func (c *Client) DownloadAsset(ctx context.Context, path string) ([]byte, error) {
+	baseURL, err := url.Parse(c.baseURL)
+	if err != nil {
+		return []byte{}, failure.Wrap(err, failure.Messagef("GET %s: BaseURLが不正です", path))
+	}
+	baseURL.Path = filepath.Join(baseURL.Path, path)
+
+	uri := baseURL.String()
+
+	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
+	if err != nil {
+		return []byte{}, failure.Wrap(err, failure.Messagef("GET %s: 静的ファイルのダウンロードに失敗しました", path))
+	}
+
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return []byte{}, failure.Wrap(err, failure.Messagef("GET %s: 静的ファイルのダウンロードに失敗しました", path))
+	}
+	defer resp.Body.Close()
+
+	if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusOK); err != nil {
+		bencherror.BenchmarkErrs.AddError(err)
+		return []byte{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です", path))
+	}
+
+	return ioutil.ReadAll(resp.Body)
 }

@@ -3,7 +3,6 @@ package mock
 import (
 	"encoding/json"
 	"log"
-	"math"
 	"net/http"
 	"sync/atomic"
 	"time"
@@ -36,7 +35,7 @@ func (m *Mock) SetDelay(second int) {
 
 func (m *Mock) updateDelay() {
 	if !m.forceDelay {
-		delayMagnification := math.Pow(2, float64(m.callCount))
+		delayMagnification := 5 * m.callCount
 		m.delay = time.Duration(delayMagnification) * time.Nanosecond
 		atomic.AddUint64(&m.callCount, 1)
 	}
