@@ -11,9 +11,13 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
-	"github.com/chibiegg/isucon9-final/bench/internal/consts"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
+	"github.com/morikuni/failure"
 )
+
+type ClientOption struct {
+	wantStatusCode int
+}
 
 type Client struct {
 	sess    *session
@@ -49,7 +53,7 @@ func (c *Client) ReplaceMockTransport() {
 }
 
 func (c *Client) Initialize(ctx context.Context) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, consts.InitializePath)
+	uri := fmt.Sprintf("%s%s", c.baseURL, config.InitializePath)
 
 	ctx, cancel := context.WithTimeout(ctx, config.InitializeTimeout)
 	defer cancel()
@@ -72,13 +76,11 @@ func (c *Client) Initialize(ctx context.Context) {
 		bencherror.InitializeErrs.AddError(err)
 		return
 	}
-
-	return
 }
 
-func (c *Client) Register(ctx context.Context, username, password string) error {
+func (c *Client) Register(ctx context.Context, username, password string, opts *ClientOption) error {
 	var (
-		uri  = fmt.Sprintf("%s%s", c.baseURL, consts.RegisterPath)
+		uri  = fmt.Sprintf("%s%s", c.baseURL, config.RegisterPath)
 		form = url.Values{}
 	)
 	form.Set("username", username)
@@ -86,25 +88,35 @@ func (c *Client) Register(ctx context.Context, username, password string) error 
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
 	if err != nil {
-		return err
+		return failure.Wrap(err, failure.Message("POST /register: リクエストに失敗しました"))
 	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return err
+		return failure.Wrap(err, failure.Message("POST /register: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusCreated {
-		// FIXME: 実装
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusAccepted); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /register: ステータスコードが不正です")))
+			return err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /register: ステータスコードが不正です")))
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (c *Client) Login(ctx context.Context, username, password string) error {
+func (c *Client) Login(ctx context.Context, username, password string, opts *ClientOption) error {
 	var (
-		uri  = fmt.Sprintf("%s%s", c.baseURL, consts.LoginPath)
+		uri  = fmt.Sprintf("%s%s", c.baseURL, config.LoginPath)
 		form = url.Values{}
 	)
 	form.Set("username", username)
@@ -112,27 +124,35 @@ func (c *Client) Login(ctx context.Context, username, password string) error {
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
 	if err != nil {
-		return err
+		return failure.Wrap(err, failure.Message("POST /login: リクエストに失敗しました"))
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return err
+		return failure.Wrap(err, failure.Message("POST /login: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		// FIXME: 実装
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusAccepted); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /login: ステータスコードが不正です")))
+			return err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /login: ステータスコードが不正です")))
+			return err
+		}
 	}
 
 	return nil
 }
 
 // ListStations は駅一覧列挙APIです
-func (c *Client) ListStations(ctx context.Context) ([]*Station, error) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, consts.ListStationsPath)
+func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Station, error) {
+	uri := fmt.Sprintf("%s%s", c.baseURL, config.ListStationsPath)
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
@@ -145,6 +165,18 @@ func (c *Client) ListStations(ctx context.Context) ([]*Station, error) {
 	}
 	defer resp.Body.Close()
 
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusOK); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /stations: ステータスコードが不正です")))
+			return []*Station{}, err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /stations: ステータスコードが不正です")))
+			return []*Station{}, err
+		}
+	}
+
 	var stations []*Station
 	if err := json.NewDecoder(resp.Body).Decode(&stations); err != nil {
 		// FIXME: 実装
@@ -155,8 +187,8 @@ func (c *Client) ListStations(ctx context.Context) ([]*Station, error) {
 }
 
 // SearchTrains は 列車検索APIです
-func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to string) ([]*TrainSearchResponse, error) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, consts.SearchTrainsPath)
+func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to string, opts *ClientOption) ([]*TrainSearchResponse, error) {
+	uri := fmt.Sprintf("%s%s", c.baseURL, config.SearchTrainsPath)
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
@@ -176,6 +208,18 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 	}
 	defer resp.Body.Close()
 
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusOK); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /trains: ステータスコードが不正です")))
+			return []*TrainSearchResponse{}, err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /trains: ステータスコードが不正です")))
+			return []*TrainSearchResponse{}, err
+		}
+	}
+
 	var trains []*TrainSearchResponse
 	if err := json.NewDecoder(resp.Body).Decode(&trains); err != nil {
 		// FIXME: 実装
@@ -185,8 +229,8 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 	return trains, nil
 }
 
-func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name string) (TrainSeats, error) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, consts.ListTrainSeatsPath)
+func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name string, opts *ClientOption) (TrainSeats, error) {
+	uri := fmt.Sprintf("%s%s", c.baseURL, config.ListTrainSeatsPath)
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
@@ -204,6 +248,18 @@ func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name str
 	}
 	defer resp.Body.Close()
 
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusOK); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /train/seats: ステータスコードが不正です")))
+			return TrainSeats{}, err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /train/seats: ステータスコードが不正です")))
+			return TrainSeats{}, err
+		}
+	}
+
 	var seats TrainSeats
 	if err := json.NewDecoder(resp.Body).Decode(&seats); err != nil {
 		return TrainSeats{}, err
@@ -212,9 +268,9 @@ func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name str
 	return seats, nil
 }
 
-func (c *Client) Reserve(ctx context.Context) (*ReservationResponse, error) {
+func (c *Client) Reserve(ctx context.Context, opts *ClientOption) (*ReservationResponse, error) {
 	var (
-		uri = fmt.Sprintf("%s%s", c.baseURL, consts.ReservePath)
+		uri = fmt.Sprintf("%s%s", c.baseURL, config.ReservePath)
 		// form = url.Values{}
 	)
 
@@ -223,22 +279,37 @@ func (c *Client) Reserve(ctx context.Context) (*ReservationResponse, error) {
 		return nil, err
 	}
 
+	req.Header.Set("Content-Type", "application/json")
+
 	resp, err := c.sess.do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusAccepted); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: ステータスコードが不正です")))
+			return nil, err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: ステータスコードが不正です")))
+			return nil, err
+		}
+	}
+
 	var reservation *ReservationResponse
 	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
+		bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: JSONのUnmarshalに失敗しました")))
 		return nil, err
 	}
 
 	return reservation, nil
 }
 
-func (c *Client) CommitReservation(ctx context.Context, reservationID string) error {
-	uri := fmt.Sprintf("%s%s", c.baseURL, consts.BuildCommitReservationPath(reservationID))
+func (c *Client) CommitReservation(ctx context.Context, reservationID string, opts *ClientOption) error {
+	uri := fmt.Sprintf("%s%s", c.baseURL, config.BuildCommitReservationPath(reservationID))
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, nil)
 	if err != nil {
@@ -251,15 +322,23 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID string) er
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusAccepted {
-		// FIXME: 実装
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusAccepted); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reservation/:id/commit: ステータスコードが不正です")))
+			return err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reservation/:id/commit: ステータスコードが不正です")))
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (c *Client) ListReservations(ctx context.Context) ([]*SeatReservation, error) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, consts.ListReservationsPath)
+func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*SeatReservation, error) {
+	uri := fmt.Sprintf("%s%s", c.baseURL, config.ListReservationsPath)
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
@@ -272,6 +351,18 @@ func (c *Client) ListReservations(ctx context.Context) ([]*SeatReservation, erro
 	}
 	defer resp.Body.Close()
 
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusOK); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /reservations: ステータスコードが不正です")))
+			return []*SeatReservation{}, err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /reservations: ステータスコードが不正です")))
+			return []*SeatReservation{}, err
+		}
+	}
+
 	var reservations []*SeatReservation
 	if err := json.NewDecoder(resp.Body).Decode(&reservations); err != nil {
 		return []*SeatReservation{}, err
@@ -280,8 +371,8 @@ func (c *Client) ListReservations(ctx context.Context) ([]*SeatReservation, erro
 	return reservations, nil
 }
 
-func (c *Client) CancelReservation(ctx context.Context, reservationID string) error {
-	uri := fmt.Sprintf("%s%s", c.baseURL, consts.BuildCancelReservationPath(reservationID))
+func (c *Client) CancelReservation(ctx context.Context, reservationID string, opts *ClientOption) error {
+	uri := fmt.Sprintf("%s%s", c.baseURL, config.BuildCancelReservationPath(reservationID))
 
 	req, err := c.sess.newRequest(ctx, http.MethodDelete, uri, nil)
 	if err != nil {
@@ -294,8 +385,16 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID string) er
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		// FIXME: 実装
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusNoContent); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("DELETE /reservation/:id/cancel: ステータスコードが不正です")))
+			return err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("DELETE /reservation/:id/cancel: ステータスコードが不正です")))
+			return err
+		}
 	}
 
 	return nil

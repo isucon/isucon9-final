@@ -48,7 +48,7 @@ func dumpFailedResult(messages []string) {
 		"messages": messages,
 	})
 	if err != nil {
-		lgr.Warn("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました", zap.Error(err))
+		lgr.Warnf("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました: %+v", err)
 		fmt.Println(`{"pass": false, "score": 0, "messages": []}`)
 	}
 
@@ -123,7 +123,7 @@ var run = cli.Command{
 
 		// pretest (まず、正しく動作できているかチェック. エラーが見つかったら、採点しようがないのでFAILにする)
 
-		scenario.Pretest(testClient)
+		scenario.Pretest(testClient, staticDir)
 		if bencherror.PreTestErrs.IsError() {
 			dumpFailedResult(bencherror.PreTestErrs.Msgs)
 			return cli.NewExitError(fmt.Errorf("Pretestに失敗しました"), 1)
@@ -133,7 +133,7 @@ var run = cli.Command{
 		ctx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		defer cancel()
 
-		benchmarker := newBenchmarker(targetURI)
+		benchmarker := newBenchmarker(targetURI, debug)
 		benchmarker.run(ctx)
 		if bencherror.BenchmarkErrs.IsFailure() {
 			dumpFailedResult(bencherror.BenchmarkErrs.Msgs)

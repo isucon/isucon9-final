@@ -1,4 +1,4 @@
-package xpool
+package xrandom
 
 // station
 var (

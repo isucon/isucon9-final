@@ -16,13 +16,13 @@ var (
 	ErrInitialTrainDatasetCount = errors.New("列車初期データセットの件数が一致しません")
 )
 
-// PreTest は、ベンチマーク前のアプリケーションが正常に動作できているか検証し、できていなければFAILとします
-func Pretest(client *isutrain.Client) {
+// Pretest は、ベンチマーク前のアプリケーションが正常に動作できているか検証し、できていなければFAILとします
+func Pretest(client *isutrain.Client, staticDir string) {
 	pretestGrp, _ := errgroup.WithContext(context.Background())
 
 	// 静的ファイル
 	pretestGrp.Go(func() error {
-		pretestStaticFiles()
+		pretestStaticFiles(staticDir)
 		return nil
 	})
 	// 正常系
@@ -41,11 +41,10 @@ func Pretest(client *isutrain.Client) {
 	})
 
 	pretestGrp.Wait()
-	return
 }
 
 // 静的ファイル
-func pretestStaticFiles() error {
+func pretestStaticFiles(staticDir string) error {
 	return nil
 }
 
@@ -55,53 +54,53 @@ func pretestStaticFiles() error {
 func pretestNormalReservation(client *isutrain.Client) {
 	ctx := context.Background()
 
-	if err := client.Register(ctx, "hoge", "hoge"); err != nil {
+	if err := client.Register(ctx, "hoge", "hoge", nil); err != nil {
 		pretestErr := fmt.Errorf("ユーザ登録ができません: %w", err)
 		bencherror.PreTestErrs.AddError(pretestErr)
 		return
 	}
 
-	if err := client.Login(ctx, "hoge", "hoge"); err != nil {
+	if err := client.Login(ctx, "hoge", "hoge", nil); err != nil {
 		pretestErr := fmt.Errorf("ユーザログインができません: %w", err)
 		bencherror.PreTestErrs.AddError(pretestErr)
 		return
 	}
 
-	_, err := client.ListStations(ctx)
+	_, err := client.ListStations(ctx, nil)
 	if err != nil {
 		pretestErr := fmt.Errorf("駅一覧を取得できません: %w", err)
 		bencherror.PreTestErrs.AddError(pretestErr)
 		return
 	}
 
-	_, err = client.SearchTrains(ctx, time.Now(), "東京", "大阪")
+	_, err = client.SearchTrains(ctx, time.Now(), "東京", "大阪", nil)
 	if err != nil {
 		pretestErr := fmt.Errorf("列車検索ができません: %w", err)
 		bencherror.PreTestErrs.AddError(pretestErr)
 		return
 	}
 
-	_, err = client.ListTrainSeats(ctx, "こだま", "96号")
+	_, err = client.ListTrainSeats(ctx, "こだま", "96号", nil)
 	if err != nil {
 		pretestErr := fmt.Errorf("列車の座席座席列挙できません: %w", err)
 		bencherror.PreTestErrs.AddError(pretestErr)
 		return
 	}
 
-	reservation, err := client.Reserve(ctx)
+	reservation, err := client.Reserve(ctx, nil)
 	if err != nil {
 		pretestErr := fmt.Errorf("予約ができません: %w", err)
 		bencherror.PreTestErrs.AddError(pretestErr)
 		return
 	}
 
-	if err = client.CommitReservation(ctx, reservation.ReservationID); err != nil {
+	if err = client.CommitReservation(ctx, reservation.ReservationID, nil); err != nil {
 		pretestErr := fmt.Errorf("予約を確定できませんでした: %w", err)
 		bencherror.PreTestErrs.AddError(pretestErr)
 		return
 	}
 
-	if err := client.CancelReservation(ctx, reservation.ReservationID); err != nil {
+	if err := client.CancelReservation(ctx, reservation.ReservationID, nil); err != nil {
 		pretestErr := fmt.Errorf("予約をキャンセルできませんでした: %w", err)
 		bencherror.PreTestErrs.AddError(pretestErr)
 		return
@@ -118,7 +117,7 @@ func pretestNormalSearch(client *isutrain.Client) {
 func pretestAbnormalLogin(client *isutrain.Client) {
 	ctx := context.Background()
 
-	if err := client.Login(ctx, "username", "password"); err != nil {
+	if err := client.Login(ctx, "username", "password", nil); err != nil {
 
 	}
 }

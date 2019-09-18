@@ -193,7 +193,7 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 
 	log.Println("[mock] Reserve")
 
-	b, err := json.Marshal(isutrain.ReservationResponse{
+	b, err := json.Marshal(&isutrain.ReservationResponse{
 		ReservationID: "1111111111",
 		IsOk:          true,
 	})
@@ -209,15 +209,14 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
 	<-time.After(m.delay)
 	// 予約IDを受け取って、確定するだけ
-	if err := req.ParseForm(); err != nil {
-		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
-	}
 	log.Println("[mock] CommitReservation")
 
-	_, err := httpmock.GetSubmatchAsUint(req, 1)
+	reservationID, err := httpmock.GetSubmatchAsUint(req, 1)
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+
+	log.Printf("[mock] CommitReservation: reservationID = %d\n", reservationID)
 
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
@@ -226,15 +225,14 @@ func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
 func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 	<-time.After(m.delay)
 	// 予約IDを受け取って
-	if err := req.ParseForm(); err != nil {
-		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
-	}
 	log.Println("[mock] CancelReservation")
 
-	_, err := httpmock.GetSubmatchAsUint(req, 1)
+	reservationID, err := httpmock.GetSubmatchAsUint(req, 1)
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+
+	log.Printf("[mock] CancelReservation: reservationID = %d\n", reservationID)
 
 	return []byte(http.StatusText(http.StatusNoContent)), http.StatusNoContent
 }

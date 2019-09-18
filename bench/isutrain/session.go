@@ -11,7 +11,6 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
-	"github.com/chibiegg/isucon9-final/bench/internal/consts"
 	"golang.org/x/xerrors"
 )
 
@@ -70,7 +69,7 @@ func (sess *session) newRequest(ctx context.Context, method, uri string, body io
 	}
 
 	req.WithContext(ctx)
-	req.Header.Add("User-Agent", consts.UserAgent)
+	req.Header.Add("User-Agent", config.UserAgent)
 
 	return req, nil
 }

@@ -1,8 +1,8 @@
-package xpool
+package xrandom
 
 import "math/rand"
 
-func GetRandomStation() string {
+func GetRandomStations() string {
 	idx := rand.Intn(len(stations))
 	return stations[idx]
 }
