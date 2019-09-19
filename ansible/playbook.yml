@@ -5,3 +5,8 @@
   roles:
     - common
     - docker
+
+- hosts: user
+  become: yes
+  roles:
+    - challenge
