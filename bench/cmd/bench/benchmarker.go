@@ -12,14 +12,11 @@ type benchmarker struct {
 	BaseURL string
 
 	level int
-
-	debug bool
 }
 
-func newBenchmarker(baseURL string, debug bool) *benchmarker {
+func newBenchmarker(baseURL string) *benchmarker {
 	return &benchmarker{
 		BaseURL: baseURL,
-		debug:   debug,
 	}
 }
 
@@ -41,7 +38,6 @@ func (b *benchmarker) load(ctx context.Context) error {
 }
 
 func (b *benchmarker) run(ctx context.Context) error {
-	return nil
 	lgr := zap.S()
 	for {
 		select {

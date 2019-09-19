@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
+	"net/url"
+	"path/filepath"
 
-	"go.uber.org/zap"
+	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 )
 
 var (
@@ -16,43 +18,49 @@ var (
 )
 
 type Client struct {
-	BaseURL string
+	BaseURL *url.URL
 }
 
-func NewClient(baseURL string) *Client {
-	return &Client{
-		BaseURL: baseURL,
+func NewClient(baseURL string) (*Client, error) {
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return nil, err
 	}
+
+	return &Client{
+		BaseURL: u,
+	}, nil
 }
 
 func (c *Client) Initialize() error {
-	uri := fmt.Sprintf("%s/initialize", c.BaseURL)
+	u := c.BaseURL
+	u.Path = filepath.Join(u.Path, config.PaymentInitializePath)
 
-	req, err := http.NewRequest(http.MethodPost, uri, nil)
+	req, err := http.NewRequest(http.MethodPost, u.String(), nil)
 	if err != nil {
-		return err
+		return bencherror.NewCriticalError(err, "課金APIへのリクエストが失敗しました. 運営に確認をお願いいたします")
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return err
+		return bencherror.NewCriticalError(err, "課金APIへのリクエストが失敗しました. 運営に確認をお願いいたします")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrInitializePayment
+		return bencherror.NewCriticalError(ErrPaymentResult, "課金APIから決済結果取得時、不正なステータスコード(=%d)が返却されました. 運営に確認をお願いいたします", resp.StatusCode)
 	}
 
 	return nil
 }
 
 func (c *Client) Result(ctx context.Context) (*PaymentResult, error) {
-	lgr := zap.S()
-	uri := fmt.Sprintf("%s/result", c.BaseURL)
+	u := c.BaseURL
+	u.Path = filepath.Join(u.Path, config.PaymentResultPath)
 
-	req, err := http.NewRequest(http.MethodGet, uri, nil)
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
-		return nil, err
+		return nil, bencherror.NewCriticalError(err, "課金APIから決済結果を取得できませんでした. 運営に確認をお願いいたします")
 	}
 
 	resp, err := http.DefaultClient.Do(req)
@@ -62,8 +70,7 @@ func (c *Client) Result(ctx context.Context) (*PaymentResult, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		lgr.Warnf("課金APIの結果取得でステータスコードが不正: %d", resp.StatusCode)
-		return nil, ErrPaymentResult
+		return nil, bencherror.NewCriticalError(ErrPaymentResult, "課金APIから決済結果取得時、不正なステータスコード(=%d)が返却されました. 運営に確認をお願いいたします", resp.StatusCode)
 	}
 
 	var result *PaymentResult
@@ -72,8 +79,7 @@ func (c *Client) Result(ctx context.Context) (*PaymentResult, error) {
 	}
 
 	if !result.IsOK {
-		lgr.Warn("課金APIの結果でis_okがfalse")
-		return nil, ErrPaymentResult
+		return nil, bencherror.NewCriticalError(ErrPaymentResult, "課金APIで処理が失敗しました. 運営に確認をお願いいたします")
 	}
 
 	return result, nil

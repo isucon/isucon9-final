@@ -37,7 +37,7 @@ func TestInitializeBenchError(t *testing.T) {
 
 	m := mock.Register()
 	m.Inject(func(path string) error {
-		if path == config.InitializePath {
+		if path == config.IsutrainInitializePath {
 			return errors.New("")
 		}
 		return nil

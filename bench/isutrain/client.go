@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -23,7 +22,7 @@ type ClientOption struct {
 
 type Client struct {
 	sess    *Session
-	baseURL string
+	baseURL *url.URL
 }
 
 func NewClient(targetBaseURL string) (*Client, error) {
@@ -31,9 +30,15 @@ func NewClient(targetBaseURL string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	u, err := url.Parse(targetBaseURL)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Client{
 		sess:    sess,
-		baseURL: targetBaseURL,
+		baseURL: u,
 	}, nil
 }
 
@@ -42,9 +47,15 @@ func NewClientForInitialize(targetBaseURL string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	u, err := url.Parse(targetBaseURL)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Client{
 		sess:    sess,
-		baseURL: targetBaseURL,
+		baseURL: u,
 	}, nil
 }
 
@@ -55,12 +66,13 @@ func (c *Client) ReplaceMockTransport() {
 }
 
 func (c *Client) Initialize(ctx context.Context) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, config.InitializePath)
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, config.IsutrainInitializePath)
 
 	ctx, cancel := context.WithTimeout(ctx, config.InitializeTimeout)
 	defer cancel()
 
-	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
 	if err != nil {
 		bencherror.InitializeErrs.AddError(err)
 		return
@@ -82,13 +94,14 @@ func (c *Client) Initialize(ctx context.Context) {
 
 func (c *Client) Register(ctx context.Context, username, password string, opts *ClientOption) error {
 	var (
-		uri  = fmt.Sprintf("%s%s", c.baseURL, config.RegisterPath)
+		u    = *c.baseURL
 		form = url.Values{}
 	)
+	u.Path = filepath.Join(u.Path, config.IsutrainRegisterPath)
 	form.Set("username", username)
 	form.Set("password", password)
 
-	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBufferString(form.Encode()))
 	if err != nil {
 		return failure.Wrap(err, failure.Message("POST /register: リクエストに失敗しました"))
 	}
@@ -118,13 +131,14 @@ func (c *Client) Register(ctx context.Context, username, password string, opts *
 
 func (c *Client) Login(ctx context.Context, username, password string, opts *ClientOption) error {
 	var (
-		uri  = fmt.Sprintf("%s%s", c.baseURL, config.LoginPath)
+		u    = *c.baseURL
 		form = url.Values{}
 	)
+	u.Path = filepath.Join(u.Path, config.IsutrainLoginPath)
 	form.Set("username", username)
 	form.Set("password", password)
 
-	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, bytes.NewBufferString(form.Encode()))
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBufferString(form.Encode()))
 	if err != nil {
 		return failure.Wrap(err, failure.Message("POST /login: リクエストに失敗しました"))
 	}
@@ -156,9 +170,10 @@ func (c *Client) Login(ctx context.Context, username, password string, opts *Cli
 
 // ListStations は駅一覧列挙APIです
 func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Station, error) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, config.ListStationsPath)
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, config.IsutrainListStationsPath)
 
-	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return []*Station{}, err
 	}
@@ -192,9 +207,10 @@ func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Stati
 
 // SearchTrains は 列車検索APIです
 func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to string, opts *ClientOption) ([]*TrainSearchResponse, error) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, config.SearchTrainsPath)
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, config.IsutrainSearchTrainsPath)
 
-	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return []*TrainSearchResponse{}, err
 	}
@@ -234,9 +250,10 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 }
 
 func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name string, opts *ClientOption) (TrainSeats, error) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, config.ListTrainSeatsPath)
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, config.IsutrainListTrainSeatsPath)
 
-	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return TrainSeats{}, err
 	}
@@ -274,11 +291,12 @@ func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name str
 
 func (c *Client) Reserve(ctx context.Context, opts *ClientOption) (*ReservationResponse, error) {
 	var (
-		uri = fmt.Sprintf("%s%s", c.baseURL, config.ReservePath)
+		u = *c.baseURL
 		// form = url.Values{}
 	)
+	u.Path = filepath.Join(u.Path, config.IsutrainReservePath)
 
-	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -313,9 +331,10 @@ func (c *Client) Reserve(ctx context.Context, opts *ClientOption) (*ReservationR
 }
 
 func (c *Client) CommitReservation(ctx context.Context, reservationID string, opts *ClientOption) error {
-	uri := fmt.Sprintf("%s%s", c.baseURL, config.BuildCommitReservationPath(reservationID))
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, config.IsutrainBuildCommitReservationPath(reservationID))
 
-	req, err := c.sess.newRequest(ctx, http.MethodPost, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
 	if err != nil {
 		return err
 	}
@@ -342,9 +361,10 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID string, op
 }
 
 func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*SeatReservation, error) {
-	uri := fmt.Sprintf("%s%s", c.baseURL, config.ListReservationsPath)
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, config.IsutrainListReservationsPath)
 
-	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return []*SeatReservation{}, err
 	}
@@ -376,9 +396,10 @@ func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*S
 }
 
 func (c *Client) CancelReservation(ctx context.Context, reservationID string, opts *ClientOption) error {
-	uri := fmt.Sprintf("%s%s", c.baseURL, config.BuildCancelReservationPath(reservationID))
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, config.IsutrainBuildCancelReservationPath(reservationID))
 
-	req, err := c.sess.newRequest(ctx, http.MethodDelete, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodDelete, u.String(), nil)
 	if err != nil {
 		return err
 	}
@@ -405,15 +426,10 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID string, op
 }
 
 func (c *Client) DownloadAsset(ctx context.Context, path string) ([]byte, error) {
-	baseURL, err := url.Parse(c.baseURL)
-	if err != nil {
-		return []byte{}, failure.Wrap(err, failure.Messagef("GET %s: BaseURLが不正です", path))
-	}
-	baseURL.Path = filepath.Join(baseURL.Path, path)
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, path)
 
-	uri := baseURL.String()
-
-	req, err := c.sess.newRequest(ctx, http.MethodGet, uri, nil)
+	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return []byte{}, failure.Wrap(err, failure.Messagef("GET %s: 静的ファイルのダウンロードに失敗しました", path))
 	}

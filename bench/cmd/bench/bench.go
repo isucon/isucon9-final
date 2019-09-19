@@ -11,6 +11,7 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/internal/logger"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/mock"
+	"github.com/chibiegg/isucon9-final/bench/payment"
 	"github.com/chibiegg/isucon9-final/bench/scenario"
 	"github.com/jarcoal/httpmock"
 	"github.com/urfave/cli"
@@ -76,7 +77,7 @@ var run = cli.Command{
 		},
 		cli.StringFlag{
 			Name:        "assetdir",
-			Value:       "/home/isucon/isucon9-final/static",
+			Value:       "assets/testdata",
 			Destination: &assetDir,
 		},
 	},
@@ -95,7 +96,6 @@ var run = cli.Command{
 			return cli.NewExitError(err, 1)
 		}
 
-		// FIXME: initClientとtestClient、まとめて良さそうか
 		initClient, err := isutrain.NewClientForInitialize(targetURI)
 		if err != nil {
 			dumpFailedResult([]string{})
@@ -103,6 +103,12 @@ var run = cli.Command{
 		}
 
 		testClient, err := isutrain.NewClient(targetURI)
+		if err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
+
+		paymentClient, err := payment.NewClient(paymentURI)
 		if err != nil {
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
@@ -138,7 +144,7 @@ var run = cli.Command{
 		benchCtx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		defer cancel()
 
-		benchmarker := newBenchmarker(targetURI, debug)
+		benchmarker := newBenchmarker(targetURI)
 		benchmarker.run(benchCtx)
 		if bencherror.BenchmarkErrs.IsFailure() {
 			dumpFailedResult(bencherror.BenchmarkErrs.Msgs)
@@ -147,7 +153,13 @@ var run = cli.Command{
 
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
 		// FIXME: 課金用のクライアントを作り、それを渡す様に変更
-		score := scenario.FinalCheck(testClient)
+		score, err := scenario.FinalCheck(ctx, paymentClient)
+		if err != nil {
+			dumpFailedResult(bencherror.BenchmarkErrs.Msgs)
+			return cli.NewExitError(err, 1)
+		}
+
+		lgr.Infof("最終チェックによるスコア: %d", score)
 
 		// エラーカウントから、スコアを減点
 		score -= bencherror.BenchmarkErrs.Penalty()

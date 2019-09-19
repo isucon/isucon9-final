@@ -43,13 +43,14 @@ func (errs *BenchErrors) IsFailure() bool {
 	errs.mu.RLock()
 	defer errs.mu.RUnlock()
 
-	if errs.criticalCnt > 0 || errs.applicationCnt >= 10 {
+	// if errs.criticalCnt > 0 || errs.applicationCnt >= 10 {
+	if errs.criticalCnt > 0 || errs.applicationCnt >= 1000 {
 		return true
 	}
 	return false
 }
 
-func (errs *BenchErrors) Penalty() uint64 {
+func (errs *BenchErrors) Penalty() int64 {
 	errs.mu.RLock()
 	defer errs.mu.RUnlock()
 
@@ -62,16 +63,16 @@ func (errs *BenchErrors) Penalty() uint64 {
 	)
 
 	penalty := config.ApplicationPenaltyWeight * errs.applicationCnt
-	lgr.Infof("アプリのエラーによる減算後ペナルティ: %d", penalty)
+	lgr.Infof("アプリのエラーによるペナルティ: %d", penalty)
 
 	trivialCnt := errs.timeoutCnt + errs.temporaryCnt
 	if trivialCnt > config.TrivialPenaltyThreshold {
 		lgr.Warn("タイムアウトや一時的なエラーが閾値を超えています")
 		penalty += config.TrivialPenaltyWeight * (1 + (trivialCnt-config.TrivialPenaltyThreshold)/config.TrivialPenaltyPerCount)
-		lgr.Infof("タイムアウトや一時的なエラーによる減算後ペナルティ: %d", penalty)
+		lgr.Infof("タイムアウトや一時的なエラーによるペナルティ: %d", penalty)
 	}
 
-	return penalty
+	return int64(penalty)
 }
 
 func (errs *BenchErrors) AddError(err error) {
