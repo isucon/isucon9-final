@@ -1,25 +1,48 @@
 package server
 
 import (
-	_ "net/http/pprof"
 	"context"
-	"time"
-	"sync"
 	"log"
+	_ "net/http/pprof"
+	"sync"
+	"time"
 
+	"github.com/golang/protobuf/ptypes"
+	"github.com/nu7hatch/gouuid"
+	"github.com/rs/xid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"payment/config"
 	pb "payment/pb"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/rs/xid"
-	"github.com/nu7hatch/gouuid"
-	"google.golang.org/grpc/status"
-	"google.golang.org/grpc/codes"
 )
+
+var rawDataPool = sync.Pool{
+	New: func() interface{} {
+		return &pb.RawData{
+			PaymentInformation: &pb.PaymentInformation{},
+			CardInformation:    &pb.CardInformation{},
+		}
+	},
+}
+
+func getRawData() *pb.RawData {
+	return rawDataPool.Get().(*pb.RawData)
+}
+
+func putRawData(rawData *pb.RawData) {
+	rawDataPool.Put(rawData)
+}
+
+func init() {
+	for i := 0; i < 1000000; i++ {
+		putRawData(getRawData())
+	}
+}
 
 type Server struct {
 	PayInfoMap  map[string]pb.PaymentInformation
 	CardInfoMap map[string]pb.CardInformation
-	mu sync.RWMutex
+	mu          sync.RWMutex
 }
 
 func NewNetworkServer(c *config.Config) (*Server, error) {
@@ -115,7 +138,7 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest) (*pb.CancelPaymentResponse, error) {
 	done := make(chan struct{}, 1)
 	ec := make(chan error, 1)
-	go func(){
+	go func() {
 		s.mu.RLock()
 		paydata, ok := s.PayInfoMap[req.PaymentId]
 		s.mu.RUnlock()
@@ -127,10 +150,10 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 		ec <- status.Errorf(codes.NotFound, "PaymentID Not Found")
 	}()
 	select {
-	case <- done:
+	case <-done:
 		return &pb.CancelPaymentResponse{IsOk: true}, nil
-	case err := <- ec:
-		return &pb.CancelPaymentResponse{IsOk: false}, err 
+	case err := <-ec:
+		return &pb.CancelPaymentResponse{IsOk: false}, err
 	}
 }
 
@@ -138,7 +161,7 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 func (s *Server) BulkCancelPayment(ctx context.Context, req *pb.BulkCancelPaymentRequest) (*pb.BulkCancelPaymentResponse, error) {
 	done := make(chan int32, 1)
 	ec := make(chan int32, 1)
-	go func(){
+	go func() {
 		s.mu.Lock()
 		if len(req.PaymentId) < 1 {
 			ec <- 0
@@ -158,23 +181,23 @@ func (s *Server) BulkCancelPayment(ctx context.Context, req *pb.BulkCancelPaymen
 		done <- i
 	}()
 	select {
-	case num := <- done:
+	case num := <-done:
 		s.mu.Unlock()
 		time.Sleep(time.Second * 1)
 		return &pb.BulkCancelPaymentResponse{Deleted: num}, nil
-	case num := <- ec:
+	case num := <-ec:
 		s.mu.Unlock()
 		time.Sleep(time.Second * 1)
 		return &pb.BulkCancelPaymentResponse{Deleted: num}, nil
 	}
-	return nil,nil
+	return nil, nil
 }
 
 //決済情報を取得する
 func (s *Server) GetPaymentInformation(ctx context.Context, req *pb.GetPaymentInformationRequest) (*pb.GetPaymentInformationResponse, error) {
 	done := make(chan *pb.GetPaymentInformationResponse, 1)
 	ec := make(chan error, 1)
-	go func(){
+	go func() {
 		s.mu.RLock()
 		id, ok := s.PayInfoMap[req.PaymentId]
 		s.mu.RUnlock()
@@ -187,7 +210,7 @@ func (s *Server) GetPaymentInformation(ctx context.Context, req *pb.GetPaymentIn
 	select {
 	case r := <-done:
 		return r, nil
-	case err := <- ec:
+	case err := <-ec:
 		return &pb.GetPaymentInformationResponse{PaymentInformation: nil, IsOk: false}, err
 	}
 }
@@ -196,7 +219,7 @@ func (s *Server) GetPaymentInformation(ctx context.Context, req *pb.GetPaymentIn
 func (s *Server) Initialize(ctx context.Context, req *pb.InitializeRequest) (*pb.InitializeResponse, error) {
 	done := make(chan struct{}, 1)
 	ec := make(chan error, 1)
-	go func(){
+	go func() {
 		s.mu.Lock()
 		s.PayInfoMap = nil
 		s.CardInfoMap = nil
@@ -208,7 +231,7 @@ func (s *Server) Initialize(ctx context.Context, req *pb.InitializeRequest) (*pb
 	select {
 	case <-done:
 		return &pb.InitializeResponse{IsOk: true}, nil
-	case err := <- ec:
+	case err := <-ec:
 		return &pb.InitializeResponse{IsOk: false}, err
 	}
 }
@@ -217,29 +240,25 @@ func (s *Server) Initialize(ctx context.Context, req *pb.InitializeRequest) (*pb
 func (s *Server) GetResult(ctx context.Context, req *pb.GetResultRequest) (*pb.GetResultResponse, error) {
 	done := make(chan *pb.GetResultResponse, 1)
 	ec := make(chan error, 1)
-	go func(){
-		log.Printf("Card count: %d\n",len(s.CardInfoMap))
-		log.Printf("Payment count: %d\n",len(s.PayInfoMap))
+	go func() {
+		log.Printf("Card count: %d\n", len(s.CardInfoMap))
+		log.Printf("Payment count: %d\n", len(s.PayInfoMap))
 
-		payinfo := &pb.PaymentInformation{}
-		cardinfo := &pb.CardInformation{}
 		raw := []*pb.RawData{}
 		s.mu.RLock()
 		for k, v := range s.PayInfoMap {
-			payinfo.CardToken = k
-			payinfo.Datetime =  v.Datetime
-			payinfo.Amount = v.Amount
-			payinfo.IsCanceled = v.IsCanceled
+			rawData := getRawData()
+			defer putRawData(rawData)
+			rawData.PaymentInformation.CardToken = k
+			rawData.PaymentInformation.Datetime = v.Datetime
+			rawData.PaymentInformation.Amount = v.Amount
+			rawData.PaymentInformation.IsCanceled = v.IsCanceled
 
-			cardinfo.CardNumber = s.CardInfoMap[k].CardNumber
-			cardinfo.Cvv = s.CardInfoMap[k].Cvv
-			cardinfo.ExpiryDate = s.CardInfoMap[k].ExpiryDate
+			rawData.CardInformation.CardNumber = s.CardInfoMap[k].CardNumber
+			rawData.CardInformation.Cvv = s.CardInfoMap[k].Cvv
+			rawData.CardInformation.ExpiryDate = s.CardInfoMap[k].ExpiryDate
 
-			rawdata := &pb.RawData {
-				PaymentInformation: payinfo,
-				CardInformation: cardinfo,
-			}
-			raw = append(raw, rawdata)
+			raw = append(raw, rawData)
 		}
 		s.mu.RUnlock()
 		done <- &pb.GetResultResponse{RawData: raw, IsOk: true}
@@ -247,7 +266,7 @@ func (s *Server) GetResult(ctx context.Context, req *pb.GetResultRequest) (*pb.G
 	select {
 	case r := <-done:
 		return r, nil
-	case err := <- ec:
+	case err := <-ec:
 		return &pb.GetResultResponse{IsOk: false}, err
 	}
 }
