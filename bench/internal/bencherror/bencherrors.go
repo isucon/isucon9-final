@@ -3,7 +3,7 @@ package bencherror
 import (
 	"sync"
 
-	"github.com/chibiegg/isucon9-final/bench/internal/consts"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"go.uber.org/zap"
 )
 
@@ -43,24 +43,36 @@ func (errs *BenchErrors) IsFailure() bool {
 	errs.mu.RLock()
 	defer errs.mu.RUnlock()
 
-	if errs.criticalCnt > 0 || errs.applicationCnt >= 10 {
+	// if errs.criticalCnt > 0 || errs.applicationCnt >= 10 {
+	if errs.criticalCnt > 0 || errs.applicationCnt >= 1000 {
 		return true
 	}
 	return false
 }
 
-func (errs *BenchErrors) Penalty() uint64 {
+func (errs *BenchErrors) Penalty() int64 {
 	errs.mu.RLock()
 	defer errs.mu.RUnlock()
 
-	penalty := consts.ApplicationPenaltyWeight * errs.applicationCnt
+	lgr := zap.S()
+	lgr.Infow("エラーカウンタ覧",
+		"critical", errs.criticalCnt,
+		"application", errs.applicationCnt,
+		"timeout", errs.timeoutCnt,
+		"temporary", errs.temporaryCnt,
+	)
+
+	penalty := config.ApplicationPenaltyWeight * errs.applicationCnt
+	lgr.Infof("アプリのエラーによるペナルティ: %d", penalty)
 
 	trivialCnt := errs.timeoutCnt + errs.temporaryCnt
-	if trivialCnt > consts.TrivialPenaltyThreshold {
-		penalty += consts.TrivialPenaltyWeight * (1 + (trivialCnt-consts.TrivialPenaltyThreshold)/consts.TrivialPenaltyPerCount)
+	if trivialCnt > config.TrivialPenaltyThreshold {
+		lgr.Warn("タイムアウトや一時的なエラーが閾値を超えています")
+		penalty += config.TrivialPenaltyWeight * (1 + (trivialCnt-config.TrivialPenaltyThreshold)/config.TrivialPenaltyPerCount)
+		lgr.Infof("タイムアウトや一時的なエラーによるペナルティ: %d", penalty)
 	}
 
-	return penalty
+	return int64(penalty)
 }
 
 func (errs *BenchErrors) AddError(err error) {
@@ -73,7 +85,7 @@ func (errs *BenchErrors) AddError(err error) {
 		return
 	}
 
-	lgr.Warn("エラーを追加", zap.Error(err))
+	lgr.Warnf("エラーを追加: %+v", err)
 
 	// エラーに応じたメッセージを追加し、カウンタをインクリメント
 	if msg, code, ok := extractCode(err); ok {

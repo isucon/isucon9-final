@@ -1,4 +1,4 @@
-package consts
+package config
 
 const (
 	// UserAgent はベンチマーク実施時に用いるユーザエージェントです

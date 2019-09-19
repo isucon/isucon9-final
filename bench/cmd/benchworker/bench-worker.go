@@ -63,8 +63,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		paymentUri = "https://localhost:5000"
 		targetUri  = fmt.Sprintf("http://%s", targetServer.GlobalIP)
 
-		dataDir   = "/home/isucon/isutrain/initial-data"
-		staticDir = "/home/isucon/isutrain/webapp/public/static"
+		assetDir = "/home/isucon/isutrain/webapp/public/static"
 	)
 
 	var stdout, stderr bytes.Buffer
@@ -72,8 +71,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		"run",
 		"--payment=" + paymentUri,
 		"--target=" + targetUri,
-		"--datadir=" + dataDir,
-		"--staticdir=" + staticDir,
+		"--assetdir=" + assetDir,
 	}...)
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr

@@ -5,7 +5,7 @@ import "time"
 type PaymentInformation struct {
 	CardToken  string    `json:"card_token"`
 	Datetime   time.Time `json:"datetime"`
-	Amount     int       `json:"amount"`
+	Amount     int64     `json:"amount"`
 	IsCanceled bool      `json:"is_canceled"`
 }
 

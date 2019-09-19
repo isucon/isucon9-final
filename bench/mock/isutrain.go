@@ -2,10 +2,7 @@ package mock
 
 import (
 	"encoding/json"
-	"log"
-	"math"
 	"net/http"
-	"sync/atomic"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
@@ -15,35 +12,27 @@ import (
 
 // Mock は `isutrain` のモック実装です
 type Mock struct {
-	delay      time.Duration
-	forceDelay bool
-	callCount  uint64
+	LoginDelay             time.Duration
+	ListStationsDelay      time.Duration
+	SearchTrainsDelay      time.Duration
+	ListTrainSeatsDelay    time.Duration
+	ReserveDelay           time.Duration
+	CommitReservationDelay time.Duration
+	CancelReservationDelay time.Duration
+	ListReservationDelay   time.Duration
+
 	injectFunc func(path string) error
+
+	paymentMock *paymentMock
 }
 
-func NewMock() *Mock {
+func NewMock(paymentMock *paymentMock) *Mock {
 	return &Mock{
 		injectFunc: func(path string) error {
 			return nil
 		},
+		paymentMock: paymentMock,
 	}
-}
-
-func (m *Mock) SetDelay(second int) {
-	m.delay = time.Duration(second) * time.Second
-	m.forceDelay = true
-}
-
-func (m *Mock) updateDelay() {
-	if !m.forceDelay {
-		delayMagnification := math.Pow(2, float64(m.callCount))
-		m.delay = time.Duration(delayMagnification) * time.Nanosecond
-		atomic.AddUint64(&m.callCount, 1)
-	}
-}
-
-func (m *Mock) Delay() time.Duration {
-	return m.delay
 }
 
 func (m *Mock) Inject(f func(path string) error) {
@@ -51,17 +40,14 @@ func (m *Mock) Inject(f func(path string) error) {
 }
 
 func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
 	if err := m.injectFunc(req.URL.Path); err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
 	}
-	log.Println("[mock] Initialize")
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
 
 // Register はユーザ登録を行います
 func (m *Mock) Register(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
 	if err := req.ParseForm(); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
@@ -74,14 +60,13 @@ func (m *Mock) Register(req *http.Request) ([]byte, int) {
 	if len(username) == 0 || len(password) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
-	log.Printf("[mock] Register: username=%s, password=%s\n", username, password)
 
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
 
 // Login はログイン処理結果を返します
 func (m *Mock) Login(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
+	<-time.After(m.LoginDelay)
 	if err := req.ParseForm(); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
@@ -93,27 +78,25 @@ func (m *Mock) Login(req *http.Request) ([]byte, int) {
 	if len(username) == 0 || len(password) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
-	log.Printf("[mock] Login: username=%s, password=%s\n", username, password)
 
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
 
 func (m *Mock) ListStations(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
+	<-time.After(m.ListStationsDelay)
 	b, err := json.Marshal([]*isutrain.Station{
 		&isutrain.Station{ID: 1, Name: "isutrain1", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: false},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
 	}
-	log.Printf("[mock] ListStations: stations=%s\n", string(b))
 
 	return b, http.StatusOK
 }
 
 // SearchTrains は新幹線検索結果を返します
 func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
+	<-time.After(m.SearchTrainsDelay)
 	query := req.URL.Query()
 	if query == nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
@@ -138,7 +121,6 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 	if len(from) == 0 || len(to) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
-	log.Printf("[mock] SearchTrains: use_at=%s, from=%s, to=%s\n", query.Get("use_at"), query.Get("from"), query.Get("to"))
 
 	b, err := json.Marshal(&isutrain.Trains{
 		&isutrain.Train{Class: "のぞみ", Name: "96号", Start: 1, Last: 2},
@@ -153,7 +135,7 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 
 // ListTrainSeats は列車の席一覧を返します
 func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
+	<-time.After(m.ListTrainSeatsDelay)
 	q := req.URL.Query()
 	if q == nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
@@ -167,7 +149,6 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 	if len(trainClass) == 0 || len(trainName) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
-	log.Printf("[mock] ListTrainSeats: trainClass=%s, trainName=%s\n", trainClass, trainName)
 
 	// 適当な席を返す
 	b, err := json.Marshal(&isutrain.TrainSeats{
@@ -177,23 +158,19 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
 	}
 
-	m.updateDelay()
-
 	return b, http.StatusOK
 }
 
 // Reserve は座席予約を実施し、結果を返します
 func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
+	<-time.After(m.ReserveDelay)
 	// 予約情報を受け取って、予約できたかを返す
 
 	// FIXME: ユーザID
 	// 複数の座席指定で予約するかもしれない
 	// なので、予約には複数の座席予約が紐づいている
 
-	log.Println("[mock] Reserve")
-
-	b, err := json.Marshal(isutrain.ReservationResponse{
+	b, err := json.Marshal(&isutrain.ReservationResponse{
 		ReservationID: "1111111111",
 		IsOk:          true,
 	})
@@ -207,29 +184,24 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 
 // CommitReservation は予約を確定します
 func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
+	<-time.After(m.CommitReservationDelay)
 	// 予約IDを受け取って、確定するだけ
-	if err := req.ParseForm(); err != nil {
-		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
-	}
-	log.Println("[mock] CommitReservation")
 
 	_, err := httpmock.GetSubmatchAsUint(req, 1)
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
+	// FIXME: ちゃんとした決済情報を追加する
+	m.paymentMock.addPaymentInformation()
+
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
 
 // CancelReservation は予約をキャンセルします
 func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
+	<-time.After(m.CancelReservationDelay)
 	// 予約IDを受け取って
-	if err := req.ParseForm(); err != nil {
-		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
-	}
-	log.Println("[mock] CancelReservation")
 
 	_, err := httpmock.GetSubmatchAsUint(req, 1)
 	if err != nil {
@@ -241,8 +213,7 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 
 // ListReservations はアカウントにひもづく予約履歴を返します
 func (m *Mock) ListReservations(req *http.Request) ([]byte, int) {
-	<-time.After(m.delay)
-	log.Println("[mock] ListReservations")
+	<-time.After(m.ListReservationDelay)
 	b, err := json.Marshal(isutrain.SeatReservations{
 		&isutrain.SeatReservation{ID: 1111, PaymentMethod: string(isutrain.CreditCard), Status: string(isutrain.Pending), ReserveAt: time.Now()},
 	})

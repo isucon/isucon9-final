@@ -16,19 +16,19 @@ var (
 )
 
 func NewCriticalError(err error, msg string, args ...interface{}) error {
-	return failure.New(errCritical, failure.Messagef(msg, args...))
+	return failure.Translate(err, errCritical, failure.Messagef(msg, args...))
 }
 
 func NewApplicationError(err error, msg string, args ...interface{}) error {
-	return failure.New(errApplication, failure.Messagef(msg, args...))
+	return failure.Translate(err, errApplication, failure.Messagef(msg, args...))
 }
 
 func NewTimeoutError(err error, msg string, args ...interface{}) error {
-	return failure.New(errTimeout, failure.Messagef(msg, args...))
+	return failure.Translate(err, errTimeout, failure.Messagef(msg, args...))
 }
 
 func NewTemporaryError(err error, msg string, args ...interface{}) error {
-	return failure.New(errTemporary, failure.Messagef(msg, args...))
+	return failure.Translate(err, errTemporary, failure.Messagef(msg, args...))
 }
 
 func NewHTTPStatusCodeError(resp *http.Response, wantStatusCode int) error {

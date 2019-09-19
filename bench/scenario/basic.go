@@ -2,16 +2,16 @@ package scenario
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
 
 // BasicScenario は基本的な予約フローのシナリオです
 type BasicScenario struct {
-	client *isutrain.Client
+	Client *isutrain.Client
 }
 
 func NewBasicScenario(targetBaseURL string) (*BasicScenario, error) {
@@ -21,64 +21,68 @@ func NewBasicScenario(targetBaseURL string) (*BasicScenario, error) {
 	}
 
 	return &BasicScenario{
-		client: client,
+		Client: client,
 	}, nil
 }
 
 // TODO: シナリオ１回転で同期ポイント
 func (s *BasicScenario) Run(ctx context.Context) error {
-	err := s.client.Register(ctx, "hoge", "hoge")
+	err := s.Client.Register(ctx, "hoge", "hoge", nil)
 	if err != nil {
-		benchErr := fmt.Errorf("ユーザ登録ができません: %w", err)
+		benchErr := bencherror.NewApplicationError(err, "ユーザ登録ができません")
 		bencherror.BenchmarkErrs.AddError(benchErr)
 		return benchErr
 	}
 
-	err = s.client.Login(ctx, "hoge", "hoge")
+	err = s.Client.Login(ctx, "hoge", "hoge", nil)
 	if err != nil {
-		benchErr := fmt.Errorf("ユーザログインができません: %w", err)
+		benchErr := bencherror.NewApplicationError(err, "ユーザログインができません")
 		bencherror.BenchmarkErrs.AddError(benchErr)
 		return benchErr
 	}
 
-	_, err = s.client.ListStations(ctx)
+	_, err = s.Client.ListStations(ctx, nil)
 	if err != nil {
-		benchErr := fmt.Errorf("駅一覧を取得できません: %w", err)
+		benchErr := bencherror.NewApplicationError(err, "駅一覧を取得できません")
 		bencherror.BenchmarkErrs.AddError(benchErr)
 		return benchErr
 	}
 
-	_, err = s.client.SearchTrains(ctx, time.Now(), "東京", "大阪")
+	var (
+		origin      = xrandom.GetRandomStations()
+		destination = xrandom.GetRandomStations()
+	)
+	_, err = s.Client.SearchTrains(ctx, time.Now(), origin, destination, nil)
 	if err != nil {
-		benchErr := fmt.Errorf("列車検索ができません: %w", err)
+		benchErr := bencherror.NewApplicationError(err, "列車検索ができません")
 		bencherror.BenchmarkErrs.AddError(benchErr)
 		return benchErr
 	}
 
-	_, err = s.client.ListTrainSeats(ctx, "こだま", "96号")
+	_, err = s.Client.ListTrainSeats(ctx, "こだま", "96号", nil)
 	if err != nil {
-		benchErr := fmt.Errorf("列車の座席座席列挙できません: %w", err)
+		benchErr := bencherror.NewApplicationError(err, "列車の座席座席列挙できません")
 		bencherror.BenchmarkErrs.AddError(benchErr)
 		return benchErr
 	}
 
-	reservation, err := s.client.Reserve(ctx)
+	reservation, err := s.Client.Reserve(ctx, nil)
 	if err != nil {
-		benchErr := fmt.Errorf("予約ができません: %w", err)
+		benchErr := bencherror.NewApplicationError(err, "予約ができません")
 		bencherror.BenchmarkErrs.AddError(benchErr)
 		return benchErr
 	}
 
-	err = s.client.CommitReservation(ctx, reservation.ReservationID)
+	err = s.Client.CommitReservation(ctx, reservation.ReservationID, nil)
 	if err != nil {
-		benchErr := fmt.Errorf("予約を確定できませんでした: %w", err)
+		benchErr := bencherror.NewApplicationError(err, "予約を確定できませんでした")
 		bencherror.BenchmarkErrs.AddError(benchErr)
 		return benchErr
 	}
 
-	_, err = s.client.ListReservations(ctx)
+	_, err = s.Client.ListReservations(ctx, nil)
 	if err != nil {
-		benchErr := fmt.Errorf("予約を列挙できませんでした: %w", err)
+		benchErr := bencherror.NewApplicationError(err, "予約を列挙できませんでした")
 		bencherror.BenchmarkErrs.AddError(benchErr)
 		return benchErr
 	}

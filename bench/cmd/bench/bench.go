@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/chibiegg/isucon9-final/bench/assets"
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/logger"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/mock"
+	"github.com/chibiegg/isucon9-final/bench/payment"
 	"github.com/chibiegg/isucon9-final/bench/scenario"
 	"github.com/jarcoal/httpmock"
 	"github.com/urfave/cli"
@@ -18,7 +20,7 @@ import (
 
 var (
 	paymentURI, targetURI string
-	dataDir, staticDir    string
+	assetDir              string
 )
 
 var (
@@ -48,7 +50,7 @@ func dumpFailedResult(messages []string) {
 		"messages": messages,
 	})
 	if err != nil {
-		lgr.Warn("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました", zap.Error(err))
+		lgr.Warnf("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました: %+v", err)
 		fmt.Println(`{"pass": false, "score": 0, "messages": []}`)
 	}
 
@@ -74,18 +76,21 @@ var run = cli.Command{
 			Destination: &targetURI,
 		},
 		cli.StringFlag{
-			Name:        "datadir",
-			Value:       "/home/isucon/isucon9-final/data",
-			Destination: &dataDir,
-		},
-		cli.StringFlag{
-			Name:        "staticdir",
-			Value:       "/home/isucon/isucon9-final/static",
-			Destination: &staticDir,
+			Name:        "assetdir",
+			Value:       "assets/testdata",
+			Destination: &assetDir,
 		},
 	},
 	Action: func(cliCtx *cli.Context) error {
+		ctx := context.Background()
+
 		lgr, err := logger.InitZapLogger()
+		if err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
+
+		assets, err := assets.Load(assetDir)
 		if err != nil {
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
@@ -103,6 +108,12 @@ var run = cli.Command{
 			return cli.NewExitError(err, 1)
 		}
 
+		paymentClient, err := payment.NewClient(paymentURI)
+		if err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
+
 		if debug {
 			httpmock.Activate()
 			defer httpmock.DeactivateAndReset()
@@ -115,7 +126,7 @@ var run = cli.Command{
 		// TODO: 初期データのロードなど用意
 
 		// initialize
-		initClient.Initialize(context.Background())
+		initClient.Initialize(ctx)
 		if bencherror.InitializeErrs.IsError() {
 			dumpFailedResult(bencherror.InitializeErrs.Msgs)
 			return cli.NewExitError(fmt.Errorf("Initializeに失敗しました"), 1)
@@ -123,18 +134,18 @@ var run = cli.Command{
 
 		// pretest (まず、正しく動作できているかチェック. エラーが見つかったら、採点しようがないのでFAILにする)
 
-		scenario.Pretest(testClient)
+		scenario.Pretest(ctx, testClient, assets)
 		if bencherror.PreTestErrs.IsError() {
 			dumpFailedResult(bencherror.PreTestErrs.Msgs)
 			return cli.NewExitError(fmt.Errorf("Pretestに失敗しました"), 1)
 		}
 
 		// bench (ISUCOIN売り上げ計上と、減点カウントを行う)
-		ctx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
+		benchCtx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		defer cancel()
 
 		benchmarker := newBenchmarker(targetURI)
-		benchmarker.run(ctx)
+		benchmarker.run(benchCtx)
 		if bencherror.BenchmarkErrs.IsFailure() {
 			dumpFailedResult(bencherror.BenchmarkErrs.Msgs)
 			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 1)
@@ -142,15 +153,20 @@ var run = cli.Command{
 
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
 		// FIXME: 課金用のクライアントを作り、それを渡す様に変更
-		score := scenario.FinalCheck(testClient)
+		score, err := scenario.FinalCheck(ctx, paymentClient)
+		if err != nil {
+			dumpFailedResult(bencherror.BenchmarkErrs.Msgs)
+			return cli.NewExitError(err, 1)
+		}
+
+		lgr.Infof("最終チェックによるスコア: %d", score)
 
 		// エラーカウントから、スコアを減点
 		score -= bencherror.BenchmarkErrs.Penalty()
 
 		lgr.Infof("payment   = %s", paymentURI)
 		lgr.Infof("target    = %s", targetURI)
-		lgr.Infof("datadir   = %s", dataDir)
-		lgr.Infof("staticdir = %s", staticDir)
+		lgr.Infof("assetdir  = %s", assetDir)
 
 		// 最終結果をstdoutへ書き出す
 		resultBytes, err := json.Marshal(map[string]interface{}{
