@@ -224,6 +224,12 @@ func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(stations)
 }
 
+func (train Train) getSeatAvailableCount(fromStation Station, toStation Station, seatClass string, isSmokingSeat bool) (int, error) {
+	//TODO: ちゃんと計算する
+
+	return 0, nil
+}
+
 func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		列車検索
@@ -352,12 +358,58 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			arrivalAt := time.Now()
 
+			premium_avail_count, err := train.getSeatAvailableCount(fromStation, toStation, "premium", false)
+			if err != nil {
+				panic(nil)
+			}
+			premium_smoke_avail_count, err := train.getSeatAvailableCount(fromStation, toStation, "premium", true)
+			if err != nil {
+				panic(nil)
+			}
+
+			reserved_avail_count, err := train.getSeatAvailableCount(fromStation, toStation, "reserved", false)
+			if err != nil {
+				panic(nil)
+			}
+			reserved_smoke_avail_count, err := train.getSeatAvailableCount(fromStation, toStation, "reserved", true)
+			if err != nil {
+				panic(nil)
+			}
+
+			premium_avail := "○"
+			if premium_avail_count == 0 {
+				premium_avail = "×"
+			} else if premium_avail_count < 10 {
+				premium_avail = "△"
+			}
+
+			premium_smoke_avail := "○"
+			if premium_smoke_avail_count == 0 {
+				premium_smoke_avail = "×"
+			} else if premium_smoke_avail_count < 10 {
+				premium_smoke_avail = "△"
+			}
+
+			reserved_avail := "○"
+			if reserved_avail_count == 0 {
+				reserved_avail = "×"
+			} else if reserved_avail_count < 10 {
+				reserved_avail = "△"
+			}
+
+			reserved_smoke_avail := "○"
+			if reserved_smoke_avail_count == 0 {
+				reserved_smoke_avail = "×"
+			} else if reserved_smoke_avail_count < 10 {
+				reserved_smoke_avail = "△"
+			}
+
 			// TODO: 空席情報
 			seatAvailability := map[string]string{
-				"premium":        "○",
-				"premium_smoke":  "×",
-				"reserved":       "△",
-				"reserved_smoke": "○",
+				"premium":        premium_avail,
+				"premium_smoke":  premium_smoke_avail,
+				"reserved":       reserved_avail,
+				"reserved_smoke": reserved_smoke_avail,
 				"non_reserved":   "○",
 			}
 
