@@ -16,7 +16,6 @@ import (
 	// "sync"
 )
 
-var db *sql.DB
 var dbx *sqlx.DB
 
 // var mu sync.Mutex
@@ -32,24 +31,47 @@ type Station struct {
 	IsStopLocal       bool    `json:"is_stop_local" db:"is_stop_local"`
 }
 
-// 未整理
+type DistanceFare struct {
+	Distance float64 `json:"distance" db:"distance"`
+	Fare     int     `json:"fare" db:"fare"`
+}
 
-type CarInformation struct {
-	Date       time.Time   `json:"date"`
-	TrainClass string      `json:"train_class"`
-	TrainName  string      `json:"train_name"`
-	CarNumber  int         `json:"car_number"`
-	SeatList   []TrainSeat `json:"seats"`
+type Fare struct {
+	TrainClass     string    `json:"train_class" db:"train_class"`
+	SeatClass      string    `json:"seat_class" db:"seat_class"`
+	StartDate      time.Time `json:"start_date" db:"start_date"`
+	FareMultiplier float64   `json:"fare_multiplier" db:"fare_multiplier"`
 }
 
 type Train struct {
-	Class string `json:"train_class"`
-	Name  string `json:"train_name"`
-	Start string `json:"start"`
-	Last  string `json:"last"`
+	Date         time.Time     `json:"date" db:"date"`
+	DepartureAt  time.Duration `json:"departure_at" db:"departure_at"`
+	TrainClass   string        `json:"train_class" db:"train_class"`
+	TrainName    string        `json:"train_name" db:"train_name"`
+	StartStation string        `json:"start_station" db:"start_station"`
+	LastStation  string        `json:"last_station" db:"last_station"`
 }
 
-type TrainSeat struct {
+type Seat struct {
+	TrainClass    string `json:"train_class" db:"train_class"`
+	CarNumber     int    `json:"car_number" db:"car_number"`
+	SeatColumn    string `json:"seat_column" db:"seat_column"`
+	SeatRow       int    `json:"seat_row" db:"seat_row"`
+	SeatClass     string `json:"seat_class" db:"seat_class"`
+	IsSmokingSeat bool   `json:"is_smoking_seat" db:"is_smoking_seat"`
+}
+
+// 未整理
+
+type CarInformation struct {
+	Date                time.Time         `json:"date"`
+	TrainClass          string            `json:"train_class"`
+	TrainName           string            `json:"train_name"`
+	CarNumber           int               `json:"car_number"`
+	SeatInformationList []SeatInformation `json:"seats"`
+}
+
+type SeatInformation struct {
 	Row           int    `json:"row"`
 	Column        string `json:"column"`
 	Class         string `json:"class"`
@@ -58,7 +80,10 @@ type TrainSeat struct {
 }
 
 type TrainSearchResponse struct {
-	Train
+	Class            string            `json:"train_class"`
+	Name             string            `json:"train_name"`
+	Start            string            `json:"start"`
+	Last             string            `json:"last"`
 	Departure        int               `json:"departure"`
 	Destination      int               `json:"destination"`
 	DepartureTime    time.Time         `json:"departure_time"`
@@ -72,103 +97,108 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
-	rows, err := db.Query("SELECT * FROM distance_fare_master")
+
+	distanceFareList := []DistanceFare{}
+
+	query := "SELECT * FROM distance_fare_master"
+	err := dbx.Select(&distanceFareList, query)
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
 
-	var distance int
-	var fare int
-	for rows.Next() {
-		err := rows.Scan(&distance, &fare)
-		if err != nil {
-			panic(err)
-		}
-
-		fmt.Fprintf(w, "%d,%d\n", distance, fare)
+	for _, distanceFare := range distanceFareList {
+		fmt.Fprintf(w, "%d,%d\n", distanceFare.Distance, distanceFare.Fare)
 	}
 
-	err = rows.Err()
-	if err != nil {
-		panic(err)
-	}
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	json.NewEncoder(w).Encode(distanceFareList)
 }
 
 func getDistanceFare(origToDestDistance float64) int {
 
-	rows, err := db.Query("SELECT distance,fare FROM distance_fare_master ORDER BY distance")
+	distanceFareList := []DistanceFare{}
+
+	query := "SELECT distance,fare FROM distance_fare_master ORDER BY distance"
+	err := dbx.Select(&distanceFareList, query)
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
 
-	var distance, fare int
-	lastDistance := 0
+	lastDistance := 0.0
 	lastFare := 0
-	for rows.Next() {
-		err := rows.Scan(&distance, &fare)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(origToDestDistance, distance, fare)
-		if float64(lastDistance) < origToDestDistance && origToDestDistance < float64(distance) {
+	for _, distanceFare := range distanceFareList {
+
+		fmt.Println(origToDestDistance, distanceFare.Distance, distanceFare.Fare)
+		if float64(lastDistance) < origToDestDistance && origToDestDistance < float64(distanceFare.Distance) {
 			break
 		}
-		lastDistance = distance
-		lastFare = fare
+		lastDistance = distanceFare.Distance
+		lastFare = distanceFare.Fare
 	}
 
 	return lastFare
 }
 
-func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass string) int {
+func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatClass string) int {
 	//
 	// 料金計算メモ
 	// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
 	//
 
-	// distance_fare_master
+	var err error
+	var fromStation, toStation Station
 
-	var fromStationAt, toStationAt float64
-	db.QueryRow("SELECT distance FROM station_master WHERE name=?", depStation).Scan(&fromStationAt)
-	db.QueryRow("SELECT distance FROM station_master WHERE name=?", destStation).Scan(&toStationAt)
-	fmt.Println("distance", math.Abs(toStationAt-fromStationAt))
-	distFare := getDistanceFare(math.Abs(toStationAt - fromStationAt))
-	fmt.Println("distFare", distFare)
+	query := "SELECT * FROM station_master WHERE id=?"
 
-	// 期間・車両・座席クラス倍率
-	stmt, err := db.Prepare("SELECT start_date,fare_multiplier FROM fare_master WHERE train_class=? AND seat_class=? ORDER BY start_date")
-	defer stmt.Close()
-	rows, err := stmt.Query(trainClass, seatClass)
+	// From
+	err = dbx.Get(&fromStation, query, depStation)
+	if err == sql.ErrNoRows {
+		panic(err)
+	}
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
 
-	var m float64 // multiplier
-	var s string
-	for rows.Next() {
-		// TODO: start_dateをちゃんと見る必要がある
+	// To
+	err = dbx.Get(&fromStation, query, destStation)
+	if err == sql.ErrNoRows {
+		panic(err)
+	}
+	if err != nil {
+		log.Print(err)
+		panic(err)
+	}
 
-		err := rows.Scan(&s, &m)
+	fmt.Println("distance", math.Abs(toStation.Distance-fromStation.Distance))
+	distFare := getDistanceFare(math.Abs(toStation.Distance - fromStation.Distance))
+	fmt.Println("distFare", distFare)
+
+	// 期間・車両・座席クラス倍率
+	fareList := []Fare{}
+	query = "SELECT * FROM fare_master WHERE train_class=? AND seat_class=? ORDER BY start_date"
+	err = dbx.Select(&fareList, query)
+	if err != nil {
+		panic(err)
+	}
+
+	var selectedFare Fare
+
+	for _, fare := range fareList {
 		if err != nil {
 			panic(err)
 		}
 
-		fmt.Println(s, m)
+		// TODO: start_dateをちゃんと見る必要がある
+		fmt.Println(fare.StartDate, fare.FareMultiplier)
+		selectedFare = fare
 	}
 
 	fmt.Println("%%%%%%%%%%%%%%%%%%%")
 
-	err = rows.Err()
-	if err != nil {
-		panic(err)
-	}
-
 	// TODO: 端数の扱い考える
 	// TODO: start_dateをちゃんと見る必要がある
-	return int(float64(distFare) * m)
+	// TODO: 距離見てる...？
+	return int(float64(distFare) * selectedFare.FareMultiplier)
 }
 
 func getStationsHandler(w http.ResponseWriter, r *http.Request) {
@@ -214,31 +244,41 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	from_id, _ := strconv.Atoi(r.URL.Query().Get("from"))
 	to_id, _ := strconv.Atoi(r.URL.Query().Get("to"))
 
-	rows, err := db.Query("SELECT departure_at,train_class,train_name,start_station,last_station FROM train_master WHERE date=?",
-		date.Format("2006-01-02"))
+	trainList := []Train{}
+	query := "SELECT * FROM train_master WHERE date=? AND train_class=?"
+	err = dbx.Select(&trainList, query, date, trainClass)
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
 
-	// var departureAt time.Time
-	var departureAt, trainName, startStation, lastStation string
-	trainList := []TrainSearchResponse{}
-	for rows.Next() {
-		err := rows.Scan(&departureAt, &trainClass, &trainName, &startStation, &lastStation)
+	trainSearchResponseList := []TrainSearchResponse{}
+
+	for _, train := range trainList {
+		var fromStation, toStation Station
+
+		query := "SELECT * FROM station_master WHERE id=?"
+
+		// From
+		err = dbx.Get(&fromStation, query, from_id)
+		if err == sql.ErrNoRows {
+			panic(err)
+		}
 		if err != nil {
 			panic(err)
 		}
 
-		var fromStationAt, toStationAt float64
-		db.QueryRow("SELECT distance FROM station_master WHERE id=?", from_id).Scan(&fromStationAt)
-		db.QueryRow("SELECT distance FROM station_master WHERE id=?", to_id).Scan(&toStationAt)
+		// To
+		err = dbx.Get(&fromStation, query, to_id)
+		if err == sql.ErrNoRows {
+			panic(err)
+		}
+		if err != nil {
+			log.Print(err)
+			panic(err)
+		}
 
-		// fmt.Println(from_station_at)
-		// fmt.Println(to_station_at)
-
-		query := "SELECT * FROM station_master ORDER BY distance"
-		if fromStationAt > toStationAt {
+		query = "SELECT * FROM station_master ORDER BY distance"
+		if fromStation.Distance > toStation.Distance {
 			// 上りだったら駅リストを逆にする
 			query += " DESC"
 		}
@@ -258,7 +298,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			if !isSeekedToFirstStation {
 				// 駅リストを列車の発駅まで読み飛ばして頭出しをする
 				// 列車の発駅以前は止まらないので無視して良い
-				if station.Name == startStation {
+				if station.Name == train.StartStation {
 					isSeekedToFirstStation = true
 				} else {
 					continue
@@ -285,7 +325,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 			}
-			if station.Name == lastStation {
+			if station.Name == train.LastStation {
 				// 駅が見つからないまま当該編成の終点に着いてしまったとき
 				break
 			}
@@ -294,7 +334,6 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 		if isContainsOriginStation && isContainsDestStation {
 			// 列車情報
-			train := Train{trainClass, trainName, startStation, lastStation}
 
 			// TODO: 所要時間計算
 
@@ -315,26 +354,25 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			// TODO: 料金計算
 			fareInformation := map[string]int{
-				"premium":        fareCalc(date, from, to, trainClass, "premium"),
-				"premium_smoke":  fareCalc(date, from, to, trainClass, "premium_smoke"),
-				"reserved":       fareCalc(date, from, to, trainClass, "reserved"),
-				"reserved_smoke": fareCalc(date, from, to, trainClass, "reserved_smoke"),
-				"non_reserved":   fareCalc(date, from, to, trainClass, "non_reserved"),
+				"premium":        fareCalc(date, from_id, to_id, train.TrainClass, "premium"),
+				"premium_smoke":  fareCalc(date, from_id, to_id, train.TrainClass, "premium_smoke"),
+				"reserved":       fareCalc(date, from_id, to_id, train.TrainClass, "reserved"),
+				"reserved_smoke": fareCalc(date, from_id, to_id, train.TrainClass, "reserved_smoke"),
+				"non_reserved":   fareCalc(date, from_id, to_id, train.TrainClass, "non_reserved"),
 			}
 
-			trainList = append(trainList, TrainSearchResponse{train, from_id, to_id, departureAt, arrivalAt, seatAvailability, fareInformation})
+			trainSearchResponseList = append(trainSearchResponseList, TrainSearchResponse{
+				train.TrainClass, train.TrainName, train.StartStation, train.LastStation,
+				from_id, to_id, departureAt, arrivalAt, seatAvailability, fareInformation,
+			})
 		}
 	}
-	resp, err := json.Marshal(trainList)
+	resp, err := json.Marshal(trainSearchResponseList)
 	if err != nil {
 		panic(err)
 	}
 	w.Write(resp)
 
-	err = rows.Err()
-	if err != nil {
-		panic(err)
-	}
 }
 
 func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
@@ -357,49 +395,46 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	rows, err := db.Query("SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?",
-		trainClass, carNumber)
+	seatList := []Seat{}
+
+	query := "SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?"
+	err = dbx.Select(&seatList, query, trainClass, carNumber)
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
 
-	var seatRow int
-	var seatColumn, seatClass string
-	var isSmokingSeat bool
-	var seats []TrainSeat
-	for rows.Next() {
-		err := rows.Scan(&seatColumn, &seatRow, &seatClass, &isSmokingSeat)
+	var seatInformationList []SeatInformation
+	for _, seat := range seatList {
+		var result int
+
+		query := "SELECT COUNT(*) FROM seat_reservations WHERE date=? AND train_class=? AND train_name=? AND car_number=? AND seat_row=? AND seat_column=?"
+		err = dbx.Select(
+			&result, query,
+			date,
+			seat.TrainClass,
+			trainName,
+			seat.CarNumber,
+			seat.SeatRow,
+			seat.SeatColumn,
+		)
 		if err != nil {
 			panic(err)
 		}
-		var result int
-		db.QueryRow("SELECT COUNT(*) FROM seat_reservations WHERE date=? AND train_class=? AND train_name=? AND car_number=? AND seat_row=? AND seat_column=?",
-			date,
-			trainClass,
-			trainName,
-			carNumber,
-			seatRow,
-			seatColumn).Scan(&result)
-		s := TrainSeat{seatRow, seatColumn, seatClass, isSmokingSeat, false}
+
+		s := SeatInformation{seat.SeatRow, seat.SeatColumn, seat.SeatClass, seat.IsSmokingSeat, false}
 		if result == 1 {
 			s.IsOccupied = true
 		}
-		seats = append(seats, s)
+		seatInformationList = append(seatInformationList, s)
 
 		// fmt.Fprintf(w, "%d,%d\n", distance, fare)
 	}
-	c := CarInformation{date, trainClass, trainName, carNumber, seats}
+	c := CarInformation{date, trainClass, trainName, carNumber, seatInformationList}
 	resp, err := json.Marshal(c)
 	if err != nil {
 		panic(err)
 	}
 	w.Write(resp)
-
-	err = rows.Err()
-	if err != nil {
-		panic(err)
-	}
 }
 
 func main() {
@@ -439,12 +474,6 @@ func main() {
 		port,
 		dbname,
 	)
-
-	db, err = sql.Open("mysql", dsn)
-	if err != nil {
-		log.Fatalf("failed to connect to DB: %s.", err.Error())
-	}
-	defer db.Close()
 
 	dbx, err = sqlx.Open("mysql", dsn)
 	if err != nil {
