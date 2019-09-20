@@ -16,9 +16,11 @@ import (
 	// "sync"
 )
 
-var dbx *sqlx.DB
+var (
+	banner = `ISUTRAIN API`
+)
 
-// var mu sync.Mutex
+var dbx *sqlx.DB
 
 // DB定義
 
@@ -44,12 +46,12 @@ type Fare struct {
 }
 
 type Train struct {
-	Date         time.Time     `json:"date" db:"date"`
-	DepartureAt  time.Duration `json:"departure_at" db:"departure_at"`
-	TrainClass   string        `json:"train_class" db:"train_class"`
-	TrainName    string        `json:"train_name" db:"train_name"`
-	StartStation string        `json:"start_station" db:"start_station"`
-	LastStation  string        `json:"last_station" db:"last_station"`
+	Date         time.Time `json:"date" db:"date"`
+	DepartureAt  string    `json:"departure_at" db:"departure_at"`
+	TrainClass   string    `json:"train_class" db:"train_class"`
+	TrainName    string    `json:"train_name" db:"train_name"`
+	StartStation string    `json:"start_station" db:"start_station"`
+	LastStation  string    `json:"last_station" db:"last_station"`
 }
 
 type Seat struct {
@@ -245,8 +247,13 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	to_id, _ := strconv.Atoi(r.URL.Query().Get("to"))
 
 	trainList := []Train{}
-	query := "SELECT * FROM train_master WHERE date=? AND train_class=?"
-	err = dbx.Select(&trainList, query, date, trainClass)
+	if trainClass == "" {
+		query := "SELECT * FROM train_master WHERE date=?"
+		err = dbx.Select(&trainList, query, date.Format("2006/01/02"))
+	} else {
+		query := "SELECT * FROM train_master WHERE date=? AND train_class=?"
+		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), trainClass)
+	}
 	if err != nil {
 		panic(err)
 	}
@@ -255,6 +262,8 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, train := range trainList {
 		var fromStation, toStation Station
+
+		fmt.Println(train)
 
 		query := "SELECT * FROM station_master WHERE id=?"
 
@@ -307,10 +316,12 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			if station.ID == from_id {
 				// 発駅を経路中に持つ編成の場合フラグを立てる
+				fmt.Println("station.ID == from_id", station.ID, from_id)
 				isContainsOriginStation = true
 				fmt.Println(station.Name)
 			}
 			if station.ID == to_id {
+				fmt.Println("station.ID == to_id", station.ID, to_id)
 				if isContainsOriginStation {
 					// 発駅と着駅を経路中に持つ編成の場合
 					fmt.Println(station.Name)
@@ -334,6 +345,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 		if isContainsOriginStation && isContainsDestStation {
 			// 列車情報
+			fmt.Println("APPEND")
 
 			// TODO: 所要時間計算
 
@@ -486,5 +498,6 @@ func main() {
 	http.HandleFunc("/api/train/search", trainSearchHandler)
 	http.HandleFunc("/api/train/seats", trainSeatsHandler)
 
+	fmt.Println(banner)
 	http.ListenAndServe(":8000", nil)
 }
