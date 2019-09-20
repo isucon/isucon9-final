@@ -32,6 +32,11 @@ type Station struct {
 	IsStopLocal       bool    `json:"is_stop_local" db:"is_stop_local"`
 }
 
+type DistanceFare struct {
+	Distance float64 `json:"distance" db:"distance"`
+	Fare     int     `json:"fare" db:"fare"`
+}
+
 // 未整理
 
 type CarInformation struct {
@@ -72,27 +77,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
-	rows, err := db.Query("SELECT * FROM distance_fare_master")
+
+	distanceFareList := []DistanceFare{}
+
+	query := "SELECT * FROM distance_fare_master"
+	err := dbx.Select(&distanceFareList, query)
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
 
-	var distance int
-	var fare int
-	for rows.Next() {
-		err := rows.Scan(&distance, &fare)
-		if err != nil {
-			panic(err)
-		}
-
-		fmt.Fprintf(w, "%d,%d\n", distance, fare)
+	for _, distanceFare := range distanceFareList {
+		fmt.Fprintf(w, "%d,%d\n", distanceFare.Distance, distanceFare.Fare)
 	}
 
-	err = rows.Err()
-	if err != nil {
-		panic(err)
-	}
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	json.NewEncoder(w).Encode(distanceFareList)
 }
 
 func getDistanceFare(origToDestDistance float64) int {
@@ -122,19 +121,38 @@ func getDistanceFare(origToDestDistance float64) int {
 	return lastFare
 }
 
-func fareCalc(date time.Time, depStation, destStation, trainClass, seatClass string) int {
+func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatClass string) int {
 	//
 	// 料金計算メモ
 	// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
 	//
 
-	// distance_fare_master
+	var err error
+	var fromStation, toStation Station
 
-	var fromStationAt, toStationAt float64
-	db.QueryRow("SELECT distance FROM station_master WHERE name=?", depStation).Scan(&fromStationAt)
-	db.QueryRow("SELECT distance FROM station_master WHERE name=?", destStation).Scan(&toStationAt)
-	fmt.Println("distance", math.Abs(toStationAt-fromStationAt))
-	distFare := getDistanceFare(math.Abs(toStationAt - fromStationAt))
+	query := "SELECT * FROM station_master WHERE id=?"
+
+	// From
+	err = dbx.Get(&fromStation, query, depStation)
+	if err == sql.ErrNoRows {
+		panic(err)
+	}
+	if err != nil {
+		panic(err)
+	}
+
+	// To
+	err = dbx.Get(&fromStation, query, destStation)
+	if err == sql.ErrNoRows {
+		panic(err)
+	}
+	if err != nil {
+		log.Print(err)
+		panic(err)
+	}
+
+	fmt.Println("distance", math.Abs(toStation.Distance-fromStation.Distance))
+	distFare := getDistanceFare(math.Abs(toStation.Distance - fromStation.Distance))
 	fmt.Println("distFare", distFare)
 
 	// 期間・車両・座席クラス倍率
@@ -230,15 +248,31 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		var fromStationAt, toStationAt float64
-		db.QueryRow("SELECT distance FROM station_master WHERE id=?", from_id).Scan(&fromStationAt)
-		db.QueryRow("SELECT distance FROM station_master WHERE id=?", to_id).Scan(&toStationAt)
+		var fromStation, toStation Station
 
-		// fmt.Println(from_station_at)
-		// fmt.Println(to_station_at)
+		query := "SELECT * FROM station_master WHERE id=?"
 
-		query := "SELECT * FROM station_master ORDER BY distance"
-		if fromStationAt > toStationAt {
+		// From
+		err = dbx.Get(&fromStation, query, from_id)
+		if err == sql.ErrNoRows {
+			panic(err)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		// To
+		err = dbx.Get(&fromStation, query, to_id)
+		if err == sql.ErrNoRows {
+			panic(err)
+		}
+		if err != nil {
+			log.Print(err)
+			panic(err)
+		}
+
+		query = "SELECT * FROM station_master ORDER BY distance"
+		if fromStation.Distance > toStation.Distance {
 			// 上りだったら駅リストを逆にする
 			query += " DESC"
 		}
@@ -315,11 +349,11 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			// TODO: 料金計算
 			fareInformation := map[string]int{
-				"premium":        fareCalc(date, from, to, trainClass, "premium"),
-				"premium_smoke":  fareCalc(date, from, to, trainClass, "premium_smoke"),
-				"reserved":       fareCalc(date, from, to, trainClass, "reserved"),
-				"reserved_smoke": fareCalc(date, from, to, trainClass, "reserved_smoke"),
-				"non_reserved":   fareCalc(date, from, to, trainClass, "non_reserved"),
+				"premium":        fareCalc(date, from_id, to_id, trainClass, "premium"),
+				"premium_smoke":  fareCalc(date, from_id, to_id, trainClass, "premium_smoke"),
+				"reserved":       fareCalc(date, from_id, to_id, trainClass, "reserved"),
+				"reserved_smoke": fareCalc(date, from_id, to_id, trainClass, "reserved_smoke"),
+				"non_reserved":   fareCalc(date, from_id, to_id, trainClass, "non_reserved"),
 			}
 
 			trainList = append(trainList, TrainSearchResponse{train, from_id, to_id, departureAt, arrivalAt, seatAvailability, fareInformation})
