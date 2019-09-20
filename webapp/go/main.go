@@ -304,17 +304,12 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	trainSearchResponseList := []TrainSearchResponse{}
 
 	for _, train := range trainList {
-
-		fmt.Println(train)
-
 		isSeekedToFirstStation := false
 		isContainsOriginStation := false
 		isContainsDestStation := false
 		i := 0
 
 		for _, station := range stations {
-
-			fmt.Println(station)
 
 			if !isSeekedToFirstStation {
 				// 駅リストを列車の発駅まで読み飛ばして頭出しをする
@@ -328,23 +323,16 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			if station.ID == from_id {
 				// 発駅を経路中に持つ編成の場合フラグを立てる
-				fmt.Println("station.ID == from_id", station.ID, from_id)
 				isContainsOriginStation = true
-				fmt.Println(station.Name)
 			}
 			if station.ID == to_id {
-				fmt.Println("station.ID == to_id", station.ID, to_id)
 				if isContainsOriginStation {
 					// 発駅と着駅を経路中に持つ編成の場合
-					fmt.Println(station.Name)
-					fmt.Println("---------")
 					isContainsDestStation = true
 					break
 				} else {
 					// 出発駅より先に終点が見つかったとき
-					// 上り対応したら要らなくなる
 					fmt.Println("なんかおかしい")
-					fmt.Println("---------")
 					break
 				}
 			}
@@ -357,13 +345,10 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 		if isContainsOriginStation && isContainsDestStation {
 			// 列車情報
-			fmt.Println("APPEND")
 
 			// TODO: 所要時間計算
-
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			departureAt := time.Now()
-
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			arrivalAt := time.Now()
 
@@ -376,7 +361,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				"non_reserved":   "○",
 			}
 
-			// TODO: 料金計算
+			// 料金計算
 			fareInformation := map[string]int{
 				"premium":        fareCalc(date, from_id, to_id, train.TrainClass, "premium"),
 				"premium_smoke":  fareCalc(date, from_id, to_id, train.TrainClass, "premium_smoke"),
