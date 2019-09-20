@@ -52,6 +52,7 @@ type Train struct {
 	TrainName    string    `json:"train_name" db:"train_name"`
 	StartStation string    `json:"start_station" db:"start_station"`
 	LastStation  string    `json:"last_station" db:"last_station"`
+	IsNobori     bool      `json:"is_nobori" db:"is_nobori"`
 }
 
 type Seat struct {
@@ -178,7 +179,7 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 	// 期間・車両・座席クラス倍率
 	fareList := []Fare{}
 	query = "SELECT * FROM fare_master WHERE train_class=? AND seat_class=? ORDER BY start_date"
-	err = dbx.Select(&fareList, query)
+	err = dbx.Select(&fareList, query, trainClass, seatClass)
 	if err != nil {
 		panic(err)
 	}
@@ -246,63 +247,74 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	from_id, _ := strconv.Atoi(r.URL.Query().Get("from"))
 	to_id, _ := strconv.Atoi(r.URL.Query().Get("to"))
 
-	trainList := []Train{}
-	if trainClass == "" {
-		query := "SELECT * FROM train_master WHERE date=?"
-		err = dbx.Select(&trainList, query, date.Format("2006/01/02"))
-	} else {
-		query := "SELECT * FROM train_master WHERE date=? AND train_class=?"
-		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), trainClass)
+	var fromStation, toStation Station
+	query := "SELECT * FROM station_master WHERE id=?"
+
+	// From
+	err = dbx.Get(&fromStation, query, from_id)
+	if err == sql.ErrNoRows {
+		panic(err)
 	}
 	if err != nil {
 		panic(err)
 	}
 
+	// To
+	err = dbx.Get(&toStation, query, to_id)
+	if err == sql.ErrNoRows {
+		panic(err)
+	}
+	if err != nil {
+		log.Print(err)
+		panic(err)
+	}
+
+	isNobori := false
+	if fromStation.Distance > toStation.Distance {
+		isNobori = true
+	}
+
+	query = "SELECT * FROM station_master ORDER BY distance"
+	if isNobori {
+		// 上りだったら駅リストを逆にする
+		query += " DESC"
+	}
+
+	trainList := []Train{}
+	if trainClass == "" {
+		query := "SELECT * FROM train_master WHERE date=? AND is_nobori=?"
+		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), isNobori)
+	} else {
+		query := "SELECT * FROM train_master WHERE date=? AND is_nobori=? AND train_class=?"
+		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), isNobori, trainClass)
+	}
+	if err != nil {
+		panic(err)
+	}
+
+	stations := []Station{}
+	err = dbx.Select(&stations, query)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("From", fromStation)
+	fmt.Println("To", toStation)
+
 	trainSearchResponseList := []TrainSearchResponse{}
 
 	for _, train := range trainList {
-		var fromStation, toStation Station
 
 		fmt.Println(train)
-
-		query := "SELECT * FROM station_master WHERE id=?"
-
-		// From
-		err = dbx.Get(&fromStation, query, from_id)
-		if err == sql.ErrNoRows {
-			panic(err)
-		}
-		if err != nil {
-			panic(err)
-		}
-
-		// To
-		err = dbx.Get(&fromStation, query, to_id)
-		if err == sql.ErrNoRows {
-			panic(err)
-		}
-		if err != nil {
-			log.Print(err)
-			panic(err)
-		}
-
-		query = "SELECT * FROM station_master ORDER BY distance"
-		if fromStation.Distance > toStation.Distance {
-			// 上りだったら駅リストを逆にする
-			query += " DESC"
-		}
-
-		stations := []Station{}
-		err = dbx.Select(&stations, query)
-		if err != nil {
-			panic(err)
-		}
 
 		isSeekedToFirstStation := false
 		isContainsOriginStation := false
 		isContainsDestStation := false
 		i := 0
+
 		for _, station := range stations {
+
+			fmt.Println(station)
 
 			if !isSeekedToFirstStation {
 				// 駅リストを列車の発駅まで読み飛ばして頭出しをする

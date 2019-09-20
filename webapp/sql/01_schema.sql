@@ -61,7 +61,8 @@ CREATE TABLE `train_master` (
   `train_class` varchar(100) NOT NULL,
   `train_name` varchar(100) NOT NULL,
   `start_station` varchar(100) NOT NULL,
-  `last_station` varchar(100) NOT NULL
+  `last_station` varchar(100) NOT NULL,
+  `is_nobori` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `users`;
