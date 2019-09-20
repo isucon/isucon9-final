@@ -3,7 +3,6 @@ Description=ISUTRAIN (Language {{ item }})
 Requires=docker.service
 
 [Service]
-
 EnvironmentFile=-/home/isucon/isutrain/webapp/.env
 WorkingDirectory=/home/isucon/isutrain/webapp
 
@@ -11,6 +10,7 @@ Type=simple
 ExecStartPre=/usr/bin/docker-compose -f docker-compose.yml -f docker-compose.{{ item }}.yml build
 ExecStart=/usr/bin/docker-compose -f docker-compose.yml -f docker-compose.{{ item }}.yml up
 ExecStop=/usr/bin/docker-compose -f docker-compose.yml -f docker-compose.{{ item }}.yml stop
+ExecRestart=/usr/bin/docker-compose -f docker-compose.yml -f docker-compose.{{ item }}.yml restart webapp
 
 Restart=always
 RestartSec=10s

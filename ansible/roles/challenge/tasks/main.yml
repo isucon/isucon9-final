@@ -2,8 +2,12 @@
   file: path="/home/isucon/isutrain" state=directory mode=0644 owner=isucon group=isucon
   tags: challenge
 
-- name: copy files
-  unarchive: src="webapp.tar.gz" dest=/home/isucon/isutrain/ owner=isucon group=isucon
+- name: copy webapp
+  unarchive: src=webapp.tar.gz dest=/home/isucon/isutrain/ owner=isucon group=isucon
+  tags: challenge
+
+- name: copy frontend
+  unarchive: src=frontend.tar.gz dest=/var/www/html/ owner=www-data group=www-data
   tags: challenge
 
 - name: create systemd services
@@ -12,3 +16,20 @@
     - go
   tags: challenge
   notify: systemctl daemon-reload
+
+- name: enabled default service
+  service: name=isutrain-go enabled=yes state=started
+  tags: challenge
+
+- name: install nginx
+  apt: name=nginx state=latest update_cache=yes
+  tags: challenge
+
+- name: nginx config
+  template: src=nginx/default dest=/etc/nginx/sites-available/default owner=root group=root mode=0644
+  tags: challenge
+  notify: reload nginx
+
+- name: robots.txt
+  template: src=nginx/robots.txt dest=/var/www/html/robots.txt owner=root group=root mode=0644
+  tags: challenge
