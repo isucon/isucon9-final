@@ -64,6 +64,26 @@ type Seat struct {
 	IsSmokingSeat bool   `json:"is_smoking_seat" db:"is_smoking_seat"`
 }
 
+type Reservation struct {
+	ReservationId int       `json:"reservation_id" db:"reservation_id"`
+	UserId        int       `json:"user_id" db:"user_id"`
+	Date          time.Time `json:"date" db:"date"`
+	TrainClass    string    `json:"train_class" db:"train_class"`
+	TrainName     string    `json:"train_name" db:"train_name"`
+	Departure     string    `json:"departure" db:"departure"`
+	Arrival       string    `json:"arrival" db:"arrival"`
+	PaymentStatus string    `json:"payment_method" db:"payment_method"`
+	Status        string    `json:"status" db:"status"`
+	PaymentId     int       `json:"payment_id" db:"payment_id"`
+}
+
+type SeatReservation struct {
+	ReservationId int    `json:"reservation_id" db:"reservation_id"`
+	CarNumber     int    `json:"car_number" db:"car_number"`
+	SeatRow       int    `json:"seat_row" db:"seat_row"`
+	SeatColumn    string `json:"seat_column" db:"seat_column"`
+}
+
 // 未整理
 
 type CarInformation struct {
@@ -226,6 +246,37 @@ func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 
 func (train Train) getSeatAvailableCount(fromStation Station, toStation Station, seatClass string, isSmokingSeat bool) (int, error) {
 	//TODO: ちゃんと計算する
+
+	var err error
+
+	query := `
+	SELECT sr.reservation_id, sr.car_number, sr.seat_row, sr.seat_column
+	FROM seat_reservations sr, reservations r, seat_master s, station_master std, station_master sta
+	WHERE
+		r.reservation_id=sr.reservation_id AND
+		s.train_class=r.train_class AND
+		s.car_number=sr.car_number AND
+		s.seat_column=sr.seat_column AND
+		s.seat_row=sr.seat_row AND
+		std.name=r.departure AND
+		sta.name=r.arrival
+	`
+
+	if train.IsNobori {
+
+	} else {
+		query += "AND ((std.id <= ? AND ? < sta.id) OR (std.id <= ? AND ? <= sta.id ))"
+
+	}
+
+	seatReservationList := []SeatReservation{}
+	err = dbx.Select(&seatReservationList, query, fromStation.ID, fromStation.ID, toStation.ID, toStation.ID)
+	if err == sql.ErrNoRows {
+		panic(err)
+	}
+	if err != nil {
+		panic(err)
+	}
 
 	return 0, nil
 }
