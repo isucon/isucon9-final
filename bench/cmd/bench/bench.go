@@ -150,7 +150,7 @@ var run = cli.Command{
 		benchmarker := newBenchmarker(targetURI)
 		benchmarker.run(benchCtx)
 		if bencherror.BenchmarkErrs.IsFailure() {
-			dumpFailedResult(bencherror.BenchmarkErrs.Msgs)
+			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
 			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 0)
 		}
 
