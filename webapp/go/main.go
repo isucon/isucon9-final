@@ -152,12 +152,14 @@ func messageResponse(w http.ResponseWriter, message string) {
 	w.Write(errResp)
 }
 
-func errorResponse(w http.ResponseWriter, message string) {
+func errorResponse(w http.ResponseWriter, errCode int, message string) {
 	e := map[string]interface{}{
 		"is_error": true,
 		"message": message,
 	}
 	errResp, _ := json.Marshal(e)
+	
+	w.WriteHeader(errCode)
 	w.Write(errResp)
 }
 
@@ -165,6 +167,25 @@ func getSession(r *http.Request) *sessions.Session {
 	session, _ := store.Get(r, sessionName)
 
 	return session
+}
+
+func getUser(r *http.Request) (user User, errCode int, errMsg string) {
+	session := getSession(r)
+	userID, ok := session.Values["user_id"]
+	if !ok {
+		return user, http.StatusNotFound, "no session"
+	}
+
+	err := dbx.Get(&user, "SELECT * FROM `users` WHERE `id` = ?", userID)
+	if err == sql.ErrNoRows {
+		return user, http.StatusNotFound, "user not found"
+	}
+	if err != nil {
+		log.Print(err)
+		return user, http.StatusInternalServerError, "db error"
+	}
+
+	return user, http.StatusOK, ""
 }
 
 func secureRandomStr(b int) string {
@@ -182,7 +203,7 @@ func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT * FROM distance_fare_master"
 	err := dbx.Select(&distanceFareList, query)
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -297,7 +318,7 @@ func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT * FROM station_master ORDER BY id"
 	err := dbx.Select(&stations, query)
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -374,7 +395,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("use_at"))
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	date = date.In(jst)
@@ -390,11 +411,11 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	err = dbx.Get(&fromStation, query, fromID)
 	if err == sql.ErrNoRows {
 		log.Print("fromStation: no rows")
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -402,12 +423,12 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	err = dbx.Get(&toStation, query, toID)
 	if err == sql.ErrNoRows {
 		log.Print("toStation: no rows")
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	if err != nil {
 		log.Print(err)
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -431,14 +452,14 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), isNobori, trainClass)
 	}
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	stations := []Station{}
 	err = dbx.Select(&stations, query)
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -498,23 +519,23 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			premium_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "premium", false)
 			if err != nil {
-				errorResponse(w, err.Error())
+				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 			premium_smoke_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "premium", true)
 			if err != nil {
-				errorResponse(w, err.Error())
+				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 
 			reserved_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "reserved", false)
 			if err != nil {
-				errorResponse(w, err.Error())
+				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 			reserved_smoke_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "reserved", true)
 			if err != nil {
-				errorResponse(w, err.Error())
+				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 
@@ -558,27 +579,27 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			// 料金計算
 			premiumFare, err := fareCalc(date, fromID, toID, train.TrainClass, "premium")
 			if err != nil {
-				errorResponse(w, err.Error())
+				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 			premiumSmokeFare, err := fareCalc(date, fromID, toID, train.TrainClass, "premium_smoke")
 			if err != nil {
-				errorResponse(w, err.Error())
+				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 			reservedFare, err := fareCalc(date, fromID, toID, train.TrainClass, "reserved")
 			if err != nil {
-				errorResponse(w, err.Error())
+				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 			reservedSmokeFare, err := fareCalc(date, fromID, toID, train.TrainClass, "reserved_smoke")
 			if err != nil {
-				errorResponse(w, err.Error())
+				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 			nonReservedFare, err := fareCalc(date, fromID, toID, train.TrainClass, "non_reserved")
 			if err != nil {
-				errorResponse(w, err.Error())
+				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
 
@@ -598,7 +619,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	resp, err := json.Marshal(trainSearchResponseList)
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	w.Write(resp)
@@ -614,7 +635,7 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("use_at"))
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	date = date.In(jst)
@@ -623,7 +644,7 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	trainName := r.URL.Query().Get("train_name")
 	carNumber, err := strconv.Atoi(r.URL.Query().Get("car_num"))
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -632,7 +653,7 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?"
 	err = dbx.Select(&seatList, query, trainClass, carNumber)
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -651,7 +672,7 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 			seat.SeatColumn,
 		)
 		if err != nil {
-			errorResponse(w, err.Error())
+			errorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -666,7 +687,7 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	c := CarInformation{date, trainClass, trainName, carNumber, seatInformationList}
 	resp, err := json.Marshal(c)
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	w.Write(resp)
@@ -690,7 +711,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 	salt := make([]byte, 1024)
 	_, err := crand.Read(salt)
 	if err != nil{
-		errorResponse(w, "salt generator error")
+		errorResponse(w, http.StatusInternalServerError, "salt generator error")
 		return
 	}
 	superSecurePassword := pbkdf2.Key([]byte(user.Password), salt, 100, 256, sha256.New)
@@ -702,7 +723,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 		superSecurePassword,
 	)
 	if err != nil {
-		errorResponse(w, "user registration failed")
+		errorResponse(w, http.StatusBadRequest, "user registration failed")
 		return
 	}
 	
@@ -725,18 +746,18 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT * FROM users WHERE email=?"
 	err := dbx.Get(&user, query, postUser.Email)
 	if err == sql.ErrNoRows {
-		errorResponse(w, "authentication failed")
+		errorResponse(w, http.StatusForbidden, "authentication failed")
 		return
 	}
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	
 	challengePassword := pbkdf2.Key([]byte(postUser.Password), user.Salt, 100, 256, sha256.New)
 
 	if !bytes.Equal(user.HashedPassword, challengePassword) {
-		errorResponse(w, "authentication failed")
+		errorResponse(w, http.StatusForbidden, "authentication failed")
 		return
 	}
 	
@@ -746,10 +767,25 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	session.Values["csrf_token"] = secureRandomStr(20)
 	if err = session.Save(r, w); err != nil {
 		log.Print(err)
-		errorResponse(w, "session error")
+		errorResponse(w, http.StatusInternalServerError, "session error")
 		return
 	}
 	messageResponse(w, "autheticated")
+}
+
+
+func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		ログイン
+		POST /auth/login
+	*/
+	user, errCode, errMsg := getUser(r)
+	if errCode != http.StatusOK {
+		errorResponse(w, errCode, errMsg)
+		return
+	}
+
+	messageResponse(w, "login siteruyo " + user.Email)
 }
 
 func main() {
@@ -804,6 +840,8 @@ func main() {
 	// 認証関連
 	http.HandleFunc("/auth/signup", signUpHandler)
 	http.HandleFunc("/auth/login", loginHandler)
+
+	http.HandleFunc("/user/reservations", userReservationsHandler)
 
 	fmt.Println(banner)
 	http.ListenAndServe(":8000", nil)
