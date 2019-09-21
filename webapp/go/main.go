@@ -577,6 +577,21 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	usableTrainClassList := getUsableTrainClassList(fromStation, toStation)
+	usable := false
+	for _, v := range usableTrainClassList {
+		if v == train.TrainClass {
+			usable = true
+		}
+	}
+	if !usable {
+		err = fmt.Errorf("invalid train_class")
+		log.Print(err)
+		errorResponse(w, err.Error())
+		return
+	}
+
+
 	seatList := []Seat{}
 
 	query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? ORDER BY seat_row, seat_column"
