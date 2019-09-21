@@ -55,36 +55,36 @@
           禁煙
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="ek"/><label for="ek"></label>
-          <div class="available">○</div>
-          <div class="price">¥12,453</div>
+          <input type="radio" name="price" id="ek" v-bind:disabled="selectedItem.seat_availability.reserved == '×'"/><label for="ek"></label>
+          <div class="available">{{ selectedItem.seat_availability.reserved }}</div>
+          <div class="price">¥{{ selectedItem.seat_fare.reserved }}</div>
         </div>
         <div class="td green">
-          <input type="radio" name="price" id="gk"/><label for="gk"></label>
-          <div class="available">○</div>
-          <div class="price">¥12,453</div>
+          <input type="radio" name="price" id="gk" v-bind:disabled="selectedItem.seat_availability.premium == '×'"/><label for="gk"></label>
+          <div class="available">{{ selectedItem.seat_availability.premium }}</div>
+          <div class="price">¥{{ selectedItem.seat_fare.premium }}</div>
         </div>
         <div class="th">
           <h3>指定席</h3>
           禁煙（喫煙ルーム付近）
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="es"/><label for="es"></label>
-          <div class="available">○</div>
-          <div class="price">¥12,453</div>
+          <input type="radio" name="price" id="es" v-bind:disabled="selectedItem.seat_availability.reserved_smoke == '×'"/><label for="es"></label>
+          <div class="available">{{ selectedItem.seat_availability.reserved_smoke }}</div>
+          <div class="price">¥{{ selectedItem.seat_fare.reserved }}</div>
         </div>
         <div class="td green">
-          <input type="radio" name="price" id="gs"/><label for="gs"></label>
-          <div class="available">○</div>
-          <div class="price">¥12,453</div>
+          <input type="radio" name="price" id="gs" v-bind:disabled="selectedItem.seat_availability.premium_smoke == '×'"/><label for="gs"></label>
+          <div class="available">{{ selectedItem.seat_availability.premium_smoke }}</div>
+          <div class="price">¥{{ selectedItem.seat_fare.premium }}</div>
         </div>
         <div class="th">
           <h3>自由席</h3>
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="f"/><label for="f"></label>
-          <div class="available">○</div>
-          <div class="price">¥12,453</div>
+          <input type="radio" name="price" id="f" v-bind:disabled="selectedItem.seat_availability.non_reserved == '×'"/><label for="f"></label>
+          <div class="available">{{ selectedItem.seat_availability.non_reserved }}</div>
+          <div class="price">¥{{ selectedItem.seat_fare.non_reserved }}</div>
         </div>
         <div class="td">
         </div>
@@ -376,6 +376,11 @@ section.information {
 	font-size:		20px;			/* チェックのサイズ */
 	color:			#fff;			/* チェックの色 */
 	background-color:	#06f;			/* チェックした時の色 */
+}
+
+/* チェックした時のスタイル */
+.popup .prices input[type=radio]:disabled + label:before {
+	background-color:	#555;			/* チェックした時の色 */
 }
 
 .popup .seat {
