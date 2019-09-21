@@ -92,6 +92,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 
 	// FIXME: result.Messagesの扱い
 	return &Result{
+		ID:       job.ID,
 		Stdout:   string(stdout.Bytes()),
 		Stderr:   string(stderr.Bytes()),
 		Reason:   strings.Join(result.Messages, "\n"),
