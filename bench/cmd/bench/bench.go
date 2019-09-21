@@ -22,6 +22,7 @@ import (
 var (
 	paymentURI, targetURI string
 	assetDir              string
+	messageLimit          int
 )
 
 var (
@@ -65,21 +66,31 @@ var run = cli.Command{
 		cli.BoolFlag{
 			Name:        "debug",
 			Destination: &debug,
+			EnvVar:      "BENCH_DEBUG",
 		},
 		cli.StringFlag{
 			Name:        "payment",
 			Value:       "http://localhost:5000",
 			Destination: &paymentURI,
+			EnvVar:      "BENCH_PAYMENT_URL",
 		},
 		cli.StringFlag{
 			Name:        "target",
 			Value:       "http://localhost",
 			Destination: &targetURI,
+			EnvVar:      "BENCH_TARGET_URL",
 		},
 		cli.StringFlag{
 			Name:        "assetdir",
 			Value:       "assets/testdata",
 			Destination: &assetDir,
+			EnvVar:      "BENCH_ASSETDIR",
+		},
+		cli.IntFlag{
+			Name:        "message-limit",
+			Value:       10,
+			Destination: &messageLimit,
+			EnvVar:      "BENCH_MESSAGE_LIMIT",
 		},
 	},
 	Action: func(cliCtx *cli.Context) error {
@@ -150,7 +161,8 @@ var run = cli.Command{
 		benchmarker := newBenchmarker(targetURI)
 		benchmarker.run(benchCtx)
 		if bencherror.BenchmarkErrs.IsFailure() {
-			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
+			msgs := uniqueMsgs(bencherror.BenchmarkErrs.Msgs)
+			dumpFailedResult(msgs[:messageLimit])
 			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 0)
 		}
 
