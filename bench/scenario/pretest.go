@@ -58,7 +58,7 @@ func pretestStaticFiles(ctx context.Context, client *isutrain.Client, assets []*
 		hash := sha256.Sum256(b)
 
 		if hash != asset.Hash {
-			err := bencherror.NewApplicationError(ErrInvalidAssetHash, "filename=%s", asset.Path)
+			err := bencherror.NewApplicationError(ErrInvalidAssetHash, "静的ファイルが不正です: filename=%s", asset.Path)
 			bencherror.PreTestErrs.AddError(err)
 			return err
 		}
