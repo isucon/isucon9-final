@@ -169,7 +169,7 @@ var run = cli.Command{
 					// dequeueが失敗しても終了しない
 					continue
 				}
-				log.Println("dequeue job id=%d team_id=%d target_server=%+v", job.ID, job.Team.ID, job.Team.Servers)
+				log.Printf("dequeue job id=%d team_id=%d target_server=%+v", job.ID, job.Team.ID, job.Team.Servers)
 
 				result, err := execBench(ctx, job)
 				if err != nil {
