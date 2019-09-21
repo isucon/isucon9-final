@@ -18,6 +18,11 @@ DROP TABLE IF EXISTS `reservations`;
 CREATE TABLE `reservations` (
   `reservation_id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `user_id` bigint NOT NULL,
+  `date` datetime NOT NULL,
+  `train_class` varchar(100) NOT NULL,
+  `train_name` varchar(100) NOT NULL,
+  `departure` varchar(100) NOT NULL,
+  `arrival` varchar(100) NOT NULL,
   `payment_method` varchar(100) NOT NULL,
   `status` enum('requesting', 'done', 'rejected') NOT NULL,
   `payment_id` bigint NOT NULL
@@ -36,9 +41,6 @@ CREATE TABLE `seat_master` (
 DROP TABLE IF EXISTS `seat_reservations`;
 CREATE TABLE `seat_reservations` (
   `reservation_id` bigint NOT NULL,
-  `date` datetime NOT NULL,
-  `train_class` varchar(100) NOT NULL,
-  `train_name` varchar(100) NOT NULL,
   `car_number` int unsigned NOT NULL,
   `seat_row` int unsigned NOT NULL,
   `seat_column` varchar(100) NOT NULL
@@ -61,7 +63,8 @@ CREATE TABLE `train_master` (
   `train_class` varchar(100) NOT NULL,
   `train_name` varchar(100) NOT NULL,
   `start_station` varchar(100) NOT NULL,
-  `last_station` varchar(100) NOT NULL
+  `last_station` varchar(100) NOT NULL,
+  `is_nobori` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `users`;
