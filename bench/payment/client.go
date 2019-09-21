@@ -60,26 +60,36 @@ func (c *Client) Result(ctx context.Context) (*PaymentResult, error) {
 
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
-		return nil, bencherror.NewCriticalError(err, "課金APIから決済結果を取得できませんでした. 運営に確認をお願いいたします")
+		paymentErr := bencherror.NewCriticalError(err, "課金APIから決済結果を取得できませんでした. 運営に確認をお願いいたします")
+		bencherror.InitializeErrs.AddError(paymentErr)
+		return nil, paymentErr
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, err
+		paymentErr := bencherror.NewCriticalError(err, "課金APIへのリクエストに失敗しました. 運営に確認をお願いいたします")
+		bencherror.InitializeErrs.AddError(paymentErr)
+		return nil, paymentErr
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, bencherror.NewCriticalError(ErrPaymentResult, "課金APIから決済結果取得時、不正なステータスコード(=%d)が返却されました. 運営に確認をお願いいたします", resp.StatusCode)
+		paymentErr := bencherror.NewCriticalError(ErrPaymentResult, "課金APIから決済結果取得時、不正なステータスコード(=%d)が返却されました. 運営に確認をお願いいたします", resp.StatusCode)
+		bencherror.InitializeErrs.AddError(paymentErr)
+		return nil, paymentErr
 	}
 
 	var result *PaymentResult
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, err
+		paymentErr := bencherror.NewCriticalError(err, "課金APIのレスポンスが不正です.運営に確認をお願いいたします")
+		bencherror.InitializeErrs.AddError(paymentErr)
+		return nil, paymentErr
 	}
 
 	if !result.IsOK {
-		return nil, bencherror.NewCriticalError(ErrPaymentResult, "課金APIで処理が失敗しました. 運営に確認をお願いいたします")
+		paymentErr := bencherror.NewCriticalError(ErrPaymentResult, "課金APIで処理が失敗しました. 運営に確認をお願いいたします")
+		bencherror.InitializeErrs.AddError(paymentErr)
+		return nil, paymentErr
 	}
 
 	return result, nil
