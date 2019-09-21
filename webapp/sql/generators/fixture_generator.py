@@ -43,6 +43,12 @@ src_dest = [
     ('東京', '京都'),
 ]
 
+train_average_speed = [500, 480, 480] # km/h
+station_stop_time = [1, 2, 2] # 分
+
+train_data = []
+station_data = []
+
 def common_queries(file):
     queries = [
         'use isutrain;',
@@ -56,7 +62,6 @@ def train_generator(filename):
     common_queries(f)
 
     values = []
-    train_data = []
     f.write('INSERT INTO train_master(date,train_class,train_name,departure_at,start_station,last_station,is_nobori) VALUES\n\t')
 
     date = datetime.datetime(2020,1,1)
@@ -99,6 +104,7 @@ def station_generator(filename):
     f.write('INSERT INTO station_master(name,distance,is_stop_express,is_stop_semi_express,is_stop_local) VALUES\n\t')
     reader = csv.reader(soreppoi)
     for row in reader:
+        station_data.append((row[0], row[1], row[2], row[3], row[4]))
         values.append('("%s",%s,%s,%s,%s)' % (row[0], row[1], row[2], row[3], row[4]))
     f.write(',\n\t'.join(values))
     f.write(';\n')
@@ -205,6 +211,39 @@ def seat_generator(filename):
 
     f.close()
 
+def train_timetable_generator(filename):
+    f = open(filename, 'w')
+    common_queries(f)
+
+    values = []
+    f.write('INSERT INTO train_timetable_master(date,train_class,train_name,station,arrival,departure) VALUES\n\t')
+    for train in train_data:
+        train_class_id = train_name.index(train[1])
+        last_station_position = 0.0
+        time_now = datetime.datetime.combine(datetime.date.today(),train[3])
+        for station in station_data:
+            if (train_class_id == 0 and station[2] == '1') or (train_class_id == 1 and station[3] == '1') or (train_class_id == 2 and station[4] == '1'):
+
+                if float(station[1]) > last_station_position:
+                    distance = float(station[1]) - last_station_position
+                else:
+                    distance = last_station_position - float(station[1])
+
+                dt = distance / train_average_speed[train_class_id] * 3600 # sec
+                arrival = time_now + datetime.timedelta(seconds=dt)
+                departure = arrival + datetime.timedelta(minutes=station_stop_time[train_class_id] + random.random() * train_class_id)
+
+
+                values.append('("%s","%s","%s","%s","%s","%s")' 
+                        % (train[0], train[1], train[2], station[0], arrival.strftime("%H:%M:%S"), departure.strftime("%H:%M:%S")))
+                
+                time_now = departure
+                last_station_position = float(station[1])
+            
+    f.write(',\n\t'.join(values))
+    f.write(';\n')
+
+    f.close()
 
 if __name__ == '__main__':
     print('90_train.sql generating...', end='', flush=True)
@@ -221,4 +260,8 @@ if __name__ == '__main__':
 
     print('93_seat.sql generating...', end='', flush=True)
     seat_generator('93_seat.sql')
+    print('ok')
+
+    print('94_train_timetable.sql generating...', end='', flush=True)
+    train_timetable_generator('94_train_timetable.sql')
     print('ok')
