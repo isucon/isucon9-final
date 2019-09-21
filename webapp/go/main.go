@@ -321,18 +321,30 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		query += " DESC"
 	}
 
-	trainList := []Train{}
+	usableTrainClassList := getUsableTrainClassList(fromStation, toStation)
+
+	var inQuery string
+	var inArgs []interface{}
+
 	if trainClass == "" {
-		query := "SELECT * FROM train_master WHERE date=? AND is_nobori=?"
-		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), isNobori)
+		query := "SELECT * FROM train_master WHERE date=? AND train_class IN (?) AND is_nobori=?"
+		inQuery, inArgs, err = sqlx.In(query, date.Format("2006/01/02"), usableTrainClassList, isNobori)
 	} else {
-		query := "SELECT * FROM train_master WHERE date=? AND is_nobori=? AND train_class=?"
-		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), isNobori, trainClass)
+		query := "SELECT * FROM train_master WHERE date=? AND train_class IN (?) AND is_nobori=? AND train_class=?"
+		inQuery, inArgs, err = sqlx.In(query, date.Format("2006/01/02"), usableTrainClassList, isNobori, trainClass)
 	}
 	if err != nil {
 		errorResponse(w, err.Error())
 		return
 	}
+
+	trainList := []Train{}
+	err = dbx.Select(&trainList, inQuery, inArgs...)
+	if err != nil {
+		errorResponse(w, err.Error())
+		return
+	}
+
 
 	stations := []Station{}
 	err = dbx.Select(&stations, query)

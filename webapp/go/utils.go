@@ -4,7 +4,7 @@ import (
   "fmt"
 )
 
-func getUsableTrainClass(fromStation Station, toStation Station) []string {
+func getUsableTrainClassList(fromStation Station, toStation Station) []string {
   usable := map[string]string{}
 
   for key, value := range TrainClassMap {
