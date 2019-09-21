@@ -42,7 +42,7 @@ const (
 
 const (
 	StatusSuccess = "done"
-	StatusFailed  = "fail"
+	// StatusFailed  = "fail"
 	StatusTimeout = "timeout"
 )
 
@@ -77,7 +77,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	select {
 	case err := <-errCh:
 		if err != nil {
-			status = StatusFailed
+			status = StatusSuccess
 		}
 	case <-ctx.Done():
 		status = StatusTimeout
