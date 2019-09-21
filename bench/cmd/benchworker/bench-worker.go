@@ -64,7 +64,10 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		"--target=" + targetURI,
 		"--assetdir=" + assetDir,
 	}...)
-	log.Println(cmd.String())
+	log.Printf("exec_path=%s", cmd.Path)
+	for _, arg := range cmd.Args {
+		log.Printf("\t- args=%s\n", arg)
+	}
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 
