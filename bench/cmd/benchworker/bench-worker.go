@@ -102,7 +102,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 }
 
 var run = cli.Command{
-	Name:  "benchworker",
+	Name:  "run",
 	Usage: "ベンチマークワーカー実行",
 	Flags: []cli.Flag{
 		cli.StringFlag{
