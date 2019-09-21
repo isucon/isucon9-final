@@ -120,7 +120,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func errorResponse(w http.ResponseWriter, message string) {
-	e := map[string]string{"error": message} 
+	e := map[string]string{"error": message}
 	errResp, _ := json.Marshal(e)
 	w.Write(errResp)
 }
@@ -144,7 +144,7 @@ func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(distanceFareList)
 }
 
-func getDistanceFare(origToDestDistance float64) (int,error) {
+func getDistanceFare(origToDestDistance float64) (int, error) {
 
 	distanceFareList := []DistanceFare{}
 
@@ -330,14 +330,14 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	date = date.In(jst)
 
 	trainClass := r.URL.Query().Get("train_class")
-	from_id, _ := strconv.Atoi(r.URL.Query().Get("from"))
-	to_id, _ := strconv.Atoi(r.URL.Query().Get("to"))
+	fromID, _ := strconv.Atoi(r.URL.Query().Get("from"))
+	toID, _ := strconv.Atoi(r.URL.Query().Get("to"))
 
 	var fromStation, toStation Station
 	query := "SELECT * FROM station_master WHERE id=?"
 
 	// From
-	err = dbx.Get(&fromStation, query, from_id)
+	err = dbx.Get(&fromStation, query, fromID)
 	if err == sql.ErrNoRows {
 		panic(err)
 	}
@@ -347,7 +347,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// To
-	err = dbx.Get(&toStation, query, to_id)
+	err = dbx.Get(&toStation, query, toID)
 	if err == sql.ErrNoRows {
 		panic(err)
 	}
@@ -410,11 +410,11 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			if station.ID == from_id {
+			if station.ID == fromID {
 				// 発駅を経路中に持つ編成の場合フラグを立てる
 				isContainsOriginStation = true
 			}
-			if station.ID == to_id {
+			if station.ID == toID {
 				if isContainsOriginStation {
 					// 発駅と着駅を経路中に持つ編成の場合
 					isContainsDestStation = true
@@ -440,8 +440,6 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			departureAt := time.Now()
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			arrivalAt := time.Now()
-
-
 
 			premium_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "premium", false)
 			if err != nil {
