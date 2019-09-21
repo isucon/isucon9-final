@@ -1,0 +1,43 @@
+---
+- name: check docker version
+  command: docker version -f \{\{.Server.Version\}\}
+  changed_when: false
+  ignore_errors: yes
+  check_mode: no
+  tags: docker
+  register: docker_installed
+
+- name: install curl
+  apt: name=curl state=latest
+  tags: docker
+
+- name: install docker
+  shell: curl -sSL https://get.docker.com/ | sudo sh
+  tags: docker
+  when: (docker_installed.rc != 0)
+
+- name: update docker if older than docker_min_version
+  apt: name=docker-engine state=latest
+  when: docker_installed.rc == 0 and docker_installed.stdout | version_compare(docker_min_version,  '<')
+
+- name: ubuntu add docker group
+  user: name="{{ item }}" groups=docker append=yes
+  tags: docker
+  with_items:
+    - admin
+    - isucon
+
+- name: docker defaults
+  template: src=default.j2 dest=/etc/default/docker owner=root group=root mode=0644
+  tags: docker
+  notify: restart docker
+
+- name: enabled docker service
+  service: name=docker enabled=yes state=started
+  with_items:
+    - docker
+  tags: docker
+
+- name: install docker-compose
+  apt: name=docker-compose state=latest
+  tags: docker

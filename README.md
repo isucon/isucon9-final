@@ -38,3 +38,12 @@ docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}
 ```
 
 http://127.0.0.1:8080
+
+
+## デプロイ
+
+```bash
+make archive
+cd ansible
+ansible-playbook -i hosts -u root -s -c paramiko -D playbook.yml
+```

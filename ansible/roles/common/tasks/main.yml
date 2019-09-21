@@ -1,0 +1,69 @@
+---
+- name: set hostname
+  hostname: name="{{inventory_hostname_short}}"
+  tags: hostname
+
+- name: set hostname
+  lineinfile: dest=/etc/hostname regexp=.* line={{inventory_hostname_short}}
+  tags: hostname
+
+- name: hosts
+  template: src=hosts.j2 dest=/etc/hosts owner=root group=root mode=0644
+  tags: hosts
+
+- name: configure sudoers
+  template: src=00_common.sudo.j2 dest=/etc/sudoers.d/00_common owner=root group=root mode=0440
+  tags: users
+
+- name: configure motd
+  template: src=motd dest=/etc/motd owner=root group=root mode=0644
+  tags: users
+
+- name: create groups
+  group: name={{ item }} state=present
+  tags: users
+  with_items:
+    - admin
+    - isucon
+
+- name: create users
+  user: name={{ item }} shell=/bin/bash state=present group={{ item }} append=yes groups={{ item }}
+  tags: users
+  with_items:
+    - admin
+    - isucon
+
+- name: change isucon password
+  user: name=isucon password=""
+  tags: users
+
+- name: create .ssh directory
+  file: path=/home/{{ item }}/.ssh state=directory owner={{ item }} group={{ item }} mode=0700
+  with_items:
+    - admin
+    - isucon
+  tags: users
+
+- name: create authorized_keys
+  copy: content="{{ public_keys }}" dest=/home/{{ item }}/.ssh/authorized_keys owner={{ item }} group={{ item }} mode=0600
+  with_items:
+    - admin
+    - isucon
+  tags: users
+
+- name: configure bash profile
+  template: src=bash_profile.j2 dest=/home/{{ item }}/.bash_profile owner={{ item }} group={{ item }} mode=0644
+  with_items:
+    - admin
+    - isucon
+  tags: users
+
+- name: 'Install common packages'
+  apt:
+    name:
+      - 'vim'
+      - 'python-apt'
+    state: 'latest'
+    update_cache: yes
+  tags:
+    - packages

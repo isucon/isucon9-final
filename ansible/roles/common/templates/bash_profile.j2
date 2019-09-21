@@ -1,0 +1,7 @@
+[ -f .bashrc ] && . .bashrc
+PS1='${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\u@{{ inventory_hostname_short }}\[\033[00m\]:\[\033[01;00m\]\w\[\033[00m\]\$ '
+case "${TERM}" in
+        screen*)
+                export PROMPT_COMMAND='printf "\033k\U1F004 %s:\033\\" "${HOSTNAME%%.*}"'
+                ;;
+esac
