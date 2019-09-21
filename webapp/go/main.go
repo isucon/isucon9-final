@@ -107,8 +107,8 @@ type TrainSearchResponse struct {
 	Name             string            `json:"train_name"`
 	Start            string            `json:"start"`
 	Last             string            `json:"last"`
-	Departure        int               `json:"departure"`
-	Destination      int               `json:"destination"`
+	Departure        string            `json:"departure"`
+	Destination      string            `json:"destination"`
 	DepartureTime    time.Time         `json:"departure_time"`
 	ArrivalTime      time.Time         `json:"arrival_time"`
 	SeatAvailability map[string]string `json:"seat_availability"`
@@ -330,14 +330,14 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	date = date.In(jst)
 
 	trainClass := r.URL.Query().Get("train_class")
-	fromID, _ := strconv.Atoi(r.URL.Query().Get("from"))
-	toID, _ := strconv.Atoi(r.URL.Query().Get("to"))
+	fromName := r.URL.Query().Get("from")
+	toName := r.URL.Query().Get("to")
 
 	var fromStation, toStation Station
-	query := "SELECT * FROM station_master WHERE id=?"
+	query := "SELECT * FROM station_master WHERE name=?"
 
 	// From
-	err = dbx.Get(&fromStation, query, fromID)
+	err = dbx.Get(&fromStation, query, fromName)
 	if err == sql.ErrNoRows {
 		log.Print("fromStation: no rows")
 		errorResponse(w, err.Error())
@@ -349,7 +349,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// To
-	err = dbx.Get(&toStation, query, toID)
+	err = dbx.Get(&toStation, query, toName)
 	if err == sql.ErrNoRows {
 		log.Print("toStation: no rows")
 		errorResponse(w, err.Error())
@@ -415,11 +415,11 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			if station.ID == fromID {
+			if station.ID == fromStation.ID {
 				// 発駅を経路中に持つ編成の場合フラグを立てる
 				isContainsOriginStation = true
 			}
-			if station.ID == toID {
+			if station.ID == toStation.ID {
 				if isContainsOriginStation {
 					// 発駅と着駅を経路中に持つ編成の場合
 					isContainsDestStation = true
@@ -506,27 +506,27 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// 料金計算
-			premiumFare, err := fareCalc(date, fromID, toID, train.TrainClass, "premium")
+			premiumFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "premium")
 			if err != nil {
 				errorResponse(w, err.Error())
 				return
 			}
-			premiumSmokeFare, err := fareCalc(date, fromID, toID, train.TrainClass, "premium_smoke")
+			premiumSmokeFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "premium_smoke")
 			if err != nil {
 				errorResponse(w, err.Error())
 				return
 			}
-			reservedFare, err := fareCalc(date, fromID, toID, train.TrainClass, "reserved")
+			reservedFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "reserved")
 			if err != nil {
 				errorResponse(w, err.Error())
 				return
 			}
-			reservedSmokeFare, err := fareCalc(date, fromID, toID, train.TrainClass, "reserved_smoke")
+			reservedSmokeFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "reserved_smoke")
 			if err != nil {
 				errorResponse(w, err.Error())
 				return
 			}
-			nonReservedFare, err := fareCalc(date, fromID, toID, train.TrainClass, "non_reserved")
+			nonReservedFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "non_reserved")
 			if err != nil {
 				errorResponse(w, err.Error())
 				return
@@ -542,7 +542,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			trainSearchResponseList = append(trainSearchResponseList, TrainSearchResponse{
 				train.TrainClass, train.TrainName, train.StartStation, train.LastStation,
-				fromID, toID, departureAt, arrivalAt, seatAvailability, fareInformation,
+				fromStation.Name, toStation.Name, departureAt, arrivalAt, seatAvailability, fareInformation,
 			})
 		}
 	}
@@ -558,7 +558,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		指定した列車の座席列挙
-		GET /train/seats?date=2020-03-01&train_class=のぞみ&train_name=96号&car_number=2&from=1&to=10
+		GET /train/seats?date=2020-03-01&train_class=のぞみ&train_name=96号&car_number=2&from=大阪&to=東京
 	*/
 
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
@@ -572,8 +572,8 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	trainClass := r.URL.Query().Get("train_class")
 	trainName := r.URL.Query().Get("train_name")
 	carNumber, _ := strconv.Atoi(r.URL.Query().Get("car_number"))
-	from_id, _ := strconv.Atoi(r.URL.Query().Get("from"))
-	to_id, _ := strconv.Atoi(r.URL.Query().Get("to"))
+	fromName := r.URL.Query().Get("from")
+	toName := r.URL.Query().Get("to")
 
 	// 対象列車の取得
 	var train Train
@@ -583,6 +583,35 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	if err != nil {
+		errorResponse(w, err.Error())
+		return
+	}
+
+
+	var fromStation, toStation Station
+	query = "SELECT * FROM station_master WHERE name=?"
+
+	// From
+	err = dbx.Get(&fromStation, query, fromName)
+	if err == sql.ErrNoRows {
+		log.Print("fromStation: no rows")
+		errorResponse(w, err.Error())
+		return
+	}
+	if err != nil {
+		errorResponse(w, err.Error())
+		return
+	}
+
+	// To
+	err = dbx.Get(&toStation, query, toName)
+	if err == sql.ErrNoRows {
+		log.Print("toStation: no rows")
+		errorResponse(w, err.Error())
+		return
+	}
+	if err != nil {
+		log.Print(err)
 		errorResponse(w, err.Error())
 		return
 	}
@@ -649,24 +678,24 @@ WHERE
 
 			if train.IsNobori {
 				// 上り
-				if arrivalStation.ID < from_id && from_id <= departureStation.ID {
+				if arrivalStation.ID < fromStation.ID && fromStation.ID <= departureStation.ID {
 					s.IsOccupied = true
 				}
-				if arrivalStation.ID < to_id && to_id <= departureStation.ID {
+				if arrivalStation.ID < toStation.ID && toStation.ID <= departureStation.ID {
 					s.IsOccupied = true
 				}
-				if to_id < arrivalStation.ID && departureStation.ID < from_id {
+				if toStation.ID < arrivalStation.ID && departureStation.ID < fromStation.ID {
 					s.IsOccupied = true
 				}
 			}else{
 				// 下り
-				if departureStation.ID <= from_id && from_id < arrivalStation.ID {
+				if departureStation.ID <= fromStation.ID && fromStation.ID < arrivalStation.ID {
 					s.IsOccupied = true
 				}
-				if departureStation.ID <= to_id && to_id < arrivalStation.ID {
+				if departureStation.ID <= toStation.ID && toStation.ID < arrivalStation.ID {
 					s.IsOccupied = true
 				}
-				if from_id < departureStation.ID && arrivalStation.ID < to_id {
+				if fromStation.ID < departureStation.ID && arrivalStation.ID < toStation.ID {
 					s.IsOccupied = true
 				}
 			}
