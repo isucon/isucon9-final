@@ -70,6 +70,7 @@ CREATE TABLE `train_master` (
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `email` varchar(300) NOT NULL,
+  `email` varchar(300) NOT NULL UNIQUE,
+  `salt` varbinary(1024) NOT NULL,
   `super_secure_password` varbinary(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
