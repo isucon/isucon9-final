@@ -1,11 +1,15 @@
 package main
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
+	"golang.org/x/crypto/pbkdf2"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"math"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -115,12 +119,29 @@ type TrainSearchResponse struct {
 	Fare             map[string]int    `json:"seat_fare"`
 }
 
+type User struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, World")
 }
 
+func messageResponse(w http.ResponseWriter, message string) {
+	e := map[string]interface{}{
+		"is_error": false,
+		"message": message,
+	}
+	errResp, _ := json.Marshal(e)
+	w.Write(errResp)
+}
+
 func errorResponse(w http.ResponseWriter, message string) {
-	e := map[string]string{"error": message}
+	e := map[string]interface{}{
+		"is_error": true,
+		"message": message,
+	}
 	errResp, _ := json.Marshal(e)
 	w.Write(errResp)
 }
@@ -622,6 +643,43 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(resp)
 }
 
+
+func signUpHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		ユーザー登録
+		POST /auth/signup
+	*/
+
+	defer r.Body.Close()
+	buf, _ := ioutil.ReadAll(r.Body)
+
+	user := User{}
+	json.Unmarshal(buf, &user)
+
+	// TODO: validation
+
+	salt := make([]byte, 1024)
+	_, err := rand.Read(salt)
+	if err != nil{
+		errorResponse(w, "salt generator error")
+		return
+	}
+	superSecurePassword := pbkdf2.Key([]byte(user.Password), salt, 100, 256, sha256.New)
+
+	_, err = dbx.Exec(
+		"INSERT INTO `users` (`email`, `salt`, `super_secure_password`) VALUES (?, ?, ?)",
+		user.Email,
+		salt,
+		superSecurePassword,
+	)
+	if err != nil {
+		errorResponse(w, "user registration failed")
+		return
+	}
+	
+	messageResponse(w, "registration complete")
+}
+
 func main() {
 	// MySQL関連のお膳立て
 	var err error
@@ -670,6 +728,9 @@ func main() {
 	http.HandleFunc("/api/stations", getStationsHandler)
 	http.HandleFunc("/api/train/search", trainSearchHandler)
 	http.HandleFunc("/api/train/seats", trainSeatsHandler)
+
+	// 認証関連
+	http.HandleFunc("/auth/signup", signUpHandler)
 
 	fmt.Println(banner)
 	http.ListenAndServe(":8000", nil)
