@@ -1,17 +1,41 @@
 - name: create isucon directory
-  file: path="/home/admin/isucon" state=directory mode=0644 owner=admin group=admin
+  file: path="{{ item }}" state=directory mode=0755 owner=admin group=admin
+  tags: benchmark
+  with_items:
+    - /home/admin/isucon
+    - /home/admin/isucon/bin
+    - /home/admin/isucon/assets
+
+- name: copy files
+  copy: src="{{ item }}" dest="/home/admin/isucon/bin/{{ item }}" owner=admin group=admin mode=0755
+  with_items:
+    - payment
+    - bench
+    - benchworker
   tags: benchmark
 
-
+- name: copy frontend
+  unarchive: src=frontend.tar.gz dest=/home/admin/isucon/assets/ owner=www-data group=www-data
+  tags: benchmark
 
 - name: create systemd services
-  template: src=benchworker.service dest="/etc/systemd/system/benchworker.service" owner=root group=root mode=0644
+  template: src="{{ item }}.service" dest="/etc/systemd/system/{{ item }}.service" owner=root group=root mode=0644
   tags: benchmark
   notify: systemctl daemon-reload
+  with_items:
+    - benchworker
+    - payment
+
+- name: create .env
+  template: src=env dest="/home/admin/isucon/.env" owner=admin group=admin mode=0644
+  tags: benchmark
 
 - name: enabled service
-  service: name=benchworker enabled=yes state=started
+  service: name="{{ item }}" enabled=yes state=started
   tags: benchmark
+  with_items:
+    - benchworker
+    - payment
 
 - name: install nginx
   apt: name=nginx state=latest update_cache=yes

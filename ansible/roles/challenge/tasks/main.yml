@@ -1,5 +1,5 @@
 - name: create isutrain directory
-  file: path="/home/isucon/isutrain" state=directory mode=0644 owner=isucon group=isucon
+  file: path="/home/isucon/isutrain" state=directory mode=0755 owner=isucon group=isucon
   tags: challenge
 
 - name: copy webapp
