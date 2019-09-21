@@ -286,13 +286,13 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 	`
 
 	if train.IsNobori {
-		query += "AND ((sta.id < ? AND ? <= std.id) OR (sta.id < ? AND ? <= std.id))"
+		query += "AND ((sta.id < ? AND ? <= std.id) OR (sta.id < ? AND ? <= std.id) OR (? < sta.id AND std.id < ?))"
 	} else {
-		query += "AND ((std.id <= ? AND ? < sta.id) OR (std.id <= ? AND ? < sta.id))"
+		query += "AND ((std.id <= ? AND ? < sta.id) OR (std.id <= ? AND ? < sta.id) OR (sta.id < ? AND ? < std.id))"
 	}
 
 	seatReservationList := []SeatReservation{}
-	err = dbx.Select(&seatReservationList, query, fromStation.ID, fromStation.ID, toStation.ID, toStation.ID)
+	err = dbx.Select(&seatReservationList, query, fromStation.ID, fromStation.ID, toStation.ID, toStation.ID, fromStation.ID, toStation.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -655,12 +655,18 @@ WHERE
 				if arrivalStation.ID < to_id && to_id <= departureStation.ID {
 					s.IsOccupied = true
 				}
+				if to_id < arrivalStation.ID && departureStation.ID < from_id {
+					s.IsOccupied = true
+				}
 			}else{
 				// 下り
 				if departureStation.ID <= from_id && from_id < arrivalStation.ID {
 					s.IsOccupied = true
 				}
 				if departureStation.ID <= to_id && to_id < arrivalStation.ID {
+					s.IsOccupied = true
+				}
+				if from_id < departureStation.ID && arrivalStation.ID < to_id {
 					s.IsOccupied = true
 				}
 			}
