@@ -76,7 +76,7 @@
       <article class="from">
         <div>{{ from_station.name }}</div>
         <select class="from" v-model="from_station_id">
-          <option v-for="station in stations" v-bind:key="station.id" :value="station.id">
+          <option v-for="station in usableStations" v-bind:key="station.id" :value="station.id">
             {{ station.name }}
           </option>
         </select>
@@ -87,7 +87,7 @@
       <article class="to">
         <div>{{ to_station.name }}</div>
         <select class="to" v-model="to_station_id">
-          <option v-for="station in stations" v-bind:key="station.id" :value="station.id">
+          <option v-for="station in usableStations" v-bind:key="station.id" :value="station.id">
             {{ station.name }}
           </option>
         </select>
@@ -159,6 +159,29 @@ export default {
     },
     to_station() {
       return apiService.getStation(this.to_station_id)
+    },
+    usableStations() {
+      var ret = this.stations
+
+      if (this.train_class == "最速"){
+        ret = this.stations.filter(station => {
+          return station.is_stop_express;
+        })
+      }
+
+      if (this.train_class == "中間"){
+        ret = this.stations.filter(station => {
+          return station.is_stop_semi_express;
+        })
+      }
+
+      if (this.train_class == "遅いやつ"){
+        ret = this.stations.filter(station => {
+          return station.is_stop_local;
+        })
+      }
+
+      return ret
     },
     train_class_query() {
       if(this.train_class=="全て") {
