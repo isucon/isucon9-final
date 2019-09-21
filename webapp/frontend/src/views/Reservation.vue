@@ -205,8 +205,8 @@ export default {
         month: this.month,
         day: this.day,
         train_class: this.train_class_query,
-        from_station: this.from_station.name,
-        to_station: this.to_station.name,
+        from_station: this.from_station.id,
+        to_station: this.to_station.id,
         adult: this.adult,
         child: this.child
       }

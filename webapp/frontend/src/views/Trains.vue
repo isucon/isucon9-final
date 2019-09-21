@@ -91,7 +91,7 @@
       </div>
 
 
-      <div class="seat">
+      <div class="seat" v-on:click="selectSeat()">
         座席表を見る
       </div>
 
@@ -123,6 +123,7 @@
 </template>
 
 <script>
+import Router from '@/router.js'
 import TrainItem from '@/components/Trains/TrainItem.vue'
 import { apiService } from '../services/api.js'
 
@@ -159,8 +160,8 @@ export default {
         month: this.month,
         day: this.day,
         train_class: this.train_class,
-        from_station: this.from_station_id,
-        to_station: this.to_station_id,
+        from_station: this.from_station.name,
+        to_station: this.to_station.name,
         adult: this.adult,
         child: this.child,
       }
@@ -190,6 +191,21 @@ export default {
 
         this.items = items
       })
+    },
+    selectSeat() {
+      var query = {
+        year: this.year,
+        month: this.month,
+        day: this.day,
+        train_class: this.selectedItem.train_class,
+        train_name: this.selectedItem.train_name,
+        car_number: 4,
+        from_station: this.from_station.name,
+        to_station: this.to_station.name,
+        adult: this.adult,
+        child: this.child
+      }
+      Router.push({ path: '/reservation/seats', query: query})
     }
   },
   mounted() {
