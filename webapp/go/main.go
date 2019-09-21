@@ -1,9 +1,9 @@
 package main
 
 import (
-	"crypto/rand"
+	"bytes"
+	crand "crypto/rand"
 	"crypto/sha256"
-	"golang.org/x/crypto/pbkdf2"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -15,8 +15,10 @@ import (
 	"strconv"
 	"time"
 
+	"golang.org/x/crypto/pbkdf2"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"github.com/gorilla/sessions"
 	// "sync"
 )
 
@@ -120,9 +122,22 @@ type TrainSearchResponse struct {
 }
 
 type User struct {
+	ID int64
 	Email string `json:"email"`
 	Password string `json:"password"`
+	Salt []byte `db:"salt"`
+	HashedPassword []byte `db:"super_secure_password"`
 }
+
+const (
+	sessionName = "session_isutrain"
+)
+
+
+var (
+	store sessions.Store = sessions.NewCookieStore([]byte(secureRandomStr(20)))
+)
+
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, World")
@@ -144,6 +159,20 @@ func errorResponse(w http.ResponseWriter, message string) {
 	}
 	errResp, _ := json.Marshal(e)
 	w.Write(errResp)
+}
+
+func getSession(r *http.Request) *sessions.Session {
+	session, _ := store.Get(r, sessionName)
+
+	return session
+}
+
+func secureRandomStr(b int) string {
+	k := make([]byte, b)
+	if _, err := crand.Read(k); err != nil {
+		panic(err)
+	}
+	return fmt.Sprintf("%x", k)
 }
 
 func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
@@ -659,7 +688,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: validation
 
 	salt := make([]byte, 1024)
-	_, err := rand.Read(salt)
+	_, err := crand.Read(salt)
 	if err != nil{
 		errorResponse(w, "salt generator error")
 		return
@@ -678,6 +707,49 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	messageResponse(w, "registration complete")
+}
+
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		ログイン
+		POST /auth/login
+	*/
+
+	defer r.Body.Close()
+	buf, _ := ioutil.ReadAll(r.Body)
+
+	postUser := User{}
+	json.Unmarshal(buf, &postUser)
+	
+	user := User{}
+	query := "SELECT * FROM users WHERE email=?"
+	err := dbx.Get(&user, query, postUser.Email)
+	if err == sql.ErrNoRows {
+		errorResponse(w, "authentication failed")
+		return
+	}
+	if err != nil {
+		errorResponse(w, err.Error())
+		return
+	}
+	
+	challengePassword := pbkdf2.Key([]byte(postUser.Password), user.Salt, 100, 256, sha256.New)
+
+	if !bytes.Equal(user.HashedPassword, challengePassword) {
+		errorResponse(w, "authentication failed")
+		return
+	}
+	
+	session := getSession(r)
+
+	session.Values["user_id"] = user.ID
+	session.Values["csrf_token"] = secureRandomStr(20)
+	if err = session.Save(r, w); err != nil {
+		log.Print(err)
+		errorResponse(w, "session error")
+		return
+	}
+	messageResponse(w, "autheticated")
 }
 
 func main() {
@@ -731,6 +803,7 @@ func main() {
 
 	// 認証関連
 	http.HandleFunc("/auth/signup", signUpHandler)
+	http.HandleFunc("/auth/login", loginHandler)
 
 	fmt.Println(banner)
 	http.ListenAndServe(":8000", nil)
