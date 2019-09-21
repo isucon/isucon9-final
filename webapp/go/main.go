@@ -244,12 +244,24 @@ func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(stations)
 }
 
-func (train Train) getSeatAvailableCount(fromStation Station, toStation Station, seatClass string, isSmokingSeat bool) (int, error) {
-	//TODO: ちゃんと計算する
-
+func (train Train) getAvailableSeats(fromStation Station, toStation Station, seatClass string, isSmokingSeat bool) ([]Seat, error) {
 	var err error
 
-	query := `
+	// 全ての座席を
+	query := "SELECT * FROM seat_master WHERE train_class=? AND seat_class=? AND is_smoking_seat=?"
+
+	seatList := []Seat{}
+	err = dbx.Select(&seatList, query, train.TrainClass, seatClass, isSmokingSeat)
+	if err != nil {
+		panic(err)
+	}
+
+	availableSeatMap := map[string]Seat{}
+	for _, seat := range seatList {
+		availableSeatMap[fmt.Sprintf("%d_%d_%s", seat.CarNumber, seat.SeatRow, seat.SeatColumn)] = seat
+	}
+
+	query = `
 	SELECT sr.reservation_id, sr.car_number, sr.seat_row, sr.seat_column
 	FROM seat_reservations sr, reservations r, seat_master s, station_master std, station_master sta
 	WHERE
@@ -263,22 +275,27 @@ func (train Train) getSeatAvailableCount(fromStation Station, toStation Station,
 	`
 
 	if train.IsNobori {
-
+		query += "AND ((sta.id < ? AND ? <= std.id) OR (sta.id < ? AND ? <= std.id))"
 	} else {
-		query += "AND ((std.id <= ? AND ? < sta.id) OR (std.id <= ? AND ? <= sta.id ))"
-
+		query += "AND ((std.id <= ? AND ? < sta.id) OR (std.id <= ? AND ? < sta.id))"
 	}
 
 	seatReservationList := []SeatReservation{}
 	err = dbx.Select(&seatReservationList, query, fromStation.ID, fromStation.ID, toStation.ID, toStation.ID)
-	if err == sql.ErrNoRows {
-		panic(err)
-	}
 	if err != nil {
 		panic(err)
 	}
 
-	return 0, nil
+	for _, seatReservation := range seatReservationList {
+		key := fmt.Sprintf("%d_%d_%s", seatReservation.CarNumber, seatReservation.SeatRow, seatReservation.SeatColumn)
+		delete(availableSeatMap, key)
+	}
+
+	ret := []Seat{}
+	for _, seat := range availableSeatMap {
+		ret = append(ret, seat)
+	}
+	return ret, nil
 }
 
 func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -409,49 +426,51 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
 			arrivalAt := time.Now()
 
-			premium_avail_count, err := train.getSeatAvailableCount(fromStation, toStation, "premium", false)
+
+
+			premium_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "premium", false)
 			if err != nil {
 				panic(nil)
 			}
-			premium_smoke_avail_count, err := train.getSeatAvailableCount(fromStation, toStation, "premium", true)
+			premium_smoke_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "premium", true)
 			if err != nil {
 				panic(nil)
 			}
 
-			reserved_avail_count, err := train.getSeatAvailableCount(fromStation, toStation, "reserved", false)
+			reserved_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "reserved", false)
 			if err != nil {
 				panic(nil)
 			}
-			reserved_smoke_avail_count, err := train.getSeatAvailableCount(fromStation, toStation, "reserved", true)
+			reserved_smoke_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "reserved", true)
 			if err != nil {
 				panic(nil)
 			}
 
 			premium_avail := "○"
-			if premium_avail_count == 0 {
+			if len(premium_avail_seats) == 0 {
 				premium_avail = "×"
-			} else if premium_avail_count < 10 {
+			} else if len(premium_avail_seats) < 10 {
 				premium_avail = "△"
 			}
 
 			premium_smoke_avail := "○"
-			if premium_smoke_avail_count == 0 {
+			if len(premium_smoke_avail_seats) == 0 {
 				premium_smoke_avail = "×"
-			} else if premium_smoke_avail_count < 10 {
+			} else if len(premium_smoke_avail_seats) < 10 {
 				premium_smoke_avail = "△"
 			}
 
 			reserved_avail := "○"
-			if reserved_avail_count == 0 {
+			if len(reserved_avail_seats) == 0 {
 				reserved_avail = "×"
-			} else if reserved_avail_count < 10 {
+			} else if len(reserved_avail_seats) < 10 {
 				reserved_avail = "△"
 			}
 
 			reserved_smoke_avail := "○"
-			if reserved_smoke_avail_count == 0 {
+			if len(reserved_smoke_avail_seats) == 0 {
 				reserved_smoke_avail = "×"
-			} else if reserved_smoke_avail_count < 10 {
+			} else if len(reserved_smoke_avail_seats) < 10 {
 				reserved_smoke_avail = "△"
 			}
 
