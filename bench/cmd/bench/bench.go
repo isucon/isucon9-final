@@ -161,8 +161,7 @@ var run = cli.Command{
 		benchmarker := newBenchmarker(targetURI)
 		benchmarker.run(benchCtx)
 		if bencherror.BenchmarkErrs.IsFailure() {
-			msgs := uniqueMsgs(bencherror.BenchmarkErrs.Msgs)
-			dumpFailedResult(msgs[:messageLimit])
+			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs)[:messageLimit])
 			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 0)
 		}
 
@@ -183,7 +182,7 @@ var run = cli.Command{
 		resultBytes, err := json.Marshal(map[string]interface{}{
 			"pass":     true,
 			"score":    score,
-			"messages": bencherror.BenchmarkErrs.Msgs,
+			"messages": uniqueMsgs(bencherror.BenchmarkErrs.Msgs)[:messageLimit],
 		})
 		if err != nil {
 			return cli.NewExitError(err, 1)
