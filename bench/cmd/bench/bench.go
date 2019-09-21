@@ -124,8 +124,6 @@ var run = cli.Command{
 			testClient.ReplaceMockTransport()
 		}
 
-		// TODO: 初期データのロードなど用意
-
 		// initialize
 		if err := paymentClient.Initialize(); err != nil {
 			dumpFailedResult([]string{})
