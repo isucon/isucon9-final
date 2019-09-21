@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
-	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/endpoint"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/mock"
 	"github.com/jarcoal/httpmock"
@@ -37,7 +37,8 @@ func TestInitializeBenchError(t *testing.T) {
 
 	m := mock.Register()
 	m.Inject(func(path string) error {
-		if path == config.IsutrainInitializePath {
+		if path == endpoint.GetPath(endpoint.Initialize) {
+			// FIXME: エラーメッセージ
 			return errors.New("")
 		}
 		return nil
