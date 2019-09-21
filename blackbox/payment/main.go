@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	_ "net/http/pprof"
 
 	"payment/config"
@@ -24,13 +25,20 @@ type PaymentService struct{}
 
 func main() {
 	fmt.Println(banner)
+	
+	httpPort := os.Getenv("PAYMENT_HTTP_PORT")
+	if httpPort == "" {
+		httpPort = "0.0.0.0:5000"
+	}
+	grpcPort := os.Getenv("PAYMENT_GRPC_PORT")
+	if grpcPort == "" {
+		grpcPort = "0.0.0.0:5001"
+	}
 
 	//setup config
-	configFile := flag.String("config-file", "config.yml", "config file path")
-	flag.Parse()
-	c, err := config.LoadFile(*configFile)
-	if err != nil {
-		log.Fatal(err)
+	c := config.Config{
+		HttpPort: httpPort,
+		GrpcPort: grpcPort,
 	}
 	log.Printf("HTTP Port%s, gRPC Port%s\n", c.HttpPort, c.GrpcPort)
 
