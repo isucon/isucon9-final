@@ -64,6 +64,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		"--target=" + targetURI,
 		"--assetdir=" + assetDir,
 	}...)
+	log.Println(cmd.String())
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 
