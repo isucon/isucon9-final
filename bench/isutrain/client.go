@@ -87,7 +87,7 @@ func (c *Client) Initialize(ctx context.Context) {
 	}
 	defer resp.Body.Close()
 
-	if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusAccepted); err != nil {
+	if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusOK); err != nil {
 		bencherror.InitializeErrs.AddError(err)
 		return
 	}
