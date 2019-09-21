@@ -846,6 +846,16 @@ func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 	messageResponse(w, "login siteruyo "+user.Email)
 }
 
+func initializeHandler (w http.ResponseWriter, r *http.Request) {
+	/*
+		initialize
+	*/
+
+	// TODO: 実装する
+	messageResponse(w, "ok")
+}
+
+
 func main() {
 	// MySQL関連のお膳立て
 	var err error
@@ -891,6 +901,7 @@ func main() {
 	defer dbx.Close()
 
 	// HTTP
+	http.HandleFunc("/initialize", initializeHandler)
 	http.HandleFunc("/api/stations", getStationsHandler)
 	http.HandleFunc("/api/train/search", trainSearchHandler)
 	http.HandleFunc("/api/train/seats", trainSeatsHandler)

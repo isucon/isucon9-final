@@ -5,6 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -101,6 +103,14 @@ func report(ctx context.Context, jobID int, result *Result) error {
 		return err
 	}
 	defer resp.Body.Close()
+
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	log.Println(string(b))
 
 	if resp.StatusCode != http.StatusOK {
 		return errReportFailed

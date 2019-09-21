@@ -12,6 +12,7 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/endpoint"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/morikuni/failure"
 )
@@ -67,7 +68,7 @@ func (c *Client) ReplaceMockTransport() {
 
 func (c *Client) Initialize(ctx context.Context) {
 	u := *c.baseURL
-	u.Path = filepath.Join(u.Path, config.IsutrainInitializePath)
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Initialize))
 
 	ctx, cancel := context.WithTimeout(ctx, config.InitializeTimeout)
 	defer cancel()
@@ -86,10 +87,12 @@ func (c *Client) Initialize(ctx context.Context) {
 	}
 	defer resp.Body.Close()
 
-	if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusAccepted); err != nil {
+	if err := bencherror.NewHTTPStatusCodeError(resp, http.StatusOK); err != nil {
 		bencherror.InitializeErrs.AddError(err)
 		return
 	}
+
+	endpoint.IncPathCounter(endpoint.Initialize)
 }
 
 func (c *Client) Register(ctx context.Context, username, password string, opts *ClientOption) error {
@@ -97,7 +100,7 @@ func (c *Client) Register(ctx context.Context, username, password string, opts *
 		u    = *c.baseURL
 		form = url.Values{}
 	)
-	u.Path = filepath.Join(u.Path, config.IsutrainRegisterPath)
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Register))
 	form.Set("username", username)
 	form.Set("password", password)
 
@@ -125,6 +128,8 @@ func (c *Client) Register(ctx context.Context, username, password string, opts *
 			return err
 		}
 	}
+
+	endpoint.IncPathCounter(endpoint.Register)
 
 	return nil
 }
@@ -134,7 +139,7 @@ func (c *Client) Login(ctx context.Context, username, password string, opts *Cli
 		u    = *c.baseURL
 		form = url.Values{}
 	)
-	u.Path = filepath.Join(u.Path, config.IsutrainLoginPath)
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Login))
 	form.Set("username", username)
 	form.Set("password", password)
 
@@ -163,7 +168,7 @@ func (c *Client) Login(ctx context.Context, username, password string, opts *Cli
 		}
 	}
 
-	// pool.PutLoggedIn(c.sess)
+	endpoint.IncPathCounter(endpoint.Login)
 
 	return nil
 }
@@ -171,7 +176,7 @@ func (c *Client) Login(ctx context.Context, username, password string, opts *Cli
 // ListStations は駅一覧列挙APIです
 func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Station, error) {
 	u := *c.baseURL
-	u.Path = filepath.Join(u.Path, config.IsutrainListStationsPath)
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.ListStations))
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
@@ -202,13 +207,15 @@ func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Stati
 		return []*Station{}, err
 	}
 
+	endpoint.IncPathCounter(endpoint.ListStations)
+
 	return stations, nil
 }
 
 // SearchTrains は 列車検索APIです
 func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to string, opts *ClientOption) ([]*TrainSearchResponse, error) {
 	u := *c.baseURL
-	u.Path = filepath.Join(u.Path, config.IsutrainSearchTrainsPath)
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.SearchTrains))
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
@@ -246,12 +253,14 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 		return []*TrainSearchResponse{}, err
 	}
 
+	endpoint.IncPathCounter(endpoint.SearchTrains)
+
 	return trains, nil
 }
 
 func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name string, opts *ClientOption) (TrainSeats, error) {
 	u := *c.baseURL
-	u.Path = filepath.Join(u.Path, config.IsutrainListTrainSeatsPath)
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.ListTrainSeats))
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
@@ -286,6 +295,8 @@ func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name str
 		return TrainSeats{}, err
 	}
 
+	endpoint.IncPathCounter(endpoint.ListTrainSeats)
+
 	return seats, nil
 }
 
@@ -294,7 +305,7 @@ func (c *Client) Reserve(ctx context.Context, opts *ClientOption) (*ReservationR
 		u = *c.baseURL
 		// form = url.Values{}
 	)
-	u.Path = filepath.Join(u.Path, config.IsutrainReservePath)
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Reserve))
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
 	if err != nil {
@@ -327,12 +338,14 @@ func (c *Client) Reserve(ctx context.Context, opts *ClientOption) (*ReservationR
 		return nil, err
 	}
 
+	endpoint.IncPathCounter(endpoint.Reserve)
+
 	return reservation, nil
 }
 
 func (c *Client) CommitReservation(ctx context.Context, reservationID string, opts *ClientOption) error {
 	u := *c.baseURL
-	u.Path = filepath.Join(u.Path, config.IsutrainBuildCommitReservationPath(reservationID))
+	u.Path = filepath.Join(u.Path, endpoint.GetDynamicPath(endpoint.CommitReservation, reservationID))
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
 	if err != nil {
@@ -357,12 +370,14 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID string, op
 		}
 	}
 
+	endpoint.IncDynamicPathCounter(endpoint.CommitReservation)
+
 	return nil
 }
 
 func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*SeatReservation, error) {
 	u := *c.baseURL
-	u.Path = filepath.Join(u.Path, config.IsutrainListReservationsPath)
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.ListReservations))
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
@@ -392,12 +407,14 @@ func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*S
 		return []*SeatReservation{}, err
 	}
 
+	endpoint.IncPathCounter(endpoint.ListReservations)
+
 	return reservations, nil
 }
 
 func (c *Client) CancelReservation(ctx context.Context, reservationID string, opts *ClientOption) error {
 	u := *c.baseURL
-	u.Path = filepath.Join(u.Path, config.IsutrainBuildCancelReservationPath(reservationID))
+	u.Path = filepath.Join(u.Path, endpoint.GetDynamicPath(endpoint.CancelReservation, reservationID))
 
 	req, err := c.sess.newRequest(ctx, http.MethodDelete, u.String(), nil)
 	if err != nil {
@@ -421,6 +438,8 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID string, op
 			return err
 		}
 	}
+
+	endpoint.IncDynamicPathCounter(endpoint.CancelReservation)
 
 	return nil
 }

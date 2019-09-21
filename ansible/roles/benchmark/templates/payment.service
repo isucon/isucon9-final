@@ -1,0 +1,16 @@
+[Unit]
+Description=ISUCON9 Payment API
+Requires=docker.service
+
+[Service]
+EnvironmentFile=-/home/admin/isucon/.env
+WorkingDirectory=/home/admin/isucon/bin
+
+Type=simple
+ExecStart=/home/admin/isucon/bin/payment
+
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

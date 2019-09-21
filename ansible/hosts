@@ -1,2 +1,5 @@
 [user]
 user-test-01 ansible_host=47.74.27.58
+
+[bench]
+bench-test-01 ansible_host=47.74.38.153

@@ -1,0 +1,16 @@
+[Unit]
+Description=ISUCON9 Benchworker
+Requires=docker.service
+
+[Service]
+EnvironmentFile=-/home/admin/isucon/.env
+WorkingDirectory=/home/admin/isucon/bin
+
+Type=simple
+ExecStart=/home/admin/isucon/bin/benchworker run
+
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

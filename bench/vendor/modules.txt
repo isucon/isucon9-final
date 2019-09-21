@@ -1,5 +1,7 @@
 # github.com/davecgh/go-spew v1.1.0
 github.com/davecgh/go-spew/spew
+# github.com/eapache/go-resiliency v1.2.0
+github.com/eapache/go-resiliency/retrier
 # github.com/jarcoal/httpmock v1.0.4
 github.com/jarcoal/httpmock
 # github.com/morikuni/failure v0.11.0
@@ -16,13 +18,15 @@ go.uber.org/atomic
 go.uber.org/multierr
 # go.uber.org/zap v1.10.0
 go.uber.org/zap
-go.uber.org/zap/zapcore
-go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/buffer
+go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
-# golang.org/x/sync v0.0.0-20190423024810-112230192c58
+go.uber.org/zap/zapcore
+# golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 golang.org/x/sync/errgroup
 # golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
+# gopkg.in/go-playground/assert.v1 v1.2.1
+gopkg.in/go-playground/assert.v1

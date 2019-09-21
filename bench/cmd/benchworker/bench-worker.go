@@ -19,8 +19,10 @@ import (
 )
 
 var (
-	portalBaseURI, paymentBaseURI, targetBaseURI string
-	benchmarkerPath                              string
+	targetPort                    int
+	portalBaseURI, paymentBaseURI string
+	benchmarkerPath               string
+	assetDir                      string
 
 	dequeueInterval int
 
@@ -40,8 +42,8 @@ const (
 
 const (
 	StatusSuccess = "done"
-	StatusFailed  = "fail"
-	StatusTimeout = "timeout"
+	StatusFailed  = "aborted"
+	StatusTimeout = "aborted"
 )
 
 // ベンチマーカー実行ファイルを実行
@@ -53,26 +55,19 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		return nil, err
 	}
 
-	// 許可IP一覧を取得
-	allowIPs := getAllowIPs(job)
-	if len(allowIPs) == 0 {
-		return nil, errAllowIPsNotFound
-	}
-
-	var (
-		paymentUri = "https://localhost:5000"
-		targetUri  = fmt.Sprintf("http://%s", targetServer.GlobalIP)
-
-		assetDir = "/home/isucon/isutrain/webapp/public/static"
-	)
+	targetURI := fmt.Sprintf("http://%s:%d", targetServer.GlobalIP, targetPort)
 
 	var stdout, stderr bytes.Buffer
 	cmd := exec.CommandContext(ctx, benchmarkerPath, []string{
 		"run",
-		"--payment=" + paymentUri,
-		"--target=" + targetUri,
+		"--payment=" + paymentBaseURI,
+		"--target=" + targetURI,
 		"--assetdir=" + assetDir,
 	}...)
+	log.Printf("exec_path=%s", cmd.Path)
+	for _, arg := range cmd.Args {
+		log.Printf("\t- args=%s\n", arg)
+	}
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 
@@ -101,6 +96,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 
 	// FIXME: result.Messagesの扱い
 	return &Result{
+		ID:       job.ID,
 		Stdout:   string(stdout.Bytes()),
 		Stderr:   string(stderr.Bytes()),
 		Reason:   strings.Join(result.Messages, "\n"),
@@ -111,28 +107,50 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 }
 
 var run = cli.Command{
-	Name:  "benchworker",
+	Name:  "run",
 	Usage: "ベンチマークワーカー実行",
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:        "portal",
 			Value:       "http://localhost:8000",
 			Destination: &portalBaseURI,
+			EnvVar:      "BENCHWORKER_PORTAL_URL",
+		},
+		cli.StringFlag{
+			Name:        "payment",
+			Value:       "http://localhost:5000",
+			Destination: &paymentBaseURI,
+			EnvVar:      "BENCHWORKER_PAYMENT_URL",
+		},
+		cli.IntFlag{
+			Name:        "target-port",
+			Value:       80,
+			Destination: &targetPort,
+			EnvVar:      "BENCHWORKER_TARGET_PORT",
+		},
+		cli.StringFlag{
+			Name:        "assetdir",
+			Value:       "/home/isucon/isutrain/assets",
+			Destination: &assetDir,
+			EnvVar:      "BENCHWORKER_ASSETDIR",
 		},
 		cli.StringFlag{
 			Name:        "benchmarker",
 			Value:       "/home/isucon/isutrain/bin/benchmarker",
 			Destination: &benchmarkerPath,
+			EnvVar:      "BENCHWORKER_BENCHMARKER_BINPATH",
 		},
 		cli.IntFlag{
 			Name:        "retrylimit",
 			Value:       10,
 			Destination: &retryLimit,
+			EnvVar:      "BENCHWORKER_RETRY_LIMIT",
 		},
 		cli.IntFlag{
 			Name:        "retryinterval",
 			Value:       2,
 			Destination: &retryInterval,
+			EnvVar:      "BENCHWORKER_RETRY_INTERVAL",
 		},
 	},
 	Action: func(cliCtx *cli.Context) error {
@@ -155,6 +173,7 @@ var run = cli.Command{
 					// dequeueが失敗しても終了しない
 					continue
 				}
+				log.Printf("dequeue job id=%d team_id=%d target_server=%+v", job.ID, job.Team.ID, job.Team.Servers)
 
 				result, err := execBench(ctx, job)
 				if err != nil {
