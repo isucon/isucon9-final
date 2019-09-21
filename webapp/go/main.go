@@ -18,9 +18,11 @@ import (
 
 var (
 	banner = `ISUTRAIN API`
+	TrainClassMap = map[string]string{"express": "最速", "semi_express": "中間", "local": "遅いやつ"}
 )
 
 var dbx *sqlx.DB
+
 
 // DB定義
 
@@ -137,7 +139,7 @@ func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, distanceFare := range distanceFareList {
-		fmt.Fprintf(w, "%d,%d\n", distanceFare.Distance, distanceFare.Fare)
+		fmt.Fprintf(w, "%#v, %#v\n", distanceFare.Distance, distanceFare.Fare)
 	}
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
@@ -255,59 +257,6 @@ func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(stations)
 }
 
-func (train Train) getAvailableSeats(fromStation Station, toStation Station, seatClass string, isSmokingSeat bool) ([]Seat, error) {
-	var err error
-
-	// 全ての座席を
-	query := "SELECT * FROM seat_master WHERE train_class=? AND seat_class=? AND is_smoking_seat=?"
-
-	seatList := []Seat{}
-	err = dbx.Select(&seatList, query, train.TrainClass, seatClass, isSmokingSeat)
-	if err != nil {
-		return nil, err
-	}
-
-	availableSeatMap := map[string]Seat{}
-	for _, seat := range seatList {
-		availableSeatMap[fmt.Sprintf("%d_%d_%s", seat.CarNumber, seat.SeatRow, seat.SeatColumn)] = seat
-	}
-
-	query = `
-	SELECT sr.reservation_id, sr.car_number, sr.seat_row, sr.seat_column
-	FROM seat_reservations sr, reservations r, seat_master s, station_master std, station_master sta
-	WHERE
-		r.reservation_id=sr.reservation_id AND
-		s.train_class=r.train_class AND
-		s.car_number=sr.car_number AND
-		s.seat_column=sr.seat_column AND
-		s.seat_row=sr.seat_row AND
-		std.name=r.departure AND
-		sta.name=r.arrival
-	`
-
-	if train.IsNobori {
-		query += "AND ((sta.id < ? AND ? <= std.id) OR (sta.id < ? AND ? <= std.id) OR (? < sta.id AND std.id < ?))"
-	} else {
-		query += "AND ((std.id <= ? AND ? < sta.id) OR (std.id <= ? AND ? < sta.id) OR (sta.id < ? AND ? < std.id))"
-	}
-
-	seatReservationList := []SeatReservation{}
-	err = dbx.Select(&seatReservationList, query, fromStation.ID, fromStation.ID, toStation.ID, toStation.ID, fromStation.ID, toStation.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, seatReservation := range seatReservationList {
-		key := fmt.Sprintf("%d_%d_%s", seatReservation.CarNumber, seatReservation.SeatRow, seatReservation.SeatColumn)
-		delete(availableSeatMap, key)
-	}
-
-	ret := []Seat{}
-	for _, seat := range availableSeatMap {
-		ret = append(ret, seat)
-	}
-	return ret, nil
-}
 
 func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	/*
@@ -372,18 +321,30 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		query += " DESC"
 	}
 
-	trainList := []Train{}
+	usableTrainClassList := getUsableTrainClassList(fromStation, toStation)
+
+	var inQuery string
+	var inArgs []interface{}
+
 	if trainClass == "" {
-		query := "SELECT * FROM train_master WHERE date=? AND is_nobori=?"
-		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), isNobori)
+		query := "SELECT * FROM train_master WHERE date=? AND train_class IN (?) AND is_nobori=?"
+		inQuery, inArgs, err = sqlx.In(query, date.Format("2006/01/02"), usableTrainClassList, isNobori)
 	} else {
-		query := "SELECT * FROM train_master WHERE date=? AND is_nobori=? AND train_class=?"
-		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), isNobori, trainClass)
+		query := "SELECT * FROM train_master WHERE date=? AND train_class IN (?) AND is_nobori=? AND train_class=?"
+		inQuery, inArgs, err = sqlx.In(query, date.Format("2006/01/02"), usableTrainClassList, isNobori, trainClass)
 	}
 	if err != nil {
 		errorResponse(w, err.Error())
 		return
 	}
+
+	trainList := []Train{}
+	err = dbx.Select(&trainList, inQuery, inArgs...)
+	if err != nil {
+		errorResponse(w, err.Error())
+		return
+	}
+
 
 	stations := []Station{}
 	err = dbx.Select(&stations, query)
@@ -615,6 +576,21 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err.Error())
 		return
 	}
+
+	usableTrainClassList := getUsableTrainClassList(fromStation, toStation)
+	usable := false
+	for _, v := range usableTrainClassList {
+		if v == train.TrainClass {
+			usable = true
+		}
+	}
+	if !usable {
+		err = fmt.Errorf("invalid train_class")
+		log.Print(err)
+		errorResponse(w, err.Error())
+		return
+	}
+
 
 	seatList := []Seat{}
 
