@@ -127,12 +127,12 @@ var run = cli.Command{
 		// initialize
 		if err := paymentClient.Initialize(); err != nil {
 			dumpFailedResult([]string{})
-			return cli.NewExitError(err, 1)
+			return cli.NewExitError(err, 0)
 		}
 		initClient.Initialize(ctx)
 		if bencherror.InitializeErrs.IsError() {
 			dumpFailedResult(bencherror.InitializeErrs.Msgs)
-			return cli.NewExitError(fmt.Errorf("Initializeに失敗しました"), 1)
+			return cli.NewExitError(fmt.Errorf("Initializeに失敗しました"), 0)
 		}
 
 		// pretest (まず、正しく動作できているかチェック. エラーが見つかったら、採点しようがないのでFAILにする)
@@ -140,7 +140,7 @@ var run = cli.Command{
 		scenario.Pretest(ctx, testClient, assets)
 		if bencherror.PreTestErrs.IsError() {
 			dumpFailedResult(bencherror.PreTestErrs.Msgs)
-			return cli.NewExitError(fmt.Errorf("Pretestに失敗しました"), 1)
+			return cli.NewExitError(fmt.Errorf("Pretestに失敗しました"), 0)
 		}
 
 		// bench (ISUCOIN売り上げ計上と、減点カウントを行う)
@@ -151,7 +151,7 @@ var run = cli.Command{
 		benchmarker.run(benchCtx)
 		if bencherror.BenchmarkErrs.IsFailure() {
 			dumpFailedResult(bencherror.BenchmarkErrs.Msgs)
-			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 1)
+			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 0)
 		}
 
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
