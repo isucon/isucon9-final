@@ -63,10 +63,20 @@
         </select>
       </article>
 
+      <article class="train_class">
+        <div>{{ train_class }}</div>
+        <select class="train_class" v-model="train_class">
+          <option value="全て">全て</option>
+          <option value="最速">最速</option>
+          <option value="中間">中間</option>
+          <option value="遅いやつ">遅いやつ</option>
+        </select>
+      </article>
+
       <article class="from">
         <div>{{ from_station.name }}</div>
         <select class="from" v-model="from_station_id">
-          <option v-for="station in stations" v-bind:key="station.id" :value="station.id">
+          <option v-for="station in usableStations" v-bind:key="station.id" :value="station.id">
             {{ station.name }}
           </option>
         </select>
@@ -77,7 +87,7 @@
       <article class="to">
         <div>{{ to_station.name }}</div>
         <select class="to" v-model="to_station_id">
-          <option v-for="station in stations" v-bind:key="station.id" :value="station.id">
+          <option v-for="station in usableStations" v-bind:key="station.id" :value="station.id">
             {{ station.name }}
           </option>
         </select>
@@ -135,6 +145,7 @@ export default {
       year: 2020,
       month: 1,
       day: "1",
+      train_class: "全て",
       from_station_id: 0,
       to_station_id: 0,
       adult: "1",
@@ -149,6 +160,35 @@ export default {
     to_station() {
       return apiService.getStation(this.to_station_id)
     },
+    usableStations() {
+      var ret = this.stations
+
+      if (this.train_class == "最速"){
+        ret = this.stations.filter(station => {
+          return station.is_stop_express;
+        })
+      }
+
+      if (this.train_class == "中間"){
+        ret = this.stations.filter(station => {
+          return station.is_stop_semi_express;
+        })
+      }
+
+      if (this.train_class == "遅いやつ"){
+        ret = this.stations.filter(station => {
+          return station.is_stop_local;
+        })
+      }
+
+      return ret
+    },
+    train_class_query() {
+      if(this.train_class=="全て") {
+        return ""
+      }
+      return this.train_class
+    }
   },
   methods: {
     loadStations() {
@@ -164,8 +204,9 @@ export default {
         year: this.year,
         month: this.month,
         day: this.day,
-        from_station: this.from_station_id,
-        to_station: this.to_station_id,
+        train_class: this.train_class_query,
+        from_station: this.from_station.name,
+        to_station: this.to_station.name,
         adult: this.adult,
         child: this.child
       }
@@ -228,6 +269,11 @@ article.month {
 article.day {
   width: 213px;
   background: #0057D3;
+}
+
+article.train_class {
+  background: #0057D3;
+  width: 640px;
 }
 
 article.from ,
