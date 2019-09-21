@@ -87,7 +87,7 @@ type SeatReservation struct {
 // 未整理
 
 type CarInformation struct {
-	Date                time.Time         `json:"date"`
+	Date                string            `json:"date"`
 	TrainClass          string            `json:"train_class"`
 	TrainName           string            `json:"train_name"`
 	CarNumber           int               `json:"car_number"`
@@ -558,11 +558,11 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		指定した列車の座席列挙
-		GET /train/seats?train_class=のぞみ && train_name=96号
+		GET /train/seats?date=2020-03-01&train_class=のぞみ&train_name=96号&car_number=2&from=1&to=10
 	*/
 
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
-	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("use_at"))
+	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("date"))
 	if err != nil {
 		errorResponse(w, err.Error())
 		return
@@ -571,7 +571,17 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 
 	trainClass := r.URL.Query().Get("train_class")
 	trainName := r.URL.Query().Get("train_name")
-	carNumber, err := strconv.Atoi(r.URL.Query().Get("car_num"))
+	carNumber, _ := strconv.Atoi(r.URL.Query().Get("car_number"))
+	from_id, _ := strconv.Atoi(r.URL.Query().Get("from"))
+	to_id, _ := strconv.Atoi(r.URL.Query().Get("to"))
+
+	// 対象列車の取得
+	var train Train
+	query := "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
+	err = dbx.Get(&train, query, date.Format("2006/01/02"), trainClass, trainName)
+	if err == sql.ErrNoRows {
+		panic(err)
+	}
 	if err != nil {
 		errorResponse(w, err.Error())
 		return
@@ -579,7 +589,7 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 
 	seatList := []Seat{}
 
-	query := "SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?"
+	query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? ORDER BY seat_row, seat_column"
 	err = dbx.Select(&seatList, query, trainClass, carNumber)
 	if err != nil {
 		errorResponse(w, err.Error())
@@ -587,13 +597,23 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var seatInformationList []SeatInformation
-	for _, seat := range seatList {
-		var result int
 
-		query := "SELECT COUNT(*) FROM seat_reservations WHERE date=? AND train_class=? AND train_name=? AND car_number=? AND seat_row=? AND seat_column=?"
+	for _, seat := range seatList {
+
+		s := SeatInformation{seat.SeatRow, seat.SeatColumn, seat.SeatClass, seat.IsSmokingSeat, false}
+
+		seatReservationList := []SeatReservation{}
+
+		query := `
+SELECT s.*
+FROM seat_reservations s, reservations r
+WHERE
+	r.date=? AND r.train_class=? AND r.train_name=? AND car_number=? AND seat_row=? AND seat_column=?
+`
+
 		err = dbx.Select(
-			&result, query,
-			date,
+			&seatReservationList, query,
+			date.Format("2006/01/02"),
 			seat.TrainClass,
 			trainName,
 			seat.CarNumber,
@@ -605,15 +625,51 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		s := SeatInformation{seat.SeatRow, seat.SeatColumn, seat.SeatClass, seat.IsSmokingSeat, false}
-		if result == 1 {
-			s.IsOccupied = true
-		}
-		seatInformationList = append(seatInformationList, s)
+		fmt.Println(seatReservationList)
 
-		// fmt.Fprintf(w, "%d,%d\n", distance, fare)
+		for _, seatReservation := range seatReservationList {
+			reservation := Reservation{}
+			query = "SELECT * FROM reservations WHERE reservation_id=?"
+			err = dbx.Get(&reservation, query, seatReservation.ReservationId)
+			if err != nil {
+				panic(err)
+			}
+
+			var departureStation, arrivalStation Station
+			query = "SELECT * FROM station_master WHERE name=?"
+
+			err = dbx.Get(&departureStation, query, reservation.Departure)
+			if err != nil {
+				panic(err)
+			}
+			err = dbx.Get(&arrivalStation, query, reservation.Arrival)
+			if err != nil {
+				panic(err)
+			}
+
+			if train.IsNobori {
+				// 上り
+				if arrivalStation.ID < from_id && from_id <= departureStation.ID {
+					s.IsOccupied = true
+				}
+				if arrivalStation.ID < to_id && to_id <= departureStation.ID {
+					s.IsOccupied = true
+				}
+			}else{
+				// 下り
+				if departureStation.ID <= from_id && from_id < arrivalStation.ID {
+					s.IsOccupied = true
+				}
+				if departureStation.ID <= to_id && to_id < arrivalStation.ID {
+					s.IsOccupied = true
+				}
+			}
+		}
+
+		fmt.Println(s.IsOccupied)
+		seatInformationList = append(seatInformationList, s)
 	}
-	c := CarInformation{date, trainClass, trainName, carNumber, seatInformationList}
+	c := CarInformation{date.Format("2006/01/02"), trainClass, trainName, carNumber, seatInformationList}
 	resp, err := json.Marshal(c)
 	if err != nil {
 		errorResponse(w, err.Error())
