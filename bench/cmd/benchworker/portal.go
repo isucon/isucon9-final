@@ -5,10 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 )
 
 // dequeue関連
@@ -105,10 +104,13 @@ func report(ctx context.Context, jobID int, result *Result) error {
 	}
 	defer resp.Body.Close()
 
-	if _, err := io.Copy(os.Stdout, resp.Body); err != nil {
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
 		log.Println(err)
 		return err
 	}
+
+	log.Println(string(b))
 
 	if resp.StatusCode != http.StatusOK {
 		return errReportFailed
