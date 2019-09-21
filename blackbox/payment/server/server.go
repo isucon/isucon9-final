@@ -45,7 +45,7 @@ type Server struct {
 	mu          sync.RWMutex
 }
 
-func NewNetworkServer(c *config.Config) (*Server, error) {
+func NewNetworkServer(c config.Config) (*Server, error) {
 	ns := &Server{
 		PayInfoMap:  make(map[string]pb.PaymentInformation, 1000000),
 		CardInfoMap: make(map[string]pb.CardInformation, 1000000),

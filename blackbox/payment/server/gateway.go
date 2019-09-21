@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func newGateway(c *config.Config, ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
+func newGateway(c config.Config, ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
 	opts = []runtime.ServeMuxOption{
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
 	}
@@ -29,7 +29,7 @@ func newGateway(c *config.Config, ctx context.Context, opts ...runtime.ServeMuxO
 	return mux, nil
 }
 
-func StartGRPCGateway(c *config.Config, opts ...runtime.ServeMuxOption) error {
+func StartGRPCGateway(c config.Config, opts ...runtime.ServeMuxOption) error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
