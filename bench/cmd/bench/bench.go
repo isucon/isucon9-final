@@ -8,6 +8,7 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/assets"
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/endpoint"
 	"github.com/chibiegg/isucon9-final/bench/internal/logger"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/mock"
@@ -126,6 +127,10 @@ var run = cli.Command{
 		// TODO: 初期データのロードなど用意
 
 		// initialize
+		if err := paymentClient.Initialize(); err != nil {
+			dumpFailedResult([]string{})
+			return cli.NewExitError(err, 1)
+		}
 		initClient.Initialize(ctx)
 		if bencherror.InitializeErrs.IsError() {
 			dumpFailedResult(bencherror.InitializeErrs.Msgs)
@@ -153,11 +158,7 @@ var run = cli.Command{
 
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
 		// FIXME: 課金用のクライアントを作り、それを渡す様に変更
-		score, err := scenario.FinalCheck(ctx, paymentClient)
-		if err != nil {
-			dumpFailedResult(bencherror.BenchmarkErrs.Msgs)
-			return cli.NewExitError(err, 1)
-		}
+		score := endpoint.CalcFinalScore()
 
 		lgr.Infof("最終チェックによるスコア: %d", score)
 

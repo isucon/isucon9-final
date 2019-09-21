@@ -60,12 +60,12 @@ type ReservationRequest struct {
 	Origin      string `json:"origin"`
 	Destination string `json:"destination"`
 	//// 未調査
-	Date    string `json:"date"`
-	CarNum  int    `json:"car_num"`
-	Payment string `json:"payment"`
-	Child   int    `json:"child"`
-	Adult   int    `json:"adult"`
-	Type    string `json:"type"`
+	Date    time.Time `json:"date"`
+	CarNum  int       `json:"car_num"`
+	Payment string    `json:"payment"`
+	Child   int       `json:"child"`
+	Adult   int       `json:"adult"`
+	Type    string    `json:"type"`
 }
 
 func NewReservationRequest(trains *TrainSearchResponse, seats TrainSeats) (*ReservationRequest, error) {
