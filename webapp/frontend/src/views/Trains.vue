@@ -132,6 +132,7 @@ export default {
       year: null,
       month: null,
       day: null,
+      train_class: "",
       from_station_id: null,
       to_station_id: null,
       adult: null,
@@ -157,6 +158,7 @@ export default {
         year: this.year,
         month: this.month,
         day: this.day,
+        train_class: this.train_class,
         from_station: this.from_station_id,
         to_station: this.to_station_id,
         adult: this.adult,
@@ -194,6 +196,7 @@ export default {
     this.year = this.$route.query.year
     this.month = this.$route.query.month
     this.day = this.$route.query.day
+    this.train_class = this.$route.query.train_class
     this.adult = this.$route.query.adult
     this.child = this.$route.query.child
     this.from_station_id = this.$route.query.from_station

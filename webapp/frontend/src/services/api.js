@@ -16,6 +16,7 @@ class ApiService {
           use_at: moment(date).toISOString(),
           from: condition.from_station,
           to: condition.to_station,
+          train_class: condition.train_class,
           adult: condition.adult,
           child: condition.child
         }
