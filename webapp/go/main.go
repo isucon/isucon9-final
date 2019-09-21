@@ -7,28 +7,27 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 
-	"golang.org/x/crypto/pbkdf2"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
 	"github.com/gorilla/sessions"
+	"github.com/jmoiron/sqlx"
+	"golang.org/x/crypto/pbkdf2"
 	// "sync"
 )
 
 var (
-	banner = `ISUTRAIN API`
+	banner        = `ISUTRAIN API`
 	TrainClassMap = map[string]string{"express": "最速", "semi_express": "中間", "local": "遅いやつ"}
 )
 
 var dbx *sqlx.DB
-
 
 // DB定義
 
@@ -124,10 +123,10 @@ type TrainSearchResponse struct {
 }
 
 type User struct {
-	ID int64
-	Email string `json:"email"`
-	Password string `json:"password"`
-	Salt []byte `db:"salt"`
+	ID             int64
+	Email          string `json:"email"`
+	Password       string `json:"password"`
+	Salt           []byte `db:"salt"`
 	HashedPassword []byte `db:"super_secure_password"`
 }
 
@@ -135,11 +134,9 @@ const (
 	sessionName = "session_isutrain"
 )
 
-
 var (
 	store sessions.Store = sessions.NewCookieStore([]byte(secureRandomStr(20)))
 )
-
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, World")
@@ -148,7 +145,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func messageResponse(w http.ResponseWriter, message string) {
 	e := map[string]interface{}{
 		"is_error": false,
-		"message": message,
+		"message":  message,
 	}
 	errResp, _ := json.Marshal(e)
 	w.Write(errResp)
@@ -157,10 +154,10 @@ func messageResponse(w http.ResponseWriter, message string) {
 func errorResponse(w http.ResponseWriter, errCode int, message string) {
 	e := map[string]interface{}{
 		"is_error": true,
-		"message": message,
+		"message":  message,
 	}
 	errResp, _ := json.Marshal(e)
-	
+
 	w.WriteHeader(errCode)
 	w.Write(errResp)
 }
@@ -328,7 +325,6 @@ func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(stations)
 }
 
-
 func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		列車検索
@@ -412,10 +408,9 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	trainList := []Train{}
 	err = dbx.Select(&trainList, inQuery, inArgs...)
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
-
 
 	stations := []Station{}
 	err = dbx.Select(&stations, query)
@@ -615,10 +610,9 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	if err != nil {
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
-
 
 	var fromStation, toStation Station
 	query = "SELECT * FROM station_master WHERE name=?"
@@ -627,7 +621,7 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	err = dbx.Get(&fromStation, query, fromName)
 	if err == sql.ErrNoRows {
 		log.Print("fromStation: no rows")
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	if err != nil {
@@ -639,12 +633,12 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	err = dbx.Get(&toStation, query, toName)
 	if err == sql.ErrNoRows {
 		log.Print("toStation: no rows")
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	if err != nil {
 		log.Print(err)
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -658,10 +652,9 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	if !usable {
 		err = fmt.Errorf("invalid train_class")
 		log.Print(err)
-		errorResponse(w, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
-
 
 	seatList := []Seat{}
 
@@ -734,7 +727,7 @@ WHERE
 				if toStation.ID < arrivalStation.ID && departureStation.ID < fromStation.ID {
 					s.IsOccupied = true
 				}
-			}else{
+			} else {
 				// 下り
 				if departureStation.ID <= fromStation.ID && fromStation.ID < arrivalStation.ID {
 					s.IsOccupied = true
@@ -760,7 +753,6 @@ WHERE
 	w.Write(resp)
 }
 
-
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		ユーザー登録
@@ -777,7 +769,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	salt := make([]byte, 1024)
 	_, err := crand.Read(salt)
-	if err != nil{
+	if err != nil {
 		errorResponse(w, http.StatusInternalServerError, "salt generator error")
 		return
 	}
@@ -793,7 +785,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, http.StatusBadRequest, "user registration failed")
 		return
 	}
-	
+
 	messageResponse(w, "registration complete")
 }
 
@@ -808,7 +800,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	postUser := User{}
 	json.Unmarshal(buf, &postUser)
-	
+
 	user := User{}
 	query := "SELECT * FROM users WHERE email=?"
 	err := dbx.Get(&user, query, postUser.Email)
@@ -820,14 +812,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	
+
 	challengePassword := pbkdf2.Key([]byte(postUser.Password), user.Salt, 100, 256, sha256.New)
 
 	if !bytes.Equal(user.HashedPassword, challengePassword) {
 		errorResponse(w, http.StatusForbidden, "authentication failed")
 		return
 	}
-	
+
 	session := getSession(r)
 
 	session.Values["user_id"] = user.ID
@@ -840,7 +832,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	messageResponse(w, "autheticated")
 }
 
-
 func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		ログイン
@@ -852,7 +843,7 @@ func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	messageResponse(w, "login siteruyo " + user.Email)
+	messageResponse(w, "login siteruyo "+user.Email)
 }
 
 func main() {
