@@ -1,0 +1,27 @@
+- name: create isucon directory
+  file: path="/home/admin/isucon" state=directory mode=0644 owner=admin group=admin
+  tags: benchmark
+
+
+
+- name: create systemd services
+  template: src=benchworker.service dest="/etc/systemd/system/benchworker.service" owner=root group=root mode=0644
+  tags: benchmark
+  notify: systemctl daemon-reload
+
+- name: enabled service
+  service: name=benchworker enabled=yes state=started
+  tags: benchmark
+
+- name: install nginx
+  apt: name=nginx state=latest update_cache=yes
+  tags: benchmark
+
+- name: nginx config
+  template: src=nginx/default dest=/etc/nginx/sites-available/default owner=root group=root mode=0644
+  tags: benchmark
+  notify: reload nginx
+
+- name: robots.txt
+  template: src=nginx/robots.txt dest=/var/www/html/robots.txt owner=root group=root mode=0644
+  tags: benchmark

@@ -1,0 +1,18 @@
+[Unit]
+Description=ISUCON9 Benchworker
+Requires=docker.service
+
+[Service]
+EnvironmentFile=-/home/admin/isucon/bench/.env
+WorkingDirectory=/home/admin/isucon/bench
+
+Type=simple
+ExecStartPre=/usr/bin/docker-compose -f docker-compose.yml build
+ExecStart=/usr/bin/docker-compose -f docker-compose.yml up
+ExecStop=/usr/bin/docker-compose -f docker-compose.yml stop
+
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

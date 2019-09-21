@@ -11,3 +11,6 @@ archive:
 	webapp
 
 	cd webapp/frontend/dist && tar zcvf ../../../ansible/roles/challenge/files/frontend.tar.gz .
+
+payment:
+	cd blackbox/payment && make

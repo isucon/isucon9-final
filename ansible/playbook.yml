@@ -10,3 +10,8 @@
   become: yes
   roles:
     - challenge
+
+- hosts: bench
+  become: yes
+  roles:
+    - benchmark
