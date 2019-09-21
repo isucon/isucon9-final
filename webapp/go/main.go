@@ -264,7 +264,7 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 	seatList := []Seat{}
 	err = dbx.Select(&seatList, query, train.TrainClass, seatClass, isSmokingSeat)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	availableSeatMap := map[string]Seat{}
@@ -294,7 +294,7 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 	seatReservationList := []SeatReservation{}
 	err = dbx.Select(&seatReservationList, query, fromStation.ID, fromStation.ID, toStation.ID, toStation.ID)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	for _, seatReservation := range seatReservationList {
@@ -340,7 +340,8 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	err = dbx.Get(&fromStation, query, fromID)
 	if err == sql.ErrNoRows {
 		log.Print("fromStation: no rows")
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 	if err != nil {
 		errorResponse(w, err.Error())
@@ -447,20 +448,24 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			premium_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "premium", false)
 			if err != nil {
-				panic(nil)
+				errorResponse(w, err.Error())
+				return
 			}
 			premium_smoke_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "premium", true)
 			if err != nil {
-				panic(nil)
+				errorResponse(w, err.Error())
+				return
 			}
 
 			reserved_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "reserved", false)
 			if err != nil {
-				panic(nil)
+				errorResponse(w, err.Error())
+				return
 			}
 			reserved_smoke_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "reserved", true)
 			if err != nil {
-				panic(nil)
+				errorResponse(w, err.Error())
+				return
 			}
 
 			premium_avail := "○"
