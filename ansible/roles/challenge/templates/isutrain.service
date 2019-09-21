@@ -10,7 +10,7 @@ Type=simple
 ExecStartPre=/usr/bin/docker-compose -f docker-compose.yml -f docker-compose.{{ item }}.yml build
 ExecStart=/usr/bin/docker-compose -f docker-compose.yml -f docker-compose.{{ item }}.yml up
 ExecStop=/usr/bin/docker-compose -f docker-compose.yml -f docker-compose.{{ item }}.yml stop
-ExecRestart=/usr/bin/docker-compose -f docker-compose.yml -f docker-compose.{{ item }}.yml restart webapp
+ExecReload=/usr/bin/docker-compose -f docker-compose.yml -f docker-compose.{{ item }}.yml restart webapp
 
 Restart=always
 RestartSec=10s
