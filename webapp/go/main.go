@@ -339,6 +339,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	// From
 	err = dbx.Get(&fromStation, query, fromID)
 	if err == sql.ErrNoRows {
+		log.Print("fromStation: no rows")
 		panic(err)
 	}
 	if err != nil {
@@ -349,11 +350,14 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	// To
 	err = dbx.Get(&toStation, query, toID)
 	if err == sql.ErrNoRows {
-		panic(err)
+		log.Print("toStation: no rows")
+		errorResponse(w, err.Error())
+		return
 	}
 	if err != nil {
 		log.Print(err)
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 
 	isNobori := false
