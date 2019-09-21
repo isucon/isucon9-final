@@ -119,6 +119,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, World")
 }
 
+func errorResponse(w http.ResponseWriter, message string) {
+	e := map[string]string{"error": message} 
+	errResp, _ := json.Marshal(e)
+	w.Write(errResp)
+}
+
 func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
 
 	distanceFareList := []DistanceFare{}
@@ -126,7 +132,8 @@ func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT * FROM distance_fare_master"
 	err := dbx.Select(&distanceFareList, query)
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 
 	for _, distanceFare := range distanceFareList {
@@ -137,14 +144,14 @@ func distanceFareHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(distanceFareList)
 }
 
-func getDistanceFare(origToDestDistance float64) int {
+func getDistanceFare(origToDestDistance float64) (int,error) {
 
 	distanceFareList := []DistanceFare{}
 
 	query := "SELECT distance,fare FROM distance_fare_master ORDER BY distance"
 	err := dbx.Select(&distanceFareList, query)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	lastDistance := 0.0
@@ -159,10 +166,10 @@ func getDistanceFare(origToDestDistance float64) int {
 		lastFare = distanceFare.Fare
 	}
 
-	return lastFare
+	return lastFare, nil
 }
 
-func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatClass string) int {
+func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatClass string) (int, error) {
 	//
 	// 料金計算メモ
 	// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
@@ -176,24 +183,27 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 	// From
 	err = dbx.Get(&fromStation, query, depStation)
 	if err == sql.ErrNoRows {
-		panic(err)
+		return 0, err
 	}
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	// To
 	err = dbx.Get(&fromStation, query, destStation)
 	if err == sql.ErrNoRows {
-		panic(err)
+		return 0, err
 	}
 	if err != nil {
 		log.Print(err)
-		panic(err)
+		return 0, err
 	}
 
 	fmt.Println("distance", math.Abs(toStation.Distance-fromStation.Distance))
-	distFare := getDistanceFare(math.Abs(toStation.Distance - fromStation.Distance))
+	distFare, err := getDistanceFare(math.Abs(toStation.Distance - fromStation.Distance))
+	if err != nil {
+		return 0, err
+	}
 	fmt.Println("distFare", distFare)
 
 	// 期間・車両・座席クラス倍率
@@ -201,14 +211,14 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 	query = "SELECT * FROM fare_master WHERE train_class=? AND seat_class=? ORDER BY start_date"
 	err = dbx.Select(&fareList, query, trainClass, seatClass)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	var selectedFare Fare
 
 	for _, fare := range fareList {
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 
 		// TODO: start_dateをちゃんと見る必要がある
@@ -221,7 +231,7 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 	// TODO: 端数の扱い考える
 	// TODO: start_dateをちゃんと見る必要がある
 	// TODO: 距離見てる...？
-	return int(float64(distFare) * selectedFare.FareMultiplier)
+	return int(float64(distFare) * selectedFare.FareMultiplier), nil
 }
 
 func getStationsHandler(w http.ResponseWriter, r *http.Request) {
@@ -237,7 +247,8 @@ func getStationsHandler(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT * FROM station_master ORDER BY id"
 	err := dbx.Select(&stations, query)
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
@@ -313,7 +324,8 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("use_at"))
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 	date = date.In(jst)
 
@@ -330,7 +342,8 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 
 	// To
@@ -363,13 +376,15 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		err = dbx.Select(&trainList, query, date.Format("2006/01/02"), isNobori, trainClass)
 	}
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 
 	stations := []Station{}
 	err = dbx.Select(&stations, query)
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 
 	fmt.Println("From", fromStation)
@@ -484,23 +499,50 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// 料金計算
+			premiumFare, err := fareCalc(date, fromID, toID, train.TrainClass, "premium")
+			if err != nil {
+				errorResponse(w, err.Error())
+				return
+			}
+			premiumSmokeFare, err := fareCalc(date, fromID, toID, train.TrainClass, "premium_smoke")
+			if err != nil {
+				errorResponse(w, err.Error())
+				return
+			}
+			reservedFare, err := fareCalc(date, fromID, toID, train.TrainClass, "reserved")
+			if err != nil {
+				errorResponse(w, err.Error())
+				return
+			}
+			reservedSmokeFare, err := fareCalc(date, fromID, toID, train.TrainClass, "reserved_smoke")
+			if err != nil {
+				errorResponse(w, err.Error())
+				return
+			}
+			nonReservedFare, err := fareCalc(date, fromID, toID, train.TrainClass, "non_reserved")
+			if err != nil {
+				errorResponse(w, err.Error())
+				return
+			}
+
 			fareInformation := map[string]int{
-				"premium":        fareCalc(date, from_id, to_id, train.TrainClass, "premium"),
-				"premium_smoke":  fareCalc(date, from_id, to_id, train.TrainClass, "premium_smoke"),
-				"reserved":       fareCalc(date, from_id, to_id, train.TrainClass, "reserved"),
-				"reserved_smoke": fareCalc(date, from_id, to_id, train.TrainClass, "reserved_smoke"),
-				"non_reserved":   fareCalc(date, from_id, to_id, train.TrainClass, "non_reserved"),
+				"premium":        premiumFare,
+				"premium_smoke":  premiumSmokeFare,
+				"reserved":       reservedFare,
+				"reserved_smoke": reservedSmokeFare,
+				"non_reserved":   nonReservedFare,
 			}
 
 			trainSearchResponseList = append(trainSearchResponseList, TrainSearchResponse{
 				train.TrainClass, train.TrainName, train.StartStation, train.LastStation,
-				from_id, to_id, departureAt, arrivalAt, seatAvailability, fareInformation,
+				fromID, toID, departureAt, arrivalAt, seatAvailability, fareInformation,
 			})
 		}
 	}
 	resp, err := json.Marshal(trainSearchResponseList)
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 	w.Write(resp)
 
@@ -515,7 +557,8 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("use_at"))
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 	date = date.In(jst)
 
@@ -523,7 +566,8 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	trainName := r.URL.Query().Get("train_name")
 	carNumber, err := strconv.Atoi(r.URL.Query().Get("car_num"))
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 
 	seatList := []Seat{}
@@ -531,7 +575,8 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT seat_column,seat_row,seat_class,is_smoking_seat FROM seat_master WHERE train_class=? AND car_number=?"
 	err = dbx.Select(&seatList, query, trainClass, carNumber)
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 
 	var seatInformationList []SeatInformation
@@ -549,7 +594,8 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 			seat.SeatColumn,
 		)
 		if err != nil {
-			panic(err)
+			errorResponse(w, err.Error())
+			return
 		}
 
 		s := SeatInformation{seat.SeatRow, seat.SeatColumn, seat.SeatClass, seat.IsSmokingSeat, false}
@@ -563,7 +609,8 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	c := CarInformation{date, trainClass, trainName, carNumber, seatInformationList}
 	resp, err := json.Marshal(c)
 	if err != nil {
-		panic(err)
+		errorResponse(w, err.Error())
+		return
 	}
 	w.Write(resp)
 }
