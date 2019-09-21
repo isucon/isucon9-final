@@ -43,7 +43,7 @@ const (
 const (
 	StatusSuccess = "done"
 	StatusFailed  = "aborted"
-	StatusTimeout = "timeout"
+	StatusTimeout = "aborted"
 )
 
 // ベンチマーカー実行ファイルを実行
