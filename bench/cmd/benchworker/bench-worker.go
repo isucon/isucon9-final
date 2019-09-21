@@ -19,8 +19,10 @@ import (
 )
 
 var (
-	portalBaseURI, paymentBaseURI, targetBaseURI string
-	benchmarkerPath                              string
+	targetPort                    int
+	portalBaseURI, paymentBaseURI string
+	benchmarkerPath               string
+	assetDir                      string
 
 	dequeueInterval int
 
@@ -53,24 +55,13 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		return nil, err
 	}
 
-	// 許可IP一覧を取得
-	allowIPs := getAllowIPs(job)
-	if len(allowIPs) == 0 {
-		return nil, errAllowIPsNotFound
-	}
-
-	var (
-		paymentUri = "https://localhost:5000"
-		targetUri  = fmt.Sprintf("http://%s", targetServer.GlobalIP)
-
-		assetDir = "/home/isucon/isutrain/webapp/public/static"
-	)
+	targetURI := fmt.Sprintf("http://%s:%d", targetServer.GlobalIP, targetPort)
 
 	var stdout, stderr bytes.Buffer
 	cmd := exec.CommandContext(ctx, benchmarkerPath, []string{
 		"run",
-		"--payment=" + paymentUri,
-		"--target=" + targetUri,
+		"--payment=" + paymentBaseURI,
+		"--target=" + targetURI,
 		"--assetdir=" + assetDir,
 	}...)
 	cmd.Stdout = &stdout
@@ -118,21 +109,43 @@ var run = cli.Command{
 			Name:        "portal",
 			Value:       "http://localhost:8000",
 			Destination: &portalBaseURI,
+			EnvVar:      "BENCHWORKER_PORTAL_URL",
+		},
+		cli.StringFlag{
+			Name:        "payment",
+			Value:       "http://localhost:5000",
+			Destination: &paymentBaseURI,
+			EnvVar:      "BENCHWORKER_PAYMENT_URL",
+		},
+		cli.IntFlag{
+			Name:        "target-port",
+			Value:       80,
+			Destination: &targetPort,
+			EnvVar:      "BENCHWORKER_TARGET_PORT",
+		},
+		cli.StringFlag{
+			Name:        "assetdir",
+			Value:       "/home/isucon/isutrain/assets",
+			Destination: &assetDir,
+			EnvVar:      "BENCHWORKER_ASSETDIR",
 		},
 		cli.StringFlag{
 			Name:        "benchmarker",
 			Value:       "/home/isucon/isutrain/bin/benchmarker",
 			Destination: &benchmarkerPath,
+			EnvVar:      "BENCHWORKER_BENCHMARKER_BINPATH",
 		},
 		cli.IntFlag{
 			Name:        "retrylimit",
 			Value:       10,
 			Destination: &retryLimit,
+			EnvVar:      "BENCHWORKER_RETRY_LIMIT",
 		},
 		cli.IntFlag{
 			Name:        "retryinterval",
 			Value:       2,
 			Destination: &retryInterval,
+			EnvVar:      "BENCHWORKER_RETRY_INTERVAL",
 		},
 	},
 	Action: func(cliCtx *cli.Context) error {
