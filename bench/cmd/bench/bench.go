@@ -22,7 +22,6 @@ import (
 var (
 	paymentURI, targetURI string
 	assetDir              string
-	messageLimit          int
 )
 
 var (
@@ -52,7 +51,7 @@ func dumpFailedResult(messages []string) {
 		"messages": messages,
 	})
 	if err != nil {
-		lgr.Warnf("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました: %+v", err)
+		lgr.Warnf("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました: messages=%+v err=%+v", messages, err)
 		fmt.Println(`{"pass": false, "score": 0, "messages": []}`)
 	}
 
@@ -86,12 +85,6 @@ var run = cli.Command{
 			Destination: &assetDir,
 			EnvVar:      "BENCH_ASSETDIR",
 		},
-		cli.IntFlag{
-			Name:        "message-limit",
-			Value:       10,
-			Destination: &messageLimit,
-			EnvVar:      "BENCH_MESSAGE_LIMIT",
-		},
 	},
 	Action: func(cliCtx *cli.Context) error {
 		ctx := context.Background()
@@ -102,31 +95,38 @@ var run = cli.Command{
 			return cli.NewExitError(err, 1)
 		}
 
+		lgr.Info("===== Prepare benchmarker =====")
+
 		assets, err := assets.Load(assetDir)
 		if err != nil {
+			lgr.Warn("静的ファイルをローカルから読み出せませんでした: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
 		initClient, err := isutrain.NewClientForInitialize(targetURI)
 		if err != nil {
+			lgr.Warn("isutrainクライアント生成に失敗しました: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
 		testClient, err := isutrain.NewClient(targetURI)
 		if err != nil {
+			lgr.Warn("pretestクライアント生成に失敗しました: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
 		paymentClient, err := payment.NewClient(paymentURI)
 		if err != nil {
+			lgr.Warn("課金クライアント生成に失敗しました: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
 		if debug {
+			lgr.Warn("!!!!! Debug enabled !!!!!")
 			httpmock.Activate()
 			defer httpmock.DeactivateAndReset()
 
@@ -136,10 +136,12 @@ var run = cli.Command{
 		}
 
 		// initialize
+		lgr.Info("===== Initialize payment =====")
 		if err := paymentClient.Initialize(); err != nil {
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 0)
 		}
+		lgr.Info("===== Initialize webapp =====")
 		initClient.Initialize(ctx)
 		if bencherror.InitializeErrs.IsError() {
 			dumpFailedResult(bencherror.InitializeErrs.Msgs)
@@ -147,7 +149,7 @@ var run = cli.Command{
 		}
 
 		// pretest (まず、正しく動作できているかチェック. エラーが見つかったら、採点しようがないのでFAILにする)
-
+		lgr.Info("===== Pretest webapp =====")
 		scenario.Pretest(ctx, testClient, assets)
 		if bencherror.PreTestErrs.IsError() {
 			dumpFailedResult(bencherror.PreTestErrs.Msgs)
@@ -155,36 +157,38 @@ var run = cli.Command{
 		}
 
 		// bench (ISUCOIN売り上げ計上と、減点カウントを行う)
+		lgr.Info("===== Benchmark webapp =====")
 		benchCtx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		defer cancel()
 
 		benchmarker := newBenchmarker(targetURI)
-		benchmarker.run(benchCtx)
+		if err := benchmarker.run(benchCtx); err != nil {
+			lgr.Warn("ベンチマークにてエラーが発生しました: %+v", err)
+		}
 		if bencherror.BenchmarkErrs.IsFailure() {
-			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs)[:messageLimit])
+			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
 			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 0)
 		}
 
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
 		// FIXME: 課金用のクライアントを作り、それを渡す様に変更
-		score := endpoint.CalcFinalScore()
+		lgr.Info("===== Calculate final score =====")
 
-		lgr.Infof("最終チェックによるスコア: %d", score)
+		score := endpoint.CalcFinalScore()
+		lgr.Infof("Final score: %d", score)
 
 		// エラーカウントから、スコアを減点
 		score -= bencherror.BenchmarkErrs.Penalty()
-
-		lgr.Infof("payment   = %s", paymentURI)
-		lgr.Infof("target    = %s", targetURI)
-		lgr.Infof("assetdir  = %s", assetDir)
+		lgr.Infof("Final score (with penalty): %d", score)
 
 		// 最終結果をstdoutへ書き出す
 		resultBytes, err := json.Marshal(map[string]interface{}{
 			"pass":     true,
 			"score":    score,
-			"messages": uniqueMsgs(bencherror.BenchmarkErrs.Msgs)[:messageLimit],
+			"messages": uniqueMsgs(bencherror.BenchmarkErrs.Msgs),
 		})
 		if err != nil {
+			lgr.Warn("ベンチマーク結果のMarshalに失敗しました: %+v", err)
 			return cli.NewExitError(err, 1)
 		}
 		fmt.Println(string(resultBytes))

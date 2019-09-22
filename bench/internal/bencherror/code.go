@@ -31,12 +31,8 @@ func NewTemporaryError(err error, msg string, args ...interface{}) error {
 	return failure.Translate(err, errTemporary, failure.Messagef(msg, args...))
 }
 
-func NewHTTPStatusCodeError(resp *http.Response, wantStatusCode int) error {
-	// prefix := fmt.Sprintf("%s %s", resp.Request.Method, resp.Request.URL.Path)
-	prefix := ""
-	// prefix := resp.Request.Method
-	// prefix += " "
-	// prefix += resp.Request.URL.String()
+func NewHTTPStatusCodeError(req *http.Request, resp *http.Response, wantStatusCode int) error {
+	prefix := fmt.Sprintf("%s %s", req.Method, req.URL.Path)
 
 	if resp.StatusCode != wantStatusCode {
 		body, err := ioutil.ReadAll(resp.Body)

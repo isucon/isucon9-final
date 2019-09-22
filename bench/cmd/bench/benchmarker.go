@@ -2,10 +2,16 @@ package main
 
 import (
 	"context"
+	"errors"
 	"sync"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/scenario"
 	"go.uber.org/zap"
+)
+
+var (
+	ErrBenchmarkFailure = errors.New("ベンチマークに失敗しました")
 )
 
 type benchmarker struct {
@@ -38,12 +44,17 @@ func (b *benchmarker) load(ctx context.Context) error {
 }
 
 func (b *benchmarker) run(ctx context.Context) error {
+	defer bencherror.BenchmarkErrs.DumpCounters()
 	lgr := zap.S()
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
 		default:
+			if bencherror.BenchmarkErrs.IsFailure() {
+				// 失格と分かれば、早々にベンチマークを終了
+				return ErrBenchmarkFailure
+			}
 			var wg sync.WaitGroup
 			for i := 0; i < b.level; i++ {
 				wg.Add(1)

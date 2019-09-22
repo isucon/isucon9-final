@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/assets"
@@ -21,7 +20,7 @@ var (
 
 // Pretest は、ベンチマーク前のアプリケーションが正常に動作できているか検証し、できていなければFAILとします
 func Pretest(ctx context.Context, client *isutrain.Client, assets []*assets.Asset) {
-	pretestGrp, _ := errgroup.WithContext(context.Background())
+	pretestGrp, _ := errgroup.WithContext(ctx)
 
 	// 静的ファイル
 	pretestGrp.Go(func() error {
@@ -46,21 +45,18 @@ func Pretest(ctx context.Context, client *isutrain.Client, assets []*assets.Asse
 	pretestGrp.Wait()
 }
 
-// 静的ファイル
+// 静的ファイルチェック
 func pretestStaticFiles(ctx context.Context, client *isutrain.Client, assets []*assets.Asset) error {
 	for _, asset := range assets {
 		b, err := client.DownloadAsset(ctx, asset.Path)
 		if err != nil {
-			bencherror.PreTestErrs.AddError(err)
 			return err
 		}
 
 		hash := sha256.Sum256(b)
 
 		if hash != asset.Hash {
-			err := bencherror.NewApplicationError(ErrInvalidAssetHash, "filename=%s", asset.Path)
-			bencherror.PreTestErrs.AddError(err)
-			return err
+			return bencherror.PreTestErrs.AddError(bencherror.NewApplicationError(ErrInvalidAssetHash, "GET /%s: 静的ファイルのハッシュ値が異なります", asset.Path))
 		}
 	}
 	return nil
@@ -70,55 +66,48 @@ func pretestStaticFiles(ctx context.Context, client *isutrain.Client, assets []*
 
 // preTestNormalReservation は予約までの一連の流れを検証します
 func pretestNormalReservation(ctx context.Context, client *isutrain.Client) {
+	// FIXME: 最初から登録されて入る、２つくらいのユーザで試す
 	if err := client.Register(ctx, "hoge", "hoge", nil); err != nil {
-		pretestErr := fmt.Errorf("ユーザ登録ができません: %w", err)
-		bencherror.PreTestErrs.AddError(pretestErr)
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "ユーザ登録に失敗しました: user=%s, password=%s", "hoge", "hoge"))
 		return
 	}
 
 	if err := client.Login(ctx, "hoge", "hoge", nil); err != nil {
-		pretestErr := fmt.Errorf("ユーザログインができません: %w", err)
-		bencherror.PreTestErrs.AddError(pretestErr)
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "ユーザのログインに失敗しました: user=%s, password=%s", "hoge", "hoge"))
 		return
 	}
 
 	_, err := client.ListStations(ctx, nil)
 	if err != nil {
-		pretestErr := fmt.Errorf("駅一覧を取得できません: %w", err)
-		bencherror.PreTestErrs.AddError(pretestErr)
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "駅一覧を取得できません"))
 		return
 	}
 
 	_, err = client.SearchTrains(ctx, time.Now(), "東京", "大阪", nil)
 	if err != nil {
-		pretestErr := fmt.Errorf("列車検索ができません: %w", err)
-		bencherror.PreTestErrs.AddError(pretestErr)
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "列車検索ができません"))
 		return
 	}
 
 	_, err = client.ListTrainSeats(ctx, "こだま", "96号", nil)
 	if err != nil {
-		pretestErr := fmt.Errorf("列車の座席座席列挙できません: %w", err)
-		bencherror.PreTestErrs.AddError(pretestErr)
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "列車の座席座席列挙できません"))
 		return
 	}
 
 	reservation, err := client.Reserve(ctx, nil)
 	if err != nil {
-		pretestErr := fmt.Errorf("予約ができません: %w", err)
-		bencherror.PreTestErrs.AddError(pretestErr)
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "予約ができません"))
 		return
 	}
 
 	if err = client.CommitReservation(ctx, reservation.ReservationID, nil); err != nil {
-		pretestErr := fmt.Errorf("予約を確定できませんでした: %w", err)
-		bencherror.PreTestErrs.AddError(pretestErr)
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "予約を確定できませんでした"))
 		return
 	}
 
 	if err := client.CancelReservation(ctx, reservation.ReservationID, nil); err != nil {
-		pretestErr := fmt.Errorf("予約をキャンセルできませんでした: %w", err)
-		bencherror.PreTestErrs.AddError(pretestErr)
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "予約をキャンセルできませんでした"))
 		return
 	}
 }

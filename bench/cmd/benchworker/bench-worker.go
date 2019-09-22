@@ -27,6 +27,8 @@ var (
 	dequeueInterval int
 
 	retryLimit, retryInterval int
+
+	messageLimit int
 )
 
 var (
@@ -45,6 +47,13 @@ const (
 	StatusFailed  = "aborted"
 	StatusTimeout = "aborted"
 )
+
+func joinN(messages []string, n int) string {
+	if len(messages) > n {
+		return strings.Join(messages[:n], ",\n")
+	}
+	return strings.Join(messages, ",\n")
+}
 
 // ベンチマーカー実行ファイルを実行
 // FIXME: リトライ
@@ -99,7 +108,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		ID:       job.ID,
 		Stdout:   string(stdout.Bytes()),
 		Stderr:   string(stderr.Bytes()),
-		Reason:   strings.Join(result.Messages, "\n"),
+		Reason:   joinN(result.Messages, messageLimit),
 		IsPassed: result.Pass,
 		Score:    result.Score,
 		Status:   status,
@@ -152,6 +161,12 @@ var run = cli.Command{
 			Destination: &retryInterval,
 			EnvVar:      "BENCHWORKER_RETRY_INTERVAL",
 		},
+		cli.IntFlag{
+			Name:        "message-limit",
+			Value:       10,
+			Destination: &messageLimit,
+			EnvVar:      "BENCHWORKER_MESSAGE_LIMIT",
+		},
 	},
 	Action: func(cliCtx *cli.Context) error {
 		ctx := context.Background()
@@ -175,14 +190,24 @@ var run = cli.Command{
 				}
 				log.Printf("dequeue job id=%d team_id=%d target_server=%+v", job.ID, job.Team.ID, job.Team.Servers)
 
+				reportRetrier := retrier.New(retrier.ConstantBackoff(retryLimit, time.Duration(retryInterval)*time.Second), nil)
+
 				result, err := execBench(ctx, job)
 				if err != nil {
 					// FIXME: ベンチ失敗した時のaction
+					reportErr := reportRetrier.RunCtx(ctx, func(ctx context.Context) error {
+						return report(ctx, job.ID, &Result{
+							ID:       job.ID,
+							Status:   StatusFailed,
+							IsPassed: false,
+							Reason:   err.Error(),
+						})
+					})
+					log.Println(reportErr)
 					break
 				}
 
 				// ポータルに結果を報告
-				reportRetrier := retrier.New(retrier.ConstantBackoff(retryLimit, time.Duration(retryInterval)*time.Second), nil)
 				err = reportRetrier.RunCtx(ctx, func(ctx context.Context) error {
 					return report(ctx, job.ID, result)
 				})
