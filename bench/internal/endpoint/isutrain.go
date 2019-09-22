@@ -49,8 +49,16 @@ func IncPathCounter(idx EndpointIdx) {
 	isutrainEndpoints[idx].inc()
 }
 
+func AddExtraScore(idx EndpointIdx, extraScore int64) {
+	isutrainEndpoints[idx].addExtraScore(extraScore)
+}
+
 func IncDynamicPathCounter(idx EndpointIdx) {
 	isutrainDynamicEndpoints[idx].inc()
+}
+
+func AddDynamicPathExtraScore(idx EndpointIdx, extraScore int64) {
+	isutrainDynamicEndpoints[idx].addExtraScore(extraScore)
 }
 
 func CalcFinalScore() (score int64) {

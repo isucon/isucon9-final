@@ -19,7 +19,6 @@ import (
 	"go.uber.org/zap"
 )
 
-
 var (
 	paymentURI, targetURI string
 	assetDir              string
@@ -164,6 +163,14 @@ var run = cli.Command{
 		if bencherror.BenchmarkErrs.IsFailure() {
 			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
 			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 0)
+		}
+
+		lgr.Info("===== Final check =====")
+		scenario.FinalCheck(ctx, testClient, paymentClient)
+		if bencherror.FinalCheckErrs.IsFailure() {
+			msgs := append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), bencherror.FinalCheckErrs.Msgs...)
+			dumpFailedResult(msgs)
+			return cli.NewExitError(fmt.Errorf("Finalcheckで失格となりました"), 0)
 		}
 
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)

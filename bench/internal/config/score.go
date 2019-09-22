@@ -10,3 +10,9 @@ const (
 	// TrivialPenaltyPerCount  = 100
 	TrivialPenaltyPerCount = 3
 )
+
+const (
+	PremiumSeatExtraScore     = 200
+	ReservedSeatExtraScore    = 100
+	NonReservedSeatExtraScore = 50
+)

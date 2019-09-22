@@ -11,7 +11,7 @@ import (
 
 func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 	now := time.Now()
-	mem := NewReservationMem()
+	mem := newReservationCache()
 
 	gotTests := []struct {
 		reservationID string
@@ -228,7 +228,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 
 func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 	now := time.Now()
-	mem := NewReservationMem()
+	mem := newReservationCache()
 
 	gotTests := []struct {
 		reservationID string

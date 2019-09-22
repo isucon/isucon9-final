@@ -374,6 +374,14 @@ func (c *Client) Reserve(
 	}
 
 	endpoint.IncPathCounter(endpoint.Reserve)
+	switch SeatAvailability(seatClass) {
+	case SaPremium:
+		endpoint.AddExtraScore(endpoint.Reserve, config.PremiumSeatExtraScore)
+	case SaReserved:
+		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
+	case SaNonReserved:
+		endpoint.AddExtraScore(endpoint.Reserve, config.NonReservedSeatExtraScore)
+	}
 
 	return reservation, nil
 }

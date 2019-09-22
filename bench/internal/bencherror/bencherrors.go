@@ -11,6 +11,7 @@ var (
 	InitializeErrs = NewBenchErrors()
 	PreTestErrs    = NewBenchErrors()
 	BenchmarkErrs  = NewBenchErrors()
+	FinalCheckErrs = NewBenchErrors()
 )
 
 type BenchErrors struct {
