@@ -212,11 +212,12 @@ def seat_generator(filename):
     f.close()
 
 def train_timetable_generator(filename):
-    f = open(filename, 'w')
+    f = open(filename % 0, 'w')
     common_queries(f)
 
     values = []
     f.write('INSERT INTO train_timetable_master(date,train_class,train_name,station,arrival,departure) VALUES\n\t')
+    i = 0
     for train in train_data:
         train_class_id = train_name.index(train[1])
         last_station_position = 0.0
@@ -237,6 +238,20 @@ def train_timetable_generator(filename):
                 values.append('("%s","%s","%s","%s","%s","%s")' 
                         % (train[0], train[1], train[2], station[0], arrival.strftime("%H:%M:%S"), departure.strftime("%H:%M:%S")))
                 
+                if len(values) > 500000:
+                    f.write(',\n\t'.join(values))
+                    f.write(';\n')
+                    f.close()
+
+                    i = i + 1
+
+                    f = open(filename % i, 'w')
+                    common_queries(f)
+                    print("%d" % (500000 * (i)))
+
+                    values = []
+                    f.write('INSERT INTO train_timetable_master(date,train_class,train_name,station,arrival,departure) VALUES\n\t')
+
                 time_now = departure
                 last_station_position = float(station[1])
             
@@ -263,5 +278,5 @@ if __name__ == '__main__':
     print('ok')
 
     print('94_train_timetable.sql generating...', end='', flush=True)
-    train_timetable_generator('94_train_timetable.sql')
+    train_timetable_generator('94_%d_train_timetable.sql')
     print('ok')
