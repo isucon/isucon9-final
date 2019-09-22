@@ -27,13 +27,13 @@ type Client struct {
 	baseURL *url.URL
 }
 
-func NewClient(targetBaseURL string) (*Client, error) {
+func NewClient() (*Client, error) {
 	sess, err := NewSession()
 	if err != nil {
 		return nil, err
 	}
 
-	u, err := url.Parse(targetBaseURL)
+	u, err := url.Parse(config.TargetBaseURL)
 	if err != nil {
 		return nil, err
 	}
@@ -44,13 +44,13 @@ func NewClient(targetBaseURL string) (*Client, error) {
 	}, nil
 }
 
-func NewClientForInitialize(targetBaseURL string) (*Client, error) {
+func NewClientForInitialize() (*Client, error) {
 	sess, err := newSessionForInitialize()
 	if err != nil {
 		return nil, err
 	}
 
-	u, err := url.Parse(targetBaseURL)
+	u, err := url.Parse(config.TargetBaseURL)
 	if err != nil {
 		return nil, err
 	}

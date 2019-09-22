@@ -21,8 +21,8 @@ type Client struct {
 	BaseURL *url.URL
 }
 
-func NewClient(baseURL string) (*Client, error) {
-	u, err := url.Parse(baseURL)
+func NewClient() (*Client, error) {
+	u, err := url.Parse(config.PaymentBaseURL)
 	if err != nil {
 		return nil, err
 	}
@@ -60,9 +60,7 @@ func (c *Client) Result(ctx context.Context) (*PaymentResult, error) {
 
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
-		paymentErr := bencherror.NewCriticalError(err, "課金APIから決済結果を取得できませんでした. 運営に確認をお願いいたします")
-		bencherror.InitializeErrs.AddError(paymentErr)
-		return nil, paymentErr
+		return nil, bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "課金APIから決済結果を取得できませんでした. 運営に確認をお願いいたします"))
 	}
 
 	resp, err := http.DefaultClient.Do(req)

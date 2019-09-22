@@ -14,7 +14,7 @@ var (
 
 var (
 	// initializeで設定される、予約日数
-	availReserveDays int
+	AvailReserveDays int
 
 	// 予約可能日数
 	maxReserveDays = 159
@@ -37,15 +37,15 @@ func SetAvailReserveDays(days int) error {
 	}
 
 	if days > maxReserveDays {
-		lgr.Warnf("予約日数が予約可能日数を超過: 予約日数=%d, 予約可能日数=%d", availReserveDays, maxReserveDays)
+		lgr.Warnf("予約日数が予約可能日数を超過: 予約日数=%d, 予約可能日数=%d", AvailReserveDays, maxReserveDays)
 		return ErrAvailReserveDaysTooLarge
 	}
 
-	availReserveDays = days
+	AvailReserveDays = days
 	ReservationEndDate = ReservationStartDate.Add(time.Duration(days) * 24 * time.Hour)
 
 	lgr.Infow("予約日数を設定",
-		"指定された予約日数", availReserveDays,
+		"指定された予約日数", AvailReserveDays,
 		"予約可能日数", maxReserveDays,
 		"予約受付開始日", ReservationStartDate,
 		"予約受付終了日", ReservationEndDate,

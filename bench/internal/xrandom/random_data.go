@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+// FIXME: 予約リクエスト生成
+// FIXME: 
+
 // station
 var (
 	// 数直線上の距離がそのままコスト(大きいほど負荷が高くなる)

@@ -54,9 +54,9 @@ func BenchmarkScore(b *testing.B) {
 
 	logger.InitZapLogger()
 
-	benchmarker := newBenchmarker("http://localhost")
-	isutrainClient, _ := isutrain.NewClient("http://localhost")
-	paymentClient, _ := payment.NewClient("http://localhost:5000")
+	benchmarker := new(benchmarker)
+	isutrainClient, _ := isutrain.NewClient()
+	paymentClient, _ := payment.NewClient()
 
 	m := mock.Register()
 	setDelay(m)

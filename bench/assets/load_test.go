@@ -39,7 +39,7 @@ func TestMock(t *testing.T) {
 
 	mock.Register()
 
-	client, err := isutrain.NewClient("http://localhost")
+	client, err := isutrain.NewClient()
 	assert.NoError(t, err)
 	client.ReplaceMockTransport()
 

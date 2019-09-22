@@ -16,3 +16,8 @@ const (
 	ReservedSeatExtraScore    = 100
 	NonReservedSeatExtraScore = 50
 )
+
+func GetFareMultiplier(trainClass, seatClass string) float64 {
+	// TODO: fare_masterを元に実装
+	return 0
+}

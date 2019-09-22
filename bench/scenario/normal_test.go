@@ -20,13 +20,13 @@ func TestScenario(t *testing.T) {
 
 	mock.Register()
 
-	initClient, err := isutrain.NewClientForInitialize("http://localhost")
+	initClient, err := isutrain.NewClientForInitialize()
 	assert.NoError(t, err)
 	initClient.ReplaceMockTransport()
 	initClient.Initialize(context.Background())
 
 	config.Debug = true
-	assert.NoError(t, NormalScenario(context.Background(), "http://localhost"))
+	assert.NoError(t, NormalScenario(context.Background()))
 }
 
 func TestInitializeBenchError(t *testing.T) {
@@ -41,7 +41,7 @@ func TestInitializeBenchError(t *testing.T) {
 		return nil
 	})
 
-	initClient, err := isutrain.NewClientForInitialize("http://localhost")
+	initClient, err := isutrain.NewClientForInitialize()
 	assert.NoError(t, err)
 	initClient.ReplaceMockTransport()
 	initClient.Initialize(context.Background())

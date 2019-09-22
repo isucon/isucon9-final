@@ -20,8 +20,7 @@ import (
 )
 
 var (
-	paymentURI, targetURI string
-	assetDir              string
+	assetDir string
 )
 
 // UniqueMsgs は重複除去したメッセージ配列を返します
@@ -65,13 +64,13 @@ var run = cli.Command{
 		cli.StringFlag{
 			Name:        "payment",
 			Value:       "http://localhost:5000",
-			Destination: &paymentURI,
+			Destination: &config.PaymentBaseURL,
 			EnvVar:      "BENCH_PAYMENT_URL",
 		},
 		cli.StringFlag{
 			Name:        "target",
 			Value:       "http://localhost",
-			Destination: &targetURI,
+			Destination: &config.TargetBaseURL,
 			EnvVar:      "BENCH_TARGET_URL",
 		},
 		cli.StringFlag{
@@ -99,21 +98,21 @@ var run = cli.Command{
 			return cli.NewExitError(err, 1)
 		}
 
-		initClient, err := isutrain.NewClientForInitialize(targetURI)
+		initClient, err := isutrain.NewClientForInitialize()
 		if err != nil {
 			lgr.Warn("isutrainクライアント生成に失敗しました: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
-		testClient, err := isutrain.NewClient(targetURI)
+		testClient, err := isutrain.NewClient()
 		if err != nil {
 			lgr.Warn("pretestクライアント生成に失敗しました: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
-		paymentClient, err := payment.NewClient(paymentURI)
+		paymentClient, err := payment.NewClient()
 		if err != nil {
 			lgr.Warn("課金クライアント生成に失敗しました: %+v", err)
 			dumpFailedResult([]string{})
@@ -156,7 +155,7 @@ var run = cli.Command{
 		benchCtx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		defer cancel()
 
-		benchmarker := newBenchmarker(targetURI)
+		benchmarker := new(benchmarker)
 		if err := benchmarker.run(benchCtx); err != nil {
 			lgr.Warn("ベンチマークにてエラーが発生しました: %+v", err)
 		}
