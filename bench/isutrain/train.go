@@ -12,6 +12,13 @@ type Train struct {
 	Start int `json:"start"`
 	// EndStation は終点駅IDです
 	Last int `json:"last"`
+
+	Departure        string            `json:"departure"`
+	Destination      string            `json:"destination"`
+	DepartedAt       time.Time         `json:"departure_time"`
+	ArrivedAt        time.Time         `json:"arrival_time"`
+	SeatAvailability map[string]string `json:"seat_availability"`
+	FareInformation  map[string]int    `json:"seat_fare"`
 }
 
 // Trains は列車一覧です
@@ -117,3 +124,11 @@ type TrainSearchResponse struct {
 //     * １つ見つかったら、予約済み(IsOccupied) フラグを立てる
 //     * 席は予約済みかそうでないかにかかわらず結果として追加
 //     * CarInformationを返す
+type TrainSeatSearchResponse struct {
+	// FIXME: Dateフィールドだけど、なんの日付なのか再確認
+	UseAt      time.Time
+	TrainClass string
+	TrainName  string
+	CarNumber  int
+	Seats      TrainSeats
+}

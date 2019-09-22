@@ -29,16 +29,7 @@ func newBenchmarker(baseURL string) *benchmarker {
 // ベンチ負荷の１単位. これの回転数を上げていく
 func (b *benchmarker) load(ctx context.Context) error {
 	// TODO: Load１単位で同期ポイント
-	basicScenario1, err := scenario.NewBasicScenario(b.BaseURL)
-	if err != nil {
-		return err
-	}
-	if debug {
-		// FIXME: ベンチマーク時のmock差し込みもうちょっと考える
-		basicScenario1.Client.ReplaceMockTransport()
-	}
-
-	basicScenario1.Run(ctx)
+	scenario.NormalScenario(ctx, b.BaseURL)
 
 	return nil
 }

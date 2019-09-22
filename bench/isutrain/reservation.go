@@ -53,18 +53,16 @@ type ReservationRequest struct {
 	// TrainSeat構造体
 	SeatClass string     `json:"seat_class"`
 	Seats     TrainSeats `json:"seats"`
-	// ログインで得る情報
-	UserId int `json:"user_id"`
 	// それ以外
 	//// 区間
-	Origin      string `json:"origin"`
-	Destination string `json:"destination"`
-	//// 未調査
+	Departure      string `json:"origin"`
+	Arrival string `json:"destination"`
+	// 日付
 	Date    time.Time `json:"date"`
 	CarNum  int       `json:"car_num"`
-	Payment string    `json:"payment"`
 	Child   int       `json:"child"`
 	Adult   int       `json:"adult"`
+	// 座席位置(通路、真ん中、窓側)
 	Type    string    `json:"type"`
 }
 

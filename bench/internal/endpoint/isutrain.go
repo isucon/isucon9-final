@@ -1,6 +1,8 @@
 package endpoint
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const (
 	// POST

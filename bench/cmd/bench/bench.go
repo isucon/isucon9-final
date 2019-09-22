@@ -19,14 +19,10 @@ import (
 	"go.uber.org/zap"
 )
 
+
 var (
 	paymentURI, targetURI string
 	assetDir              string
-)
-
-var (
-	// デバッグフラグ
-	debug bool
 )
 
 // UniqueMsgs は重複除去したメッセージ配列を返します
@@ -64,7 +60,7 @@ var run = cli.Command{
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:        "debug",
-			Destination: &debug,
+			Destination: &config.Debug,
 			EnvVar:      "BENCH_DEBUG",
 		},
 		cli.StringFlag{
@@ -125,7 +121,7 @@ var run = cli.Command{
 			return cli.NewExitError(err, 1)
 		}
 
-		if debug {
+		if config.Debug {
 			lgr.Warn("!!!!! Debug enabled !!!!!")
 			httpmock.Activate()
 			defer httpmock.DeactivateAndReset()

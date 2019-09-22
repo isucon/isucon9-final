@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/logger"
 	"github.com/chibiegg/isucon9-final/bench/mock"
 	"github.com/chibiegg/isucon9-final/bench/payment"
@@ -47,7 +48,7 @@ func BenchmarkScore(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	debug = true
+	config.Debug = true
 
 	logger.InitZapLogger()
 

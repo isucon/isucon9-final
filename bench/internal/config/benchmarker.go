@@ -10,3 +10,5 @@ const (
 	// BenchmarkTimeout  = 180 * time.Second
 	BenchmarkTimeout = 30 * time.Second
 )
+
+var Debug bool

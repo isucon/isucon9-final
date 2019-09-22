@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
@@ -92,16 +93,22 @@ func (c *Client) Initialize(ctx context.Context) {
 		return
 	}
 
+	// FIXME: 予約可能日数をレスポンスから受け取る
+	if err := config.SetAvailReserveDays(30); err != nil {
+		bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "POST /initialize: 予約可能日数の設定に失敗しました"))
+		return
+	}
+
 	endpoint.IncPathCounter(endpoint.Initialize)
 }
 
-func (c *Client) Register(ctx context.Context, username, password string, opts *ClientOption) error {
+func (c *Client) Register(ctx context.Context, email, password string, opts *ClientOption) error {
 	var (
 		u    = *c.baseURL
 		form = url.Values{}
 	)
 	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Register))
-	form.Set("username", username)
+	form.Set("email", email)
 	form.Set("password", password)
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBufferString(form.Encode()))
@@ -258,56 +265,84 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 	return trains, nil
 }
 
-func (c *Client) ListTrainSeats(ctx context.Context, train_class, train_name string, opts *ClientOption) (TrainSeats, error) {
+func (c *Client) ListTrainSeats(ctx context.Context, trainClass, trainName string, carNum int, departure, arrival string, opts *ClientOption) (*TrainSearchResponse, error) {
 	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.ListTrainSeats))
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
-		return TrainSeats{}, err
+		return nil, err
 	}
 
 	query := req.URL.Query()
-	query.Set("train_class", train_class)
-	query.Set("train_name", train_name)
+	query.Set("train_class", trainClass)
+	query.Set("train_name", trainName)
+	query.Set("car_number", strconv.Itoa(carNum))
+	query.Set("from", departure)
+	query.Set("to", arrival)
 	req.URL.RawQuery = query.Encode()
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return TrainSeats{}, err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
 			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /train/seats: ステータスコードが不正です")))
-			return TrainSeats{}, err
+			return nil, err
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
 			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /train/seats: ステータスコードが不正です")))
-			return TrainSeats{}, err
+			return nil, err
 		}
 	}
 
-	var seats TrainSeats
-	if err := json.NewDecoder(resp.Body).Decode(&seats); err != nil {
-		return TrainSeats{}, err
+	var trainSearchResp *TrainSearchResponse
+	if err := json.NewDecoder(resp.Body).Decode(&trainSearchResp); err != nil {
+		return nil, err
 	}
 
 	endpoint.IncPathCounter(endpoint.ListTrainSeats)
 
-	return seats, nil
+	return trainSearchResp, nil
 }
 
-func (c *Client) Reserve(ctx context.Context, opts *ClientOption) (*ReservationResponse, error) {
-	var (
-		u = *c.baseURL
-		// form = url.Values{}
-	)
+func (c *Client) Reserve(
+	ctx context.Context,
+	trainClass, trainName string,
+	seatClass string,
+	seats TrainSeats,
+	departure, arrival string,
+	useAt time.Time,
+	carNum int,
+	child, adult int,
+	typ string,
+	opts *ClientOption,
+) (*ReservationResponse, error) {
+	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Reserve))
 
-	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
+	b, err := json.Marshal(&ReservationRequest{
+		TrainClass: trainClass,
+		TrainName:  trainName,
+		SeatClass:  seatClass,
+		Seats:      seats,
+		Departure:  departure,
+		Arrival:    arrival,
+		Date:       useAt,
+		CarNum:     carNum,
+		Child:      child,
+		Adult:      adult,
+		Type:       typ,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
 	}

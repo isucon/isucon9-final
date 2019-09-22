@@ -2,7 +2,10 @@ package mock
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
@@ -53,9 +56,8 @@ func (m *Mock) Register(req *http.Request) ([]byte, int) {
 	}
 
 	var (
-		username = req.Form.Get("username")
+		username = req.Form.Get("email")
 		password = req.Form.Get("password")
-		// TODO: 他にも登録情報を追加
 	)
 	if len(username) == 0 || len(password) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
@@ -122,9 +124,47 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
+	var (
+		seatAvailability = map[string]string{
+			string(isutrain.SaPremium):       "○",
+			string(isutrain.SaPremiumSmoke):  "×",
+			string(isutrain.SaReserved):      "△",
+			string(isutrain.SaReservedSmoke): "○",
+			string(isutrain.SaNonReserved):   "○",
+		}
+		fareInformation = map[string]int{
+			string(isutrain.SaPremium):       24000,
+			string(isutrain.SaPremiumSmoke):  24500,
+			string(isutrain.SaReserved):      19000,
+			string(isutrain.SaReservedSmoke): 19500,
+			string(isutrain.SaNonReserved):   15000,
+		}
+	)
 	b, err := json.Marshal(&isutrain.Trains{
-		&isutrain.Train{Class: "のぞみ", Name: "96号", Start: 1, Last: 2},
-		&isutrain.Train{Class: "こだま", Name: "96号", Start: 3, Last: 4},
+		&isutrain.Train{
+			Class:            "のぞみ",
+			Name:             "96号",
+			Start:            1,
+			Last:             2,
+			Departure:        "東京",
+			Destination:      "名古屋",
+			DepartedAt:       time.Now(),
+			ArrivedAt:        time.Now(),
+			SeatAvailability: seatAvailability,
+			FareInformation:  fareInformation,
+		},
+		&isutrain.Train{
+			Class:            "こだま",
+			Name:             "96号",
+			Start:            3,
+			Last:             4,
+			Departure:        "名古屋",
+			Destination:      "大阪",
+			DepartedAt:       time.Now(),
+			ArrivedAt:        time.Now(),
+			SeatAvailability: seatAvailability,
+			FareInformation:  fareInformation,
+		},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
@@ -143,16 +183,31 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 
 	// 列車特定情報を受け取る
 	var (
-		trainClass = q["train_class"]
-		trainName  = q["train_name"]
+		trainClass   = q.Get("train_class")
+		trainName    = q.Get("train_name")
+		carNumber, _ = strconv.Atoi(q.Get("car_number"))
+		fromName     = q.Get("from")
+		toName       = q.Get("to")
 	)
 	if len(trainClass) == 0 || len(trainName) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+	if len(fromName) == 0 || len(toName) == 0 {
+		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
+	}
+	if carNumber == 0 {
+		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
+	}
 
 	// 適当な席を返す
-	b, err := json.Marshal(&isutrain.TrainSeats{
-		&isutrain.TrainSeat{},
+	b, err := json.Marshal(&isutrain.TrainSeatSearchResponse{
+		UseAt:      time.Now(),
+		TrainClass: "dummy",
+		TrainName:  "dummy",
+		CarNumber:  1,
+		Seats: isutrain.TrainSeats{
+			&isutrain.TrainSeat{},
+		},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
@@ -165,12 +220,25 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 	<-time.After(m.ReserveDelay)
 	// 予約情報を受け取って、予約できたかを返す
+	b, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
+	}
 
-	// FIXME: ユーザID
 	// 複数の座席指定で予約するかもしれない
 	// なので、予約には複数の座席予約が紐づいている
+	var reservationReq *isutrain.ReservationRequest
+	if err := json.Unmarshal(b, &reservationReq); err != nil {
+		log.Println("unmarshal fail")
+		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
+	}
 
-	b, err := json.Marshal(&isutrain.ReservationResponse{
+	if len(reservationReq.TrainClass) == 0 || len(reservationReq.TrainName) == 0 {
+		log.Println("train info fail")
+		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
+	}
+
+	b, err = json.Marshal(&isutrain.ReservationResponse{
 		ReservationID: "1111111111",
 		IsOk:          true,
 	})

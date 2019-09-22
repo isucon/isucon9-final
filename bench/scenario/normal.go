@@ -5,39 +5,33 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
 
-// BasicScenario は基本的な予約フローのシナリオです
-type BasicScenario struct {
-	Client *isutrain.Client
-}
-
-func NewBasicScenario(targetBaseURL string) (*BasicScenario, error) {
+// NormalScenario は基本的な予約フローのシナリオです
+func NormalScenario(ctx context.Context, targetBaseURL string) error {
 	client, err := isutrain.NewClient(targetBaseURL)
 	if err != nil {
-		return nil, err
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
 	}
 
-	return &BasicScenario{
-		Client: client,
-	}, nil
-}
+	if config.Debug {
+		client.ReplaceMockTransport()
+	}
 
-// TODO: シナリオ１回転で同期ポイント
-func (s *BasicScenario) Run(ctx context.Context) error {
-	err := s.Client.Register(ctx, "hoge", "hoge", nil)
+	err = client.Register(ctx, "hoge", "hoge", nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザ登録ができません"))
 	}
 
-	err = s.Client.Login(ctx, "hoge", "hoge", nil)
+	err = client.Login(ctx, "hoge", "hoge", nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
 	}
 
-	_, err = s.Client.ListStations(ctx, nil)
+	_, err = client.ListStations(ctx, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "駅一覧を取得できません"))
 	}
@@ -46,30 +40,42 @@ func (s *BasicScenario) Run(ctx context.Context) error {
 		origin      = xrandom.GetRandomStations()
 		destination = xrandom.GetRandomStations()
 	)
-	_, err = s.Client.SearchTrains(ctx, time.Now(), origin, destination, nil)
+	_, err = client.SearchTrains(ctx, time.Now(), origin, destination, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車検索ができません"))
 	}
 
-	_, err = s.Client.ListTrainSeats(ctx, "こだま", "96号", nil)
+	_, err = client.ListTrainSeats(ctx, "こだま", "96号", 1, "東京", "大阪", nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席座席列挙できません"))
 	}
 
-	reservation, err := s.Client.Reserve(ctx, nil)
+	reservation, err := client.Reserve(ctx, "こだま", "69号", "premium", isutrain.TrainSeats{}, "東京", "名古屋", time.Now(), 1, 1, 1, "isle", nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約ができません"))
 	}
 
-	err = s.Client.CommitReservation(ctx, reservation.ReservationID, nil)
+	err = client.CommitReservation(ctx, reservation.ReservationID, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約を確定できませんでした"))
 	}
 
-	_, err = s.Client.ListReservations(ctx, nil)
+	_, err = client.ListReservations(ctx, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約を列挙できませんでした"))
 	}
+
+	return nil
+}
+
+// 予約キャンセル含む(Commit後にキャンセル)
+func NormalCancelScenario(ctx context.Context, targetBaseURL string) error {
+
+	return nil
+}
+
+// 曖昧検索シナリオ
+func NormalAmbigiousSearchScenario(ctx context.Context, targetBaseURL string) error {
 
 	return nil
 }
