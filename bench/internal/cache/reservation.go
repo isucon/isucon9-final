@@ -30,26 +30,6 @@ var (
 
 // FIXME: 未予約の予約を取得できるものがあるといい
 
-type ReservationResult struct {
-	keys                []SeatMapKey
-	origin, destination string
-	amount              int64
-}
-
-func NewReservationResult() *ReservationResult {
-	return &ReservationResult{
-		keys: []SeatMapKey{},
-	}
-}
-
-type SeatMapKey struct {
-	Date                  time.Time
-	TrainClass, TrainName string
-	CarNum                int
-	Row                   int
-	Column                string
-}
-
 type Reservation struct {
 	ID     string
 	Amount int64
