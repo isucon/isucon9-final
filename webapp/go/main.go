@@ -79,7 +79,7 @@ type Reservation struct {
 	TrainName     string    `json:"train_name" db:"train_name"`
 	Departure     string    `json:"departure" db:"departure"`
 	Arrival       string    `json:"arrival" db:"arrival"`
-	PaymentStatus string    `json:"payment_method" db:"payment_method"`
+	PaymentStatus string    `json:"payment_status" db:"payment_status"`
 	Status        string    `json:"status" db:"status"`
 	PaymentId     string    `json:"payment_id" db:"payment_id"`
 }
@@ -131,17 +131,18 @@ type User struct {
 }
 
 type TrainReservationRequest struct {
-	Date      string        `json:"date"`
-	TrainName string        `json:"train_name"`
-	CarNumber int           `json:"car_number"`
-	SeatClass string        `json:"seat_class"`
-	Departure string        `json:"departure"`
-	Arrival   string        `json:"arrival"`
-	Payment   string        `json:"payment"`
-	Child     int           `json:"child"`
-	Adult     int           `json:"adult"`
-	Type      string        `json:"type"`
-	Seats     []RequestSeat `json:"seats"`
+	Date       string        `json:"date"`
+	TrainName  string        `json:"train_name"`
+	TrainClass string        `json:"train_class"`
+	CarNumber  int           `json:"car_number"`
+	SeatClass  string        `json:"seat_class"`
+	Departure  string        `json:"departure"`
+	Arrival    string        `json:"arrival"`
+	Payment    string        `json:"payment"`
+	Child      int           `json:"child"`
+	Adult      int           `json:"adult"`
+	Type       string        `json:"type"`
+	Seats      []RequestSeat `json:"seats"`
 }
 
 type RequestSeat struct {
@@ -891,10 +892,11 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	tx := dbx.MustBegin()
 	// まずは乗車予定の区間をチェックする
 	reservations := []Reservation{}
-	query := "SELECT * FROM reservations WHERE date=? AND train_name=? AND departure=? AND arrival=?"
+	query := "SELECT * FROM reservations WHERE date=? AND train_class=? AND train_name=? AND departure=? AND arrival=?"
 	err = tx.Select(
 		&reservations, query,
 		date.Format("2006/01/02"),
+		req.TrainClass,
 		req.TrainName,
 		req.Departure,
 		req.Arrival,
@@ -908,10 +910,11 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	// 止まらない駅の予約を取ろうとしていないかチェックする
 	// 列車データを取得
 	tmas := Train{}
-	query = "SELECT * FROM train_master WHERE date=? AND train_name=?"
+	query = "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
 	err = tx.Get(
 		&tmas, query,
 		date.Format("2006-01-02"),
+		req.TrainClass,
 		req.TrainName,
 	)
 	if err == sql.ErrNoRows {
@@ -954,31 +957,30 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 別の方法でリクエスト以外から列車クラスを拾ってくる
-	// switch req.TrainClass {
-	// case "最速":
-	// 	if !departureStation.IsStopExpress || !arrivalStation.IsStopExpress {
-	// 		tx.Rollback()
-	// 		reservationResponse(w,400,0,true,"最速の止まらない駅です")
-	// 		return
-	// 	}
-	// case "中間":
-	// 	if !departureStation.IsStopSemiExpress || !arrivalStation.IsStopSemiExpress {
-	// 		tx.Rollback()
-	// 		reservationResponse(w,400,0,true,"中間の止まらない駅です")
-	// 		return
-	// 	}
-	// case "遅いやつ":
-	// 	if !departureStation.IsStopLocal || !arrivalStation.IsStopLocal {
-	// 		tx.Rollback()
-	// 		reservationResponse(w,400,0,true,"遅いやつの止まらない駅です")
-	// 		return
-	// 	}
-	// default:
-	// 	tx.Rollback()
-	// 	reservationResponse(w,400,0,true,"列車クラスが不明です")
-	// 	return
-	// }
+	switch req.TrainClass {
+	case "最速":
+		if !departureStation.IsStopExpress || !arrivalStation.IsStopExpress {
+			tx.Rollback()
+			reservationResponse(w, 400, 0, true, "最速の止まらない駅です")
+			return
+		}
+	case "中間":
+		if !departureStation.IsStopSemiExpress || !arrivalStation.IsStopSemiExpress {
+			tx.Rollback()
+			reservationResponse(w, 400, 0, true, "中間の止まらない駅です")
+			return
+		}
+	case "遅いやつ":
+		if !departureStation.IsStopLocal || !arrivalStation.IsStopLocal {
+			tx.Rollback()
+			reservationResponse(w, 400, 0, true, "遅いやつの止まらない駅です")
+			return
+		}
+	default:
+		tx.Rollback()
+		reservationResponse(w, 400, 0, true, "列車クラスが不明です")
+		return
+	}
 
 	// 乗車区間の駅IDを求める
 	var fromStation, toStation Station
@@ -1028,10 +1030,11 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		for i, _ := range reservations {
 			// train_masterから列車情報を取得(上り・下りが分かる)
 			tmas = Train{}
-			query = "SELECT * FROM train_master WHERE date=? AND train_name=?"
+			query = "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
 			err = tx.Get(
 				&tmas, query,
 				date.Format("2006-01-02"),
+				req.TrainClass,
 				req.TrainName,
 			)
 			if err == sql.ErrNoRows {
@@ -1104,9 +1107,10 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 				// 座席情報のValidate
 				seatList := Seat{}
 				for _, z := range req.Seats {
-					query = "SELECT * FROM seat_master WHERE car_number=? AND seat_column=? AND seat_row=?"
+					query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=?"
 					err = dbx.Get(
 						&seatList, query,
+						req.TrainClass,
 						req.CarNumber,
 						z.Column,
 						z.Row,
@@ -1153,11 +1157,12 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//予約ID発行と予約情報登録
-	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_name`, `departure`, `arrival`, `status`, `payment_id`) VALUES (?, ?, ?, ?, ?, ?, ?)"
+	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 	result, err := tx.Exec(
 		query,
 		user.ID,
 		date.Format("2006/01/02"),
+		req.TrainClass,
 		req.TrainName,
 		req.Departure,
 		req.Arrival,
