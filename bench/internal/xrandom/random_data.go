@@ -1,12 +1,15 @@
 package xrandom
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/chibiegg/isucon9-final/bench/internal/util"
 )
 
 // FIXME: 予約リクエスト生成
-// FIXME: 
+// FIXME:
 
 // station
 var (
@@ -118,6 +121,21 @@ func init() {
 type User struct {
 	Email    string
 	Password string
+}
+
+func GenRandomUser() (*User, error) {
+	emailRandomStr, err := util.SecureRandomStr(10)
+	if err != nil {
+		return nil, err
+	}
+	passwdRandomStr, err := util.SecureRandomStr(20)
+	if err != nil {
+		return nil, err
+	}
+	return &User{
+		Email:    fmt.Sprintf("%s@example.com", emailRandomStr),
+		Password: passwdRandomStr,
+	}, nil
 }
 
 var (

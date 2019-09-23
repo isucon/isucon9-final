@@ -27,12 +27,17 @@ func NormalScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = client.Signup(ctx, "hoge", "hoge", nil)
+	user, err := xrandom.GenRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ランダムデータの生成ができません. 運営に確認をお願いいたします"))
+	}
+
+	err = client.Signup(ctx, user.Email, user.Password, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザ登録ができません"))
 	}
 
-	err = client.Login(ctx, "hoge", "hoge", nil)
+	err = client.Login(ctx, user.Email, user.Password, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
 	}
@@ -108,12 +113,17 @@ func NormalCancelScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = client.Signup(ctx, "hoge", "hoge", nil)
+	user, err := xrandom.GenRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ランダムデータの生成ができません. 運営に確認をお願いいたします"))
+	}
+
+	err = client.Signup(ctx, user.Email, user.Password, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザ登録ができません"))
 	}
 
-	err = client.Login(ctx, "hoge", "hoge", nil)
+	err = client.Login(ctx, user.Email, user.Password, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
 	}
