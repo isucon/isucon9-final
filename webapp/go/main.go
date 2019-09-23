@@ -84,6 +84,7 @@ type Reservation struct {
 	PaymentStatus string     `json:"payment_method" db:"payment_method"`
 	Status        string     `json:"status" db:"status"`
 	PaymentId     string     `json:"payment_id,omitempty" db:"payment_id"`
+	Amount        string     `json:"amount" db:"amount"`
 }
 
 type SeatReservation struct {
@@ -1230,9 +1231,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		reservationResponse(w, http.StatusBadRequest, 0, true, "リクエストされた座席クラスが不明です")
 		return
 	}
-
-	fmt.Println(fare)
-
+	sumFare := (req.Adult * fare) + (req.Child * fare)/2
 
 	// userID取得。ログインしてないと怒られる。
 	user, errCode, errMsg := getUser(r)
@@ -1254,7 +1253,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		req.Arrival,
 		"requesting",
 		"a",
-		10000, // これをいい感じに算出する
+		sumFare,
 	)
 	if err != nil {
 		tx.Rollback()
