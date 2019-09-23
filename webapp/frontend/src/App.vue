@@ -3,15 +3,15 @@
     <header>
       <div class="welcome">
         <p class="logo"><a></a></p>
-        <p class="welcome2"><span>最終ログイン日時：2019/08/02 16:32</span></p>
-        <p class="welcome"><span>こたまご様</span><span style="color:#ff0000"></span></p>
+        <p class="welcome" v-if="user"><span>{{ user.email }}様</span><span style="color:#ff0000"></span></p>
       </div>
 
       <div class="title">
         <h1>メニュー</h1>
         <ul>
           <li class="b1"><router-link to="/"><a>メニュー</a></router-link></li>
-          <li class="b2"><a href="#" v-on:click="login()">ログイン</a></li>
+          <li class="b2" v-if="!user"><a href="#" v-on:click="login()">ログイン</a></li>
+          <li class="b2" v-if="user"><a href="#" v-on:click="logout()">ログアウト</a></li>
           <li class="b3"><a href="#" v-on:click="register()">ユーザー登録</a></li>
         </ul>
       </div>
@@ -23,9 +23,13 @@
 
 <script>
 import Router from '@/router.js'
+import { apiService } from './services/api.js'
 
 export default {
   data() {
+    return {
+      user: null,
+    }
   },
   methods:{
     register() {
@@ -33,7 +37,21 @@ export default {
     },
     login() {
       Router.push({ path: '/login'})
+    },
+    logout() {
+      apiService.logout().then((res) => {
+        this.user = null;
+        Router.push({ path: '/login' })
+      })
+    },
+    getAuth() {
+      apiService.getAuth().then((res) => {
+        this.user = res
+      })
     }
+  },
+  mounted() {
+    this.getAuth()
   }
 }
 </script>

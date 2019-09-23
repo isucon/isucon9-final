@@ -204,6 +204,10 @@ type InitializeResponse struct {
 	AllowedDays int `json:"allowed_days"`
 }
 
+type AuthResponse struct {
+	Email string `json:"email"`
+}
+
 const (
 	sessionName = "session_isutrain"
 )
@@ -632,17 +636,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
-			premiumSmokeFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "premium_smoke")
-			if err != nil {
-				errorResponse(w, http.StatusBadRequest, err.Error())
-				return
-			}
 			reservedFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "reserved")
-			if err != nil {
-				errorResponse(w, http.StatusBadRequest, err.Error())
-				return
-			}
-			reservedSmokeFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "reserved_smoke")
 			if err != nil {
 				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
@@ -655,9 +649,9 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			fareInformation := map[string]int{
 				"premium":        premiumFare,
-				"premium_smoke":  premiumSmokeFare,
+				"premium_smoke":  premiumFare,
 				"reserved":       reservedFare,
-				"reserved_smoke": reservedSmokeFare,
+				"reserved_smoke": reservedFare,
 				"non_reserved":   nonReservedFare,
 			}
 
@@ -1218,24 +1212,8 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			return
 		}
-	case "premium_smoke":
-		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "premium_smoke")
-		if err != nil {
-			tx.Rollback()
-			errorResponse(w, http.StatusBadRequest, err.Error())
-			log.Println(err.Error())
-			return
-		}
 	case "reserved":
 		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "reserved")
-		if err != nil {
-			tx.Rollback()
-			errorResponse(w, http.StatusBadRequest, err.Error())
-			log.Println(err.Error())
-			return
-		}
-	case "reserved_smoke":
-		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "reserved_smoke")
 		if err != nil {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, err.Error())
@@ -1395,7 +1373,6 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	case "done":
 		tx.Rollback()
 		errorResponse(w, http.StatusForbidden, "既に支払いが完了している予約IDです")
-		log.Println(err.Error())
 		return
 	default:
 		break
@@ -1470,6 +1447,22 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	tx.Commit()
 	w.Write(response)
+}
+
+func getAuthHandler(w http.ResponseWriter, r *http.Request) {
+
+	// userID取得
+	user, errCode, errMsg := getUser(r)
+	if errCode != http.StatusOK {
+		errorResponse(w, errCode, errMsg)
+		log.Printf("%s", errMsg)
+		return
+	}
+
+
+	resp := AuthResponse{user.Email}
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	json.NewEncoder(w).Encode(resp)
 }
 
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
@@ -1551,6 +1544,25 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	messageResponse(w, "autheticated")
 }
 
+
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		ログアウト
+		POST /auth/logout
+	*/
+
+	session := getSession(r)
+
+	session.Values["user_id"] = 0
+	session.Values["csrf_token"] = secureRandomStr(20)
+	if err := session.Save(r, w); err != nil {
+		log.Print(err)
+		errorResponse(w, http.StatusInternalServerError, "session error")
+		return
+	}
+	messageResponse(w, "logged out")
+}
+
 func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		ログイン
@@ -1577,8 +1589,6 @@ func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	json.NewEncoder(w).Encode(reservationList)
-
-	// messageResponse(w, "login siteruyo "+user.Email)
 }
 
 func userReservationDetailHandler(w http.ResponseWriter, r *http.Request) {
@@ -1778,9 +1788,10 @@ func main() {
 	mux.HandleFunc(pat.Post("/api/train/reservation/commit"), reservationPaymentHandler)
 
 	// 認証関連
+	mux.HandleFunc(pat.Get("/api/auth"), getAuthHandler)
 	mux.HandleFunc(pat.Post("/api/auth/signup"), signUpHandler)
 	mux.HandleFunc(pat.Post("/api/auth/login"), loginHandler)
-	mux.HandleFunc(pat.Post("/api/auth/logout"), dummyHandler) // FIXME:
+	mux.HandleFunc(pat.Post("/api/auth/logout"), logoutHandler)
 	mux.HandleFunc(pat.Get("/api/user/reservations"), userReservationsHandler)
 	mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationDetailHandler)
 	mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), userReservationCancelHandler)
