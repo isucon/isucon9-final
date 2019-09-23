@@ -817,7 +817,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		レスポンスで予約IDを返す
 		reservationResponse(w http.ResponseWriter, errCode int, id int, ok bool, message string)
 	*/
-	
+
 	// json parse
 	req := new(TrainReservationRequest)
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -933,7 +933,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		reservationResponse(w,400,0,true,"列車クラスが不明です")
 		return
 	}
-	
+
 	// 乗車区間の駅IDを求める
 	var fromStation, toStation Station
 	query = "SELECT * FROM station_master WHERE name=?"
@@ -1002,7 +1002,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 			// 列車自体の駅IDを求める
 			query = "SELECT * FROM station_master WHERE name=?"
-		
+
 			// Departure
 			err = tx.Get(&departureStation, query, tmas.StartStation)
 			if err == sql.ErrNoRows {
@@ -1015,7 +1015,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 				reservationResponse(w,500,0,true,"リクエストされた列車の始発駅データの取得に失敗しました")
 				return
 			}
-		
+
 			// Arrive
 			err = tx.Get(&arrivalStation, query, tmas.LastStation)
 			if err == sql.ErrNoRows {
@@ -1086,7 +1086,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				
+
 				for _, v := range SeatReservations {
 					for j, _ := range req.Seats {
 						if (v.CarNumber == req.CarNum && v.SeatRow == req.Seats[j].Row && v.SeatColumn == req.Seats[j].Column) {
@@ -1252,6 +1252,10 @@ func initializeHandler (w http.ResponseWriter, r *http.Request) {
 }
 
 
+func dummyHandler (w http.ResponseWriter, r *http.Request) {
+	messageResponse(w, "ok")
+}
+
 func main() {
 	// MySQL関連のお膳立て
 	var err error
@@ -1302,13 +1306,19 @@ func main() {
 	http.HandleFunc("/api/train/search", trainSearchHandler)
 	http.HandleFunc("/api/train/seats", trainSeatsHandler)
 	http.HandleFunc("/api/train/reservation", trainReservationHandler)
+	http.HandleFunc("/api/train/reservation/commit", dummyHandler) // FIXME:
+
 
 	// 認証関連
-	http.HandleFunc("/auth/signup", signUpHandler)
-	http.HandleFunc("/auth/login", loginHandler)
-
-	http.HandleFunc("/user/reservations", userReservationsHandler)
+	http.HandleFunc("/api/auth/signup", signUpHandler)
+	http.HandleFunc("/api/auth/login", loginHandler)
+	http.HandleFunc("/api/auth/logout", dummyHandler) // FIXME:
+	http.HandleFunc("/api/user/reservations", userReservationsHandler)
+	http.HandleFunc("/api/user/reservations/:item_id", dummyHandler) // FIXME:
+	http.HandleFunc("/api/user/reservations/:item_id/cancel", dummyHandler) // FIXME:
 
 	fmt.Println(banner)
-	http.ListenAndServe(":8000", nil)
+	err = http.ListenAndServe(":8000", nil)
+
+	log.Fatal(err)
 }
