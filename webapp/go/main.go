@@ -151,6 +151,12 @@ type RequestSeat struct {
 	Column string `json:"column"`
 }
 
+type ReservationPaymentRequest struct {
+	CardToken 		string 	`json:"card_token"`
+	ReservationId 	string 	`json:"reservation_id"`
+	Amount			int		`json:"amount"`
+}
+
 const (
 	sessionName = "session_isutrain"
 )
@@ -187,6 +193,17 @@ func reservationResponse(w http.ResponseWriter, errCode int, id int64, ok bool, 
 	e := map[string]interface{}{
 		"is_error": ok,
 		"ReservationId": id,
+		"message":  message,
+	}
+	errResp, _ := json.Marshal(e)
+
+	w.WriteHeader(errCode)
+	w.Write(errResp)
+}
+
+func paymentResponse(w http.ResponseWriter, errCode int, ok bool, message string) {
+	e := map[string]interface{}{
+		"is_error": ok,
 		"message":  message,
 	}
 	errResp, _ := json.Marshal(e)
