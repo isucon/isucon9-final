@@ -188,6 +188,7 @@ export default {
     },
     changeCar (car_number) {
       console.log(car_number)
+      car_number = parseInt(car_number)
       var query = {
         year: this.year,
         month: this.month,
@@ -232,7 +233,7 @@ export default {
     this.day = parseInt(this.$route.query.day)
     this.train_class = this.$route.query.train_class
     this.train_name = this.$route.query.train_name
-    this.car_number = this.$route.query.car_number
+    this.car_number = parseInt(this.$route.query.car_number)
     this.adult = parseInt(this.$route.query.adult)
     this.child = parseInt(this.$route.query.child)
     this.from_station = this.$route.query.from_station

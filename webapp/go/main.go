@@ -236,7 +236,7 @@ func getUser(r *http.Request) (user User, errCode int, errMsg string) {
 	session := getSession(r)
 	userID, ok := session.Values["user_id"]
 	if !ok {
-		return user, http.StatusNotFound, "no session"
+		return user, http.StatusForbidden, "no session"
 	}
 
 	err := dbx.Get(&user, "SELECT * FROM `users` WHERE `id` = ?", userID)
