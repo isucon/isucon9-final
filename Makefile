@@ -1,16 +1,15 @@
 .PHONY: frontend archive payment bench
 
-all: frontend archive payment bench
+all: frontend webapp payment bench
 
 frontend:
 	cd webapp/frontend && make
+	cd webapp/frontend/dist && tar zcvf ../../../ansible/files/frontend.tar.gz .
 
-archive:
+webapp:
 	tar zcvf ansible/files/webapp.tar.gz \
 	--exclude webapp/frontend \
 	webapp
-
-	cd webapp/frontend/dist && tar zcvf ../../../ansible/files/frontend.tar.gz .
 
 payment:
 	cd blackbox/payment && make && cp bin/payment_linux ../../ansible/roles/benchmark/files/payment

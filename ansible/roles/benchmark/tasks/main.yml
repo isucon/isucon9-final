@@ -21,10 +21,18 @@
   notify: restart benchworker
 
 - name: copy frontend
-  unarchive: src=frontend.tar.gz dest=/home/admin/isucon/assets/ owner=www-data group=www-data
+  copy: src=frontend.tar.gz dest=/home/admin/isucon/ owner=www-data group=www-data
   tags:
     - benchmark
     - frontend
+  register: frontend
+
+- name: unarchive frontned
+  shell: rm -rf /home/admin/isucon/assets && mkdir /home/admin/isucon/assets && cd /home/admin/isucon/assets && tar zxvf ../frontend.tar.gz
+  tags:
+    - benchmark
+    - frontend
+  when: frontend.changed
 
 - name: create systemd services
   template: src="{{ item }}.service" dest="/etc/systemd/system/{{ item }}.service" owner=root group=root mode=0644
