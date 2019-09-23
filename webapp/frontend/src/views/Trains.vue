@@ -82,7 +82,7 @@
           <h3>自由席</h3>
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="f" v-bind:disabled="selectedItem.seat_availability.non_reserved == '×'" v-on:click="selectSeatClass('', false)"/><label for="f"></label>
+          <input type="radio" name="price" id="f" v-bind:disabled="selectedItem.seat_availability.non_reserved == '×'" v-on:click="selectSeatClass('non-reserved', false)"/><label for="f"></label>
           <div class="available">{{ selectedItem.seat_availability.non_reserved }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.non_reserved }}</div>
         </div>
