@@ -220,7 +220,7 @@ export default {
       }
     },
     reserve() {
-      if (this.train_class == "") {
+      if (this.seat_class == "") {
         return
       }
       var condition = {
@@ -255,8 +255,8 @@ export default {
     this.hour = this.$route.query.hour
     this.minute = this.$route.query.minute
     this.train_class = this.$route.query.train_class
-    this.adult = this.$route.query.adult
-    this.child = this.$route.query.child
+    this.adult = parseInt(this.$route.query.adult)
+    this.child = parseInt(this.$route.query.child)
     this.from_station = this.$route.query.from_station
     this.to_station = this.$route.query.to_station
 
