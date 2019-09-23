@@ -140,18 +140,18 @@ type User struct {
 }
 
 type TrainReservationRequest struct {
-	Date       string        `json:"date"`
-	TrainName  string        `json:"train_name"`
-	TrainClass string        `json:"train_class"`
-	CarNumber  int           `json:"car_number"`
-	SeatClass  string        `json:"seat_class"`
-	Departure  string        `json:"departure"`
-	Arrival    string        `json:"arrival"`
-	Payment    string        `json:"payment"`
-	Child      int           `json:"child"`
-	Adult      int           `json:"adult"`
-	Type       string        `json:"type"`
-	Seats      []RequestSeat `json:"seats"`
+	Date			string			`json:"date"`
+	TrainName		string			`json:"train_name"`
+	TrainClass		string			`json:"train_class"`
+	CarNumber		int				`json:"car_number"`
+	IsSmokingSeat 	bool			`json:"is_smoking_seat"`
+	SeatClass  		string			`json:"seat_class"`
+	Departure		string			`json:"departure"`
+	Arrival			string			`json:"arrival"`
+	Child			int				`json:"child"`
+	Adult			int				`json:"adult"`
+	Column			string			`json:"Column"`
+	Seats			[]RequestSeat	`json:"seats"`
 }
 
 type RequestSeat struct {
@@ -864,29 +864,28 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		列車の席予約API　支払いはまだ
 		POST /api/train/reservation
-		{
-			"date": "2020-12-31T07:57:00+09:00",
-			"train_class": "中間",
-			"train_name": "183",
-			"car_num": 4,
-			"seat_class": "reserved",
-			"origin": "東京",
-			"destination": "名古屋",
-			"user_id": 3,
-			"payment": "creditcard",
-			"child": 1,
-			"adult": 1,
-			"type": "isle",
-			"seats": [
-				{
-				"row": 1,
-				"column": "E"
-				},
+			{
+				"date": "2020-12-31T07:57:00+09:00",
+				"train_name": "183",
+				"train_class": "中間",
+				"car_number": 7,
+				"is_smoking_seat": false,
+				"seat_class": "reserved",
+				"departure": "東京",
+				"arrival": "名古屋",
+				"child": 2,
+				"adult": 1,
+				"column": "A",
+				"seats": [
 					{
-				"row": 1,
-				"column": "F"
-				}
-			]
+					"row": 3,
+					"column": "B"
+					},
+						{
+					"row": 4,
+					"column": "C"
+					}
+				]
 		}
 		レスポンスで予約IDを返す
 		reservationResponse(w http.ResponseWriter, errCode int, id int, ok bool, message string)
@@ -910,14 +909,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	date = date.In(jst)
 
-	/*
-		３段階の予約前チェック
-		・reservationが見つからなければそのまま予約へ
-		・reservationがあれば乗車区間に重複があるか確認。していなければ予約へ
-		・乗車区間重複があれば座席に重複があるか確認。していなければ予約へ
-	*/
 	tx := dbx.MustBegin()
-
 	// 止まらない駅の予約を取ろうとしていないかチェックする
 	// 列車データを取得
 	tmas := Train{}
@@ -1003,7 +995,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 乗車区間の駅IDを求める
+	// リクエストされた乗車区間の駅IDを求める
 	var fromStation, toStation Station
 	query = "SELECT * FROM station_master WHERE name=?"
 
@@ -1038,7 +1030,6 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 運行していない区間を予約していないかチェックする
-
 	if tmas.IsNobori {
 		if fromStation.ID > departureStation.ID || toStation.ID > departureStation.ID {
 			tx.Rollback()
@@ -1067,11 +1058,172 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	/*
+		あいまい座席検索
+		columnに A/B/C/D/E が入っておりseatsが空白の時に発動する
+	*/
+	switch req.Column {
+	case "A","B","C","D","E","":
+		if len(req.Seats) != 0 {
+			tx.Rollback()
+			errorResponse(w, http.StatusInternalServerError, "あいまい座席予約では座席指定はできません。座席情報を空にしてください。")
+			return
+		}
+		
+		//当該列車・号車中の空き座席検索
+		var train Train
+		query := "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
+		err = dbx.Get(&train, query, date.Format("2006/01/02"), req.TrainClass, req.TrainName)
+		if err == sql.ErrNoRows {
+			panic(err)
+		}
+		if err != nil {
+			tx.Rollback()
+			errorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
 
-	// 予約の区間重複をチェック
-	// ここでreservationsが存在しない場合は区間も座席も被っていないため即時予約可とする
+		usableTrainClassList := getUsableTrainClassList(fromStation, toStation)
+		usable := false
+		for _, v := range usableTrainClassList {
+			if v == train.TrainClass {
+				usable = true
+			}
+		}
+		if !usable {
+			err = fmt.Errorf("invalid train_class")
+			log.Print(err)
+			tx.Rollback()
+			errorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
 
-	// まずは乗車予定の区間をチェックする
+		seatList := []Seat{}
+
+		query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? ORDER BY seat_row, seat_column"
+		err = dbx.Select(&seatList, query, req.TrainClass, req.CarNumber)
+		if err != nil {
+			tx.Rollback()
+			errorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		var seatInformationList []SeatInformation
+
+		for _, seat := range seatList {
+			s := SeatInformation{seat.SeatRow, seat.SeatColumn, seat.SeatClass, seat.IsSmokingSeat, false}
+			seatReservationList := []SeatReservation{}
+			query = "SELECT s.* FROM seat_reservations s, reservations r WHERE r.date=? AND r.train_class=? AND r.train_name=? AND car_number=? AND seat_row=? AND seat_column=?"
+			err = dbx.Select(
+				&seatReservationList, query,
+				date.Format("2006/01/02"),
+				seat.TrainClass,
+				req.TrainName,
+				seat.CarNumber,
+				seat.SeatRow,
+				seat.SeatColumn,
+			)
+			if err != nil {
+				tx.Rollback()
+				errorResponse(w, http.StatusBadRequest, err.Error())
+				return
+			}
+
+			for _, seatReservation := range seatReservationList {
+				reservation := Reservation{}
+				query = "SELECT * FROM reservations WHERE reservation_id=?"
+				err = dbx.Get(&reservation, query, seatReservation.ReservationId)
+				if err != nil {
+					panic(err)
+				}
+
+				var departureStation, arrivalStation Station
+				query = "SELECT * FROM station_master WHERE name=?"
+
+				err = dbx.Get(&departureStation, query, reservation.Departure)
+				if err != nil {
+					tx.Rollback()
+					panic(err)
+				}
+				err = dbx.Get(&arrivalStation, query, reservation.Arrival)
+				if err != nil {
+					tx.Rollback()
+					panic(err)
+				}
+
+				if train.IsNobori {
+					// 上り
+					if toStation.ID < arrivalStation.ID && fromStation.ID <= arrivalStation.ID {
+						// pass
+					}else if toStation.ID >= departureStation.ID && fromStation.ID > departureStation.ID {
+						// pass
+					}else{
+						s.IsOccupied = true
+					}
+				} else {
+					// 下り
+					if fromStation.ID < departureStation.ID && toStation.ID <= departureStation.ID {
+						// pass
+					}else if fromStation.ID >= arrivalStation.ID && toStation.ID > arrivalStation.ID {
+						// pass
+					}else{
+						s.IsOccupied = true
+					}
+				}
+			}
+			seatInformationList = append(seatInformationList, s)
+		}
+		// ここまでで当該列車の号車中の全ての座席予約情報が取得できている
+		// 曖昧予約席とその他の候補席を選出
+		var seatnum int
+		var reserved bool
+		var vargue bool
+		var VagueSeat RequestSeat
+		reserved = false
+		vargue = true
+		seatnum = (req.Adult + req.Child - 1)
+		if req.Column == "" {
+			seatnum = (req.Adult + req.Child) // あいまい指定せず大人＋小人分の座席を取る
+			reserved = true // dummy
+			vargue = false
+		}
+		CandidateSeats := make([]RequestSeat, seatnum)
+
+		// シート分だけ回す。曖昧予約席が見つかり、かつ他の人も収容できそうな空き席を見つけたら抜ける。
+		i := 0
+		for _, seat := range seatInformationList {
+			if seat.Column == req.Column && seat.IsSmokingSeat == req.IsSmokingSeat && !seat.IsOccupied && !reserved && vargue{ // あいまい席があいてる
+				fmt.Println("みているあいまい:",seat,"iの値",i)
+					VagueSeat.Row = seat.Row
+					VagueSeat.Column = seat.Column
+					reserved = true
+			} else if seat.Column != req.Column && !seat.IsOccupied && i < seatnum{ // 単に席があいてる
+					fmt.Println("みている予約席:",seat,"iの値",i)
+					CandidateSeats[i].Row = seat.Row
+					CandidateSeats[i].Column = seat.Column
+					i++
+			} else {
+				// pass
+			}
+		}
+
+		if !reserved {
+			errorResponse(w, http.StatusNotFound, "あいまい座席予約ができませんでした。希望の席は全部埋まっています。")
+			tx.Rollback()
+			return
+		}
+
+		if vargue  {
+			req.Seats = append(req.Seats, VagueSeat) // 曖昧予約席追加
+		}
+		req.Seats = append(req.Seats, CandidateSeats...) // 予約候補席追加
+		fmt.Println("予約できそう:  ",req.Seats)
+	default:
+		break
+}
+
+
+	// 当該列車・列車名の予約一覧取得
 	reservations := []Reservation{}
 	query = "SELECT * FROM reservations WHERE date=? AND train_class=? AND train_name=?"
 	err = tx.Select(
@@ -1086,19 +1238,8 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		return
 	}
-	fmt.Println(reservations, err)
-
-	fmt.Println("Get Reservations", query,
-	date.Format("2006/01/02"),
-	req.TrainClass,
-	req.TrainName,
-	)
 
 	for _, reservation := range reservations {
-
-		fmt.Printf("Reservartion ID %d %#v\n", reservation.ReservationId, reservation)
-
-
 		// train_masterから列車情報を取得(上り・下りが分かる)
 		tmas = Train{}
 		query = "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
@@ -1260,19 +1401,19 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	sumFare := (req.Adult * fare) + (req.Child*fare)/2
 
 	// userID取得。ログインしてないと怒られる。
-	user, errCode, errMsg := getUser(r)
-	if errCode != http.StatusOK {
-		tx.Rollback()
-		errorResponse(w, errCode, errMsg)
-		log.Printf("%s", errMsg)
-		return
-	}
+	// user, errCode, errMsg := getUser(r)
+	// if errCode != http.StatusOK {
+	// 	tx.Rollback()
+	// 	errorResponse(w, errCode, errMsg)
+	// 	log.Printf("%s", errMsg)
+	// 	return
+	// }
 
 	//予約ID発行と予約情報登録
 	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `amount`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	result, err := tx.Exec(
 		query,
-		user.ID,
+		3,
 		date.Format("2006/01/02"),
 		req.TrainClass,
 		req.TrainName,
