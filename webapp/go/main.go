@@ -1187,7 +1187,54 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// 3段階の予約前チェック終わり
 
-	// userID取得
+	// 運賃計算
+	var fare int
+	switch req.SeatClass {
+	case "premium":
+		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "premium")
+		if err != nil {
+			tx.Rollback()
+			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			return
+		}
+	case "premium_smoke":
+		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "premium_smoke")
+		if err != nil {
+			tx.Rollback()
+			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			return
+		}
+	case "reserved":
+		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "reserved")
+		if err != nil {
+			tx.Rollback()
+			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			return
+		}
+	case "reserved_smoke":
+		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "reserved_smoke")
+		if err != nil {
+			tx.Rollback()
+			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			return
+		}
+	case "non_reserved":
+		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "non_reserved")
+		if err != nil {
+			tx.Rollback()
+			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			return
+		}
+	default:
+		tx.Rollback()
+		reservationResponse(w, http.StatusBadRequest, 0, true, "リクエストされた座席クラスが不明です")
+		return
+	}
+
+	fmt.Println(fare)
+
+
+	// userID取得。ログインしてないと怒られる。
 	user, errCode, errMsg := getUser(r)
 	if errCode != http.StatusOK {
 		tx.Rollback()
@@ -1196,7 +1243,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//予約ID発行と予約情報登録
-	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `amount`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	result, err := tx.Exec(
 		query,
 		user.ID,
@@ -1207,6 +1254,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		req.Arrival,
 		"requesting",
 		"a",
+		10000, // これをいい感じに算出する
 	)
 	if err != nil {
 		tx.Rollback()
