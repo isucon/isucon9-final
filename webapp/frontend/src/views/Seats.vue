@@ -3,10 +3,9 @@
 
 <h2>{{ year }}年{{ month }}月{{ day }}日 {{ train_class }} {{ train_name }}号</h2>
 <h2>{{ from_station }} → {{ to_station }}号 {{ car_number }}号車</h2>
-<h2>{{ seat_class }}　　おとな {{ adult }}名　　こども {{ child }}名 </h2>
+<h2>{{ seat_class_name }}　　おとな {{ adult }}名　　こども {{ child }}名 </h2>
 
 
-{{availableCount}}
 <select class="from" v-model="next_car_number" v-on:change="changeCar(next_car_number)">
   <option
     v-for="car in selectableCars"
@@ -89,6 +88,14 @@ export default {
   },
   components: {},
   computed: {
+    seat_class_name () {
+      var m = {
+        premium: "プレミアム",
+        reserved: "普通席",
+        "": "",
+      }
+      return m[this.seat_class]
+    },
     selectableCars () {
       return this.cars.filter(car => car.seat_class == this.seat_class)
     },

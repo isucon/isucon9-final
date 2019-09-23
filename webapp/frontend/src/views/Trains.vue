@@ -7,6 +7,7 @@
     <section class="subcontent">
       <article class="condition">
         <div class="date">{{year}}年{{month}}月{{day}}日</div>
+        <div class="time">{{hour}}時{{minute}}時 頃</div>
         <div class="station">{{ from_station }}→{{ to_station }}</div>
         <div class="person">おとな {{ adult }} 名 こども {{ child }} 名</div>
       </article>
@@ -133,6 +134,8 @@ export default {
       year: null,
       month: null,
       day: null,
+      hour: null,
+      minute: null,
       train_class: "",
       from_station: "",
       to_station: "",
@@ -155,6 +158,8 @@ export default {
         year: this.year,
         month: this.month,
         day: this.day,
+        hour: this.hour,
+        minute: this.minute,
         train_class: this.train_class,
         from_station: this.from_station,
         to_station: this.to_station,
@@ -215,7 +220,7 @@ export default {
       }
     },
     reserve() {
-      if (thid.train_class == "") {
+      if (this.train_class == "") {
         return
       }
       var condition = {
@@ -247,6 +252,8 @@ export default {
     this.year = this.$route.query.year
     this.month = this.$route.query.month
     this.day = this.$route.query.day
+    this.hour = this.$route.query.hour
+    this.minute = this.$route.query.minute
     this.train_class = this.$route.query.train_class
     this.adult = this.$route.query.adult
     this.child = this.$route.query.child

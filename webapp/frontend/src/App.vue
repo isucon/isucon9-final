@@ -337,6 +337,10 @@ div.trains .condition .date {
   font-size: 30px;
 }
 
+div.trains .condition .time {
+  font-size: 30px;
+}
+
 div.trains .condition .station {
   font-size: 28px;
 }

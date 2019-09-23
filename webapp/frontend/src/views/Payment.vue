@@ -42,9 +42,9 @@
 
           <div class="seats">
 
-            <h3>普通車</h3>
+            <h3>{{ seat_class_name }}</h3>
 
-            <p v-for="(seat, index) in reservation.seats">
+            <p v-for="(seat, index) in reservation.seats" style="margin-top: 0; margin-bottom: 0;">
               {{ reservation.car_number }}号車{{ seat.seat_row }}番{{ seat.seat_column }}席
             </p>
 
@@ -139,7 +139,15 @@ export default {
     year() { return this.reservation.date.getYear() + 1900},
     month() { return this.reservation.date.getMonth() + 1 },
     day() { return this.reservation.date.getDate() },
-    expiry_date() { return this.expiry_date_month + "/" + this.expiry_date_year }
+    expiry_date() { return this.expiry_date_month + "/" + this.expiry_date_year },
+    seat_class_name () {
+      var m = {
+        premium: "プレミアム",
+        reserved: "普通席",
+        "": "",
+      }
+      return m[this.reservation.seat_class]
+    },
   },
   methods: {
     getReservation() {
