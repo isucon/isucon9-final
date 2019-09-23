@@ -1072,7 +1072,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	// 予約の区間重複をチェック
 	// ここでreservationsが存在しない場合は区間も座席も被っていないため即時予約可とする
 	if len(reservations) != 0 {
-		for i, _ := range reservations {
+		for i, j := range reservations {
 			// train_masterから列車情報を取得(上り・下りが分かる)
 			tmas = Train{}
 			query = "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
@@ -1095,35 +1095,36 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			// 列車自体の駅IDを求める
+			// 予約情報の乗車区間の駅IDを求める
+			var reservedfromStation, reservedtoStation Station
 			query = "SELECT * FROM station_master WHERE name=?"
 
-			// Departure
-			err = tx.Get(&departureStation, query, tmas.StartStation)
+			// From
+			err = tx.Get(&fromStation, query, j.Departure)
 			if err == sql.ErrNoRows {
 				tx.Rollback()
-				errorResponse(w, http.StatusNotFound, "リクエストされた列車の始発駅データがみつかりません")
+				errorResponse(w, http.StatusNotFound, "予約情報に記載された列車の乗車駅データがみつかりません")
 				log.Println(err.Error())
 				return
 			}
 			if err != nil {
 				tx.Rollback()
-				errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の始発駅データの取得に失敗しました")
+				errorResponse(w, http.StatusInternalServerError, "予約情報に記載された列車の乗車駅データの取得に失敗しました")
 				log.Println(err.Error())
 				return
 			}
 
-			// Arrive
-			err = tx.Get(&arrivalStation, query, tmas.LastStation)
+			// To
+			err = tx.Get(&toStation, query, j.Arrival)
 			if err == sql.ErrNoRows {
 				tx.Rollback()
-				errorResponse(w, http.StatusNotFound, "リクエストされた列車の終着駅データがみつかりません")
+				errorResponse(w, http.StatusNotFound, "予約情報に記載された列車の降車駅データがみつかりません")
 				log.Println(err.Error())
 				return
 			}
 			if err != nil {
 				tx.Rollback()
-				errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の終着駅データの取得に失敗しました")
+				errorResponse(w, http.StatusInternalServerError, "予約情報に記載された列車の降車駅データの取得に失敗しました")
 				log.Println(err.Error())
 				return
 			}
@@ -1132,24 +1133,25 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			secdup := false
 			if tmas.IsNobori {
 				// 上り
-				if arrivalStation.ID < fromStation.ID && fromStation.ID <= departureStation.ID {
+			var reservedfromStation, reservedtoStation Station
+				if arrivalStation.ID < reservedfromStation.ID && reservedfromStation.ID <= departureStation.ID {
 					secdup = true
 				}
-				if arrivalStation.ID < toStation.ID && toStation.ID <= departureStation.ID {
+				if arrivalStation.ID < reservedtoStation.ID && reservedtoStation.ID <= departureStation.ID {
 					secdup = true
 				}
-				if toStation.ID < arrivalStation.ID && departureStation.ID < fromStation.ID {
+				if reservedtoStation.ID < arrivalStation.ID && departureStation.ID < reservedfromStation.ID {
 					secdup = true
 				}
 			} else {
 				// 下り
-				if departureStation.ID <= fromStation.ID && fromStation.ID < arrivalStation.ID {
+				if departureStation.ID <= reservedfromStation.ID && reservedfromStation.ID < arrivalStation.ID {
 					secdup = true
 				}
-				if departureStation.ID <= toStation.ID && toStation.ID < arrivalStation.ID {
+				if departureStation.ID <= reservedtoStation.ID && reservedtoStation.ID < arrivalStation.ID {
 					secdup = true
 				}
-				if fromStation.ID < departureStation.ID && arrivalStation.ID < toStation.ID {
+				if reservedfromStation.ID < departureStation.ID && arrivalStation.ID < reservedtoStation.ID {
 					secdup = true
 				}
 			}
