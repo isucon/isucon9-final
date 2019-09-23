@@ -1376,6 +1376,19 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 支払い前のユーザチェック。本人以外のユーザの予約を支払ったりキャンセルできてはいけない。
+	user, errCode, errMsg := getUser(r)
+	if errCode != http.StatusOK {
+		tx.Rollback()
+		errorResponse(w, errCode, errMsg)
+		log.Printf("%s", errMsg)
+		return
+	}
+	if int64(*reservation.UserId) != user.ID {
+		tx.Rollback()
+		paymentResponse(w, http.StatusUnauthorized, true, "他のユーザIDの支払いはできません")
+		return
+	}
 
 	// 予約情報の支払いステータス確認
 	switch reservation.Status {
