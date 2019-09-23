@@ -18,7 +18,7 @@ func newGateway(c config.Config, ctx context.Context, opts ...runtime.ServeMuxOp
 	}
 	mux := runtime.NewServeMux(opts...)
 	newMux := handlers.CORS(
-		handlers.AllowedMethods([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}),
 		handlers.AllowedOrigins([]string{"*"}),
 		handlers.AllowedHeaders([]string{"*"}),
 	)(mux)
