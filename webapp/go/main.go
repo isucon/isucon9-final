@@ -1151,11 +1151,19 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// 3段階の予約前チェック終わり
 
+	// userID取得
+	user, errCode, errMsg := getUser(r)
+	if errCode != http.StatusOK {
+		tx.Rollback()
+		reservationResponse(w,errCode,0,true,errMsg)
+		return
+	}
+
 	//予約ID発行と予約情報登録
 	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 	result, err := tx.Exec(
 		query,
-		1, // あとでなおす
+		user.ID,
 		date.Format("2006/01/02"),
 		req.TrainClass,
 		req.TrainName,
