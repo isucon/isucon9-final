@@ -23,9 +23,8 @@ CREATE TABLE `reservations` (
   `train_name` varchar(100) NOT NULL,
   `departure` varchar(100) NOT NULL,
   `arrival` varchar(100) NOT NULL,
-  `payment_method` varchar(100) NOT NULL,
   `status` enum('requesting', 'done', 'rejected') NOT NULL,
-  `payment_id` bigint NOT NULL
+  `payment_id` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `seat_master`;

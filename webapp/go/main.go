@@ -81,7 +81,7 @@ type Reservation struct {
 	Arrival       string    `json:"arrival" db:"arrival"`
 	PaymentStatus string    `json:"payment_method" db:"payment_method"`
 	Status        string    `json:"status" db:"status"`
-	PaymentId     int       `json:"payment_id" db:"payment_id"`
+	PaymentId     string       `json:"payment_id" db:"payment_id"`
 }
 
 type SeatReservation struct {
@@ -155,6 +155,15 @@ type ReservationPaymentRequest struct {
 	CardToken 		string 	`json:"card_token"`
 	ReservationId 	string 	`json:"reservation_id"`
 	Amount			int		`json:"amount"`
+}
+
+type PaymentInformation struct {
+	PayInfo ReservationPaymentRequest `json:"payment_information"`
+}
+
+type PaymentResponse struct {
+	PaymentId 	string	`json:"payment_id"`
+	IsOk 		bool	`json:"is_ok"`
 }
 
 const (
@@ -1153,11 +1162,11 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		req.Origin,
 		req.Destination,
 		"requesting",
-		0,
+		"a",
 	)
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w,500,0,true,"列車予約の登録に失敗しました")
+		reservationResponse(w,500,0,true,err.Error())
 		return
 	}
 
@@ -1232,44 +1241,57 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 決済する
-	j, err := json.Marshal(req)
+	j, err := json.Marshal(PaymentInformation{PayInfo:*req})
 	if err != nil {
 		tx.Rollback()
 		paymentResponse(w,http.StatusInternalServerError,true,"JSON Marshalに失敗しました")
 		return
 	}
-	resp, err := http.Post("http://localhost:5000/payment", "application/json", bytes.NewBuffer(j))
+	resp, err := http.Post("http://payment:5000/payment", "application/json", bytes.NewBuffer(j))
 	if err != nil {
 		tx.Rollback()
 		paymentResponse(w,http.StatusInternalServerError,true,"HTTP POSTに失敗しました")
+		// paymentResponse(w, http.StatusInternalServerError,true, err.Error())
 		return
 	}
 
-	_, err = ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		tx.Rollback()
 		paymentResponse(w,http.StatusInternalServerError,true,"レスポンスの読み込みに失敗しました")
 		return
 	}
 
-	// リクエスト成功
-	if resp.StatusCode == http.StatusOK {
-		query = "UPDATE reservations SET status=? where reservation_id=?"
-		_, err = tx.Exec(
-			query,
-			"done",
-			req.ReservationId,
-		)
-		if err != nil {
-			tx.Rollback()
-			paymentResponse(w,http.StatusInternalServerError,true,"DBのレコード更新に失敗しました")
-			return
-		}
-
-		paymentResponse(w,http.StatusOK,false,"決済に成功しました")
+	// リクエスト失敗
+	if resp.StatusCode != http.StatusOK {
+		tx.Rollback()
+		paymentResponse(w,resp.StatusCode,true,"決済に失敗しました。カードトークンや支払いIDが間違っている可能性があります")
+		return
 	}
 
-	paymentResponse(w,resp.StatusCode,true,"決済に失敗しました。カードトークンや支払いIDが間違っている可能性があります")
+    output := PaymentResponse{}
+    err = json.Unmarshal(body, &output)
+	if err != nil {
+		paymentResponse(w,500,true,"JSON parseに失敗しました")
+		return
+	}
+
+	query = "UPDATE reservations SET status=?, payment_id=? WHERE reservation_id=?"
+	_, err = tx.Exec(
+		query,
+		"done",
+		output.PaymentId,
+		req.ReservationId,
+	)
+	if err != nil {
+		tx.Rollback()
+		// paymentResponse(w,http.StatusInternalServerError,true,"DBのレコード更新に失敗しました")
+		paymentResponse(w,http.StatusInternalServerError,true,err.Error())
+		return
+	}
+
+	tx.Commit()
+	paymentResponse(w,http.StatusOK,false,"決済に成功しました")
 }
 
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
