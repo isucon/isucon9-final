@@ -699,7 +699,7 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
 	err = dbx.Get(&train, query, date.Format("2006/01/02"), trainClass, trainName)
 	if err == sql.ErrNoRows {
-		panic(err)
+		errorResponse(w, http.StatusNotFound, "列車が存在しません")
 	}
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, err.Error())
@@ -1387,7 +1387,13 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		return
 	}
-	resp, err := http.Post("http://payment:5000/payment", "application/json", bytes.NewBuffer(j))
+
+	payment_api := os.Getenv("PAYMENT_API")
+	if payment_api == "" {
+		payment_api = "http://payment:5000"
+	}
+
+	resp, err := http.Post(payment_api + "/payment", "application/json", bytes.NewBuffer(j))
 	if err != nil {
 		tx.Rollback()
 		errorResponse(w, resp.StatusCode, "HTTP POSTに失敗しました")
@@ -1407,7 +1413,7 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	if resp.StatusCode != http.StatusOK {
 		tx.Rollback()
 		errorResponse(w, http.StatusInternalServerError, "決済に失敗しました。カードトークンや支払いIDが間違っている可能性があります")
-		log.Println(err.Error())
+		log.Println(resp.StatusCode)
 		return
 	}
 
@@ -1717,8 +1723,13 @@ func initializeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func settingsHandler(w http.ResponseWriter, r *http.Request) {
+	payment_api := os.Getenv("PAYMENT_API")
+	if payment_api == "" {
+		payment_api = "http://localhost:5000"
+	}
+
 	settings := Settings{
-		PaymentAPI: "http://localhost:5000",
+		PaymentAPI: payment_api,
 	}
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
