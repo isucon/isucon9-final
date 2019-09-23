@@ -91,7 +91,7 @@
       </div>
 
 
-      <div class="seat" v-on:click="selectSeat()" v-bind:class="{ disabled: !seat_class }">
+      <div class="seat" v-on:click="selectSeat()" v-bind:class="{ disabled: !canSelectSeat }">
         座席表を見る
       </div>
 
@@ -109,7 +109,7 @@
         </select>
       </div>
 
-      <div class="continue" v-on:click="reserve()">
+      <div class="continue" v-on:click="reserve()" v-bind:class="{ disabled: !seat_class }">
         予約を続ける
       </div>
 
@@ -161,6 +161,12 @@ export default {
         adult: this.adult,
         child: this.child,
       }
+    },
+    canSelectSeat () {
+      if (this.seat_class == "" || this.seat_class == "non-reserved") {
+        return false
+      }
+      return true
     }
   },
   methods: {
@@ -209,6 +215,9 @@ export default {
       }
     },
     reserve() {
+      if (thid.train_class == "") {
+        return
+      }
       var condition = {
         year: this.year,
         month: this.month,
@@ -397,6 +406,13 @@ export default {
 
 .popup .seat.disabled {
   background: #aaaaaa;
+  cursor: default;
+}
+
+.popup .continue.disabled {
+  background: #aaaaaa;
+  color: white;
+  cursor: default;
 }
 
 .popup .position {
