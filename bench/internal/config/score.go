@@ -18,9 +18,7 @@ const (
 )
 
 const (
-	PremiumSeatExtraScore     = 200
-	ReservedSeatExtraScore    = 100
-	NonReservedSeatExtraScore = 50
+	ReservedSeatExtraScore = 100
 )
 
 type FareMultiplierQuery struct {

@@ -71,7 +71,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client) {
 
 	// FIXME: ランダムなユーザ情報を使う
 
-	if err := client.Register(ctx, "hoge@example.com", "hoge", nil); err != nil {
+	if err := client.Signup(ctx, "hoge@example.com", "hoge", nil); err != nil {
 		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "ユーザ登録に失敗しました: user=%s, password=%s", "hoge", "hoge"))
 		return
 	}

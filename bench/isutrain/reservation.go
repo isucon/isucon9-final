@@ -11,16 +11,6 @@ var (
 
 // TODO: Statusのconst
 
-// PaymentMethod は決済方法です
-type PaymentMethod string
-
-const (
-	// CreditCard はクレカ決済
-	CreditCard PaymentMethod = "creditcard"
-	// TicketVendingMachine は券売機決済
-	TicketVendingMachine PaymentMethod = "ticket-vending-machine"
-)
-
 // ReservationStatus は予約状態です
 type ReservationStatus string
 
@@ -55,15 +45,15 @@ type ReservationRequest struct {
 	Seats     TrainSeats `json:"seats"`
 	// それ以外
 	//// 区間
-	Departure      string `json:"origin"`
-	Arrival string `json:"destination"`
+	Departure string `json:"origin"`
+	Arrival   string `json:"destination"`
 	// 日付
-	Date    time.Time `json:"date"`
-	CarNum  int       `json:"car_num"`
-	Child   int       `json:"child"`
-	Adult   int       `json:"adult"`
+	Date   time.Time `json:"date"`
+	CarNum int       `json:"car_num"`
+	Child  int       `json:"child"`
+	Adult  int       `json:"adult"`
 	// 座席位置(通路、真ん中、窓側)
-	Type    string    `json:"type"`
+	Type string `json:"type"`
 }
 
 func NewReservationRequest(trains *TrainSearchResponse, seats TrainSeats) (*ReservationRequest, error) {
@@ -84,6 +74,14 @@ func NewReservationRequest(trains *TrainSearchResponse, seats TrainSeats) (*Rese
 }
 
 type ReservationResponse struct {
-	ReservationID string `json:"reservation_id"`
-	IsOk          bool   `json:"is_ok"`
+	ReservationID int  `json:"reservation_id"`
+	IsOk          bool `json:"is_ok"`
+}
+
+type CommitReservationRequest struct {
+	ReservationID int `json:"reservation_id"`
+}
+
+type ShowReservationResponse struct {
+	ReservationID int `json:"reservation_id"`
 }

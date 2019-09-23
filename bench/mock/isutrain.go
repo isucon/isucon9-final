@@ -3,16 +3,16 @@ package mock
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	"net/http/httptest"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/gorilla/sessions"
 	"github.com/jarcoal/httpmock"
-	"net/http/httptest"
 )
 
 // Mock は `isutrain` のモック実装です
@@ -27,7 +27,7 @@ type Mock struct {
 	ListReservationDelay   time.Duration
 
 	sessionName string
-	session     sessions.Store
+	session     *sessions.CookieStore
 
 	injectFunc func(path string) error
 
@@ -69,8 +69,8 @@ func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }
 
-// Register はユーザ登録を行います
-func (m *Mock) Register(req *http.Request) ([]byte, int) {
+// Signup はユーザ登録を行います
+func (m *Mock) Signup(req *http.Request) ([]byte, int) {
 	if err := req.ParseForm(); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
@@ -87,10 +87,14 @@ func (m *Mock) Register(req *http.Request) ([]byte, int) {
 }
 
 // Login はログイン処理結果を返します
-func (m *Mock) Login(req *http.Request) ([]byte, int) {
+func (m *Mock) Login(req *http.Request) (*httptest.ResponseRecorder, int) {
 	<-time.After(m.LoginDelay)
+
+	wr := httptest.NewRecorder()
+
 	if err := req.ParseForm(); err != nil {
-		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
+		wr.Write([]byte(http.StatusText(http.StatusBadRequest)))
+		return wr, http.StatusBadRequest
 	}
 
 	var (
@@ -98,24 +102,61 @@ func (m *Mock) Login(req *http.Request) ([]byte, int) {
 		password = req.Form.Get("password")
 	)
 	if len(username) == 0 || len(password) == 0 {
-		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
+		wr.Write([]byte(http.StatusText(http.StatusBadRequest)))
+		return wr, http.StatusBadRequest
 	}
 
 	session, err := m.getSession(req)
 	if err != nil {
-		return []byte(http.StatusText(http.StatusNotFound)), http.StatusNotFound
+		wr.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+		return wr, http.StatusInternalServerError
 	}
-	session.Values["user_id"] = 1
-	session.Values["csrf_token"], err = util.SecureRandomStr(20)
 
+	csrfToken, err := util.SecureRandomStr(20)
 	if err != nil {
-		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
+		wr.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+		return wr, http.StatusInternalServerError
 	}
+
+	if err := session.Save(req, wr); err != nil {
+		wr.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+		return wr, http.StatusInternalServerError
+	}
+	http.SetCookie(wr, &http.Cookie{
+		Name:  "csrf_token",
+		Value: csrfToken,
+		Path:  "/",
+	})
+	http.SetCookie(wr, &http.Cookie{
+		Name:  "mock",
+		Value: "true",
+		Path:  "/",
+	})
+
+	wr.Write([]byte(http.StatusText(http.StatusAccepted)))
+	return wr, http.StatusAccepted
+}
+
+func (m *Mock) Logout(req *http.Request) (*httptest.ResponseRecorder, int) {
+	// <-time.After()
 
 	wr := httptest.NewRecorder()
 
+	session, err := m.getSession(req)
+	if err != nil {
+		wr.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+		return wr, http.StatusInternalServerError
+	}
+	session.Values[m.sessionName] = ""
+	session.Values["csrf_token"] = ""
+	session.Values["mock"] = ""
 
-	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
+	if err := session.Save(req, wr); err != nil {
+		wr.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+		return wr, http.StatusInternalServerError
+	}
+
+	return wr, http.StatusNoContent
 }
 
 func (m *Mock) ListStations(req *http.Request) ([]byte, int) {
@@ -253,6 +294,7 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 // Reserve は座席予約を実施し、結果を返します
 func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 	<-time.After(m.ReserveDelay)
+
 	// 予約情報を受け取って、予約できたかを返す
 	b, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -263,17 +305,15 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 	// なので、予約には複数の座席予約が紐づいている
 	var reservationReq *isutrain.ReservationRequest
 	if err := json.Unmarshal(b, &reservationReq); err != nil {
-		log.Println("unmarshal fail")
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
 	if len(reservationReq.TrainClass) == 0 || len(reservationReq.TrainName) == 0 {
-		log.Println("train info fail")
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
 	b, err = json.Marshal(&isutrain.ReservationResponse{
-		ReservationID: "1111111111",
+		ReservationID: 11111111,
 		IsOk:          true,
 	})
 	if err != nil {
@@ -289,8 +329,8 @@ func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
 	<-time.After(m.CommitReservationDelay)
 	// 予約IDを受け取って、確定するだけ
 
-	_, err := httpmock.GetSubmatchAsUint(req, 1)
-	if err != nil {
+	var reservation *isutrain.CommitReservationRequest
+	if err := json.NewDecoder(req.Body).Decode(&reservation); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
@@ -317,11 +357,25 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 func (m *Mock) ListReservations(req *http.Request) ([]byte, int) {
 	<-time.After(m.ListReservationDelay)
 	b, err := json.Marshal(isutrain.SeatReservations{
-		&isutrain.SeatReservation{ID: 1111, PaymentMethod: string(isutrain.CreditCard), Status: string(isutrain.Pending), ReserveAt: time.Now()},
+		&isutrain.SeatReservation{ID: 1111, Status: string(isutrain.Pending), ReserveAt: time.Now()},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+
+	return b, http.StatusOK
+}
+
+func (m *Mock) ShowReservation(req *http.Request) ([]byte, int) {
+
+	reservationID, err := httpmock.GetSubmatchAsInt(req, 1)
+	if err != nil {
+		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
+	}
+
+	b, err := json.Marshal(&isutrain.ShowReservationResponse{
+		ReservationID: int(reservationID),
+	})
 
 	return b, http.StatusOK
 }

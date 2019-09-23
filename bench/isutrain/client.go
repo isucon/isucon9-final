@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -102,12 +103,36 @@ func (c *Client) Initialize(ctx context.Context) {
 	endpoint.IncPathCounter(endpoint.Initialize)
 }
 
-func (c *Client) Register(ctx context.Context, email, password string, opts *ClientOption) error {
+// FIXME: PreTestでちゃんと返せてるかチェックする
+func (c *Client) Settings(ctx context.Context) (*Settings, error) {
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Settings))
+
+	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var settings *Settings
+	if err := json.NewDecoder(resp.Body).Decode(&settings); err != nil {
+		return nil, err
+	}
+
+	return settings, nil
+}
+
+func (c *Client) Signup(ctx context.Context, email, password string, opts *ClientOption) error {
 	var (
 		u    = *c.baseURL
 		form = url.Values{}
 	)
-	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Register))
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Signup))
 	form.Set("email", email)
 	form.Set("password", password)
 
@@ -136,7 +161,7 @@ func (c *Client) Register(ctx context.Context, email, password string, opts *Cli
 		}
 	}
 
-	endpoint.IncPathCounter(endpoint.Register)
+	endpoint.IncPathCounter(endpoint.Signup)
 
 	return nil
 }
@@ -176,6 +201,36 @@ func (c *Client) Login(ctx context.Context, username, password string, opts *Cli
 	}
 
 	endpoint.IncPathCounter(endpoint.Login)
+
+	return nil
+}
+
+func (c *Client) Logout(ctx context.Context, opts *ClientOption) error {
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Logout))
+
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if opts == nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusNoContent); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /logout: ステータスコードが不正です")))
+			return err
+		}
+	} else {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /logout: ステータスコードが不正です")))
+			return err
+		}
+	}
 
 	return nil
 }
@@ -347,6 +402,9 @@ func (c *Client) Reserve(
 		return nil, err
 	}
 
+	csrfToken, _ := req.Cookie("csrf_token")
+	log.Printf("[mock] reserve: cookie = %s\n", csrfToken)
+
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.sess.do(req)
@@ -374,23 +432,27 @@ func (c *Client) Reserve(
 	}
 
 	endpoint.IncPathCounter(endpoint.Reserve)
-	switch SeatAvailability(seatClass) {
-	case SaPremium:
-		endpoint.AddExtraScore(endpoint.Reserve, config.PremiumSeatExtraScore)
-	case SaReserved:
+	if SeatAvailability(seatClass) != SaNonReserved {
 		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
-	case SaNonReserved:
-		endpoint.AddExtraScore(endpoint.Reserve, config.NonReservedSeatExtraScore)
 	}
 
 	return reservation, nil
 }
 
-func (c *Client) CommitReservation(ctx context.Context, reservationID string, opts *ClientOption) error {
+func (c *Client) CommitReservation(ctx context.Context, reservationID int, opts *ClientOption) error {
 	u := *c.baseURL
-	u.Path = filepath.Join(u.Path, endpoint.GetDynamicPath(endpoint.CommitReservation, reservationID))
+	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.CommitReservation))
+	log.Printf("commit reservation path: %s\n", u.String())
 
-	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
+	// FIXME: 一応構造体にする？
+	b, err := json.Marshal(map[string]interface{}{
+		"reservation_id": reservationID,
+	})
+	if err != nil {
+		return err
+	}
+
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}
@@ -413,7 +475,7 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID string, op
 		}
 	}
 
-	endpoint.IncDynamicPathCounter(endpoint.CommitReservation)
+	endpoint.IncPathCounter(endpoint.CommitReservation)
 
 	return nil
 }
@@ -455,7 +517,31 @@ func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*S
 	return reservations, nil
 }
 
-func (c *Client) CancelReservation(ctx context.Context, reservationID string, opts *ClientOption) error {
+func (c *Client) ShowReservation(ctx context.Context, reservationID int, opts *ClientOption) (*SeatReservation, error) {
+	u := *c.baseURL
+	u.Path = filepath.Join(u.Path, endpoint.GetDynamicPath(endpoint.ShowReservation, reservationID))
+
+	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.sess.do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var reservation *SeatReservation
+	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
+		return nil, err
+	}
+
+	endpoint.IncDynamicPathCounter(endpoint.ShowReservation)
+
+	return reservation, nil
+}
+
+func (c *Client) CancelReservation(ctx context.Context, reservationID int, opts *ClientOption) error {
 	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetDynamicPath(endpoint.CancelReservation, reservationID))
 

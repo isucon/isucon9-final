@@ -21,7 +21,7 @@ func NormalScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = client.Register(ctx, "hoge", "hoge", nil)
+	err = client.Signup(ctx, "hoge", "hoge", nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザ登録ができません"))
 	}
@@ -65,6 +65,19 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約を列挙できませんでした"))
 	}
 
+	reservation2, err := client.ShowReservation(ctx, reservation.ReservationID, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約詳細を取得できませんでした"))
+	}
+
+	if reservation.ReservationID != reservation2.ID {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "正しい予約詳細を取得できませんでした"))
+	}
+
+	if err := client.Logout(ctx, nil); err != nil {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ログアウトできません"))
+	}
+
 	return nil
 }
 
@@ -79,7 +92,7 @@ func NormalCancelScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = client.Register(ctx, "hoge", "hoge", nil)
+	err = client.Signup(ctx, "hoge", "hoge", nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザ登録ができません"))
 	}
@@ -142,7 +155,7 @@ func NormalOlympicParticipantsScenario(ctx context.Context) error {
 
 	// NOTE: webappから見て、明らかに負荷が上がったと感じるレベルに持ってく必要がある
 	// NOTE: 指定できる最大の日数で負荷をかける際、飽和しないようにする
-	// NOTE: 
+	// NOTE:
 
 	return nil
 }
