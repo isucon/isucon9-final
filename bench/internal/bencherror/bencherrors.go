@@ -11,6 +11,7 @@ var (
 	InitializeErrs = NewBenchErrors()
 	PreTestErrs    = NewBenchErrors()
 	BenchmarkErrs  = NewBenchErrors()
+	FinalCheckErrs = NewBenchErrors()
 )
 
 type BenchErrors struct {
@@ -55,12 +56,6 @@ func (errs *BenchErrors) Penalty() int64 {
 	defer errs.mu.RUnlock()
 
 	lgr := zap.S()
-	lgr.Infow("エラーカウンタ覧",
-		"critical", errs.criticalCnt,
-		"application", errs.applicationCnt,
-		"timeout", errs.timeoutCnt,
-		"temporary", errs.temporaryCnt,
-	)
 
 	penalty := config.ApplicationPenaltyWeight * errs.applicationCnt
 	lgr.Infof("アプリのエラーによるペナルティ: %d", penalty)
@@ -75,14 +70,14 @@ func (errs *BenchErrors) Penalty() int64 {
 	return int64(penalty)
 }
 
-func (errs *BenchErrors) AddError(err error) {
+func (errs *BenchErrors) AddError(err error) error {
 	lgr := zap.S()
 
 	errs.mu.Lock()
 	defer errs.mu.Unlock()
 
 	if err == nil {
-		return
+		return nil
 	}
 
 	lgr.Warnf("エラーを追加: %+v", err)
@@ -107,4 +102,16 @@ func (errs *BenchErrors) AddError(err error) {
 			errs.criticalCnt++
 		}
 	}
+
+	return err
+}
+
+func (errs *BenchErrors) DumpCounters() {
+	lgr := zap.S()
+	lgr.Infow("ベンチマーク完了時のエラーカウンタ",
+		"critical", errs.criticalCnt,
+		"application", errs.applicationCnt,
+		"timeout", errs.timeoutCnt,
+		"temporary", errs.temporaryCnt,
+	)
 }

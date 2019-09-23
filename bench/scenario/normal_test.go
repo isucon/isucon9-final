@@ -2,10 +2,11 @@ package scenario
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/endpoint"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/mock"
@@ -19,32 +20,29 @@ func TestScenario(t *testing.T) {
 
 	mock.Register()
 
-	initClient, err := isutrain.NewClientForInitialize("http://localhost")
+	initClient, err := isutrain.NewClientForInitialize()
 	assert.NoError(t, err)
 	initClient.ReplaceMockTransport()
 	initClient.Initialize(context.Background())
 
-	scenario, err := NewBasicScenario("http://localhost")
-	scenario.Client.ReplaceMockTransport()
-	assert.NoError(t, err)
-
-	assert.NoError(t, scenario.Run(context.TODO()))
+	config.Debug = true
+	assert.NoError(t, NormalScenario(context.Background()))
 }
 
 func TestInitializeBenchError(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	m := mock.Register()
+	m, err := mock.Register()
+	assert.NoError(t, err)
 	m.Inject(func(path string) error {
 		if path == endpoint.GetPath(endpoint.Initialize) {
-			// FIXME: エラーメッセージ
-			return errors.New("")
+			return fmt.Errorf("POST /initialize: テスト用のエラーです")
 		}
 		return nil
 	})
 
-	initClient, err := isutrain.NewClientForInitialize("http://localhost")
+	initClient, err := isutrain.NewClientForInitialize()
 	assert.NoError(t, err)
 	initClient.ReplaceMockTransport()
 	initClient.Initialize(context.Background())

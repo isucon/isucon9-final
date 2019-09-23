@@ -1,6 +1,6 @@
 BUILD=go build
 TEST=go test
-TEST_FLAGS=-race -v
+TEST_FLAGS=-v
 
 DARWIN_TARGET_ENV=GOOS=darwin GOARCH=amd64
 LINUX_TARGET_ENV=GOOS=linux GOARCH=amd64

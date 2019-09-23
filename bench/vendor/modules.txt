@@ -2,6 +2,10 @@
 github.com/davecgh/go-spew/spew
 # github.com/eapache/go-resiliency v1.2.0
 github.com/eapache/go-resiliency/retrier
+# github.com/gorilla/securecookie v1.1.1
+github.com/gorilla/securecookie
+# github.com/gorilla/sessions v1.2.0
+github.com/gorilla/sessions
 # github.com/jarcoal/httpmock v1.0.4
 github.com/jarcoal/httpmock
 # github.com/morikuni/failure v0.11.0
@@ -28,5 +32,3 @@ golang.org/x/sync/errgroup
 # golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
-# gopkg.in/go-playground/assert.v1 v1.2.1
-gopkg.in/go-playground/assert.v1

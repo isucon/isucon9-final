@@ -85,11 +85,14 @@ func dequeue(ctx context.Context) (*Job, error) {
 // FIXME: リトライ
 func report(ctx context.Context, jobID int, result *Result) error {
 	uri := fmt.Sprintf("%s/internal/job/%d/report/", portalBaseURI, jobID)
+	log.Printf("portal uri = %s\n", uri)
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(result); err != nil {
 		return err
 	}
+
+	log.Printf("result = %s\n", string(buf.Bytes()))
 
 	req, err := http.NewRequest(http.MethodPost, uri, &buf)
 	if err != nil {

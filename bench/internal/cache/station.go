@@ -1,11 +1,14 @@
 package cache
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	ErrInvalidStationName = errors.New("駅名が不正です")
 )
 
+// 下りベースの駅
 var sectionMap = map[string]int{
 	"東京":   1,
 	"古岡":   2,
@@ -91,15 +94,20 @@ var sectionMap = map[string]int{
 	"大阪":   82,
 }
 
-// aの区間に対し、bの区間が被って入るかチェック
-func isOverwrap(aOrigin, aDestination string, bOrigin, bDestination string) (bool, error) {
-	aDepartureNum, ok1 := sectionMap[aOrigin]
-	aArrivalNum, ok2 := sectionMap[aDestination]
-	bDepartureNum, ok3 := sectionMap[bOrigin]
-	bArrivalNum, ok4 := sectionMap[bDestination]
+// aの区間に対し、bの区間が被って入るかチェック (下りベース)
+func isKudariOverwrap(aOrigin, aDestination string, bOrigin, bDestination string) (bool, error) {
+	var (
+		aDepartureNum, ok1 = sectionMap[aOrigin]
+		aArrivalNum, ok2   = sectionMap[aDestination]
+		bDepartureNum, ok3 = sectionMap[bOrigin]
+		bArrivalNum, ok4   = sectionMap[bDestination]
+	)
 	if !ok1 || !ok2 || !ok3 || !ok4 {
 		return false, ErrInvalidStationName
 	}
+
+	// FIXME: 上りと下り、下りと上りは予約的に一致しない（別の列車を用いる）ので、被っていないとする
+	// それはこの呼び出し側で弾いちゃうか
 
 	if bDepartureNum < aDepartureNum && bArrivalNum <= aDepartureNum {
 		return false, nil
@@ -112,12 +120,14 @@ func isOverwrap(aOrigin, aDestination string, bOrigin, bDestination string) (boo
 }
 
 // 上り経路か否か
-func isNobori(origin, destination string) (bool, error) {
-	originNum, ok1 := sectionMap[origin]
-	destinationNum, ok2 := sectionMap[destination]
+func isKudari(origin, destination string) (bool, error) {
+	var (
+		originNum, ok1      = sectionMap[origin]
+		destinationNum, ok2 = sectionMap[destination]
+	)
 	if !ok1 || !ok2 {
 		return false, ErrInvalidStationName
 	}
 
-	return destinationNum < originNum, nil
+	return destinationNum > originNum, nil
 }

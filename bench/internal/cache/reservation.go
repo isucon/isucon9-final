@@ -2,17 +2,22 @@ package cache
 
 import (
 	"errors"
-	"log"
 	"sync"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
+	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 )
+
+// FIXME: 料金計算
+//距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
 
 var (
 	ErrCommitReservation = errors.New("予約の確定に失敗しました")
 	ErrCancelReservation = errors.New("予約のキャンセルに失敗しました")
+	ErrCanNotReserve     = errors.New("予約済みの座席が指定されたため予約できません")
 )
 
 // FIXME: 区間の考慮
@@ -27,68 +32,64 @@ var (
 
 // FIXME: 未予約の予約を取得できるものがあるといい
 
-type ReservationResult struct {
-	keys                []SeatMapKey
-	origin, destination string
-	amount              int64
-}
-
-func NewReservationResult() *ReservationResult {
-	return &ReservationResult{
-		keys: []SeatMapKey{},
-	}
-}
-
-type SeatMapKey struct {
-	Date                  time.Time
-	TrainClass, TrainName string
-	CarNum                int
-	Row                   int
-	Column                string
-}
-
 type Reservation struct {
 	ID     string
 	Amount int64
 
 	// 検索条件周り
 	Date                  time.Time
-	Origin, Destination   string
+	Departure, Arrival    string
 	TrainClass, TrainName string
 	CarNum                int
 
 	Seats isutrain.TrainSeats
 }
 
-type ReservationCache struct {
+var (
+	ReservationCache = newReservationCache()
+)
+
+type reservationCache struct {
 	mu           sync.RWMutex
 	reservations []*Reservation
 }
 
-func NewReservationMem() *ReservationCache {
-	return &ReservationCache{
+func newReservationCache() *reservationCache {
+	return &reservationCache{
 		reservations: []*Reservation{},
 	}
 }
 
 // 予約可能判定
 // NOTE: この予約が可能か？を判定する必要があるので、リクエストを受け取り、複数のSeatのどれか１つでも含まれていればNGとする
-func (r *ReservationCache) CanReserve(req *isutrain.ReservationRequest) (bool, error) {
+func (r *reservationCache) CanReserve(req *isutrain.ReservationRequest) (bool, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
+	lgr := zap.S()
+
 	canReserveWithOverwrap := func(reservation *Reservation) (bool, error) {
-		nobori, err := isNobori(req.Origin, req.Destination)
+		reqKudari, err := isKudari(req.Departure, req.Arrival)
 		if err != nil {
-			log.Println("上りエラー")
-			log.Println(err)
+			lgr.Warnf("予約可能判定の 下り判定でエラーが発生: %+v", err)
 			return false, err
 		}
 
-		if nobori {
-			log.Println("上り")
-			overwrap, err := isOverwrap(req.Origin, req.Destination, reservation.Origin, reservation.Destination)
+		resKudari, err := isKudari(reservation.Departure, reservation.Arrival)
+		if err != nil {
+			lgr.Warnf("予約可能判定の 下り判定でエラーが発生: %+v", err)
+			return false, err
+		}
+
+		// 上りと下りが一致しなければ、予約として被らない
+		if reqKudari != resKudari {
+			return true, nil
+		}
+
+		if reqKudari {
+			overwrap, err := isKudariOverwrap(reservation.Departure, reservation.Arrival, req.Departure, req.Arrival)
 			if err != nil {
+				lgr.Warnf("予約可能判定の 区間重複判定呼び出しでエラーが発生: %+v", err)
 				return false, err
 			}
 
@@ -96,9 +97,10 @@ func (r *ReservationCache) CanReserve(req *isutrain.ReservationRequest) (bool, e
 				return false, nil
 			}
 		} else {
-			log.Println("下り")
-			overwrap, err := isOverwrap(reservation.Origin, reservation.Destination, reservation.Origin, reservation.Destination)
+			// NOTE: 下りベースの判定関数を用いるため、上りの場合は乗車・降車を入れ替えて渡す
+			overwrap, err := isKudariOverwrap(reservation.Arrival, reservation.Departure, req.Arrival, req.Departure)
 			if err != nil {
+				lgr.Warnf("予約可能判定の 区間重複判定呼び出しでエラーが発生: %+v", err)
 				return false, err
 			}
 
@@ -110,65 +112,64 @@ func (r *ReservationCache) CanReserve(req *isutrain.ReservationRequest) (bool, e
 		return true, nil
 	}
 
-	log.Println("iterate reservations")
-	for _, reservation := range r.reservations {
-		log.Println("look at a reservation")
-		if !req.Date.Equal(reservation.Date) {
-			continue
-		}
-		log.Println("date checking")
-		log.Printf("req trainclass=%s, trainname=%s | reservation trainclass=%s, trainname=%s\n", req.TrainClass, req.TrainName, reservation.TrainClass, reservation.TrainName)
-		if req.TrainClass != reservation.TrainClass || req.TrainName != reservation.TrainName {
-			continue
-		}
-		log.Printf("train checking")
-		// 区間
-		log.Printf("req origin=%s destination=%s | reservation origin=%s destination=%s\n", req.Origin, req.Destination, reservation.Origin, reservation.Destination)
-		if ok, err := canReserveWithOverwrap(reservation); ok {
-			if err != nil {
-				log.Printf("overwrap error: %+v\n", err)
-				return false, err
+	eg := errgroup.Group{}
+	for _, r := range r.reservations {
+		reservation := r
+		eg.Go(func() error {
+			if !req.Date.Equal(reservation.Date) {
+				return nil
 			}
-			continue
-		}
-		log.Println("overwrap checking")
-		// 車両
-		if req.CarNum != reservation.CarNum {
-			continue
-		}
-		log.Println("carnum checking")
-		// 座席
-		for _, seat := range req.Seats {
-			for _, existSeat := range reservation.Seats {
-				if seat.Row == existSeat.Row && seat.Column == existSeat.Column {
-					return false, nil
+			if req.TrainClass != reservation.TrainClass || req.TrainName != reservation.TrainName {
+				return nil
+			}
+			// 区間
+			if ok, err := canReserveWithOverwrap(reservation); ok || err != nil {
+				return err
+			}
+			// 車両
+			if req.CarNum != reservation.CarNum {
+				return nil
+			}
+			// 座席
+			for _, seat := range req.Seats {
+				for _, existSeat := range reservation.Seats {
+					if seat.Row == existSeat.Row && seat.Column == existSeat.Column {
+						return ErrCanNotReserve
+					}
 				}
 			}
-		}
-		log.Println("seat is not same. ok.")
+
+			return nil
+		})
+	}
+	if err := eg.Wait(); errors.Is(err, ErrCanNotReserve) {
+		return false, nil
+	} else if err != nil {
+		lgr.Warnf("予約可能判定の予約チェックループにて、区間重複チェック呼び出しエラーが発生: %+v", err)
+		return false, err
 	}
 
 	return true, nil
 }
 
-func (r *ReservationCache) Add(req *isutrain.ReservationRequest, reservationID string) {
+func (r *reservationCache) Add(req *isutrain.ReservationRequest, reservationID string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	// TODO: webappから意図的にreservationIDを細工して変に整合性つけることができないか考える
 	r.reservations = append(r.reservations, &Reservation{
-		ID:          reservationID,
-		Date:        req.Date,
-		Origin:      req.Origin,
-		Destination: req.Destination,
-		TrainClass:  req.TrainClass,
-		TrainName:   req.TrainName,
-		CarNum:      req.CarNum,
-		Seats:       req.Seats,
+		ID:         reservationID,
+		Date:       req.Date,
+		Departure:  req.Departure,
+		Arrival:    req.Arrival,
+		TrainClass: req.TrainClass,
+		TrainName:  req.TrainName,
+		CarNum:     req.CarNum,
+		Seats:      req.Seats,
 	})
 }
 
-func (r *ReservationCache) Commit(reservationID string, amount int64) error {
+func (r *reservationCache) Commit(reservationID string, amount int64) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -182,7 +183,7 @@ func (r *ReservationCache) Commit(reservationID string, amount int64) error {
 	return bencherror.NewApplicationError(ErrCommitReservation, "予約が存在しません")
 }
 
-func (r *ReservationCache) Cancel(reservationID string) error {
+func (r *reservationCache) Cancel(reservationID string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -194,4 +195,13 @@ func (r *ReservationCache) Cancel(reservationID string) error {
 	}
 
 	return bencherror.NewApplicationError(ErrCancelReservation, "予約が存在しません")
+}
+
+func (r *reservationCache) Range(f func(reservation *Reservation)) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	for _, reservation := range r.reservations {
+		f(reservation)
+	}
 }

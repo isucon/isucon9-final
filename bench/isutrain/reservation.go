@@ -11,16 +11,6 @@ var (
 
 // TODO: Statusのconst
 
-// PaymentMethod は決済方法です
-type PaymentMethod string
-
-const (
-	// CreditCard はクレカ決済
-	CreditCard PaymentMethod = "creditcard"
-	// TicketVendingMachine は券売機決済
-	TicketVendingMachine PaymentMethod = "ticket-vending-machine"
-)
-
 // ReservationStatus は予約状態です
 type ReservationStatus string
 
@@ -53,22 +43,20 @@ type ReservationRequest struct {
 	// TrainSeat構造体
 	SeatClass string     `json:"seat_class"`
 	Seats     TrainSeats `json:"seats"`
-	// ログインで得る情報
-	UserId int `json:"user_id"`
 	// それ以外
 	//// 区間
-	Origin      string `json:"origin"`
-	Destination string `json:"destination"`
-	//// 未調査
-	Date    time.Time `json:"date"`
-	CarNum  int       `json:"car_num"`
-	Payment string    `json:"payment"`
-	Child   int       `json:"child"`
-	Adult   int       `json:"adult"`
-	Type    string    `json:"type"`
+	Departure string `json:"departure"`
+	Arrival   string `json:"arrival"`
+	// 日付
+	Date   time.Time `json:"date"`
+	CarNum int       `json:"car_num"`
+	Child  int       `json:"child"`
+	Adult  int       `json:"adult"`
+	// 座席位置(通路、真ん中、窓側)
+	Type string `json:"type"`
 }
 
-func NewReservationRequest(trains *TrainSearchResponse, seats TrainSeats) (*ReservationRequest, error) {
+func NewReservationRequest(trains Train, seats TrainSeats) (*ReservationRequest, error) {
 	req := &ReservationRequest{}
 
 	// Train構造体
@@ -86,6 +74,15 @@ func NewReservationRequest(trains *TrainSearchResponse, seats TrainSeats) (*Rese
 }
 
 type ReservationResponse struct {
-	ReservationID string `json:"reservation_id"`
-	IsOk          bool   `json:"is_ok"`
+	ReservationID int  `json:"reservation_id"`
+	IsOk          bool `json:"is_ok"`
+}
+
+type CommitReservationRequest struct {
+	ReservationID int    `json:"reservation_id"`
+	CardToken     string `json:"card_token"`
+}
+
+type ShowReservationResponse struct {
+	ReservationID int `json:"reservation_id"`
 }

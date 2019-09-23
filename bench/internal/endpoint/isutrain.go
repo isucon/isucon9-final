@@ -1,13 +1,18 @@
 package endpoint
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const (
 	// POST
 	Initialize EndpointIdx = iota
-	Register
+	Settings
+	Signup
 	Login
+	Logout
 	Reserve
+	CommitReservation
 	ListStations
 	SearchTrains
 	ListTrainSeats
@@ -15,24 +20,29 @@ const (
 )
 
 var isutrainEndpoints = []*Endpoint{
-	&Endpoint{path: "/initialize", weight: 1},
-	&Endpoint{path: "/register", weight: 1},
-	&Endpoint{path: "/login", weight: 1},
-	&Endpoint{path: "/reserve", weight: 1},
-	&Endpoint{path: "/stations", weight: 1},
-	&Endpoint{path: "/train/search", weight: 1},
-	&Endpoint{path: "/train/seats", weight: 1},
-	&Endpoint{path: "/reservation", weight: 1},
+	&Endpoint{path: "/initialize", weight: 0},
+	&Endpoint{path: "/api/settings", weight: 0},
+	&Endpoint{path: "/api/auth/signup", weight: 1},
+	&Endpoint{path: "/api/auth/login", weight: 1},
+	&Endpoint{path: "/api/auth/logout", weight: 1},
+	&Endpoint{path: "/api/train/reservation", weight: 1},
+	// FIXME: Bodyに予約IDを含める
+	&Endpoint{path: "/api/train/reservation/commit", weight: 1},
+	&Endpoint{path: "/api/stations", weight: 1},
+	&Endpoint{path: "/api/train/search", weight: 1},
+	&Endpoint{path: "/api/train/seats", weight: 1},
+	&Endpoint{path: "/api/user/reservation", weight: 1},
 }
 
 const (
-	CommitReservation EndpointIdx = iota
-	CancelReservation
+	CancelReservation EndpointIdx = iota
+	ShowReservation
 )
 
 var isutrainDynamicEndpoints = []*Endpoint{
-	&Endpoint{path: "/reservation/%s/commit", weight: 1},
-	&Endpoint{path: "/reservation/%s/cancel", weight: 1},
+	// FIXME: 文字列ではなく整数値
+	&Endpoint{path: "/api/user/reservations/%d/cancel", weight: 1},
+	&Endpoint{path: "/api/train/reservation/%d", weight: 1},
 }
 
 func GetPath(idx EndpointIdx) string {
@@ -47,8 +57,16 @@ func IncPathCounter(idx EndpointIdx) {
 	isutrainEndpoints[idx].inc()
 }
 
+func AddExtraScore(idx EndpointIdx, extraScore int64) {
+	isutrainEndpoints[idx].addExtraScore(extraScore)
+}
+
 func IncDynamicPathCounter(idx EndpointIdx) {
 	isutrainDynamicEndpoints[idx].inc()
+}
+
+func AddDynamicPathExtraScore(idx EndpointIdx, extraScore int64) {
+	isutrainDynamicEndpoints[idx].addExtraScore(extraScore)
 }
 
 func CalcFinalScore() (score int64) {

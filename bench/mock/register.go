@@ -1,9 +1,9 @@
 package mock
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -15,9 +15,12 @@ import (
 
 // RegisterMockEndpoints はhttpmockのエンドポイントを登録する
 // NOTE: httpmock.Activate, httpmock.Deactivateは別途実施する必要があります
-func Register() *Mock {
+func Register() (*Mock, error) {
 	paymentMock := newPaymentMock()
-	isutrainMock := NewMock(paymentMock)
+	isutrainMock, err := NewMock(paymentMock)
+	if err != nil {
+		return nil, err
+	}
 	isutrainMock.LoginDelay = 100 * time.Millisecond
 	isutrainMock.ReserveDelay = 100 * time.Millisecond
 	isutrainMock.ListStationsDelay = 100 * time.Millisecond
@@ -31,6 +34,16 @@ func Register() *Mock {
 	paymentBaseURL := "http://localhost:5000"
 
 	// GET
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.Settings)), func(req *http.Request) (*http.Response, error) {
+		b, err := json.Marshal(map[string]interface{}{
+			"payment_api": paymentBaseURL,
+		})
+		if err != nil {
+			return httpmock.NewBytesResponse(http.StatusInternalServerError, []byte(http.StatusText(http.StatusInternalServerError))), nil
+		}
+
+		return httpmock.NewBytesResponse(http.StatusOK, b), nil
+	})
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.ListStations)), func(req *http.Request) (*http.Response, error) {
 		body, status := isutrainMock.ListStations(req)
 		return httpmock.NewBytesResponse(status, body), nil
@@ -47,25 +60,46 @@ func Register() *Mock {
 		body, status := isutrainMock.ListReservations(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
+	httpmock.RegisterResponder("GET", endpoint.IsutrainMockShowReservationPath, func(req *http.Request) (*http.Response, error) {
+		body, status := isutrainMock.ShowReservation(req)
+		return httpmock.NewBytesResponse(status, body), nil
+	})
 
 	// POST
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.Initialize)), func(req *http.Request) (*http.Response, error) {
 		body, status := isutrainMock.Initialize(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
-	httpmock.RegisterResponder("POST", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.Register)), func(req *http.Request) (*http.Response, error) {
-		body, status := isutrainMock.Register(req)
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.Signup)), func(req *http.Request) (*http.Response, error) {
+		body, status := isutrainMock.Signup(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.Login)), func(req *http.Request) (*http.Response, error) {
-		body, status := isutrainMock.Login(req)
-		return httpmock.NewBytesResponse(status, body), nil
+		wr, status := isutrainMock.Login(req)
+		resp := httpmock.NewBytesResponse(status, wr.Body.Bytes())
+		resp.Header.Add("X-Test-Header", "hoge")
+		for headerKey, header := range wr.Header() {
+			for _, headerValue := range header {
+				resp.Header.Add(headerKey, headerValue)
+			}
+		}
+		return resp, nil
+	})
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.Logout)), func(req *http.Request) (*http.Response, error) {
+		wr, status := isutrainMock.Logout(req)
+		resp := httpmock.NewBytesResponse(status, wr.Body.Bytes())
+		for headerKey, header := range wr.Header() {
+			for _, headerValue := range header {
+				resp.Header.Add(headerKey, headerValue)
+			}
+		}
+		return resp, nil
 	})
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.Reserve)), func(req *http.Request) (*http.Response, error) {
 		body, status := isutrainMock.Reserve(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
-	httpmock.RegisterResponder("POST", endpoint.IsutrainMockCommitReservationPath, func(req *http.Request) (*http.Response, error) {
+	httpmock.RegisterResponder("POST", endpoint.GetPath(endpoint.CommitReservation), func(req *http.Request) (*http.Response, error) {
 		body, status := isutrainMock.CommitReservation(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
@@ -105,7 +139,6 @@ func Register() *Mock {
 		if err != nil {
 			return httpmock.NewBytesResponse(http.StatusInternalServerError, []byte(http.StatusText(http.StatusInternalServerError))), err
 		}
-		log.Println(string(b))
 		return httpmock.NewBytesResponse(http.StatusOK, b), nil
 	})
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/favicon.ico", baseURL), func(req *http.Request) (*http.Response, error) {
@@ -132,6 +165,10 @@ func Register() *Mock {
 		body, status := paymentMock.GetResult()
 		return httpmock.NewBytesResponse(status, body), nil
 	})
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s%s", paymentBaseURL, endpoint.PaymentRegistCardPath), func(req *http.Request) (*http.Response, error) {
+		body, status := paymentMock.RegistCard()
+		return httpmock.NewBytesResponse(status, body), nil
+	})
 
-	return isutrainMock
+	return isutrainMock, nil
 }

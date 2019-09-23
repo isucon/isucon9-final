@@ -20,13 +20,7 @@ import (
 )
 
 var (
-	paymentURI, targetURI string
-	assetDir              string
-)
-
-var (
-	// デバッグフラグ
-	debug bool
+	assetDir string
 )
 
 // UniqueMsgs は重複除去したメッセージ配列を返します
@@ -51,7 +45,7 @@ func dumpFailedResult(messages []string) {
 		"messages": messages,
 	})
 	if err != nil {
-		lgr.Warnf("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました: %+v", err)
+		lgr.Warnf("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました: messages=%+v err=%+v", messages, err)
 		fmt.Println(`{"pass": false, "score": 0, "messages": []}`)
 	}
 
@@ -64,22 +58,26 @@ var run = cli.Command{
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:        "debug",
-			Destination: &debug,
+			Destination: &config.Debug,
+			EnvVar:      "BENCH_DEBUG",
 		},
 		cli.StringFlag{
 			Name:        "payment",
 			Value:       "http://localhost:5000",
-			Destination: &paymentURI,
+			Destination: &config.PaymentBaseURL,
+			EnvVar:      "BENCH_PAYMENT_URL",
 		},
 		cli.StringFlag{
 			Name:        "target",
 			Value:       "http://localhost",
-			Destination: &targetURI,
+			Destination: &config.TargetBaseURL,
+			EnvVar:      "BENCH_TARGET_URL",
 		},
 		cli.StringFlag{
 			Name:        "assetdir",
 			Value:       "assets/testdata",
 			Destination: &assetDir,
+			EnvVar:      "BENCH_ASSETDIR",
 		},
 	},
 	Action: func(cliCtx *cli.Context) error {
@@ -91,44 +89,57 @@ var run = cli.Command{
 			return cli.NewExitError(err, 1)
 		}
 
+		lgr.Info("===== Prepare benchmarker =====")
+
 		assets, err := assets.Load(assetDir)
 		if err != nil {
+			lgr.Warn("静的ファイルをローカルから読み出せませんでした: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
-		initClient, err := isutrain.NewClientForInitialize(targetURI)
+		initClient, err := isutrain.NewClientForInitialize()
 		if err != nil {
+			lgr.Warn("isutrainクライアント生成に失敗しました: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
-		testClient, err := isutrain.NewClient(targetURI)
+		testClient, err := isutrain.NewClient()
 		if err != nil {
+			lgr.Warn("pretestクライアント生成に失敗しました: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
-		paymentClient, err := payment.NewClient(paymentURI)
+		paymentClient, err := payment.NewClient()
 		if err != nil {
+			lgr.Warn("課金クライアント生成に失敗しました: %+v", err)
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 1)
 		}
 
-		if debug {
+		if config.Debug {
+			lgr.Warn("!!!!! Debug enabled !!!!!")
 			httpmock.Activate()
 			defer httpmock.DeactivateAndReset()
 
-			mock.Register()
+			_, err = mock.Register()
+			if err != nil {
+				dumpFailedResult([]string{err.Error()})
+				return cli.NewExitError(err, 1)
+			}
 			initClient.ReplaceMockTransport()
 			testClient.ReplaceMockTransport()
 		}
 
 		// initialize
+		lgr.Info("===== Initialize payment =====")
 		if err := paymentClient.Initialize(); err != nil {
 			dumpFailedResult([]string{})
 			return cli.NewExitError(err, 0)
 		}
+		lgr.Info("===== Initialize webapp =====")
 		initClient.Initialize(ctx)
 		if bencherror.InitializeErrs.IsError() {
 			dumpFailedResult(bencherror.InitializeErrs.Msgs)
@@ -136,44 +147,54 @@ var run = cli.Command{
 		}
 
 		// pretest (まず、正しく動作できているかチェック. エラーが見つかったら、採点しようがないのでFAILにする)
-
-		scenario.Pretest(ctx, testClient, assets)
+		lgr.Info("===== Pretest webapp =====")
+		scenario.Pretest(ctx, testClient, paymentClient, assets)
 		if bencherror.PreTestErrs.IsError() {
 			dumpFailedResult(bencherror.PreTestErrs.Msgs)
 			return cli.NewExitError(fmt.Errorf("Pretestに失敗しました"), 0)
 		}
 
 		// bench (ISUCOIN売り上げ計上と、減点カウントを行う)
+		lgr.Info("===== Benchmark webapp =====")
 		benchCtx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		defer cancel()
 
-		benchmarker := newBenchmarker(targetURI)
-		benchmarker.run(benchCtx)
+		benchmarker := new(benchmarker)
+		if err := benchmarker.run(benchCtx); err != nil {
+			lgr.Warn("ベンチマークにてエラーが発生しました: %+v", err)
+		}
 		if bencherror.BenchmarkErrs.IsFailure() {
 			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
 			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 0)
 		}
 
+		lgr.Info("===== Final check =====")
+		scenario.FinalCheck(ctx, testClient, paymentClient)
+		if bencherror.FinalCheckErrs.IsFailure() {
+			msgs := append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), bencherror.FinalCheckErrs.Msgs...)
+			dumpFailedResult(msgs)
+			return cli.NewExitError(fmt.Errorf("Finalcheckで失格となりました"), 0)
+		}
+
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
 		// FIXME: 課金用のクライアントを作り、それを渡す様に変更
-		score := endpoint.CalcFinalScore()
+		lgr.Info("===== Calculate final score =====")
 
-		lgr.Infof("最終チェックによるスコア: %d", score)
+		score := endpoint.CalcFinalScore()
+		lgr.Infof("Final score: %d", score)
 
 		// エラーカウントから、スコアを減点
 		score -= bencherror.BenchmarkErrs.Penalty()
-
-		lgr.Infof("payment   = %s", paymentURI)
-		lgr.Infof("target    = %s", targetURI)
-		lgr.Infof("assetdir  = %s", assetDir)
+		lgr.Infof("Final score (with penalty): %d", score)
 
 		// 最終結果をstdoutへ書き出す
 		resultBytes, err := json.Marshal(map[string]interface{}{
 			"pass":     true,
 			"score":    score,
-			"messages": bencherror.BenchmarkErrs.Msgs,
+			"messages": uniqueMsgs(bencherror.BenchmarkErrs.Msgs),
 		})
 		if err != nil {
+			lgr.Warn("ベンチマーク結果のMarshalに失敗しました: %+v", err)
 			return cli.NewExitError(err, 1)
 		}
 		fmt.Println(string(resultBytes))

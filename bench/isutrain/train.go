@@ -3,19 +3,26 @@ package isutrain
 import "time"
 
 // Train は新幹線列車です
-type Train struct {
-	// Class は列車種別です
-	Class string `json:"class"`
-	// Name は列車名です
-	Name string `json:"name"`
-	// Start は始点駅IDです
-	Start int `json:"start"`
-	// EndStation は終点駅IDです
-	Last int `json:"last"`
-}
+// type Train struct {
+// 	// Class は列車種別です
+// 	Class string `json:"class"`
+// 	// Name は列車名です
+// 	Name string `json:"name"`
+// 	// Start は始点駅IDです
+// 	Start int `json:"start"`
+// 	// EndStation は終点駅IDです
+// 	Last int `json:"last"`
+
+// 	Departure        string            `json:"departure"`
+// 	Destination      string            `json:"destination"`
+// 	DepartedAt       time.Time         `json:"departure_time"`
+// 	ArrivedAt        time.Time         `json:"arrival_time"`
+// 	SeatAvailability map[string]string `json:"seat_availability"`
+// 	FareInformation  map[string]int    `json:"seat_fare"`
+// }
 
 // Trains は列車一覧です
-type Trains []*Train
+// type Trains []*Train
 
 // TrainSeat は座席です
 type TrainSeat struct {
@@ -100,15 +107,24 @@ func (fi FareInformation) Value() int {
 //     * 引っ張れた駅名をイテレーションし、発駅、着駅を経路に持っているか調べ上げる
 //     * 発駅、着駅を含むなら、列車リストに列車を追加
 //   * 列車リストを返す(TranSearchResponse, 未定義)
-type TrainSearchResponse struct {
-	Train
+type Train struct {
+	// Class は列車種別です
+	Class string `json:"class"`
+	// Name は列車名です
+	Name string `json:"name"`
+	// Start は始点駅IDです
+	Start string `json:"start"`
+	// EndStation は終点駅IDです
+	Last             string            `json:"last"`
 	Departure        string            `json:"departure"`
-	Destination      string            `json:"destination"`
-	DepartedAt       time.Time         `json:"departure_time"`
-	ArrivedAt        time.Time         `json:"arrival_time"`
+	Arrival          string            `json:"arrival"`
+	DepartedAt       string            `json:"departure_time"`
+	ArrivedAt        string            `json:"arrival_time"`
 	SeatAvailability map[string]string `json:"seat_availability"`
-	Fare             map[string]int    `json:"seat_fare"`
+	FareInformation  map[string]int    `json:"seat_fare"`
 }
+
+type Trains []*Train
 
 // NOTE: 座席API use_at=<RFC3339形式の時刻>&train_class=<列車クラス>&train_name=<列車名>&car_num=<>
 // * 流れ
@@ -117,3 +133,11 @@ type TrainSearchResponse struct {
 //     * １つ見つかったら、予約済み(IsOccupied) フラグを立てる
 //     * 席は予約済みかそうでないかにかかわらず結果として追加
 //     * CarInformationを返す
+type TrainSeatSearchResponse struct {
+	// FIXME: Dateフィールドだけど、なんの日付なのか再確認
+	UseAt      time.Time
+	TrainClass string
+	TrainName  string
+	CarNumber  int
+	Seats      TrainSeats
+}

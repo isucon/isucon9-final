@@ -8,7 +8,10 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/endpoint"
 	"github.com/chibiegg/isucon9-final/bench/internal/logger"
+	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/mock"
 	"github.com/chibiegg/isucon9-final/bench/payment"
 	"github.com/chibiegg/isucon9-final/bench/scenario"
@@ -47,14 +50,15 @@ func BenchmarkScore(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	debug = true
+	config.Debug = true
 
 	logger.InitZapLogger()
 
-	benchmarker := newBenchmarker("http://localhost")
-	paymentClient, _ := payment.NewClient("http://localhost:5000")
+	benchmarker := new(benchmarker)
+	isutrainClient, _ := isutrain.NewClient()
+	paymentClient, _ := payment.NewClient()
 
-	m := mock.Register()
+	m, _ := mock.Register()
 	setDelay(m)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*testBenchTimeoutSec)*time.Second)
@@ -62,7 +66,9 @@ func BenchmarkScore(b *testing.B) {
 
 	benchmarker.run(ctx)
 
-	score, _ := scenario.FinalCheck(ctx, paymentClient)
+	scenario.FinalCheck(ctx, isutrainClient, paymentClient)
+
+	score := endpoint.CalcFinalScore()
 	b.ReportMetric(float64(score), "score")
 	b.ReportMetric(float64(bencherror.BenchmarkErrs.Penalty()), "penalty")
 }
