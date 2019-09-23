@@ -66,7 +66,7 @@ func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 	if err := m.injectFunc(req.URL.Path); err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
 	}
-	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
+	return []byte(http.StatusText(http.StatusOK)), http.StatusOK
 }
 
 // Signup はユーザ登録を行います
