@@ -18,6 +18,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
 	"github.com/jmoiron/sqlx"
+	goji "goji.io"
+	"goji.io/pat"
 	"golang.org/x/crypto/pbkdf2"
 	// "sync"
 )
@@ -72,21 +74,21 @@ type Seat struct {
 }
 
 type Reservation struct {
-	ReservationId int       `json:"reservation_id" db:"reservation_id"`
-	UserId        int       `json:"user_id" db:"user_id"`
-	Date          time.Time `json:"date" db:"date"`
-	TrainClass    string    `json:"train_class" db:"train_class"`
-	TrainName     string    `json:"train_name" db:"train_name"`
-	Departure     string    `json:"departure" db:"departure"`
-	Arrival       string    `json:"arrival" db:"arrival"`
-	PaymentStatus string    `json:"payment_status" db:"payment_status"`
-	Status        string    `json:"status" db:"status"`
-	PaymentId     string    `json:"payment_id" db:"payment_id"`
+	ReservationId int        `json:"reservation_id" db:"reservation_id"`
+	UserId        *int       `json:"user_id" db:"user_id"`
+	Date          *time.Time `json:"date" db:"date"`
+	TrainClass    string     `json:"train_class" db:"train_class"`
+	TrainName     string     `json:"train_name" db:"train_name"`
+	Departure     string     `json:"departure" db:"departure"`
+	Arrival       string     `json:"arrival" db:"arrival"`
+	PaymentStatus string     `json:"payment_method" db:"payment_method"`
+	Status        string     `json:"status" db:"status"`
+	PaymentId     string     `json:"payment_id,omitempty" db:"payment_id"`
 }
 
 type SeatReservation struct {
-	ReservationId int    `json:"reservation_id" db:"reservation_id"`
-	CarNumber     int    `json:"car_number" db:"car_number"`
+	ReservationId int    `json:"reservation_id,omitempty" db:"reservation_id"`
+	CarNumber     int    `json:"car_number,omitempty" db:"car_number"`
 	SeatRow       int    `json:"seat_row" db:"seat_row"`
 	SeatColumn    string `json:"seat_column" db:"seat_column"`
 }
@@ -163,6 +165,13 @@ type PaymentInformation struct {
 type PaymentResponse struct {
 	PaymentId string `json:"payment_id"`
 	IsOk      bool   `json:"is_ok"`
+}
+
+type ReservationDetail struct {
+	Date      string `json:"date"`
+	CarNumber int    `json:"car_number"`
+	Reservation
+	Seats []SeatReservation `json:"seats"`
 }
 
 const (
@@ -1388,8 +1397,87 @@ func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, errCode, errMsg)
 		return
 	}
+	reservationList := []Reservation{}
 
-	messageResponse(w, "login siteruyo "+user.Email)
+	query := "SELECT * FROM reservations WHERE user_id=?"
+	err := dbx.Select(&reservationList, query, user.ID)
+	if err == sql.ErrNoRows {
+		messageResponse(w, "yoyaku naiyo "+user.Email)
+		// errorResponse(w, http.Status, "authentication failed")
+		return
+	}
+	if err != nil {
+		errorResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	json.NewEncoder(w).Encode(reservationList)
+
+	// messageResponse(w, "login siteruyo "+user.Email)
+}
+
+func userReservationDetailHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		ログイン
+		POST /auth/login
+	*/
+	user, errCode, errMsg := getUser(r)
+	if errCode != http.StatusOK {
+		errorResponse(w, errCode, errMsg)
+		return
+	}
+	itemIDStr := pat.Param(r, "item_id")
+	itemID, err := strconv.ParseInt(itemIDStr, 10, 64)
+	if err != nil || itemID <= 0 {
+		errorResponse(w, http.StatusBadRequest, "incorrect item id")
+		return
+	}
+
+	reservationDetail := ReservationDetail{}
+
+	query := "SELECT * FROM reservations WHERE reservation_id=?"
+	err = dbx.Get(&reservationDetail.Reservation, query, itemID)
+	if err == sql.ErrNoRows {
+		messageResponse(w, "yoyaku sonzaisi naiyo "+user.Email)
+		// errorResponse(w, http.Status, "authentication failed")
+		return
+	}
+	if err != nil {
+		errorResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	query = "SELECT * FROM seat_reservations WHERE reservation_id=?"
+	err = dbx.Select(&reservationDetail.Seats, query, itemID)
+	if err == sql.ErrNoRows {
+		messageResponse(w, "yoyaku sonzaisi naiyo "+user.Email)
+		// errorResponse(w, http.Status, "authentication failed")
+		return
+	}
+
+	// 1つの予約内で車両番号は全席同じ
+	reservationDetail.CarNumber = reservationDetail.Seats[0].CarNumber
+	for i, v := range reservationDetail.Seats {
+		v.CarNumber = 0
+		v.ReservationId = 0
+		reservationDetail.Seats[i] = v
+	}
+
+	reservationDetail.Date = reservationDetail.Reservation.Date.Format("2006/01/02")
+	reservationDetail.Reservation.Date = nil
+	reservationDetail.UserId = nil
+	reservationDetail.PaymentId = ""
+
+	if err != nil {
+		errorResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	json.NewEncoder(w).Encode(reservationDetail)
+
+	// messageResponse(w, "login siteruyo "+user.Email)
 }
 
 func initializeHandler(w http.ResponseWriter, r *http.Request) {
@@ -1450,23 +1538,26 @@ func main() {
 	defer dbx.Close()
 
 	// HTTP
-	http.HandleFunc("/initialize", initializeHandler)
-	http.HandleFunc("/api/stations", getStationsHandler)
-	http.HandleFunc("/api/train/search", trainSearchHandler)
-	http.HandleFunc("/api/train/seats", trainSeatsHandler)
-	http.HandleFunc("/api/train/reservation", trainReservationHandler)
-	http.HandleFunc("/api/train/reservation/commit", reservationPaymentHandler)
+
+	mux := goji.NewMux()
+
+	mux.HandleFunc(pat.Get("/initialize"), initializeHandler)
+	mux.HandleFunc(pat.Get("/api/stations"), getStationsHandler)
+	mux.HandleFunc(pat.Post("/api/train/search"), trainSearchHandler)
+	mux.HandleFunc(pat.Get("/api/train/seats"), trainSeatsHandler)
+	mux.HandleFunc(pat.Post("/api/train/reservation"), trainReservationHandler)
+	mux.HandleFunc(pat.Post("/api/train/reservation/commit"), reservationPaymentHandler)
 
 	// 認証関連
-	http.HandleFunc("/api/auth/signup", signUpHandler)
-	http.HandleFunc("/api/auth/login", loginHandler)
-	http.HandleFunc("/api/auth/logout", dummyHandler) // FIXME:
-	http.HandleFunc("/api/user/reservations", userReservationsHandler)
-	http.HandleFunc("/api/user/reservations/:item_id", dummyHandler)        // FIXME:
-	http.HandleFunc("/api/user/reservations/:item_id/cancel", dummyHandler) // FIXME:
+	mux.HandleFunc(pat.Post("/api/auth/signup"), signUpHandler)
+	mux.HandleFunc(pat.Post("/api/auth/login"), loginHandler)
+	mux.HandleFunc(pat.Post("/api/auth/logout"), dummyHandler) // FIXME:
+	mux.HandleFunc(pat.Get("/api/user/reservations"), userReservationsHandler)
+	mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationDetailHandler) // FIXME:
+	mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), dummyHandler)         // FIXME:
 
 	fmt.Println(banner)
-	err = http.ListenAndServe(":8000", nil)
+	err = http.ListenAndServe(":8000", mux)
 
 	log.Fatal(err)
 }
