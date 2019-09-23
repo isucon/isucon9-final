@@ -1,13 +1,13 @@
 <template>
   <div>
 
-  <form v-on:submit="onSubmit()">
+  <form>
 
   <section class="register">
     <input v-model="card_number"/>
     <input v-model="cvv"/>
     <input v-model="expiry_date"/>
-    <button type="submit">登録</button>
+    <button type="button" v-on:click="onSubmit()">登録</button>
   </section>
 
   </form>
