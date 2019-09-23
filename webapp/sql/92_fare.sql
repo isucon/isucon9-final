@@ -1,88 +1,86 @@
-use `isutrain`;
-
+use isutrain;
 SET CHARACTER_SET_CLIENT = utf8;
 SET CHARACTER_SET_CONNECTION = utf8;
 
-BEGIN;
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-01-01",15.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-01-01",9.375);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-01-01",7.500);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","premium","2020-01-01",10.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","reserved","2020-01-01",6.250);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","non-reserved","2020-01-01",5.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-01-01",8.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-01-01",5.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-01-01",4.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-01-06",3.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-01-06",1.875);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-01-06",1.500);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","premium","2020-01-06",2.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","reserved","2020-01-06",1.250);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","non-reserved","2020-01-06",1.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-01-06",1.600);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-01-06",1.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-01-06",0.800);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-03-13",9.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-03-13",5.625);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-03-13",4.500);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","premium","2020-03-13",6.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","reserved","2020-03-13",3.750);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","non-reserved","2020-03-13",3.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-03-13",4.800);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-03-13",3.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-03-13",2.400);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-04-01",3.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-04-01",1.875);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-04-01",1.500);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","premium","2020-04-01",2.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","reserved","2020-04-01",1.250);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","non-reserved","2020-04-01",1.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-04-01",1.600);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-04-01",1.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-04-01",0.800);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-04-24",15.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-04-24",9.375);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-04-24",7.500);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","premium","2020-04-24",10.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","reserved","2020-04-24",6.250);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","non-reserved","2020-04-24",5.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-04-24",8.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-04-24",5.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-04-24",4.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-05-11",3.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-05-11",1.875);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-05-11",1.500);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","premium","2020-05-11",2.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","reserved","2020-05-11",1.250);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","non-reserved","2020-05-11",1.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-05-11",1.600);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-05-11",1.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-05-11",0.800);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-08-07",9.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-08-07",5.625);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-08-07",4.500);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","premium","2020-08-07",6.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","reserved","2020-08-07",3.750);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","non-reserved","2020-08-07",3.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-08-07",4.800);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-08-07",3.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-08-07",2.400);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-08-24",3.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-08-24",1.875);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-08-24",1.500);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","premium","2020-08-24",2.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","reserved","2020-08-24",1.250);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","non-reserved","2020-08-24",1.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-08-24",1.600);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-08-24",1.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-08-24",0.800);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","premium","2020-12-25",15.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","reserved","2020-12-25",9.375);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("最速","non-reserved","2020-12-25",7.500);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","premium","2020-12-25",10.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","reserved","2020-12-25",6.250);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("中間","non-reserved","2020-12-25",5.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","premium","2020-12-25",8.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","reserved","2020-12-25",5.000);
-INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES ("遅いやつ","non-reserved","2020-12-25",4.000);
-COMMIT;
+INSERT INTO fare_master(train_class,seat_class,start_date,fare_multiplier) VALUES
+	("最速","premium","2020-01-01",15.000),
+	("最速","reserved","2020-01-01",9.375),
+	("最速","non-reserved","2020-01-01",7.500),
+	("中間","premium","2020-01-01",10.000),
+	("中間","reserved","2020-01-01",6.250),
+	("中間","non-reserved","2020-01-01",5.000),
+	("遅いやつ","premium","2020-01-01",8.000),
+	("遅いやつ","reserved","2020-01-01",5.000),
+	("遅いやつ","non-reserved","2020-01-01",4.000),
+	("最速","premium","2020-01-06",3.000),
+	("最速","reserved","2020-01-06",1.875),
+	("最速","non-reserved","2020-01-06",1.500),
+	("中間","premium","2020-01-06",2.000),
+	("中間","reserved","2020-01-06",1.250),
+	("中間","non-reserved","2020-01-06",1.000),
+	("遅いやつ","premium","2020-01-06",1.600),
+	("遅いやつ","reserved","2020-01-06",1.000),
+	("遅いやつ","non-reserved","2020-01-06",0.800),
+	("最速","premium","2020-03-13",9.000),
+	("最速","reserved","2020-03-13",5.625),
+	("最速","non-reserved","2020-03-13",4.500),
+	("中間","premium","2020-03-13",6.000),
+	("中間","reserved","2020-03-13",3.750),
+	("中間","non-reserved","2020-03-13",3.000),
+	("遅いやつ","premium","2020-03-13",4.800),
+	("遅いやつ","reserved","2020-03-13",3.000),
+	("遅いやつ","non-reserved","2020-03-13",2.400),
+	("最速","premium","2020-04-01",3.000),
+	("最速","reserved","2020-04-01",1.875),
+	("最速","non-reserved","2020-04-01",1.500),
+	("中間","premium","2020-04-01",2.000),
+	("中間","reserved","2020-04-01",1.250),
+	("中間","non-reserved","2020-04-01",1.000),
+	("遅いやつ","premium","2020-04-01",1.600),
+	("遅いやつ","reserved","2020-04-01",1.000),
+	("遅いやつ","non-reserved","2020-04-01",0.800),
+	("最速","premium","2020-04-24",15.000),
+	("最速","reserved","2020-04-24",9.375),
+	("最速","non-reserved","2020-04-24",7.500),
+	("中間","premium","2020-04-24",10.000),
+	("中間","reserved","2020-04-24",6.250),
+	("中間","non-reserved","2020-04-24",5.000),
+	("遅いやつ","premium","2020-04-24",8.000),
+	("遅いやつ","reserved","2020-04-24",5.000),
+	("遅いやつ","non-reserved","2020-04-24",4.000),
+	("最速","premium","2020-05-11",3.000),
+	("最速","reserved","2020-05-11",1.875),
+	("最速","non-reserved","2020-05-11",1.500),
+	("中間","premium","2020-05-11",2.000),
+	("中間","reserved","2020-05-11",1.250),
+	("中間","non-reserved","2020-05-11",1.000),
+	("遅いやつ","premium","2020-05-11",1.600),
+	("遅いやつ","reserved","2020-05-11",1.000),
+	("遅いやつ","non-reserved","2020-05-11",0.800),
+	("最速","premium","2020-08-07",9.000),
+	("最速","reserved","2020-08-07",5.625),
+	("最速","non-reserved","2020-08-07",4.500),
+	("中間","premium","2020-08-07",6.000),
+	("中間","reserved","2020-08-07",3.750),
+	("中間","non-reserved","2020-08-07",3.000),
+	("遅いやつ","premium","2020-08-07",4.800),
+	("遅いやつ","reserved","2020-08-07",3.000),
+	("遅いやつ","non-reserved","2020-08-07",2.400),
+	("最速","premium","2020-08-24",3.000),
+	("最速","reserved","2020-08-24",1.875),
+	("最速","non-reserved","2020-08-24",1.500),
+	("中間","premium","2020-08-24",2.000),
+	("中間","reserved","2020-08-24",1.250),
+	("中間","non-reserved","2020-08-24",1.000),
+	("遅いやつ","premium","2020-08-24",1.600),
+	("遅いやつ","reserved","2020-08-24",1.000),
+	("遅いやつ","non-reserved","2020-08-24",0.800),
+	("最速","premium","2020-12-25",15.000),
+	("最速","reserved","2020-12-25",9.375),
+	("最速","non-reserved","2020-12-25",7.500),
+	("中間","premium","2020-12-25",10.000),
+	("中間","reserved","2020-12-25",6.250),
+	("中間","non-reserved","2020-12-25",5.000),
+	("遅いやつ","premium","2020-12-25",8.000),
+	("遅いやつ","reserved","2020-12-25",5.000),
+	("遅いやつ","non-reserved","2020-12-25",4.000);

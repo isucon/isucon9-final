@@ -67,6 +67,16 @@ CREATE TABLE `train_master` (
   `is_nobori` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `train_timetable_master`;
+CREATE TABLE `train_timetable_master` (
+  `date` date NOT NULL,
+  `train_class` varchar(100) NOT NULL,
+  `train_name` varchar(100) NOT NULL,
+  `station` varchar(100) NOT NULL,
+  `departure` time NOT NULL,
+  `arrival` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,

@@ -1,3949 +1,3947 @@
-use `isutrain`;
-
+use isutrain;
 SET CHARACTER_SET_CLIENT = utf8;
 SET CHARACTER_SET_CONNECTION = utf8;
 
-BEGIN;
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",1,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"A",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"B",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"C",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"D",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",2,"E",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"A",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"B",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"C",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"D",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",3,"E",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"A",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"B",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"C",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"D",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",4,"E",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"A",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"B",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"C",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"D",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",5,"E",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"A",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"B",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"C",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"D",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",6,"E",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"A",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"B",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"C",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"D",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",7,"E",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"A",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"B",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"C",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",8,"D",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"A",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"B",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"C",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",9,"D",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"A",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"B",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"C",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",10,"D",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"A",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"B",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"C",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"D",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",11,"E",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"A",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"B",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"C",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"D",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",12,"E",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"A",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"B",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"C",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"D",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",13,"E",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"A",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"B",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"C",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"D",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",14,"E",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"A",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"B",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"C",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"D",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",15,"E",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("最速",16,"E",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",1,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"A",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"B",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"C",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"D",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",2,"E",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"A",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"B",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"C",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"D",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",3,"E",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"A",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"B",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"C",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"D",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",4,"E",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"A",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"B",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"C",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"D",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",5,"E",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"A",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"B",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"C",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"D",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",6,"E",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"A",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"B",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"C",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"D",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",7,"E",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"A",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"B",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"C",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",8,"D",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"A",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"B",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"C",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",9,"D",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"A",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"B",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"C",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",10,"D",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"A",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"B",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"C",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"D",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",11,"E",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"A",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"B",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"C",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"D",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",12,"E",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"A",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"B",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"C",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"D",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",13,"E",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",14,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",15,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",16,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",17,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",18,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",19,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"A",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"B",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"C",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"D",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",14,"E",20,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",11,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",12,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",13,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",14,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",15,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"A",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"B",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"C",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"D",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",15,"E",16,"reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("中間",16,"E",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",1,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"A",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"B",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"C",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"D",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",2,"E",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"A",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"B",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"C",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"D",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",3,"E",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"A",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"B",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"C",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"D",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",4,"E",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"A",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"B",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"C",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"D",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",5,"E",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"A",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"B",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"C",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"D",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",6,"E",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"A",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"B",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"C",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"D",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",7,"E",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"A",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"B",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"C",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",8,"D",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"A",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"B",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"C",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",9,"D",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",1,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",2,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",3,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",4,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",5,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",6,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",7,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",8,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",9,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",10,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",11,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",12,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",13,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",14,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",15,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",16,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"A",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"B",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"C",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",10,"D",17,"premium",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"A",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"B",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"C",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"D",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",11,"E",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"A",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"B",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"C",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"D",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",12,"E",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"A",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"B",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"C",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"D",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",13,"E",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",11,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",12,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",13,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",14,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",15,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",16,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",17,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",18,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",19,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"A",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"B",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"C",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"D",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",14,"E",20,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",1,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",2,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",3,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",4,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",5,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",6,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",7,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",8,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",9,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",10,"non-reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",11,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",12,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",13,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",14,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",15,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"A",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"B",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"C",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"D",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",15,"E",16,"non-reserved",1);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",1,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",2,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",3,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",4,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",5,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",6,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",7,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",8,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",9,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",10,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",11,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",12,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"A",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"B",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"C",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"D",13,"reserved",0);
-INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES("遅いやつ",16,"E",13,"reserved",0);
-COMMIT;
+INSERT INTO seat_master(train_class,car_number,seat_column,seat_row,seat_class,is_smoking_seat) VALUES
+	("最速",1,"A",1,"non-reserved",0),
+	("最速",1,"B",1,"non-reserved",0),
+	("最速",1,"C",1,"non-reserved",0),
+	("最速",1,"D",1,"non-reserved",0),
+	("最速",1,"E",1,"non-reserved",0),
+	("最速",1,"A",2,"non-reserved",0),
+	("最速",1,"B",2,"non-reserved",0),
+	("最速",1,"C",2,"non-reserved",0),
+	("最速",1,"D",2,"non-reserved",0),
+	("最速",1,"E",2,"non-reserved",0),
+	("最速",1,"A",3,"non-reserved",0),
+	("最速",1,"B",3,"non-reserved",0),
+	("最速",1,"C",3,"non-reserved",0),
+	("最速",1,"D",3,"non-reserved",0),
+	("最速",1,"E",3,"non-reserved",0),
+	("最速",1,"A",4,"non-reserved",0),
+	("最速",1,"B",4,"non-reserved",0),
+	("最速",1,"C",4,"non-reserved",0),
+	("最速",1,"D",4,"non-reserved",0),
+	("最速",1,"E",4,"non-reserved",0),
+	("最速",1,"A",5,"non-reserved",0),
+	("最速",1,"B",5,"non-reserved",0),
+	("最速",1,"C",5,"non-reserved",0),
+	("最速",1,"D",5,"non-reserved",0),
+	("最速",1,"E",5,"non-reserved",0),
+	("最速",1,"A",6,"non-reserved",0),
+	("最速",1,"B",6,"non-reserved",0),
+	("最速",1,"C",6,"non-reserved",0),
+	("最速",1,"D",6,"non-reserved",0),
+	("最速",1,"E",6,"non-reserved",0),
+	("最速",1,"A",7,"non-reserved",0),
+	("最速",1,"B",7,"non-reserved",0),
+	("最速",1,"C",7,"non-reserved",0),
+	("最速",1,"D",7,"non-reserved",0),
+	("最速",1,"E",7,"non-reserved",0),
+	("最速",1,"A",8,"non-reserved",0),
+	("最速",1,"B",8,"non-reserved",0),
+	("最速",1,"C",8,"non-reserved",0),
+	("最速",1,"D",8,"non-reserved",0),
+	("最速",1,"E",8,"non-reserved",0),
+	("最速",1,"A",9,"non-reserved",0),
+	("最速",1,"B",9,"non-reserved",0),
+	("最速",1,"C",9,"non-reserved",0),
+	("最速",1,"D",9,"non-reserved",0),
+	("最速",1,"E",9,"non-reserved",0),
+	("最速",1,"A",10,"non-reserved",0),
+	("最速",1,"B",10,"non-reserved",0),
+	("最速",1,"C",10,"non-reserved",0),
+	("最速",1,"D",10,"non-reserved",0),
+	("最速",1,"E",10,"non-reserved",0),
+	("最速",1,"A",11,"non-reserved",0),
+	("最速",1,"B",11,"non-reserved",0),
+	("最速",1,"C",11,"non-reserved",0),
+	("最速",1,"D",11,"non-reserved",0),
+	("最速",1,"E",11,"non-reserved",0),
+	("最速",1,"A",12,"non-reserved",0),
+	("最速",1,"B",12,"non-reserved",0),
+	("最速",1,"C",12,"non-reserved",0),
+	("最速",1,"D",12,"non-reserved",0),
+	("最速",1,"E",12,"non-reserved",0),
+	("最速",1,"A",13,"non-reserved",0),
+	("最速",1,"B",13,"non-reserved",0),
+	("最速",1,"C",13,"non-reserved",0),
+	("最速",1,"D",13,"non-reserved",0),
+	("最速",1,"E",13,"non-reserved",0),
+	("最速",2,"A",1,"non-reserved",0),
+	("最速",2,"B",1,"non-reserved",0),
+	("最速",2,"C",1,"non-reserved",0),
+	("最速",2,"D",1,"non-reserved",0),
+	("最速",2,"E",1,"non-reserved",0),
+	("最速",2,"A",2,"non-reserved",0),
+	("最速",2,"B",2,"non-reserved",0),
+	("最速",2,"C",2,"non-reserved",0),
+	("最速",2,"D",2,"non-reserved",0),
+	("最速",2,"E",2,"non-reserved",0),
+	("最速",2,"A",3,"non-reserved",0),
+	("最速",2,"B",3,"non-reserved",0),
+	("最速",2,"C",3,"non-reserved",0),
+	("最速",2,"D",3,"non-reserved",0),
+	("最速",2,"E",3,"non-reserved",0),
+	("最速",2,"A",4,"non-reserved",0),
+	("最速",2,"B",4,"non-reserved",0),
+	("最速",2,"C",4,"non-reserved",0),
+	("最速",2,"D",4,"non-reserved",0),
+	("最速",2,"E",4,"non-reserved",0),
+	("最速",2,"A",5,"non-reserved",0),
+	("最速",2,"B",5,"non-reserved",0),
+	("最速",2,"C",5,"non-reserved",0),
+	("最速",2,"D",5,"non-reserved",0),
+	("最速",2,"E",5,"non-reserved",0),
+	("最速",2,"A",6,"non-reserved",0),
+	("最速",2,"B",6,"non-reserved",0),
+	("最速",2,"C",6,"non-reserved",0),
+	("最速",2,"D",6,"non-reserved",0),
+	("最速",2,"E",6,"non-reserved",0),
+	("最速",2,"A",7,"non-reserved",0),
+	("最速",2,"B",7,"non-reserved",0),
+	("最速",2,"C",7,"non-reserved",0),
+	("最速",2,"D",7,"non-reserved",0),
+	("最速",2,"E",7,"non-reserved",0),
+	("最速",2,"A",8,"non-reserved",0),
+	("最速",2,"B",8,"non-reserved",0),
+	("最速",2,"C",8,"non-reserved",0),
+	("最速",2,"D",8,"non-reserved",0),
+	("最速",2,"E",8,"non-reserved",0),
+	("最速",2,"A",9,"non-reserved",0),
+	("最速",2,"B",9,"non-reserved",0),
+	("最速",2,"C",9,"non-reserved",0),
+	("最速",2,"D",9,"non-reserved",0),
+	("最速",2,"E",9,"non-reserved",0),
+	("最速",2,"A",10,"non-reserved",0),
+	("最速",2,"B",10,"non-reserved",0),
+	("最速",2,"C",10,"non-reserved",0),
+	("最速",2,"D",10,"non-reserved",0),
+	("最速",2,"E",10,"non-reserved",0),
+	("最速",2,"A",11,"non-reserved",0),
+	("最速",2,"B",11,"non-reserved",0),
+	("最速",2,"C",11,"non-reserved",0),
+	("最速",2,"D",11,"non-reserved",0),
+	("最速",2,"E",11,"non-reserved",0),
+	("最速",2,"A",12,"non-reserved",0),
+	("最速",2,"B",12,"non-reserved",0),
+	("最速",2,"C",12,"non-reserved",0),
+	("最速",2,"D",12,"non-reserved",0),
+	("最速",2,"E",12,"non-reserved",0),
+	("最速",2,"A",13,"non-reserved",0),
+	("最速",2,"B",13,"non-reserved",0),
+	("最速",2,"C",13,"non-reserved",0),
+	("最速",2,"D",13,"non-reserved",0),
+	("最速",2,"E",13,"non-reserved",0),
+	("最速",2,"A",14,"non-reserved",0),
+	("最速",2,"B",14,"non-reserved",0),
+	("最速",2,"C",14,"non-reserved",0),
+	("最速",2,"D",14,"non-reserved",0),
+	("最速",2,"E",14,"non-reserved",0),
+	("最速",2,"A",15,"non-reserved",0),
+	("最速",2,"B",15,"non-reserved",0),
+	("最速",2,"C",15,"non-reserved",0),
+	("最速",2,"D",15,"non-reserved",0),
+	("最速",2,"E",15,"non-reserved",0),
+	("最速",2,"A",16,"non-reserved",0),
+	("最速",2,"B",16,"non-reserved",0),
+	("最速",2,"C",16,"non-reserved",0),
+	("最速",2,"D",16,"non-reserved",0),
+	("最速",2,"E",16,"non-reserved",0),
+	("最速",2,"A",17,"non-reserved",0),
+	("最速",2,"B",17,"non-reserved",0),
+	("最速",2,"C",17,"non-reserved",0),
+	("最速",2,"D",17,"non-reserved",0),
+	("最速",2,"E",17,"non-reserved",0),
+	("最速",2,"A",18,"non-reserved",0),
+	("最速",2,"B",18,"non-reserved",0),
+	("最速",2,"C",18,"non-reserved",0),
+	("最速",2,"D",18,"non-reserved",0),
+	("最速",2,"E",18,"non-reserved",0),
+	("最速",2,"A",19,"non-reserved",0),
+	("最速",2,"B",19,"non-reserved",0),
+	("最速",2,"C",19,"non-reserved",0),
+	("最速",2,"D",19,"non-reserved",0),
+	("最速",2,"E",19,"non-reserved",0),
+	("最速",2,"A",20,"non-reserved",0),
+	("最速",2,"B",20,"non-reserved",0),
+	("最速",2,"C",20,"non-reserved",0),
+	("最速",2,"D",20,"non-reserved",0),
+	("最速",2,"E",20,"non-reserved",0),
+	("最速",3,"A",1,"non-reserved",0),
+	("最速",3,"B",1,"non-reserved",0),
+	("最速",3,"C",1,"non-reserved",0),
+	("最速",3,"D",1,"non-reserved",0),
+	("最速",3,"E",1,"non-reserved",0),
+	("最速",3,"A",2,"non-reserved",0),
+	("最速",3,"B",2,"non-reserved",0),
+	("最速",3,"C",2,"non-reserved",0),
+	("最速",3,"D",2,"non-reserved",0),
+	("最速",3,"E",2,"non-reserved",0),
+	("最速",3,"A",3,"non-reserved",0),
+	("最速",3,"B",3,"non-reserved",0),
+	("最速",3,"C",3,"non-reserved",0),
+	("最速",3,"D",3,"non-reserved",0),
+	("最速",3,"E",3,"non-reserved",0),
+	("最速",3,"A",4,"non-reserved",0),
+	("最速",3,"B",4,"non-reserved",0),
+	("最速",3,"C",4,"non-reserved",0),
+	("最速",3,"D",4,"non-reserved",0),
+	("最速",3,"E",4,"non-reserved",0),
+	("最速",3,"A",5,"non-reserved",0),
+	("最速",3,"B",5,"non-reserved",0),
+	("最速",3,"C",5,"non-reserved",0),
+	("最速",3,"D",5,"non-reserved",0),
+	("最速",3,"E",5,"non-reserved",0),
+	("最速",3,"A",6,"non-reserved",0),
+	("最速",3,"B",6,"non-reserved",0),
+	("最速",3,"C",6,"non-reserved",0),
+	("最速",3,"D",6,"non-reserved",0),
+	("最速",3,"E",6,"non-reserved",0),
+	("最速",3,"A",7,"non-reserved",0),
+	("最速",3,"B",7,"non-reserved",0),
+	("最速",3,"C",7,"non-reserved",0),
+	("最速",3,"D",7,"non-reserved",0),
+	("最速",3,"E",7,"non-reserved",0),
+	("最速",3,"A",8,"non-reserved",0),
+	("最速",3,"B",8,"non-reserved",0),
+	("最速",3,"C",8,"non-reserved",0),
+	("最速",3,"D",8,"non-reserved",0),
+	("最速",3,"E",8,"non-reserved",0),
+	("最速",3,"A",9,"non-reserved",0),
+	("最速",3,"B",9,"non-reserved",0),
+	("最速",3,"C",9,"non-reserved",0),
+	("最速",3,"D",9,"non-reserved",0),
+	("最速",3,"E",9,"non-reserved",0),
+	("最速",3,"A",10,"non-reserved",0),
+	("最速",3,"B",10,"non-reserved",0),
+	("最速",3,"C",10,"non-reserved",0),
+	("最速",3,"D",10,"non-reserved",0),
+	("最速",3,"E",10,"non-reserved",0),
+	("最速",3,"A",11,"non-reserved",1),
+	("最速",3,"B",11,"non-reserved",1),
+	("最速",3,"C",11,"non-reserved",1),
+	("最速",3,"D",11,"non-reserved",1),
+	("最速",3,"E",11,"non-reserved",1),
+	("最速",3,"A",12,"non-reserved",1),
+	("最速",3,"B",12,"non-reserved",1),
+	("最速",3,"C",12,"non-reserved",1),
+	("最速",3,"D",12,"non-reserved",1),
+	("最速",3,"E",12,"non-reserved",1),
+	("最速",3,"A",13,"non-reserved",1),
+	("最速",3,"B",13,"non-reserved",1),
+	("最速",3,"C",13,"non-reserved",1),
+	("最速",3,"D",13,"non-reserved",1),
+	("最速",3,"E",13,"non-reserved",1),
+	("最速",3,"A",14,"non-reserved",1),
+	("最速",3,"B",14,"non-reserved",1),
+	("最速",3,"C",14,"non-reserved",1),
+	("最速",3,"D",14,"non-reserved",1),
+	("最速",3,"E",14,"non-reserved",1),
+	("最速",3,"A",15,"non-reserved",1),
+	("最速",3,"B",15,"non-reserved",1),
+	("最速",3,"C",15,"non-reserved",1),
+	("最速",3,"D",15,"non-reserved",1),
+	("最速",3,"E",15,"non-reserved",1),
+	("最速",3,"A",16,"non-reserved",1),
+	("最速",3,"B",16,"non-reserved",1),
+	("最速",3,"C",16,"non-reserved",1),
+	("最速",3,"D",16,"non-reserved",1),
+	("最速",3,"E",16,"non-reserved",1),
+	("最速",4,"A",1,"reserved",0),
+	("最速",4,"B",1,"reserved",0),
+	("最速",4,"C",1,"reserved",0),
+	("最速",4,"D",1,"reserved",0),
+	("最速",4,"E",1,"reserved",0),
+	("最速",4,"A",2,"reserved",0),
+	("最速",4,"B",2,"reserved",0),
+	("最速",4,"C",2,"reserved",0),
+	("最速",4,"D",2,"reserved",0),
+	("最速",4,"E",2,"reserved",0),
+	("最速",4,"A",3,"reserved",0),
+	("最速",4,"B",3,"reserved",0),
+	("最速",4,"C",3,"reserved",0),
+	("最速",4,"D",3,"reserved",0),
+	("最速",4,"E",3,"reserved",0),
+	("最速",4,"A",4,"reserved",0),
+	("最速",4,"B",4,"reserved",0),
+	("最速",4,"C",4,"reserved",0),
+	("最速",4,"D",4,"reserved",0),
+	("最速",4,"E",4,"reserved",0),
+	("最速",4,"A",5,"reserved",0),
+	("最速",4,"B",5,"reserved",0),
+	("最速",4,"C",5,"reserved",0),
+	("最速",4,"D",5,"reserved",0),
+	("最速",4,"E",5,"reserved",0),
+	("最速",4,"A",6,"reserved",0),
+	("最速",4,"B",6,"reserved",0),
+	("最速",4,"C",6,"reserved",0),
+	("最速",4,"D",6,"reserved",0),
+	("最速",4,"E",6,"reserved",0),
+	("最速",4,"A",7,"reserved",0),
+	("最速",4,"B",7,"reserved",0),
+	("最速",4,"C",7,"reserved",0),
+	("最速",4,"D",7,"reserved",0),
+	("最速",4,"E",7,"reserved",0),
+	("最速",4,"A",8,"reserved",0),
+	("最速",4,"B",8,"reserved",0),
+	("最速",4,"C",8,"reserved",0),
+	("最速",4,"D",8,"reserved",0),
+	("最速",4,"E",8,"reserved",0),
+	("最速",4,"A",9,"reserved",0),
+	("最速",4,"B",9,"reserved",0),
+	("最速",4,"C",9,"reserved",0),
+	("最速",4,"D",9,"reserved",0),
+	("最速",4,"E",9,"reserved",0),
+	("最速",4,"A",10,"reserved",0),
+	("最速",4,"B",10,"reserved",0),
+	("最速",4,"C",10,"reserved",0),
+	("最速",4,"D",10,"reserved",0),
+	("最速",4,"E",10,"reserved",0),
+	("最速",4,"A",11,"reserved",0),
+	("最速",4,"B",11,"reserved",0),
+	("最速",4,"C",11,"reserved",0),
+	("最速",4,"D",11,"reserved",0),
+	("最速",4,"E",11,"reserved",0),
+	("最速",4,"A",12,"reserved",0),
+	("最速",4,"B",12,"reserved",0),
+	("最速",4,"C",12,"reserved",0),
+	("最速",4,"D",12,"reserved",0),
+	("最速",4,"E",12,"reserved",0),
+	("最速",4,"A",13,"reserved",0),
+	("最速",4,"B",13,"reserved",0),
+	("最速",4,"C",13,"reserved",0),
+	("最速",4,"D",13,"reserved",0),
+	("最速",4,"E",13,"reserved",0),
+	("最速",4,"A",14,"reserved",0),
+	("最速",4,"B",14,"reserved",0),
+	("最速",4,"C",14,"reserved",0),
+	("最速",4,"D",14,"reserved",0),
+	("最速",4,"E",14,"reserved",0),
+	("最速",4,"A",15,"reserved",0),
+	("最速",4,"B",15,"reserved",0),
+	("最速",4,"C",15,"reserved",0),
+	("最速",4,"D",15,"reserved",0),
+	("最速",4,"E",15,"reserved",0),
+	("最速",4,"A",16,"reserved",0),
+	("最速",4,"B",16,"reserved",0),
+	("最速",4,"C",16,"reserved",0),
+	("最速",4,"D",16,"reserved",0),
+	("最速",4,"E",16,"reserved",0),
+	("最速",4,"A",17,"reserved",0),
+	("最速",4,"B",17,"reserved",0),
+	("最速",4,"C",17,"reserved",0),
+	("最速",4,"D",17,"reserved",0),
+	("最速",4,"E",17,"reserved",0),
+	("最速",4,"A",18,"reserved",0),
+	("最速",4,"B",18,"reserved",0),
+	("最速",4,"C",18,"reserved",0),
+	("最速",4,"D",18,"reserved",0),
+	("最速",4,"E",18,"reserved",0),
+	("最速",4,"A",19,"reserved",0),
+	("最速",4,"B",19,"reserved",0),
+	("最速",4,"C",19,"reserved",0),
+	("最速",4,"D",19,"reserved",0),
+	("最速",4,"E",19,"reserved",0),
+	("最速",4,"A",20,"reserved",0),
+	("最速",4,"B",20,"reserved",0),
+	("最速",4,"C",20,"reserved",0),
+	("最速",4,"D",20,"reserved",0),
+	("最速",4,"E",20,"reserved",0),
+	("最速",5,"A",1,"reserved",0),
+	("最速",5,"B",1,"reserved",0),
+	("最速",5,"C",1,"reserved",0),
+	("最速",5,"D",1,"reserved",0),
+	("最速",5,"E",1,"reserved",0),
+	("最速",5,"A",2,"reserved",0),
+	("最速",5,"B",2,"reserved",0),
+	("最速",5,"C",2,"reserved",0),
+	("最速",5,"D",2,"reserved",0),
+	("最速",5,"E",2,"reserved",0),
+	("最速",5,"A",3,"reserved",0),
+	("最速",5,"B",3,"reserved",0),
+	("最速",5,"C",3,"reserved",0),
+	("最速",5,"D",3,"reserved",0),
+	("最速",5,"E",3,"reserved",0),
+	("最速",5,"A",4,"reserved",0),
+	("最速",5,"B",4,"reserved",0),
+	("最速",5,"C",4,"reserved",0),
+	("最速",5,"D",4,"reserved",0),
+	("最速",5,"E",4,"reserved",0),
+	("最速",5,"A",5,"reserved",0),
+	("最速",5,"B",5,"reserved",0),
+	("最速",5,"C",5,"reserved",0),
+	("最速",5,"D",5,"reserved",0),
+	("最速",5,"E",5,"reserved",0),
+	("最速",5,"A",6,"reserved",0),
+	("最速",5,"B",6,"reserved",0),
+	("最速",5,"C",6,"reserved",0),
+	("最速",5,"D",6,"reserved",0),
+	("最速",5,"E",6,"reserved",0),
+	("最速",5,"A",7,"reserved",0),
+	("最速",5,"B",7,"reserved",0),
+	("最速",5,"C",7,"reserved",0),
+	("最速",5,"D",7,"reserved",0),
+	("最速",5,"E",7,"reserved",0),
+	("最速",5,"A",8,"reserved",0),
+	("最速",5,"B",8,"reserved",0),
+	("最速",5,"C",8,"reserved",0),
+	("最速",5,"D",8,"reserved",0),
+	("最速",5,"E",8,"reserved",0),
+	("最速",5,"A",9,"reserved",0),
+	("最速",5,"B",9,"reserved",0),
+	("最速",5,"C",9,"reserved",0),
+	("最速",5,"D",9,"reserved",0),
+	("最速",5,"E",9,"reserved",0),
+	("最速",5,"A",10,"reserved",0),
+	("最速",5,"B",10,"reserved",0),
+	("最速",5,"C",10,"reserved",0),
+	("最速",5,"D",10,"reserved",0),
+	("最速",5,"E",10,"reserved",0),
+	("最速",5,"A",11,"reserved",1),
+	("最速",5,"B",11,"reserved",1),
+	("最速",5,"C",11,"reserved",1),
+	("最速",5,"D",11,"reserved",1),
+	("最速",5,"E",11,"reserved",1),
+	("最速",5,"A",12,"reserved",1),
+	("最速",5,"B",12,"reserved",1),
+	("最速",5,"C",12,"reserved",1),
+	("最速",5,"D",12,"reserved",1),
+	("最速",5,"E",12,"reserved",1),
+	("最速",5,"A",13,"reserved",1),
+	("最速",5,"B",13,"reserved",1),
+	("最速",5,"C",13,"reserved",1),
+	("最速",5,"D",13,"reserved",1),
+	("最速",5,"E",13,"reserved",1),
+	("最速",5,"A",14,"reserved",1),
+	("最速",5,"B",14,"reserved",1),
+	("最速",5,"C",14,"reserved",1),
+	("最速",5,"D",14,"reserved",1),
+	("最速",5,"E",14,"reserved",1),
+	("最速",5,"A",15,"reserved",1),
+	("最速",5,"B",15,"reserved",1),
+	("最速",5,"C",15,"reserved",1),
+	("最速",5,"D",15,"reserved",1),
+	("最速",5,"E",15,"reserved",1),
+	("最速",5,"A",16,"reserved",1),
+	("最速",5,"B",16,"reserved",1),
+	("最速",5,"C",16,"reserved",1),
+	("最速",5,"D",16,"reserved",1),
+	("最速",5,"E",16,"reserved",1),
+	("最速",6,"A",1,"reserved",0),
+	("最速",6,"B",1,"reserved",0),
+	("最速",6,"C",1,"reserved",0),
+	("最速",6,"D",1,"reserved",0),
+	("最速",6,"E",1,"reserved",0),
+	("最速",6,"A",2,"reserved",0),
+	("最速",6,"B",2,"reserved",0),
+	("最速",6,"C",2,"reserved",0),
+	("最速",6,"D",2,"reserved",0),
+	("最速",6,"E",2,"reserved",0),
+	("最速",6,"A",3,"reserved",0),
+	("最速",6,"B",3,"reserved",0),
+	("最速",6,"C",3,"reserved",0),
+	("最速",6,"D",3,"reserved",0),
+	("最速",6,"E",3,"reserved",0),
+	("最速",6,"A",4,"reserved",0),
+	("最速",6,"B",4,"reserved",0),
+	("最速",6,"C",4,"reserved",0),
+	("最速",6,"D",4,"reserved",0),
+	("最速",6,"E",4,"reserved",0),
+	("最速",6,"A",5,"reserved",0),
+	("最速",6,"B",5,"reserved",0),
+	("最速",6,"C",5,"reserved",0),
+	("最速",6,"D",5,"reserved",0),
+	("最速",6,"E",5,"reserved",0),
+	("最速",6,"A",6,"reserved",0),
+	("最速",6,"B",6,"reserved",0),
+	("最速",6,"C",6,"reserved",0),
+	("最速",6,"D",6,"reserved",0),
+	("最速",6,"E",6,"reserved",0),
+	("最速",6,"A",7,"reserved",0),
+	("最速",6,"B",7,"reserved",0),
+	("最速",6,"C",7,"reserved",0),
+	("最速",6,"D",7,"reserved",0),
+	("最速",6,"E",7,"reserved",0),
+	("最速",6,"A",8,"reserved",0),
+	("最速",6,"B",8,"reserved",0),
+	("最速",6,"C",8,"reserved",0),
+	("最速",6,"D",8,"reserved",0),
+	("最速",6,"E",8,"reserved",0),
+	("最速",6,"A",9,"reserved",0),
+	("最速",6,"B",9,"reserved",0),
+	("最速",6,"C",9,"reserved",0),
+	("最速",6,"D",9,"reserved",0),
+	("最速",6,"E",9,"reserved",0),
+	("最速",6,"A",10,"reserved",0),
+	("最速",6,"B",10,"reserved",0),
+	("最速",6,"C",10,"reserved",0),
+	("最速",6,"D",10,"reserved",0),
+	("最速",6,"E",10,"reserved",0),
+	("最速",6,"A",11,"reserved",0),
+	("最速",6,"B",11,"reserved",0),
+	("最速",6,"C",11,"reserved",0),
+	("最速",6,"D",11,"reserved",0),
+	("最速",6,"E",11,"reserved",0),
+	("最速",6,"A",12,"reserved",0),
+	("最速",6,"B",12,"reserved",0),
+	("最速",6,"C",12,"reserved",0),
+	("最速",6,"D",12,"reserved",0),
+	("最速",6,"E",12,"reserved",0),
+	("最速",6,"A",13,"reserved",0),
+	("最速",6,"B",13,"reserved",0),
+	("最速",6,"C",13,"reserved",0),
+	("最速",6,"D",13,"reserved",0),
+	("最速",6,"E",13,"reserved",0),
+	("最速",6,"A",14,"reserved",0),
+	("最速",6,"B",14,"reserved",0),
+	("最速",6,"C",14,"reserved",0),
+	("最速",6,"D",14,"reserved",0),
+	("最速",6,"E",14,"reserved",0),
+	("最速",6,"A",15,"reserved",0),
+	("最速",6,"B",15,"reserved",0),
+	("最速",6,"C",15,"reserved",0),
+	("最速",6,"D",15,"reserved",0),
+	("最速",6,"E",15,"reserved",0),
+	("最速",6,"A",16,"reserved",0),
+	("最速",6,"B",16,"reserved",0),
+	("最速",6,"C",16,"reserved",0),
+	("最速",6,"D",16,"reserved",0),
+	("最速",6,"E",16,"reserved",0),
+	("最速",6,"A",17,"reserved",0),
+	("最速",6,"B",17,"reserved",0),
+	("最速",6,"C",17,"reserved",0),
+	("最速",6,"D",17,"reserved",0),
+	("最速",6,"E",17,"reserved",0),
+	("最速",6,"A",18,"reserved",0),
+	("最速",6,"B",18,"reserved",0),
+	("最速",6,"C",18,"reserved",0),
+	("最速",6,"D",18,"reserved",0),
+	("最速",6,"E",18,"reserved",0),
+	("最速",6,"A",19,"reserved",0),
+	("最速",6,"B",19,"reserved",0),
+	("最速",6,"C",19,"reserved",0),
+	("最速",6,"D",19,"reserved",0),
+	("最速",6,"E",19,"reserved",0),
+	("最速",6,"A",20,"reserved",0),
+	("最速",6,"B",20,"reserved",0),
+	("最速",6,"C",20,"reserved",0),
+	("最速",6,"D",20,"reserved",0),
+	("最速",6,"E",20,"reserved",0),
+	("最速",7,"A",1,"reserved",0),
+	("最速",7,"B",1,"reserved",0),
+	("最速",7,"C",1,"reserved",0),
+	("最速",7,"D",1,"reserved",0),
+	("最速",7,"E",1,"reserved",0),
+	("最速",7,"A",2,"reserved",0),
+	("最速",7,"B",2,"reserved",0),
+	("最速",7,"C",2,"reserved",0),
+	("最速",7,"D",2,"reserved",0),
+	("最速",7,"E",2,"reserved",0),
+	("最速",7,"A",3,"reserved",0),
+	("最速",7,"B",3,"reserved",0),
+	("最速",7,"C",3,"reserved",0),
+	("最速",7,"D",3,"reserved",0),
+	("最速",7,"E",3,"reserved",0),
+	("最速",7,"A",4,"reserved",0),
+	("最速",7,"B",4,"reserved",0),
+	("最速",7,"C",4,"reserved",0),
+	("最速",7,"D",4,"reserved",0),
+	("最速",7,"E",4,"reserved",0),
+	("最速",7,"A",5,"reserved",0),
+	("最速",7,"B",5,"reserved",0),
+	("最速",7,"C",5,"reserved",0),
+	("最速",7,"D",5,"reserved",0),
+	("最速",7,"E",5,"reserved",0),
+	("最速",7,"A",6,"reserved",0),
+	("最速",7,"B",6,"reserved",0),
+	("最速",7,"C",6,"reserved",0),
+	("最速",7,"D",6,"reserved",0),
+	("最速",7,"E",6,"reserved",0),
+	("最速",7,"A",7,"reserved",0),
+	("最速",7,"B",7,"reserved",0),
+	("最速",7,"C",7,"reserved",0),
+	("最速",7,"D",7,"reserved",0),
+	("最速",7,"E",7,"reserved",0),
+	("最速",7,"A",8,"reserved",0),
+	("最速",7,"B",8,"reserved",0),
+	("最速",7,"C",8,"reserved",0),
+	("最速",7,"D",8,"reserved",0),
+	("最速",7,"E",8,"reserved",0),
+	("最速",7,"A",9,"reserved",0),
+	("最速",7,"B",9,"reserved",0),
+	("最速",7,"C",9,"reserved",0),
+	("最速",7,"D",9,"reserved",0),
+	("最速",7,"E",9,"reserved",0),
+	("最速",7,"A",10,"reserved",0),
+	("最速",7,"B",10,"reserved",0),
+	("最速",7,"C",10,"reserved",0),
+	("最速",7,"D",10,"reserved",0),
+	("最速",7,"E",10,"reserved",0),
+	("最速",7,"A",11,"reserved",1),
+	("最速",7,"B",11,"reserved",1),
+	("最速",7,"C",11,"reserved",1),
+	("最速",7,"D",11,"reserved",1),
+	("最速",7,"E",11,"reserved",1),
+	("最速",7,"A",12,"reserved",1),
+	("最速",7,"B",12,"reserved",1),
+	("最速",7,"C",12,"reserved",1),
+	("最速",7,"D",12,"reserved",1),
+	("最速",7,"E",12,"reserved",1),
+	("最速",7,"A",13,"reserved",1),
+	("最速",7,"B",13,"reserved",1),
+	("最速",7,"C",13,"reserved",1),
+	("最速",7,"D",13,"reserved",1),
+	("最速",7,"E",13,"reserved",1),
+	("最速",7,"A",14,"reserved",1),
+	("最速",7,"B",14,"reserved",1),
+	("最速",7,"C",14,"reserved",1),
+	("最速",7,"D",14,"reserved",1),
+	("最速",7,"E",14,"reserved",1),
+	("最速",7,"A",15,"reserved",1),
+	("最速",7,"B",15,"reserved",1),
+	("最速",7,"C",15,"reserved",1),
+	("最速",7,"D",15,"reserved",1),
+	("最速",7,"E",15,"reserved",1),
+	("最速",7,"A",16,"reserved",1),
+	("最速",7,"B",16,"reserved",1),
+	("最速",7,"C",16,"reserved",1),
+	("最速",7,"D",16,"reserved",1),
+	("最速",7,"E",16,"reserved",1),
+	("最速",8,"A",1,"premium",0),
+	("最速",8,"B",1,"premium",0),
+	("最速",8,"C",1,"premium",0),
+	("最速",8,"D",1,"premium",0),
+	("最速",8,"A",2,"premium",0),
+	("最速",8,"B",2,"premium",0),
+	("最速",8,"C",2,"premium",0),
+	("最速",8,"D",2,"premium",0),
+	("最速",8,"A",3,"premium",0),
+	("最速",8,"B",3,"premium",0),
+	("最速",8,"C",3,"premium",0),
+	("最速",8,"D",3,"premium",0),
+	("最速",8,"A",4,"premium",0),
+	("最速",8,"B",4,"premium",0),
+	("最速",8,"C",4,"premium",0),
+	("最速",8,"D",4,"premium",0),
+	("最速",8,"A",5,"premium",0),
+	("最速",8,"B",5,"premium",0),
+	("最速",8,"C",5,"premium",0),
+	("最速",8,"D",5,"premium",0),
+	("最速",8,"A",6,"premium",0),
+	("最速",8,"B",6,"premium",0),
+	("最速",8,"C",6,"premium",0),
+	("最速",8,"D",6,"premium",0),
+	("最速",8,"A",7,"premium",0),
+	("最速",8,"B",7,"premium",0),
+	("最速",8,"C",7,"premium",0),
+	("最速",8,"D",7,"premium",0),
+	("最速",8,"A",8,"premium",0),
+	("最速",8,"B",8,"premium",0),
+	("最速",8,"C",8,"premium",0),
+	("最速",8,"D",8,"premium",0),
+	("最速",8,"A",9,"premium",0),
+	("最速",8,"B",9,"premium",0),
+	("最速",8,"C",9,"premium",0),
+	("最速",8,"D",9,"premium",0),
+	("最速",8,"A",10,"premium",0),
+	("最速",8,"B",10,"premium",0),
+	("最速",8,"C",10,"premium",0),
+	("最速",8,"D",10,"premium",0),
+	("最速",8,"A",11,"premium",0),
+	("最速",8,"B",11,"premium",0),
+	("最速",8,"C",11,"premium",0),
+	("最速",8,"D",11,"premium",0),
+	("最速",8,"A",12,"premium",0),
+	("最速",8,"B",12,"premium",0),
+	("最速",8,"C",12,"premium",0),
+	("最速",8,"D",12,"premium",0),
+	("最速",8,"A",13,"premium",0),
+	("最速",8,"B",13,"premium",0),
+	("最速",8,"C",13,"premium",0),
+	("最速",8,"D",13,"premium",0),
+	("最速",8,"A",14,"premium",0),
+	("最速",8,"B",14,"premium",0),
+	("最速",8,"C",14,"premium",0),
+	("最速",8,"D",14,"premium",0),
+	("最速",8,"A",15,"premium",0),
+	("最速",8,"B",15,"premium",0),
+	("最速",8,"C",15,"premium",0),
+	("最速",8,"D",15,"premium",0),
+	("最速",8,"A",16,"premium",0),
+	("最速",8,"B",16,"premium",0),
+	("最速",8,"C",16,"premium",0),
+	("最速",8,"D",16,"premium",0),
+	("最速",8,"A",17,"premium",0),
+	("最速",8,"B",17,"premium",0),
+	("最速",8,"C",17,"premium",0),
+	("最速",8,"D",17,"premium",0),
+	("最速",9,"A",1,"premium",0),
+	("最速",9,"B",1,"premium",0),
+	("最速",9,"C",1,"premium",0),
+	("最速",9,"D",1,"premium",0),
+	("最速",9,"A",2,"premium",0),
+	("最速",9,"B",2,"premium",0),
+	("最速",9,"C",2,"premium",0),
+	("最速",9,"D",2,"premium",0),
+	("最速",9,"A",3,"premium",0),
+	("最速",9,"B",3,"premium",0),
+	("最速",9,"C",3,"premium",0),
+	("最速",9,"D",3,"premium",0),
+	("最速",9,"A",4,"premium",0),
+	("最速",9,"B",4,"premium",0),
+	("最速",9,"C",4,"premium",0),
+	("最速",9,"D",4,"premium",0),
+	("最速",9,"A",5,"premium",0),
+	("最速",9,"B",5,"premium",0),
+	("最速",9,"C",5,"premium",0),
+	("最速",9,"D",5,"premium",0),
+	("最速",9,"A",6,"premium",0),
+	("最速",9,"B",6,"premium",0),
+	("最速",9,"C",6,"premium",0),
+	("最速",9,"D",6,"premium",0),
+	("最速",9,"A",7,"premium",0),
+	("最速",9,"B",7,"premium",0),
+	("最速",9,"C",7,"premium",0),
+	("最速",9,"D",7,"premium",0),
+	("最速",9,"A",8,"premium",0),
+	("最速",9,"B",8,"premium",0),
+	("最速",9,"C",8,"premium",0),
+	("最速",9,"D",8,"premium",0),
+	("最速",9,"A",9,"premium",0),
+	("最速",9,"B",9,"premium",0),
+	("最速",9,"C",9,"premium",0),
+	("最速",9,"D",9,"premium",0),
+	("最速",9,"A",10,"premium",0),
+	("最速",9,"B",10,"premium",0),
+	("最速",9,"C",10,"premium",0),
+	("最速",9,"D",10,"premium",0),
+	("最速",9,"A",11,"premium",0),
+	("最速",9,"B",11,"premium",0),
+	("最速",9,"C",11,"premium",0),
+	("最速",9,"D",11,"premium",0),
+	("最速",9,"A",12,"premium",0),
+	("最速",9,"B",12,"premium",0),
+	("最速",9,"C",12,"premium",0),
+	("最速",9,"D",12,"premium",0),
+	("最速",9,"A",13,"premium",0),
+	("最速",9,"B",13,"premium",0),
+	("最速",9,"C",13,"premium",0),
+	("最速",9,"D",13,"premium",0),
+	("最速",9,"A",14,"premium",0),
+	("最速",9,"B",14,"premium",0),
+	("最速",9,"C",14,"premium",0),
+	("最速",9,"D",14,"premium",0),
+	("最速",9,"A",15,"premium",0),
+	("最速",9,"B",15,"premium",0),
+	("最速",9,"C",15,"premium",0),
+	("最速",9,"D",15,"premium",0),
+	("最速",9,"A",16,"premium",0),
+	("最速",9,"B",16,"premium",0),
+	("最速",9,"C",16,"premium",0),
+	("最速",9,"D",16,"premium",0),
+	("最速",9,"A",17,"premium",0),
+	("最速",9,"B",17,"premium",0),
+	("最速",9,"C",17,"premium",0),
+	("最速",9,"D",17,"premium",0),
+	("最速",10,"A",1,"premium",0),
+	("最速",10,"B",1,"premium",0),
+	("最速",10,"C",1,"premium",0),
+	("最速",10,"D",1,"premium",0),
+	("最速",10,"A",2,"premium",0),
+	("最速",10,"B",2,"premium",0),
+	("最速",10,"C",2,"premium",0),
+	("最速",10,"D",2,"premium",0),
+	("最速",10,"A",3,"premium",0),
+	("最速",10,"B",3,"premium",0),
+	("最速",10,"C",3,"premium",0),
+	("最速",10,"D",3,"premium",0),
+	("最速",10,"A",4,"premium",0),
+	("最速",10,"B",4,"premium",0),
+	("最速",10,"C",4,"premium",0),
+	("最速",10,"D",4,"premium",0),
+	("最速",10,"A",5,"premium",0),
+	("最速",10,"B",5,"premium",0),
+	("最速",10,"C",5,"premium",0),
+	("最速",10,"D",5,"premium",0),
+	("最速",10,"A",6,"premium",0),
+	("最速",10,"B",6,"premium",0),
+	("最速",10,"C",6,"premium",0),
+	("最速",10,"D",6,"premium",0),
+	("最速",10,"A",7,"premium",0),
+	("最速",10,"B",7,"premium",0),
+	("最速",10,"C",7,"premium",0),
+	("最速",10,"D",7,"premium",0),
+	("最速",10,"A",8,"premium",0),
+	("最速",10,"B",8,"premium",0),
+	("最速",10,"C",8,"premium",0),
+	("最速",10,"D",8,"premium",0),
+	("最速",10,"A",9,"premium",0),
+	("最速",10,"B",9,"premium",0),
+	("最速",10,"C",9,"premium",0),
+	("最速",10,"D",9,"premium",0),
+	("最速",10,"A",10,"premium",0),
+	("最速",10,"B",10,"premium",0),
+	("最速",10,"C",10,"premium",0),
+	("最速",10,"D",10,"premium",0),
+	("最速",10,"A",11,"premium",0),
+	("最速",10,"B",11,"premium",0),
+	("最速",10,"C",11,"premium",0),
+	("最速",10,"D",11,"premium",0),
+	("最速",10,"A",12,"premium",0),
+	("最速",10,"B",12,"premium",0),
+	("最速",10,"C",12,"premium",0),
+	("最速",10,"D",12,"premium",0),
+	("最速",10,"A",13,"premium",0),
+	("最速",10,"B",13,"premium",0),
+	("最速",10,"C",13,"premium",0),
+	("最速",10,"D",13,"premium",0),
+	("最速",10,"A",14,"premium",0),
+	("最速",10,"B",14,"premium",0),
+	("最速",10,"C",14,"premium",0),
+	("最速",10,"D",14,"premium",0),
+	("最速",10,"A",15,"premium",0),
+	("最速",10,"B",15,"premium",0),
+	("最速",10,"C",15,"premium",0),
+	("最速",10,"D",15,"premium",0),
+	("最速",10,"A",16,"premium",0),
+	("最速",10,"B",16,"premium",0),
+	("最速",10,"C",16,"premium",0),
+	("最速",10,"D",16,"premium",0),
+	("最速",10,"A",17,"premium",0),
+	("最速",10,"B",17,"premium",0),
+	("最速",10,"C",17,"premium",0),
+	("最速",10,"D",17,"premium",0),
+	("最速",11,"A",1,"reserved",0),
+	("最速",11,"B",1,"reserved",0),
+	("最速",11,"C",1,"reserved",0),
+	("最速",11,"D",1,"reserved",0),
+	("最速",11,"E",1,"reserved",0),
+	("最速",11,"A",2,"reserved",0),
+	("最速",11,"B",2,"reserved",0),
+	("最速",11,"C",2,"reserved",0),
+	("最速",11,"D",2,"reserved",0),
+	("最速",11,"E",2,"reserved",0),
+	("最速",11,"A",3,"reserved",0),
+	("最速",11,"B",3,"reserved",0),
+	("最速",11,"C",3,"reserved",0),
+	("最速",11,"D",3,"reserved",0),
+	("最速",11,"E",3,"reserved",0),
+	("最速",11,"A",4,"reserved",0),
+	("最速",11,"B",4,"reserved",0),
+	("最速",11,"C",4,"reserved",0),
+	("最速",11,"D",4,"reserved",0),
+	("最速",11,"E",4,"reserved",0),
+	("最速",11,"A",5,"reserved",0),
+	("最速",11,"B",5,"reserved",0),
+	("最速",11,"C",5,"reserved",0),
+	("最速",11,"D",5,"reserved",0),
+	("最速",11,"E",5,"reserved",0),
+	("最速",11,"A",6,"reserved",0),
+	("最速",11,"B",6,"reserved",0),
+	("最速",11,"C",6,"reserved",0),
+	("最速",11,"D",6,"reserved",0),
+	("最速",11,"E",6,"reserved",0),
+	("最速",11,"A",7,"reserved",0),
+	("最速",11,"B",7,"reserved",0),
+	("最速",11,"C",7,"reserved",0),
+	("最速",11,"D",7,"reserved",0),
+	("最速",11,"E",7,"reserved",0),
+	("最速",11,"A",8,"reserved",0),
+	("最速",11,"B",8,"reserved",0),
+	("最速",11,"C",8,"reserved",0),
+	("最速",11,"D",8,"reserved",0),
+	("最速",11,"E",8,"reserved",0),
+	("最速",11,"A",9,"reserved",0),
+	("最速",11,"B",9,"reserved",0),
+	("最速",11,"C",9,"reserved",0),
+	("最速",11,"D",9,"reserved",0),
+	("最速",11,"E",9,"reserved",0),
+	("最速",11,"A",10,"reserved",0),
+	("最速",11,"B",10,"reserved",0),
+	("最速",11,"C",10,"reserved",0),
+	("最速",11,"D",10,"reserved",0),
+	("最速",11,"E",10,"reserved",0),
+	("最速",11,"A",11,"reserved",1),
+	("最速",11,"B",11,"reserved",1),
+	("最速",11,"C",11,"reserved",1),
+	("最速",11,"D",11,"reserved",1),
+	("最速",11,"E",11,"reserved",1),
+	("最速",11,"A",12,"reserved",1),
+	("最速",11,"B",12,"reserved",1),
+	("最速",11,"C",12,"reserved",1),
+	("最速",11,"D",12,"reserved",1),
+	("最速",11,"E",12,"reserved",1),
+	("最速",11,"A",13,"reserved",1),
+	("最速",11,"B",13,"reserved",1),
+	("最速",11,"C",13,"reserved",1),
+	("最速",11,"D",13,"reserved",1),
+	("最速",11,"E",13,"reserved",1),
+	("最速",11,"A",14,"reserved",1),
+	("最速",11,"B",14,"reserved",1),
+	("最速",11,"C",14,"reserved",1),
+	("最速",11,"D",14,"reserved",1),
+	("最速",11,"E",14,"reserved",1),
+	("最速",11,"A",15,"reserved",1),
+	("最速",11,"B",15,"reserved",1),
+	("最速",11,"C",15,"reserved",1),
+	("最速",11,"D",15,"reserved",1),
+	("最速",11,"E",15,"reserved",1),
+	("最速",11,"A",16,"reserved",1),
+	("最速",11,"B",16,"reserved",1),
+	("最速",11,"C",16,"reserved",1),
+	("最速",11,"D",16,"reserved",1),
+	("最速",11,"E",16,"reserved",1),
+	("最速",12,"A",1,"reserved",0),
+	("最速",12,"B",1,"reserved",0),
+	("最速",12,"C",1,"reserved",0),
+	("最速",12,"D",1,"reserved",0),
+	("最速",12,"E",1,"reserved",0),
+	("最速",12,"A",2,"reserved",0),
+	("最速",12,"B",2,"reserved",0),
+	("最速",12,"C",2,"reserved",0),
+	("最速",12,"D",2,"reserved",0),
+	("最速",12,"E",2,"reserved",0),
+	("最速",12,"A",3,"reserved",0),
+	("最速",12,"B",3,"reserved",0),
+	("最速",12,"C",3,"reserved",0),
+	("最速",12,"D",3,"reserved",0),
+	("最速",12,"E",3,"reserved",0),
+	("最速",12,"A",4,"reserved",0),
+	("最速",12,"B",4,"reserved",0),
+	("最速",12,"C",4,"reserved",0),
+	("最速",12,"D",4,"reserved",0),
+	("最速",12,"E",4,"reserved",0),
+	("最速",12,"A",5,"reserved",0),
+	("最速",12,"B",5,"reserved",0),
+	("最速",12,"C",5,"reserved",0),
+	("最速",12,"D",5,"reserved",0),
+	("最速",12,"E",5,"reserved",0),
+	("最速",12,"A",6,"reserved",0),
+	("最速",12,"B",6,"reserved",0),
+	("最速",12,"C",6,"reserved",0),
+	("最速",12,"D",6,"reserved",0),
+	("最速",12,"E",6,"reserved",0),
+	("最速",12,"A",7,"reserved",0),
+	("最速",12,"B",7,"reserved",0),
+	("最速",12,"C",7,"reserved",0),
+	("最速",12,"D",7,"reserved",0),
+	("最速",12,"E",7,"reserved",0),
+	("最速",12,"A",8,"reserved",0),
+	("最速",12,"B",8,"reserved",0),
+	("最速",12,"C",8,"reserved",0),
+	("最速",12,"D",8,"reserved",0),
+	("最速",12,"E",8,"reserved",0),
+	("最速",12,"A",9,"reserved",0),
+	("最速",12,"B",9,"reserved",0),
+	("最速",12,"C",9,"reserved",0),
+	("最速",12,"D",9,"reserved",0),
+	("最速",12,"E",9,"reserved",0),
+	("最速",12,"A",10,"reserved",0),
+	("最速",12,"B",10,"reserved",0),
+	("最速",12,"C",10,"reserved",0),
+	("最速",12,"D",10,"reserved",0),
+	("最速",12,"E",10,"reserved",0),
+	("最速",12,"A",11,"reserved",0),
+	("最速",12,"B",11,"reserved",0),
+	("最速",12,"C",11,"reserved",0),
+	("最速",12,"D",11,"reserved",0),
+	("最速",12,"E",11,"reserved",0),
+	("最速",12,"A",12,"reserved",0),
+	("最速",12,"B",12,"reserved",0),
+	("最速",12,"C",12,"reserved",0),
+	("最速",12,"D",12,"reserved",0),
+	("最速",12,"E",12,"reserved",0),
+	("最速",12,"A",13,"reserved",0),
+	("最速",12,"B",13,"reserved",0),
+	("最速",12,"C",13,"reserved",0),
+	("最速",12,"D",13,"reserved",0),
+	("最速",12,"E",13,"reserved",0),
+	("最速",12,"A",14,"reserved",0),
+	("最速",12,"B",14,"reserved",0),
+	("最速",12,"C",14,"reserved",0),
+	("最速",12,"D",14,"reserved",0),
+	("最速",12,"E",14,"reserved",0),
+	("最速",12,"A",15,"reserved",0),
+	("最速",12,"B",15,"reserved",0),
+	("最速",12,"C",15,"reserved",0),
+	("最速",12,"D",15,"reserved",0),
+	("最速",12,"E",15,"reserved",0),
+	("最速",12,"A",16,"reserved",0),
+	("最速",12,"B",16,"reserved",0),
+	("最速",12,"C",16,"reserved",0),
+	("最速",12,"D",16,"reserved",0),
+	("最速",12,"E",16,"reserved",0),
+	("最速",12,"A",17,"reserved",0),
+	("最速",12,"B",17,"reserved",0),
+	("最速",12,"C",17,"reserved",0),
+	("最速",12,"D",17,"reserved",0),
+	("最速",12,"E",17,"reserved",0),
+	("最速",12,"A",18,"reserved",0),
+	("最速",12,"B",18,"reserved",0),
+	("最速",12,"C",18,"reserved",0),
+	("最速",12,"D",18,"reserved",0),
+	("最速",12,"E",18,"reserved",0),
+	("最速",12,"A",19,"reserved",0),
+	("最速",12,"B",19,"reserved",0),
+	("最速",12,"C",19,"reserved",0),
+	("最速",12,"D",19,"reserved",0),
+	("最速",12,"E",19,"reserved",0),
+	("最速",12,"A",20,"reserved",0),
+	("最速",12,"B",20,"reserved",0),
+	("最速",12,"C",20,"reserved",0),
+	("最速",12,"D",20,"reserved",0),
+	("最速",12,"E",20,"reserved",0),
+	("最速",13,"A",1,"reserved",0),
+	("最速",13,"B",1,"reserved",0),
+	("最速",13,"C",1,"reserved",0),
+	("最速",13,"D",1,"reserved",0),
+	("最速",13,"E",1,"reserved",0),
+	("最速",13,"A",2,"reserved",0),
+	("最速",13,"B",2,"reserved",0),
+	("最速",13,"C",2,"reserved",0),
+	("最速",13,"D",2,"reserved",0),
+	("最速",13,"E",2,"reserved",0),
+	("最速",13,"A",3,"reserved",0),
+	("最速",13,"B",3,"reserved",0),
+	("最速",13,"C",3,"reserved",0),
+	("最速",13,"D",3,"reserved",0),
+	("最速",13,"E",3,"reserved",0),
+	("最速",13,"A",4,"reserved",0),
+	("最速",13,"B",4,"reserved",0),
+	("最速",13,"C",4,"reserved",0),
+	("最速",13,"D",4,"reserved",0),
+	("最速",13,"E",4,"reserved",0),
+	("最速",13,"A",5,"reserved",0),
+	("最速",13,"B",5,"reserved",0),
+	("最速",13,"C",5,"reserved",0),
+	("最速",13,"D",5,"reserved",0),
+	("最速",13,"E",5,"reserved",0),
+	("最速",13,"A",6,"reserved",0),
+	("最速",13,"B",6,"reserved",0),
+	("最速",13,"C",6,"reserved",0),
+	("最速",13,"D",6,"reserved",0),
+	("最速",13,"E",6,"reserved",0),
+	("最速",13,"A",7,"reserved",0),
+	("最速",13,"B",7,"reserved",0),
+	("最速",13,"C",7,"reserved",0),
+	("最速",13,"D",7,"reserved",0),
+	("最速",13,"E",7,"reserved",0),
+	("最速",13,"A",8,"reserved",0),
+	("最速",13,"B",8,"reserved",0),
+	("最速",13,"C",8,"reserved",0),
+	("最速",13,"D",8,"reserved",0),
+	("最速",13,"E",8,"reserved",0),
+	("最速",13,"A",9,"reserved",0),
+	("最速",13,"B",9,"reserved",0),
+	("最速",13,"C",9,"reserved",0),
+	("最速",13,"D",9,"reserved",0),
+	("最速",13,"E",9,"reserved",0),
+	("最速",13,"A",10,"reserved",0),
+	("最速",13,"B",10,"reserved",0),
+	("最速",13,"C",10,"reserved",0),
+	("最速",13,"D",10,"reserved",0),
+	("最速",13,"E",10,"reserved",0),
+	("最速",13,"A",11,"reserved",1),
+	("最速",13,"B",11,"reserved",1),
+	("最速",13,"C",11,"reserved",1),
+	("最速",13,"D",11,"reserved",1),
+	("最速",13,"E",11,"reserved",1),
+	("最速",13,"A",12,"reserved",1),
+	("最速",13,"B",12,"reserved",1),
+	("最速",13,"C",12,"reserved",1),
+	("最速",13,"D",12,"reserved",1),
+	("最速",13,"E",12,"reserved",1),
+	("最速",13,"A",13,"reserved",1),
+	("最速",13,"B",13,"reserved",1),
+	("最速",13,"C",13,"reserved",1),
+	("最速",13,"D",13,"reserved",1),
+	("最速",13,"E",13,"reserved",1),
+	("最速",13,"A",14,"reserved",1),
+	("最速",13,"B",14,"reserved",1),
+	("最速",13,"C",14,"reserved",1),
+	("最速",13,"D",14,"reserved",1),
+	("最速",13,"E",14,"reserved",1),
+	("最速",13,"A",15,"reserved",1),
+	("最速",13,"B",15,"reserved",1),
+	("最速",13,"C",15,"reserved",1),
+	("最速",13,"D",15,"reserved",1),
+	("最速",13,"E",15,"reserved",1),
+	("最速",13,"A",16,"reserved",1),
+	("最速",13,"B",16,"reserved",1),
+	("最速",13,"C",16,"reserved",1),
+	("最速",13,"D",16,"reserved",1),
+	("最速",13,"E",16,"reserved",1),
+	("最速",14,"A",1,"reserved",0),
+	("最速",14,"B",1,"reserved",0),
+	("最速",14,"C",1,"reserved",0),
+	("最速",14,"D",1,"reserved",0),
+	("最速",14,"E",1,"reserved",0),
+	("最速",14,"A",2,"reserved",0),
+	("最速",14,"B",2,"reserved",0),
+	("最速",14,"C",2,"reserved",0),
+	("最速",14,"D",2,"reserved",0),
+	("最速",14,"E",2,"reserved",0),
+	("最速",14,"A",3,"reserved",0),
+	("最速",14,"B",3,"reserved",0),
+	("最速",14,"C",3,"reserved",0),
+	("最速",14,"D",3,"reserved",0),
+	("最速",14,"E",3,"reserved",0),
+	("最速",14,"A",4,"reserved",0),
+	("最速",14,"B",4,"reserved",0),
+	("最速",14,"C",4,"reserved",0),
+	("最速",14,"D",4,"reserved",0),
+	("最速",14,"E",4,"reserved",0),
+	("最速",14,"A",5,"reserved",0),
+	("最速",14,"B",5,"reserved",0),
+	("最速",14,"C",5,"reserved",0),
+	("最速",14,"D",5,"reserved",0),
+	("最速",14,"E",5,"reserved",0),
+	("最速",14,"A",6,"reserved",0),
+	("最速",14,"B",6,"reserved",0),
+	("最速",14,"C",6,"reserved",0),
+	("最速",14,"D",6,"reserved",0),
+	("最速",14,"E",6,"reserved",0),
+	("最速",14,"A",7,"reserved",0),
+	("最速",14,"B",7,"reserved",0),
+	("最速",14,"C",7,"reserved",0),
+	("最速",14,"D",7,"reserved",0),
+	("最速",14,"E",7,"reserved",0),
+	("最速",14,"A",8,"reserved",0),
+	("最速",14,"B",8,"reserved",0),
+	("最速",14,"C",8,"reserved",0),
+	("最速",14,"D",8,"reserved",0),
+	("最速",14,"E",8,"reserved",0),
+	("最速",14,"A",9,"reserved",0),
+	("最速",14,"B",9,"reserved",0),
+	("最速",14,"C",9,"reserved",0),
+	("最速",14,"D",9,"reserved",0),
+	("最速",14,"E",9,"reserved",0),
+	("最速",14,"A",10,"reserved",0),
+	("最速",14,"B",10,"reserved",0),
+	("最速",14,"C",10,"reserved",0),
+	("最速",14,"D",10,"reserved",0),
+	("最速",14,"E",10,"reserved",0),
+	("最速",14,"A",11,"reserved",0),
+	("最速",14,"B",11,"reserved",0),
+	("最速",14,"C",11,"reserved",0),
+	("最速",14,"D",11,"reserved",0),
+	("最速",14,"E",11,"reserved",0),
+	("最速",14,"A",12,"reserved",0),
+	("最速",14,"B",12,"reserved",0),
+	("最速",14,"C",12,"reserved",0),
+	("最速",14,"D",12,"reserved",0),
+	("最速",14,"E",12,"reserved",0),
+	("最速",14,"A",13,"reserved",0),
+	("最速",14,"B",13,"reserved",0),
+	("最速",14,"C",13,"reserved",0),
+	("最速",14,"D",13,"reserved",0),
+	("最速",14,"E",13,"reserved",0),
+	("最速",14,"A",14,"reserved",0),
+	("最速",14,"B",14,"reserved",0),
+	("最速",14,"C",14,"reserved",0),
+	("最速",14,"D",14,"reserved",0),
+	("最速",14,"E",14,"reserved",0),
+	("最速",14,"A",15,"reserved",0),
+	("最速",14,"B",15,"reserved",0),
+	("最速",14,"C",15,"reserved",0),
+	("最速",14,"D",15,"reserved",0),
+	("最速",14,"E",15,"reserved",0),
+	("最速",14,"A",16,"reserved",0),
+	("最速",14,"B",16,"reserved",0),
+	("最速",14,"C",16,"reserved",0),
+	("最速",14,"D",16,"reserved",0),
+	("最速",14,"E",16,"reserved",0),
+	("最速",14,"A",17,"reserved",0),
+	("最速",14,"B",17,"reserved",0),
+	("最速",14,"C",17,"reserved",0),
+	("最速",14,"D",17,"reserved",0),
+	("最速",14,"E",17,"reserved",0),
+	("最速",14,"A",18,"reserved",0),
+	("最速",14,"B",18,"reserved",0),
+	("最速",14,"C",18,"reserved",0),
+	("最速",14,"D",18,"reserved",0),
+	("最速",14,"E",18,"reserved",0),
+	("最速",14,"A",19,"reserved",0),
+	("最速",14,"B",19,"reserved",0),
+	("最速",14,"C",19,"reserved",0),
+	("最速",14,"D",19,"reserved",0),
+	("最速",14,"E",19,"reserved",0),
+	("最速",14,"A",20,"reserved",0),
+	("最速",14,"B",20,"reserved",0),
+	("最速",14,"C",20,"reserved",0),
+	("最速",14,"D",20,"reserved",0),
+	("最速",14,"E",20,"reserved",0),
+	("最速",15,"A",1,"reserved",0),
+	("最速",15,"B",1,"reserved",0),
+	("最速",15,"C",1,"reserved",0),
+	("最速",15,"D",1,"reserved",0),
+	("最速",15,"E",1,"reserved",0),
+	("最速",15,"A",2,"reserved",0),
+	("最速",15,"B",2,"reserved",0),
+	("最速",15,"C",2,"reserved",0),
+	("最速",15,"D",2,"reserved",0),
+	("最速",15,"E",2,"reserved",0),
+	("最速",15,"A",3,"reserved",0),
+	("最速",15,"B",3,"reserved",0),
+	("最速",15,"C",3,"reserved",0),
+	("最速",15,"D",3,"reserved",0),
+	("最速",15,"E",3,"reserved",0),
+	("最速",15,"A",4,"reserved",0),
+	("最速",15,"B",4,"reserved",0),
+	("最速",15,"C",4,"reserved",0),
+	("最速",15,"D",4,"reserved",0),
+	("最速",15,"E",4,"reserved",0),
+	("最速",15,"A",5,"reserved",0),
+	("最速",15,"B",5,"reserved",0),
+	("最速",15,"C",5,"reserved",0),
+	("最速",15,"D",5,"reserved",0),
+	("最速",15,"E",5,"reserved",0),
+	("最速",15,"A",6,"reserved",0),
+	("最速",15,"B",6,"reserved",0),
+	("最速",15,"C",6,"reserved",0),
+	("最速",15,"D",6,"reserved",0),
+	("最速",15,"E",6,"reserved",0),
+	("最速",15,"A",7,"reserved",0),
+	("最速",15,"B",7,"reserved",0),
+	("最速",15,"C",7,"reserved",0),
+	("最速",15,"D",7,"reserved",0),
+	("最速",15,"E",7,"reserved",0),
+	("最速",15,"A",8,"reserved",0),
+	("最速",15,"B",8,"reserved",0),
+	("最速",15,"C",8,"reserved",0),
+	("最速",15,"D",8,"reserved",0),
+	("最速",15,"E",8,"reserved",0),
+	("最速",15,"A",9,"reserved",0),
+	("最速",15,"B",9,"reserved",0),
+	("最速",15,"C",9,"reserved",0),
+	("最速",15,"D",9,"reserved",0),
+	("最速",15,"E",9,"reserved",0),
+	("最速",15,"A",10,"reserved",0),
+	("最速",15,"B",10,"reserved",0),
+	("最速",15,"C",10,"reserved",0),
+	("最速",15,"D",10,"reserved",0),
+	("最速",15,"E",10,"reserved",0),
+	("最速",15,"A",11,"reserved",1),
+	("最速",15,"B",11,"reserved",1),
+	("最速",15,"C",11,"reserved",1),
+	("最速",15,"D",11,"reserved",1),
+	("最速",15,"E",11,"reserved",1),
+	("最速",15,"A",12,"reserved",1),
+	("最速",15,"B",12,"reserved",1),
+	("最速",15,"C",12,"reserved",1),
+	("最速",15,"D",12,"reserved",1),
+	("最速",15,"E",12,"reserved",1),
+	("最速",15,"A",13,"reserved",1),
+	("最速",15,"B",13,"reserved",1),
+	("最速",15,"C",13,"reserved",1),
+	("最速",15,"D",13,"reserved",1),
+	("最速",15,"E",13,"reserved",1),
+	("最速",15,"A",14,"reserved",1),
+	("最速",15,"B",14,"reserved",1),
+	("最速",15,"C",14,"reserved",1),
+	("最速",15,"D",14,"reserved",1),
+	("最速",15,"E",14,"reserved",1),
+	("最速",15,"A",15,"reserved",1),
+	("最速",15,"B",15,"reserved",1),
+	("最速",15,"C",15,"reserved",1),
+	("最速",15,"D",15,"reserved",1),
+	("最速",15,"E",15,"reserved",1),
+	("最速",15,"A",16,"reserved",1),
+	("最速",15,"B",16,"reserved",1),
+	("最速",15,"C",16,"reserved",1),
+	("最速",15,"D",16,"reserved",1),
+	("最速",15,"E",16,"reserved",1),
+	("最速",16,"A",1,"reserved",0),
+	("最速",16,"B",1,"reserved",0),
+	("最速",16,"C",1,"reserved",0),
+	("最速",16,"D",1,"reserved",0),
+	("最速",16,"E",1,"reserved",0),
+	("最速",16,"A",2,"reserved",0),
+	("最速",16,"B",2,"reserved",0),
+	("最速",16,"C",2,"reserved",0),
+	("最速",16,"D",2,"reserved",0),
+	("最速",16,"E",2,"reserved",0),
+	("最速",16,"A",3,"reserved",0),
+	("最速",16,"B",3,"reserved",0),
+	("最速",16,"C",3,"reserved",0),
+	("最速",16,"D",3,"reserved",0),
+	("最速",16,"E",3,"reserved",0),
+	("最速",16,"A",4,"reserved",0),
+	("最速",16,"B",4,"reserved",0),
+	("最速",16,"C",4,"reserved",0),
+	("最速",16,"D",4,"reserved",0),
+	("最速",16,"E",4,"reserved",0),
+	("最速",16,"A",5,"reserved",0),
+	("最速",16,"B",5,"reserved",0),
+	("最速",16,"C",5,"reserved",0),
+	("最速",16,"D",5,"reserved",0),
+	("最速",16,"E",5,"reserved",0),
+	("最速",16,"A",6,"reserved",0),
+	("最速",16,"B",6,"reserved",0),
+	("最速",16,"C",6,"reserved",0),
+	("最速",16,"D",6,"reserved",0),
+	("最速",16,"E",6,"reserved",0),
+	("最速",16,"A",7,"reserved",0),
+	("最速",16,"B",7,"reserved",0),
+	("最速",16,"C",7,"reserved",0),
+	("最速",16,"D",7,"reserved",0),
+	("最速",16,"E",7,"reserved",0),
+	("最速",16,"A",8,"reserved",0),
+	("最速",16,"B",8,"reserved",0),
+	("最速",16,"C",8,"reserved",0),
+	("最速",16,"D",8,"reserved",0),
+	("最速",16,"E",8,"reserved",0),
+	("最速",16,"A",9,"reserved",0),
+	("最速",16,"B",9,"reserved",0),
+	("最速",16,"C",9,"reserved",0),
+	("最速",16,"D",9,"reserved",0),
+	("最速",16,"E",9,"reserved",0),
+	("最速",16,"A",10,"reserved",0),
+	("最速",16,"B",10,"reserved",0),
+	("最速",16,"C",10,"reserved",0),
+	("最速",16,"D",10,"reserved",0),
+	("最速",16,"E",10,"reserved",0),
+	("最速",16,"A",11,"reserved",0),
+	("最速",16,"B",11,"reserved",0),
+	("最速",16,"C",11,"reserved",0),
+	("最速",16,"D",11,"reserved",0),
+	("最速",16,"E",11,"reserved",0),
+	("最速",16,"A",12,"reserved",0),
+	("最速",16,"B",12,"reserved",0),
+	("最速",16,"C",12,"reserved",0),
+	("最速",16,"D",12,"reserved",0),
+	("最速",16,"E",12,"reserved",0),
+	("最速",16,"A",13,"reserved",0),
+	("最速",16,"B",13,"reserved",0),
+	("最速",16,"C",13,"reserved",0),
+	("最速",16,"D",13,"reserved",0),
+	("最速",16,"E",13,"reserved",0),
+	("中間",1,"A",1,"non-reserved",0),
+	("中間",1,"B",1,"non-reserved",0),
+	("中間",1,"C",1,"non-reserved",0),
+	("中間",1,"D",1,"non-reserved",0),
+	("中間",1,"E",1,"non-reserved",0),
+	("中間",1,"A",2,"non-reserved",0),
+	("中間",1,"B",2,"non-reserved",0),
+	("中間",1,"C",2,"non-reserved",0),
+	("中間",1,"D",2,"non-reserved",0),
+	("中間",1,"E",2,"non-reserved",0),
+	("中間",1,"A",3,"non-reserved",0),
+	("中間",1,"B",3,"non-reserved",0),
+	("中間",1,"C",3,"non-reserved",0),
+	("中間",1,"D",3,"non-reserved",0),
+	("中間",1,"E",3,"non-reserved",0),
+	("中間",1,"A",4,"non-reserved",0),
+	("中間",1,"B",4,"non-reserved",0),
+	("中間",1,"C",4,"non-reserved",0),
+	("中間",1,"D",4,"non-reserved",0),
+	("中間",1,"E",4,"non-reserved",0),
+	("中間",1,"A",5,"non-reserved",0),
+	("中間",1,"B",5,"non-reserved",0),
+	("中間",1,"C",5,"non-reserved",0),
+	("中間",1,"D",5,"non-reserved",0),
+	("中間",1,"E",5,"non-reserved",0),
+	("中間",1,"A",6,"non-reserved",0),
+	("中間",1,"B",6,"non-reserved",0),
+	("中間",1,"C",6,"non-reserved",0),
+	("中間",1,"D",6,"non-reserved",0),
+	("中間",1,"E",6,"non-reserved",0),
+	("中間",1,"A",7,"non-reserved",0),
+	("中間",1,"B",7,"non-reserved",0),
+	("中間",1,"C",7,"non-reserved",0),
+	("中間",1,"D",7,"non-reserved",0),
+	("中間",1,"E",7,"non-reserved",0),
+	("中間",1,"A",8,"non-reserved",0),
+	("中間",1,"B",8,"non-reserved",0),
+	("中間",1,"C",8,"non-reserved",0),
+	("中間",1,"D",8,"non-reserved",0),
+	("中間",1,"E",8,"non-reserved",0),
+	("中間",1,"A",9,"non-reserved",0),
+	("中間",1,"B",9,"non-reserved",0),
+	("中間",1,"C",9,"non-reserved",0),
+	("中間",1,"D",9,"non-reserved",0),
+	("中間",1,"E",9,"non-reserved",0),
+	("中間",1,"A",10,"non-reserved",0),
+	("中間",1,"B",10,"non-reserved",0),
+	("中間",1,"C",10,"non-reserved",0),
+	("中間",1,"D",10,"non-reserved",0),
+	("中間",1,"E",10,"non-reserved",0),
+	("中間",1,"A",11,"non-reserved",0),
+	("中間",1,"B",11,"non-reserved",0),
+	("中間",1,"C",11,"non-reserved",0),
+	("中間",1,"D",11,"non-reserved",0),
+	("中間",1,"E",11,"non-reserved",0),
+	("中間",1,"A",12,"non-reserved",0),
+	("中間",1,"B",12,"non-reserved",0),
+	("中間",1,"C",12,"non-reserved",0),
+	("中間",1,"D",12,"non-reserved",0),
+	("中間",1,"E",12,"non-reserved",0),
+	("中間",1,"A",13,"non-reserved",0),
+	("中間",1,"B",13,"non-reserved",0),
+	("中間",1,"C",13,"non-reserved",0),
+	("中間",1,"D",13,"non-reserved",0),
+	("中間",1,"E",13,"non-reserved",0),
+	("中間",2,"A",1,"non-reserved",0),
+	("中間",2,"B",1,"non-reserved",0),
+	("中間",2,"C",1,"non-reserved",0),
+	("中間",2,"D",1,"non-reserved",0),
+	("中間",2,"E",1,"non-reserved",0),
+	("中間",2,"A",2,"non-reserved",0),
+	("中間",2,"B",2,"non-reserved",0),
+	("中間",2,"C",2,"non-reserved",0),
+	("中間",2,"D",2,"non-reserved",0),
+	("中間",2,"E",2,"non-reserved",0),
+	("中間",2,"A",3,"non-reserved",0),
+	("中間",2,"B",3,"non-reserved",0),
+	("中間",2,"C",3,"non-reserved",0),
+	("中間",2,"D",3,"non-reserved",0),
+	("中間",2,"E",3,"non-reserved",0),
+	("中間",2,"A",4,"non-reserved",0),
+	("中間",2,"B",4,"non-reserved",0),
+	("中間",2,"C",4,"non-reserved",0),
+	("中間",2,"D",4,"non-reserved",0),
+	("中間",2,"E",4,"non-reserved",0),
+	("中間",2,"A",5,"non-reserved",0),
+	("中間",2,"B",5,"non-reserved",0),
+	("中間",2,"C",5,"non-reserved",0),
+	("中間",2,"D",5,"non-reserved",0),
+	("中間",2,"E",5,"non-reserved",0),
+	("中間",2,"A",6,"non-reserved",0),
+	("中間",2,"B",6,"non-reserved",0),
+	("中間",2,"C",6,"non-reserved",0),
+	("中間",2,"D",6,"non-reserved",0),
+	("中間",2,"E",6,"non-reserved",0),
+	("中間",2,"A",7,"non-reserved",0),
+	("中間",2,"B",7,"non-reserved",0),
+	("中間",2,"C",7,"non-reserved",0),
+	("中間",2,"D",7,"non-reserved",0),
+	("中間",2,"E",7,"non-reserved",0),
+	("中間",2,"A",8,"non-reserved",0),
+	("中間",2,"B",8,"non-reserved",0),
+	("中間",2,"C",8,"non-reserved",0),
+	("中間",2,"D",8,"non-reserved",0),
+	("中間",2,"E",8,"non-reserved",0),
+	("中間",2,"A",9,"non-reserved",0),
+	("中間",2,"B",9,"non-reserved",0),
+	("中間",2,"C",9,"non-reserved",0),
+	("中間",2,"D",9,"non-reserved",0),
+	("中間",2,"E",9,"non-reserved",0),
+	("中間",2,"A",10,"non-reserved",0),
+	("中間",2,"B",10,"non-reserved",0),
+	("中間",2,"C",10,"non-reserved",0),
+	("中間",2,"D",10,"non-reserved",0),
+	("中間",2,"E",10,"non-reserved",0),
+	("中間",2,"A",11,"non-reserved",0),
+	("中間",2,"B",11,"non-reserved",0),
+	("中間",2,"C",11,"non-reserved",0),
+	("中間",2,"D",11,"non-reserved",0),
+	("中間",2,"E",11,"non-reserved",0),
+	("中間",2,"A",12,"non-reserved",0),
+	("中間",2,"B",12,"non-reserved",0),
+	("中間",2,"C",12,"non-reserved",0),
+	("中間",2,"D",12,"non-reserved",0),
+	("中間",2,"E",12,"non-reserved",0),
+	("中間",2,"A",13,"non-reserved",0),
+	("中間",2,"B",13,"non-reserved",0),
+	("中間",2,"C",13,"non-reserved",0),
+	("中間",2,"D",13,"non-reserved",0),
+	("中間",2,"E",13,"non-reserved",0),
+	("中間",2,"A",14,"non-reserved",0),
+	("中間",2,"B",14,"non-reserved",0),
+	("中間",2,"C",14,"non-reserved",0),
+	("中間",2,"D",14,"non-reserved",0),
+	("中間",2,"E",14,"non-reserved",0),
+	("中間",2,"A",15,"non-reserved",0),
+	("中間",2,"B",15,"non-reserved",0),
+	("中間",2,"C",15,"non-reserved",0),
+	("中間",2,"D",15,"non-reserved",0),
+	("中間",2,"E",15,"non-reserved",0),
+	("中間",2,"A",16,"non-reserved",0),
+	("中間",2,"B",16,"non-reserved",0),
+	("中間",2,"C",16,"non-reserved",0),
+	("中間",2,"D",16,"non-reserved",0),
+	("中間",2,"E",16,"non-reserved",0),
+	("中間",2,"A",17,"non-reserved",0),
+	("中間",2,"B",17,"non-reserved",0),
+	("中間",2,"C",17,"non-reserved",0),
+	("中間",2,"D",17,"non-reserved",0),
+	("中間",2,"E",17,"non-reserved",0),
+	("中間",2,"A",18,"non-reserved",0),
+	("中間",2,"B",18,"non-reserved",0),
+	("中間",2,"C",18,"non-reserved",0),
+	("中間",2,"D",18,"non-reserved",0),
+	("中間",2,"E",18,"non-reserved",0),
+	("中間",2,"A",19,"non-reserved",0),
+	("中間",2,"B",19,"non-reserved",0),
+	("中間",2,"C",19,"non-reserved",0),
+	("中間",2,"D",19,"non-reserved",0),
+	("中間",2,"E",19,"non-reserved",0),
+	("中間",2,"A",20,"non-reserved",0),
+	("中間",2,"B",20,"non-reserved",0),
+	("中間",2,"C",20,"non-reserved",0),
+	("中間",2,"D",20,"non-reserved",0),
+	("中間",2,"E",20,"non-reserved",0),
+	("中間",3,"A",1,"non-reserved",0),
+	("中間",3,"B",1,"non-reserved",0),
+	("中間",3,"C",1,"non-reserved",0),
+	("中間",3,"D",1,"non-reserved",0),
+	("中間",3,"E",1,"non-reserved",0),
+	("中間",3,"A",2,"non-reserved",0),
+	("中間",3,"B",2,"non-reserved",0),
+	("中間",3,"C",2,"non-reserved",0),
+	("中間",3,"D",2,"non-reserved",0),
+	("中間",3,"E",2,"non-reserved",0),
+	("中間",3,"A",3,"non-reserved",0),
+	("中間",3,"B",3,"non-reserved",0),
+	("中間",3,"C",3,"non-reserved",0),
+	("中間",3,"D",3,"non-reserved",0),
+	("中間",3,"E",3,"non-reserved",0),
+	("中間",3,"A",4,"non-reserved",0),
+	("中間",3,"B",4,"non-reserved",0),
+	("中間",3,"C",4,"non-reserved",0),
+	("中間",3,"D",4,"non-reserved",0),
+	("中間",3,"E",4,"non-reserved",0),
+	("中間",3,"A",5,"non-reserved",0),
+	("中間",3,"B",5,"non-reserved",0),
+	("中間",3,"C",5,"non-reserved",0),
+	("中間",3,"D",5,"non-reserved",0),
+	("中間",3,"E",5,"non-reserved",0),
+	("中間",3,"A",6,"non-reserved",0),
+	("中間",3,"B",6,"non-reserved",0),
+	("中間",3,"C",6,"non-reserved",0),
+	("中間",3,"D",6,"non-reserved",0),
+	("中間",3,"E",6,"non-reserved",0),
+	("中間",3,"A",7,"non-reserved",0),
+	("中間",3,"B",7,"non-reserved",0),
+	("中間",3,"C",7,"non-reserved",0),
+	("中間",3,"D",7,"non-reserved",0),
+	("中間",3,"E",7,"non-reserved",0),
+	("中間",3,"A",8,"non-reserved",0),
+	("中間",3,"B",8,"non-reserved",0),
+	("中間",3,"C",8,"non-reserved",0),
+	("中間",3,"D",8,"non-reserved",0),
+	("中間",3,"E",8,"non-reserved",0),
+	("中間",3,"A",9,"non-reserved",0),
+	("中間",3,"B",9,"non-reserved",0),
+	("中間",3,"C",9,"non-reserved",0),
+	("中間",3,"D",9,"non-reserved",0),
+	("中間",3,"E",9,"non-reserved",0),
+	("中間",3,"A",10,"non-reserved",0),
+	("中間",3,"B",10,"non-reserved",0),
+	("中間",3,"C",10,"non-reserved",0),
+	("中間",3,"D",10,"non-reserved",0),
+	("中間",3,"E",10,"non-reserved",0),
+	("中間",3,"A",11,"non-reserved",1),
+	("中間",3,"B",11,"non-reserved",1),
+	("中間",3,"C",11,"non-reserved",1),
+	("中間",3,"D",11,"non-reserved",1),
+	("中間",3,"E",11,"non-reserved",1),
+	("中間",3,"A",12,"non-reserved",1),
+	("中間",3,"B",12,"non-reserved",1),
+	("中間",3,"C",12,"non-reserved",1),
+	("中間",3,"D",12,"non-reserved",1),
+	("中間",3,"E",12,"non-reserved",1),
+	("中間",3,"A",13,"non-reserved",1),
+	("中間",3,"B",13,"non-reserved",1),
+	("中間",3,"C",13,"non-reserved",1),
+	("中間",3,"D",13,"non-reserved",1),
+	("中間",3,"E",13,"non-reserved",1),
+	("中間",3,"A",14,"non-reserved",1),
+	("中間",3,"B",14,"non-reserved",1),
+	("中間",3,"C",14,"non-reserved",1),
+	("中間",3,"D",14,"non-reserved",1),
+	("中間",3,"E",14,"non-reserved",1),
+	("中間",3,"A",15,"non-reserved",1),
+	("中間",3,"B",15,"non-reserved",1),
+	("中間",3,"C",15,"non-reserved",1),
+	("中間",3,"D",15,"non-reserved",1),
+	("中間",3,"E",15,"non-reserved",1),
+	("中間",3,"A",16,"non-reserved",1),
+	("中間",3,"B",16,"non-reserved",1),
+	("中間",3,"C",16,"non-reserved",1),
+	("中間",3,"D",16,"non-reserved",1),
+	("中間",3,"E",16,"non-reserved",1),
+	("中間",4,"A",1,"non-reserved",0),
+	("中間",4,"B",1,"non-reserved",0),
+	("中間",4,"C",1,"non-reserved",0),
+	("中間",4,"D",1,"non-reserved",0),
+	("中間",4,"E",1,"non-reserved",0),
+	("中間",4,"A",2,"non-reserved",0),
+	("中間",4,"B",2,"non-reserved",0),
+	("中間",4,"C",2,"non-reserved",0),
+	("中間",4,"D",2,"non-reserved",0),
+	("中間",4,"E",2,"non-reserved",0),
+	("中間",4,"A",3,"non-reserved",0),
+	("中間",4,"B",3,"non-reserved",0),
+	("中間",4,"C",3,"non-reserved",0),
+	("中間",4,"D",3,"non-reserved",0),
+	("中間",4,"E",3,"non-reserved",0),
+	("中間",4,"A",4,"non-reserved",0),
+	("中間",4,"B",4,"non-reserved",0),
+	("中間",4,"C",4,"non-reserved",0),
+	("中間",4,"D",4,"non-reserved",0),
+	("中間",4,"E",4,"non-reserved",0),
+	("中間",4,"A",5,"non-reserved",0),
+	("中間",4,"B",5,"non-reserved",0),
+	("中間",4,"C",5,"non-reserved",0),
+	("中間",4,"D",5,"non-reserved",0),
+	("中間",4,"E",5,"non-reserved",0),
+	("中間",4,"A",6,"non-reserved",0),
+	("中間",4,"B",6,"non-reserved",0),
+	("中間",4,"C",6,"non-reserved",0),
+	("中間",4,"D",6,"non-reserved",0),
+	("中間",4,"E",6,"non-reserved",0),
+	("中間",4,"A",7,"non-reserved",0),
+	("中間",4,"B",7,"non-reserved",0),
+	("中間",4,"C",7,"non-reserved",0),
+	("中間",4,"D",7,"non-reserved",0),
+	("中間",4,"E",7,"non-reserved",0),
+	("中間",4,"A",8,"non-reserved",0),
+	("中間",4,"B",8,"non-reserved",0),
+	("中間",4,"C",8,"non-reserved",0),
+	("中間",4,"D",8,"non-reserved",0),
+	("中間",4,"E",8,"non-reserved",0),
+	("中間",4,"A",9,"non-reserved",0),
+	("中間",4,"B",9,"non-reserved",0),
+	("中間",4,"C",9,"non-reserved",0),
+	("中間",4,"D",9,"non-reserved",0),
+	("中間",4,"E",9,"non-reserved",0),
+	("中間",4,"A",10,"non-reserved",0),
+	("中間",4,"B",10,"non-reserved",0),
+	("中間",4,"C",10,"non-reserved",0),
+	("中間",4,"D",10,"non-reserved",0),
+	("中間",4,"E",10,"non-reserved",0),
+	("中間",4,"A",11,"non-reserved",0),
+	("中間",4,"B",11,"non-reserved",0),
+	("中間",4,"C",11,"non-reserved",0),
+	("中間",4,"D",11,"non-reserved",0),
+	("中間",4,"E",11,"non-reserved",0),
+	("中間",4,"A",12,"non-reserved",0),
+	("中間",4,"B",12,"non-reserved",0),
+	("中間",4,"C",12,"non-reserved",0),
+	("中間",4,"D",12,"non-reserved",0),
+	("中間",4,"E",12,"non-reserved",0),
+	("中間",4,"A",13,"non-reserved",0),
+	("中間",4,"B",13,"non-reserved",0),
+	("中間",4,"C",13,"non-reserved",0),
+	("中間",4,"D",13,"non-reserved",0),
+	("中間",4,"E",13,"non-reserved",0),
+	("中間",4,"A",14,"non-reserved",0),
+	("中間",4,"B",14,"non-reserved",0),
+	("中間",4,"C",14,"non-reserved",0),
+	("中間",4,"D",14,"non-reserved",0),
+	("中間",4,"E",14,"non-reserved",0),
+	("中間",4,"A",15,"non-reserved",0),
+	("中間",4,"B",15,"non-reserved",0),
+	("中間",4,"C",15,"non-reserved",0),
+	("中間",4,"D",15,"non-reserved",0),
+	("中間",4,"E",15,"non-reserved",0),
+	("中間",4,"A",16,"non-reserved",0),
+	("中間",4,"B",16,"non-reserved",0),
+	("中間",4,"C",16,"non-reserved",0),
+	("中間",4,"D",16,"non-reserved",0),
+	("中間",4,"E",16,"non-reserved",0),
+	("中間",4,"A",17,"non-reserved",0),
+	("中間",4,"B",17,"non-reserved",0),
+	("中間",4,"C",17,"non-reserved",0),
+	("中間",4,"D",17,"non-reserved",0),
+	("中間",4,"E",17,"non-reserved",0),
+	("中間",4,"A",18,"non-reserved",0),
+	("中間",4,"B",18,"non-reserved",0),
+	("中間",4,"C",18,"non-reserved",0),
+	("中間",4,"D",18,"non-reserved",0),
+	("中間",4,"E",18,"non-reserved",0),
+	("中間",4,"A",19,"non-reserved",0),
+	("中間",4,"B",19,"non-reserved",0),
+	("中間",4,"C",19,"non-reserved",0),
+	("中間",4,"D",19,"non-reserved",0),
+	("中間",4,"E",19,"non-reserved",0),
+	("中間",4,"A",20,"non-reserved",0),
+	("中間",4,"B",20,"non-reserved",0),
+	("中間",4,"C",20,"non-reserved",0),
+	("中間",4,"D",20,"non-reserved",0),
+	("中間",4,"E",20,"non-reserved",0),
+	("中間",5,"A",1,"non-reserved",0),
+	("中間",5,"B",1,"non-reserved",0),
+	("中間",5,"C",1,"non-reserved",0),
+	("中間",5,"D",1,"non-reserved",0),
+	("中間",5,"E",1,"non-reserved",0),
+	("中間",5,"A",2,"non-reserved",0),
+	("中間",5,"B",2,"non-reserved",0),
+	("中間",5,"C",2,"non-reserved",0),
+	("中間",5,"D",2,"non-reserved",0),
+	("中間",5,"E",2,"non-reserved",0),
+	("中間",5,"A",3,"non-reserved",0),
+	("中間",5,"B",3,"non-reserved",0),
+	("中間",5,"C",3,"non-reserved",0),
+	("中間",5,"D",3,"non-reserved",0),
+	("中間",5,"E",3,"non-reserved",0),
+	("中間",5,"A",4,"non-reserved",0),
+	("中間",5,"B",4,"non-reserved",0),
+	("中間",5,"C",4,"non-reserved",0),
+	("中間",5,"D",4,"non-reserved",0),
+	("中間",5,"E",4,"non-reserved",0),
+	("中間",5,"A",5,"non-reserved",0),
+	("中間",5,"B",5,"non-reserved",0),
+	("中間",5,"C",5,"non-reserved",0),
+	("中間",5,"D",5,"non-reserved",0),
+	("中間",5,"E",5,"non-reserved",0),
+	("中間",5,"A",6,"non-reserved",0),
+	("中間",5,"B",6,"non-reserved",0),
+	("中間",5,"C",6,"non-reserved",0),
+	("中間",5,"D",6,"non-reserved",0),
+	("中間",5,"E",6,"non-reserved",0),
+	("中間",5,"A",7,"non-reserved",0),
+	("中間",5,"B",7,"non-reserved",0),
+	("中間",5,"C",7,"non-reserved",0),
+	("中間",5,"D",7,"non-reserved",0),
+	("中間",5,"E",7,"non-reserved",0),
+	("中間",5,"A",8,"non-reserved",0),
+	("中間",5,"B",8,"non-reserved",0),
+	("中間",5,"C",8,"non-reserved",0),
+	("中間",5,"D",8,"non-reserved",0),
+	("中間",5,"E",8,"non-reserved",0),
+	("中間",5,"A",9,"non-reserved",0),
+	("中間",5,"B",9,"non-reserved",0),
+	("中間",5,"C",9,"non-reserved",0),
+	("中間",5,"D",9,"non-reserved",0),
+	("中間",5,"E",9,"non-reserved",0),
+	("中間",5,"A",10,"non-reserved",0),
+	("中間",5,"B",10,"non-reserved",0),
+	("中間",5,"C",10,"non-reserved",0),
+	("中間",5,"D",10,"non-reserved",0),
+	("中間",5,"E",10,"non-reserved",0),
+	("中間",5,"A",11,"non-reserved",1),
+	("中間",5,"B",11,"non-reserved",1),
+	("中間",5,"C",11,"non-reserved",1),
+	("中間",5,"D",11,"non-reserved",1),
+	("中間",5,"E",11,"non-reserved",1),
+	("中間",5,"A",12,"non-reserved",1),
+	("中間",5,"B",12,"non-reserved",1),
+	("中間",5,"C",12,"non-reserved",1),
+	("中間",5,"D",12,"non-reserved",1),
+	("中間",5,"E",12,"non-reserved",1),
+	("中間",5,"A",13,"non-reserved",1),
+	("中間",5,"B",13,"non-reserved",1),
+	("中間",5,"C",13,"non-reserved",1),
+	("中間",5,"D",13,"non-reserved",1),
+	("中間",5,"E",13,"non-reserved",1),
+	("中間",5,"A",14,"non-reserved",1),
+	("中間",5,"B",14,"non-reserved",1),
+	("中間",5,"C",14,"non-reserved",1),
+	("中間",5,"D",14,"non-reserved",1),
+	("中間",5,"E",14,"non-reserved",1),
+	("中間",5,"A",15,"non-reserved",1),
+	("中間",5,"B",15,"non-reserved",1),
+	("中間",5,"C",15,"non-reserved",1),
+	("中間",5,"D",15,"non-reserved",1),
+	("中間",5,"E",15,"non-reserved",1),
+	("中間",5,"A",16,"non-reserved",1),
+	("中間",5,"B",16,"non-reserved",1),
+	("中間",5,"C",16,"non-reserved",1),
+	("中間",5,"D",16,"non-reserved",1),
+	("中間",5,"E",16,"non-reserved",1),
+	("中間",6,"A",1,"reserved",0),
+	("中間",6,"B",1,"reserved",0),
+	("中間",6,"C",1,"reserved",0),
+	("中間",6,"D",1,"reserved",0),
+	("中間",6,"E",1,"reserved",0),
+	("中間",6,"A",2,"reserved",0),
+	("中間",6,"B",2,"reserved",0),
+	("中間",6,"C",2,"reserved",0),
+	("中間",6,"D",2,"reserved",0),
+	("中間",6,"E",2,"reserved",0),
+	("中間",6,"A",3,"reserved",0),
+	("中間",6,"B",3,"reserved",0),
+	("中間",6,"C",3,"reserved",0),
+	("中間",6,"D",3,"reserved",0),
+	("中間",6,"E",3,"reserved",0),
+	("中間",6,"A",4,"reserved",0),
+	("中間",6,"B",4,"reserved",0),
+	("中間",6,"C",4,"reserved",0),
+	("中間",6,"D",4,"reserved",0),
+	("中間",6,"E",4,"reserved",0),
+	("中間",6,"A",5,"reserved",0),
+	("中間",6,"B",5,"reserved",0),
+	("中間",6,"C",5,"reserved",0),
+	("中間",6,"D",5,"reserved",0),
+	("中間",6,"E",5,"reserved",0),
+	("中間",6,"A",6,"reserved",0),
+	("中間",6,"B",6,"reserved",0),
+	("中間",6,"C",6,"reserved",0),
+	("中間",6,"D",6,"reserved",0),
+	("中間",6,"E",6,"reserved",0),
+	("中間",6,"A",7,"reserved",0),
+	("中間",6,"B",7,"reserved",0),
+	("中間",6,"C",7,"reserved",0),
+	("中間",6,"D",7,"reserved",0),
+	("中間",6,"E",7,"reserved",0),
+	("中間",6,"A",8,"reserved",0),
+	("中間",6,"B",8,"reserved",0),
+	("中間",6,"C",8,"reserved",0),
+	("中間",6,"D",8,"reserved",0),
+	("中間",6,"E",8,"reserved",0),
+	("中間",6,"A",9,"reserved",0),
+	("中間",6,"B",9,"reserved",0),
+	("中間",6,"C",9,"reserved",0),
+	("中間",6,"D",9,"reserved",0),
+	("中間",6,"E",9,"reserved",0),
+	("中間",6,"A",10,"reserved",0),
+	("中間",6,"B",10,"reserved",0),
+	("中間",6,"C",10,"reserved",0),
+	("中間",6,"D",10,"reserved",0),
+	("中間",6,"E",10,"reserved",0),
+	("中間",6,"A",11,"reserved",0),
+	("中間",6,"B",11,"reserved",0),
+	("中間",6,"C",11,"reserved",0),
+	("中間",6,"D",11,"reserved",0),
+	("中間",6,"E",11,"reserved",0),
+	("中間",6,"A",12,"reserved",0),
+	("中間",6,"B",12,"reserved",0),
+	("中間",6,"C",12,"reserved",0),
+	("中間",6,"D",12,"reserved",0),
+	("中間",6,"E",12,"reserved",0),
+	("中間",6,"A",13,"reserved",0),
+	("中間",6,"B",13,"reserved",0),
+	("中間",6,"C",13,"reserved",0),
+	("中間",6,"D",13,"reserved",0),
+	("中間",6,"E",13,"reserved",0),
+	("中間",6,"A",14,"reserved",0),
+	("中間",6,"B",14,"reserved",0),
+	("中間",6,"C",14,"reserved",0),
+	("中間",6,"D",14,"reserved",0),
+	("中間",6,"E",14,"reserved",0),
+	("中間",6,"A",15,"reserved",0),
+	("中間",6,"B",15,"reserved",0),
+	("中間",6,"C",15,"reserved",0),
+	("中間",6,"D",15,"reserved",0),
+	("中間",6,"E",15,"reserved",0),
+	("中間",6,"A",16,"reserved",0),
+	("中間",6,"B",16,"reserved",0),
+	("中間",6,"C",16,"reserved",0),
+	("中間",6,"D",16,"reserved",0),
+	("中間",6,"E",16,"reserved",0),
+	("中間",6,"A",17,"reserved",0),
+	("中間",6,"B",17,"reserved",0),
+	("中間",6,"C",17,"reserved",0),
+	("中間",6,"D",17,"reserved",0),
+	("中間",6,"E",17,"reserved",0),
+	("中間",6,"A",18,"reserved",0),
+	("中間",6,"B",18,"reserved",0),
+	("中間",6,"C",18,"reserved",0),
+	("中間",6,"D",18,"reserved",0),
+	("中間",6,"E",18,"reserved",0),
+	("中間",6,"A",19,"reserved",0),
+	("中間",6,"B",19,"reserved",0),
+	("中間",6,"C",19,"reserved",0),
+	("中間",6,"D",19,"reserved",0),
+	("中間",6,"E",19,"reserved",0),
+	("中間",6,"A",20,"reserved",0),
+	("中間",6,"B",20,"reserved",0),
+	("中間",6,"C",20,"reserved",0),
+	("中間",6,"D",20,"reserved",0),
+	("中間",6,"E",20,"reserved",0),
+	("中間",7,"A",1,"reserved",0),
+	("中間",7,"B",1,"reserved",0),
+	("中間",7,"C",1,"reserved",0),
+	("中間",7,"D",1,"reserved",0),
+	("中間",7,"E",1,"reserved",0),
+	("中間",7,"A",2,"reserved",0),
+	("中間",7,"B",2,"reserved",0),
+	("中間",7,"C",2,"reserved",0),
+	("中間",7,"D",2,"reserved",0),
+	("中間",7,"E",2,"reserved",0),
+	("中間",7,"A",3,"reserved",0),
+	("中間",7,"B",3,"reserved",0),
+	("中間",7,"C",3,"reserved",0),
+	("中間",7,"D",3,"reserved",0),
+	("中間",7,"E",3,"reserved",0),
+	("中間",7,"A",4,"reserved",0),
+	("中間",7,"B",4,"reserved",0),
+	("中間",7,"C",4,"reserved",0),
+	("中間",7,"D",4,"reserved",0),
+	("中間",7,"E",4,"reserved",0),
+	("中間",7,"A",5,"reserved",0),
+	("中間",7,"B",5,"reserved",0),
+	("中間",7,"C",5,"reserved",0),
+	("中間",7,"D",5,"reserved",0),
+	("中間",7,"E",5,"reserved",0),
+	("中間",7,"A",6,"reserved",0),
+	("中間",7,"B",6,"reserved",0),
+	("中間",7,"C",6,"reserved",0),
+	("中間",7,"D",6,"reserved",0),
+	("中間",7,"E",6,"reserved",0),
+	("中間",7,"A",7,"reserved",0),
+	("中間",7,"B",7,"reserved",0),
+	("中間",7,"C",7,"reserved",0),
+	("中間",7,"D",7,"reserved",0),
+	("中間",7,"E",7,"reserved",0),
+	("中間",7,"A",8,"reserved",0),
+	("中間",7,"B",8,"reserved",0),
+	("中間",7,"C",8,"reserved",0),
+	("中間",7,"D",8,"reserved",0),
+	("中間",7,"E",8,"reserved",0),
+	("中間",7,"A",9,"reserved",0),
+	("中間",7,"B",9,"reserved",0),
+	("中間",7,"C",9,"reserved",0),
+	("中間",7,"D",9,"reserved",0),
+	("中間",7,"E",9,"reserved",0),
+	("中間",7,"A",10,"reserved",0),
+	("中間",7,"B",10,"reserved",0),
+	("中間",7,"C",10,"reserved",0),
+	("中間",7,"D",10,"reserved",0),
+	("中間",7,"E",10,"reserved",0),
+	("中間",7,"A",11,"reserved",1),
+	("中間",7,"B",11,"reserved",1),
+	("中間",7,"C",11,"reserved",1),
+	("中間",7,"D",11,"reserved",1),
+	("中間",7,"E",11,"reserved",1),
+	("中間",7,"A",12,"reserved",1),
+	("中間",7,"B",12,"reserved",1),
+	("中間",7,"C",12,"reserved",1),
+	("中間",7,"D",12,"reserved",1),
+	("中間",7,"E",12,"reserved",1),
+	("中間",7,"A",13,"reserved",1),
+	("中間",7,"B",13,"reserved",1),
+	("中間",7,"C",13,"reserved",1),
+	("中間",7,"D",13,"reserved",1),
+	("中間",7,"E",13,"reserved",1),
+	("中間",7,"A",14,"reserved",1),
+	("中間",7,"B",14,"reserved",1),
+	("中間",7,"C",14,"reserved",1),
+	("中間",7,"D",14,"reserved",1),
+	("中間",7,"E",14,"reserved",1),
+	("中間",7,"A",15,"reserved",1),
+	("中間",7,"B",15,"reserved",1),
+	("中間",7,"C",15,"reserved",1),
+	("中間",7,"D",15,"reserved",1),
+	("中間",7,"E",15,"reserved",1),
+	("中間",7,"A",16,"reserved",1),
+	("中間",7,"B",16,"reserved",1),
+	("中間",7,"C",16,"reserved",1),
+	("中間",7,"D",16,"reserved",1),
+	("中間",7,"E",16,"reserved",1),
+	("中間",8,"A",1,"premium",0),
+	("中間",8,"B",1,"premium",0),
+	("中間",8,"C",1,"premium",0),
+	("中間",8,"D",1,"premium",0),
+	("中間",8,"A",2,"premium",0),
+	("中間",8,"B",2,"premium",0),
+	("中間",8,"C",2,"premium",0),
+	("中間",8,"D",2,"premium",0),
+	("中間",8,"A",3,"premium",0),
+	("中間",8,"B",3,"premium",0),
+	("中間",8,"C",3,"premium",0),
+	("中間",8,"D",3,"premium",0),
+	("中間",8,"A",4,"premium",0),
+	("中間",8,"B",4,"premium",0),
+	("中間",8,"C",4,"premium",0),
+	("中間",8,"D",4,"premium",0),
+	("中間",8,"A",5,"premium",0),
+	("中間",8,"B",5,"premium",0),
+	("中間",8,"C",5,"premium",0),
+	("中間",8,"D",5,"premium",0),
+	("中間",8,"A",6,"premium",0),
+	("中間",8,"B",6,"premium",0),
+	("中間",8,"C",6,"premium",0),
+	("中間",8,"D",6,"premium",0),
+	("中間",8,"A",7,"premium",0),
+	("中間",8,"B",7,"premium",0),
+	("中間",8,"C",7,"premium",0),
+	("中間",8,"D",7,"premium",0),
+	("中間",8,"A",8,"premium",0),
+	("中間",8,"B",8,"premium",0),
+	("中間",8,"C",8,"premium",0),
+	("中間",8,"D",8,"premium",0),
+	("中間",8,"A",9,"premium",0),
+	("中間",8,"B",9,"premium",0),
+	("中間",8,"C",9,"premium",0),
+	("中間",8,"D",9,"premium",0),
+	("中間",8,"A",10,"premium",0),
+	("中間",8,"B",10,"premium",0),
+	("中間",8,"C",10,"premium",0),
+	("中間",8,"D",10,"premium",0),
+	("中間",8,"A",11,"premium",0),
+	("中間",8,"B",11,"premium",0),
+	("中間",8,"C",11,"premium",0),
+	("中間",8,"D",11,"premium",0),
+	("中間",8,"A",12,"premium",0),
+	("中間",8,"B",12,"premium",0),
+	("中間",8,"C",12,"premium",0),
+	("中間",8,"D",12,"premium",0),
+	("中間",8,"A",13,"premium",0),
+	("中間",8,"B",13,"premium",0),
+	("中間",8,"C",13,"premium",0),
+	("中間",8,"D",13,"premium",0),
+	("中間",8,"A",14,"premium",0),
+	("中間",8,"B",14,"premium",0),
+	("中間",8,"C",14,"premium",0),
+	("中間",8,"D",14,"premium",0),
+	("中間",8,"A",15,"premium",0),
+	("中間",8,"B",15,"premium",0),
+	("中間",8,"C",15,"premium",0),
+	("中間",8,"D",15,"premium",0),
+	("中間",8,"A",16,"premium",0),
+	("中間",8,"B",16,"premium",0),
+	("中間",8,"C",16,"premium",0),
+	("中間",8,"D",16,"premium",0),
+	("中間",8,"A",17,"premium",0),
+	("中間",8,"B",17,"premium",0),
+	("中間",8,"C",17,"premium",0),
+	("中間",8,"D",17,"premium",0),
+	("中間",9,"A",1,"premium",0),
+	("中間",9,"B",1,"premium",0),
+	("中間",9,"C",1,"premium",0),
+	("中間",9,"D",1,"premium",0),
+	("中間",9,"A",2,"premium",0),
+	("中間",9,"B",2,"premium",0),
+	("中間",9,"C",2,"premium",0),
+	("中間",9,"D",2,"premium",0),
+	("中間",9,"A",3,"premium",0),
+	("中間",9,"B",3,"premium",0),
+	("中間",9,"C",3,"premium",0),
+	("中間",9,"D",3,"premium",0),
+	("中間",9,"A",4,"premium",0),
+	("中間",9,"B",4,"premium",0),
+	("中間",9,"C",4,"premium",0),
+	("中間",9,"D",4,"premium",0),
+	("中間",9,"A",5,"premium",0),
+	("中間",9,"B",5,"premium",0),
+	("中間",9,"C",5,"premium",0),
+	("中間",9,"D",5,"premium",0),
+	("中間",9,"A",6,"premium",0),
+	("中間",9,"B",6,"premium",0),
+	("中間",9,"C",6,"premium",0),
+	("中間",9,"D",6,"premium",0),
+	("中間",9,"A",7,"premium",0),
+	("中間",9,"B",7,"premium",0),
+	("中間",9,"C",7,"premium",0),
+	("中間",9,"D",7,"premium",0),
+	("中間",9,"A",8,"premium",0),
+	("中間",9,"B",8,"premium",0),
+	("中間",9,"C",8,"premium",0),
+	("中間",9,"D",8,"premium",0),
+	("中間",9,"A",9,"premium",0),
+	("中間",9,"B",9,"premium",0),
+	("中間",9,"C",9,"premium",0),
+	("中間",9,"D",9,"premium",0),
+	("中間",9,"A",10,"premium",0),
+	("中間",9,"B",10,"premium",0),
+	("中間",9,"C",10,"premium",0),
+	("中間",9,"D",10,"premium",0),
+	("中間",9,"A",11,"premium",0),
+	("中間",9,"B",11,"premium",0),
+	("中間",9,"C",11,"premium",0),
+	("中間",9,"D",11,"premium",0),
+	("中間",9,"A",12,"premium",0),
+	("中間",9,"B",12,"premium",0),
+	("中間",9,"C",12,"premium",0),
+	("中間",9,"D",12,"premium",0),
+	("中間",9,"A",13,"premium",0),
+	("中間",9,"B",13,"premium",0),
+	("中間",9,"C",13,"premium",0),
+	("中間",9,"D",13,"premium",0),
+	("中間",9,"A",14,"premium",0),
+	("中間",9,"B",14,"premium",0),
+	("中間",9,"C",14,"premium",0),
+	("中間",9,"D",14,"premium",0),
+	("中間",9,"A",15,"premium",0),
+	("中間",9,"B",15,"premium",0),
+	("中間",9,"C",15,"premium",0),
+	("中間",9,"D",15,"premium",0),
+	("中間",9,"A",16,"premium",0),
+	("中間",9,"B",16,"premium",0),
+	("中間",9,"C",16,"premium",0),
+	("中間",9,"D",16,"premium",0),
+	("中間",9,"A",17,"premium",0),
+	("中間",9,"B",17,"premium",0),
+	("中間",9,"C",17,"premium",0),
+	("中間",9,"D",17,"premium",0),
+	("中間",10,"A",1,"premium",0),
+	("中間",10,"B",1,"premium",0),
+	("中間",10,"C",1,"premium",0),
+	("中間",10,"D",1,"premium",0),
+	("中間",10,"A",2,"premium",0),
+	("中間",10,"B",2,"premium",0),
+	("中間",10,"C",2,"premium",0),
+	("中間",10,"D",2,"premium",0),
+	("中間",10,"A",3,"premium",0),
+	("中間",10,"B",3,"premium",0),
+	("中間",10,"C",3,"premium",0),
+	("中間",10,"D",3,"premium",0),
+	("中間",10,"A",4,"premium",0),
+	("中間",10,"B",4,"premium",0),
+	("中間",10,"C",4,"premium",0),
+	("中間",10,"D",4,"premium",0),
+	("中間",10,"A",5,"premium",0),
+	("中間",10,"B",5,"premium",0),
+	("中間",10,"C",5,"premium",0),
+	("中間",10,"D",5,"premium",0),
+	("中間",10,"A",6,"premium",0),
+	("中間",10,"B",6,"premium",0),
+	("中間",10,"C",6,"premium",0),
+	("中間",10,"D",6,"premium",0),
+	("中間",10,"A",7,"premium",0),
+	("中間",10,"B",7,"premium",0),
+	("中間",10,"C",7,"premium",0),
+	("中間",10,"D",7,"premium",0),
+	("中間",10,"A",8,"premium",0),
+	("中間",10,"B",8,"premium",0),
+	("中間",10,"C",8,"premium",0),
+	("中間",10,"D",8,"premium",0),
+	("中間",10,"A",9,"premium",0),
+	("中間",10,"B",9,"premium",0),
+	("中間",10,"C",9,"premium",0),
+	("中間",10,"D",9,"premium",0),
+	("中間",10,"A",10,"premium",0),
+	("中間",10,"B",10,"premium",0),
+	("中間",10,"C",10,"premium",0),
+	("中間",10,"D",10,"premium",0),
+	("中間",10,"A",11,"premium",0),
+	("中間",10,"B",11,"premium",0),
+	("中間",10,"C",11,"premium",0),
+	("中間",10,"D",11,"premium",0),
+	("中間",10,"A",12,"premium",0),
+	("中間",10,"B",12,"premium",0),
+	("中間",10,"C",12,"premium",0),
+	("中間",10,"D",12,"premium",0),
+	("中間",10,"A",13,"premium",0),
+	("中間",10,"B",13,"premium",0),
+	("中間",10,"C",13,"premium",0),
+	("中間",10,"D",13,"premium",0),
+	("中間",10,"A",14,"premium",0),
+	("中間",10,"B",14,"premium",0),
+	("中間",10,"C",14,"premium",0),
+	("中間",10,"D",14,"premium",0),
+	("中間",10,"A",15,"premium",0),
+	("中間",10,"B",15,"premium",0),
+	("中間",10,"C",15,"premium",0),
+	("中間",10,"D",15,"premium",0),
+	("中間",10,"A",16,"premium",0),
+	("中間",10,"B",16,"premium",0),
+	("中間",10,"C",16,"premium",0),
+	("中間",10,"D",16,"premium",0),
+	("中間",10,"A",17,"premium",0),
+	("中間",10,"B",17,"premium",0),
+	("中間",10,"C",17,"premium",0),
+	("中間",10,"D",17,"premium",0),
+	("中間",11,"A",1,"reserved",0),
+	("中間",11,"B",1,"reserved",0),
+	("中間",11,"C",1,"reserved",0),
+	("中間",11,"D",1,"reserved",0),
+	("中間",11,"E",1,"reserved",0),
+	("中間",11,"A",2,"reserved",0),
+	("中間",11,"B",2,"reserved",0),
+	("中間",11,"C",2,"reserved",0),
+	("中間",11,"D",2,"reserved",0),
+	("中間",11,"E",2,"reserved",0),
+	("中間",11,"A",3,"reserved",0),
+	("中間",11,"B",3,"reserved",0),
+	("中間",11,"C",3,"reserved",0),
+	("中間",11,"D",3,"reserved",0),
+	("中間",11,"E",3,"reserved",0),
+	("中間",11,"A",4,"reserved",0),
+	("中間",11,"B",4,"reserved",0),
+	("中間",11,"C",4,"reserved",0),
+	("中間",11,"D",4,"reserved",0),
+	("中間",11,"E",4,"reserved",0),
+	("中間",11,"A",5,"reserved",0),
+	("中間",11,"B",5,"reserved",0),
+	("中間",11,"C",5,"reserved",0),
+	("中間",11,"D",5,"reserved",0),
+	("中間",11,"E",5,"reserved",0),
+	("中間",11,"A",6,"reserved",0),
+	("中間",11,"B",6,"reserved",0),
+	("中間",11,"C",6,"reserved",0),
+	("中間",11,"D",6,"reserved",0),
+	("中間",11,"E",6,"reserved",0),
+	("中間",11,"A",7,"reserved",0),
+	("中間",11,"B",7,"reserved",0),
+	("中間",11,"C",7,"reserved",0),
+	("中間",11,"D",7,"reserved",0),
+	("中間",11,"E",7,"reserved",0),
+	("中間",11,"A",8,"reserved",0),
+	("中間",11,"B",8,"reserved",0),
+	("中間",11,"C",8,"reserved",0),
+	("中間",11,"D",8,"reserved",0),
+	("中間",11,"E",8,"reserved",0),
+	("中間",11,"A",9,"reserved",0),
+	("中間",11,"B",9,"reserved",0),
+	("中間",11,"C",9,"reserved",0),
+	("中間",11,"D",9,"reserved",0),
+	("中間",11,"E",9,"reserved",0),
+	("中間",11,"A",10,"reserved",0),
+	("中間",11,"B",10,"reserved",0),
+	("中間",11,"C",10,"reserved",0),
+	("中間",11,"D",10,"reserved",0),
+	("中間",11,"E",10,"reserved",0),
+	("中間",11,"A",11,"reserved",1),
+	("中間",11,"B",11,"reserved",1),
+	("中間",11,"C",11,"reserved",1),
+	("中間",11,"D",11,"reserved",1),
+	("中間",11,"E",11,"reserved",1),
+	("中間",11,"A",12,"reserved",1),
+	("中間",11,"B",12,"reserved",1),
+	("中間",11,"C",12,"reserved",1),
+	("中間",11,"D",12,"reserved",1),
+	("中間",11,"E",12,"reserved",1),
+	("中間",11,"A",13,"reserved",1),
+	("中間",11,"B",13,"reserved",1),
+	("中間",11,"C",13,"reserved",1),
+	("中間",11,"D",13,"reserved",1),
+	("中間",11,"E",13,"reserved",1),
+	("中間",11,"A",14,"reserved",1),
+	("中間",11,"B",14,"reserved",1),
+	("中間",11,"C",14,"reserved",1),
+	("中間",11,"D",14,"reserved",1),
+	("中間",11,"E",14,"reserved",1),
+	("中間",11,"A",15,"reserved",1),
+	("中間",11,"B",15,"reserved",1),
+	("中間",11,"C",15,"reserved",1),
+	("中間",11,"D",15,"reserved",1),
+	("中間",11,"E",15,"reserved",1),
+	("中間",11,"A",16,"reserved",1),
+	("中間",11,"B",16,"reserved",1),
+	("中間",11,"C",16,"reserved",1),
+	("中間",11,"D",16,"reserved",1),
+	("中間",11,"E",16,"reserved",1),
+	("中間",12,"A",1,"reserved",0),
+	("中間",12,"B",1,"reserved",0),
+	("中間",12,"C",1,"reserved",0),
+	("中間",12,"D",1,"reserved",0),
+	("中間",12,"E",1,"reserved",0),
+	("中間",12,"A",2,"reserved",0),
+	("中間",12,"B",2,"reserved",0),
+	("中間",12,"C",2,"reserved",0),
+	("中間",12,"D",2,"reserved",0),
+	("中間",12,"E",2,"reserved",0),
+	("中間",12,"A",3,"reserved",0),
+	("中間",12,"B",3,"reserved",0),
+	("中間",12,"C",3,"reserved",0),
+	("中間",12,"D",3,"reserved",0),
+	("中間",12,"E",3,"reserved",0),
+	("中間",12,"A",4,"reserved",0),
+	("中間",12,"B",4,"reserved",0),
+	("中間",12,"C",4,"reserved",0),
+	("中間",12,"D",4,"reserved",0),
+	("中間",12,"E",4,"reserved",0),
+	("中間",12,"A",5,"reserved",0),
+	("中間",12,"B",5,"reserved",0),
+	("中間",12,"C",5,"reserved",0),
+	("中間",12,"D",5,"reserved",0),
+	("中間",12,"E",5,"reserved",0),
+	("中間",12,"A",6,"reserved",0),
+	("中間",12,"B",6,"reserved",0),
+	("中間",12,"C",6,"reserved",0),
+	("中間",12,"D",6,"reserved",0),
+	("中間",12,"E",6,"reserved",0),
+	("中間",12,"A",7,"reserved",0),
+	("中間",12,"B",7,"reserved",0),
+	("中間",12,"C",7,"reserved",0),
+	("中間",12,"D",7,"reserved",0),
+	("中間",12,"E",7,"reserved",0),
+	("中間",12,"A",8,"reserved",0),
+	("中間",12,"B",8,"reserved",0),
+	("中間",12,"C",8,"reserved",0),
+	("中間",12,"D",8,"reserved",0),
+	("中間",12,"E",8,"reserved",0),
+	("中間",12,"A",9,"reserved",0),
+	("中間",12,"B",9,"reserved",0),
+	("中間",12,"C",9,"reserved",0),
+	("中間",12,"D",9,"reserved",0),
+	("中間",12,"E",9,"reserved",0),
+	("中間",12,"A",10,"reserved",0),
+	("中間",12,"B",10,"reserved",0),
+	("中間",12,"C",10,"reserved",0),
+	("中間",12,"D",10,"reserved",0),
+	("中間",12,"E",10,"reserved",0),
+	("中間",12,"A",11,"reserved",0),
+	("中間",12,"B",11,"reserved",0),
+	("中間",12,"C",11,"reserved",0),
+	("中間",12,"D",11,"reserved",0),
+	("中間",12,"E",11,"reserved",0),
+	("中間",12,"A",12,"reserved",0),
+	("中間",12,"B",12,"reserved",0),
+	("中間",12,"C",12,"reserved",0),
+	("中間",12,"D",12,"reserved",0),
+	("中間",12,"E",12,"reserved",0),
+	("中間",12,"A",13,"reserved",0),
+	("中間",12,"B",13,"reserved",0),
+	("中間",12,"C",13,"reserved",0),
+	("中間",12,"D",13,"reserved",0),
+	("中間",12,"E",13,"reserved",0),
+	("中間",12,"A",14,"reserved",0),
+	("中間",12,"B",14,"reserved",0),
+	("中間",12,"C",14,"reserved",0),
+	("中間",12,"D",14,"reserved",0),
+	("中間",12,"E",14,"reserved",0),
+	("中間",12,"A",15,"reserved",0),
+	("中間",12,"B",15,"reserved",0),
+	("中間",12,"C",15,"reserved",0),
+	("中間",12,"D",15,"reserved",0),
+	("中間",12,"E",15,"reserved",0),
+	("中間",12,"A",16,"reserved",0),
+	("中間",12,"B",16,"reserved",0),
+	("中間",12,"C",16,"reserved",0),
+	("中間",12,"D",16,"reserved",0),
+	("中間",12,"E",16,"reserved",0),
+	("中間",12,"A",17,"reserved",0),
+	("中間",12,"B",17,"reserved",0),
+	("中間",12,"C",17,"reserved",0),
+	("中間",12,"D",17,"reserved",0),
+	("中間",12,"E",17,"reserved",0),
+	("中間",12,"A",18,"reserved",0),
+	("中間",12,"B",18,"reserved",0),
+	("中間",12,"C",18,"reserved",0),
+	("中間",12,"D",18,"reserved",0),
+	("中間",12,"E",18,"reserved",0),
+	("中間",12,"A",19,"reserved",0),
+	("中間",12,"B",19,"reserved",0),
+	("中間",12,"C",19,"reserved",0),
+	("中間",12,"D",19,"reserved",0),
+	("中間",12,"E",19,"reserved",0),
+	("中間",12,"A",20,"reserved",0),
+	("中間",12,"B",20,"reserved",0),
+	("中間",12,"C",20,"reserved",0),
+	("中間",12,"D",20,"reserved",0),
+	("中間",12,"E",20,"reserved",0),
+	("中間",13,"A",1,"reserved",0),
+	("中間",13,"B",1,"reserved",0),
+	("中間",13,"C",1,"reserved",0),
+	("中間",13,"D",1,"reserved",0),
+	("中間",13,"E",1,"reserved",0),
+	("中間",13,"A",2,"reserved",0),
+	("中間",13,"B",2,"reserved",0),
+	("中間",13,"C",2,"reserved",0),
+	("中間",13,"D",2,"reserved",0),
+	("中間",13,"E",2,"reserved",0),
+	("中間",13,"A",3,"reserved",0),
+	("中間",13,"B",3,"reserved",0),
+	("中間",13,"C",3,"reserved",0),
+	("中間",13,"D",3,"reserved",0),
+	("中間",13,"E",3,"reserved",0),
+	("中間",13,"A",4,"reserved",0),
+	("中間",13,"B",4,"reserved",0),
+	("中間",13,"C",4,"reserved",0),
+	("中間",13,"D",4,"reserved",0),
+	("中間",13,"E",4,"reserved",0),
+	("中間",13,"A",5,"reserved",0),
+	("中間",13,"B",5,"reserved",0),
+	("中間",13,"C",5,"reserved",0),
+	("中間",13,"D",5,"reserved",0),
+	("中間",13,"E",5,"reserved",0),
+	("中間",13,"A",6,"reserved",0),
+	("中間",13,"B",6,"reserved",0),
+	("中間",13,"C",6,"reserved",0),
+	("中間",13,"D",6,"reserved",0),
+	("中間",13,"E",6,"reserved",0),
+	("中間",13,"A",7,"reserved",0),
+	("中間",13,"B",7,"reserved",0),
+	("中間",13,"C",7,"reserved",0),
+	("中間",13,"D",7,"reserved",0),
+	("中間",13,"E",7,"reserved",0),
+	("中間",13,"A",8,"reserved",0),
+	("中間",13,"B",8,"reserved",0),
+	("中間",13,"C",8,"reserved",0),
+	("中間",13,"D",8,"reserved",0),
+	("中間",13,"E",8,"reserved",0),
+	("中間",13,"A",9,"reserved",0),
+	("中間",13,"B",9,"reserved",0),
+	("中間",13,"C",9,"reserved",0),
+	("中間",13,"D",9,"reserved",0),
+	("中間",13,"E",9,"reserved",0),
+	("中間",13,"A",10,"reserved",0),
+	("中間",13,"B",10,"reserved",0),
+	("中間",13,"C",10,"reserved",0),
+	("中間",13,"D",10,"reserved",0),
+	("中間",13,"E",10,"reserved",0),
+	("中間",13,"A",11,"reserved",1),
+	("中間",13,"B",11,"reserved",1),
+	("中間",13,"C",11,"reserved",1),
+	("中間",13,"D",11,"reserved",1),
+	("中間",13,"E",11,"reserved",1),
+	("中間",13,"A",12,"reserved",1),
+	("中間",13,"B",12,"reserved",1),
+	("中間",13,"C",12,"reserved",1),
+	("中間",13,"D",12,"reserved",1),
+	("中間",13,"E",12,"reserved",1),
+	("中間",13,"A",13,"reserved",1),
+	("中間",13,"B",13,"reserved",1),
+	("中間",13,"C",13,"reserved",1),
+	("中間",13,"D",13,"reserved",1),
+	("中間",13,"E",13,"reserved",1),
+	("中間",13,"A",14,"reserved",1),
+	("中間",13,"B",14,"reserved",1),
+	("中間",13,"C",14,"reserved",1),
+	("中間",13,"D",14,"reserved",1),
+	("中間",13,"E",14,"reserved",1),
+	("中間",13,"A",15,"reserved",1),
+	("中間",13,"B",15,"reserved",1),
+	("中間",13,"C",15,"reserved",1),
+	("中間",13,"D",15,"reserved",1),
+	("中間",13,"E",15,"reserved",1),
+	("中間",13,"A",16,"reserved",1),
+	("中間",13,"B",16,"reserved",1),
+	("中間",13,"C",16,"reserved",1),
+	("中間",13,"D",16,"reserved",1),
+	("中間",13,"E",16,"reserved",1),
+	("中間",14,"A",1,"reserved",0),
+	("中間",14,"B",1,"reserved",0),
+	("中間",14,"C",1,"reserved",0),
+	("中間",14,"D",1,"reserved",0),
+	("中間",14,"E",1,"reserved",0),
+	("中間",14,"A",2,"reserved",0),
+	("中間",14,"B",2,"reserved",0),
+	("中間",14,"C",2,"reserved",0),
+	("中間",14,"D",2,"reserved",0),
+	("中間",14,"E",2,"reserved",0),
+	("中間",14,"A",3,"reserved",0),
+	("中間",14,"B",3,"reserved",0),
+	("中間",14,"C",3,"reserved",0),
+	("中間",14,"D",3,"reserved",0),
+	("中間",14,"E",3,"reserved",0),
+	("中間",14,"A",4,"reserved",0),
+	("中間",14,"B",4,"reserved",0),
+	("中間",14,"C",4,"reserved",0),
+	("中間",14,"D",4,"reserved",0),
+	("中間",14,"E",4,"reserved",0),
+	("中間",14,"A",5,"reserved",0),
+	("中間",14,"B",5,"reserved",0),
+	("中間",14,"C",5,"reserved",0),
+	("中間",14,"D",5,"reserved",0),
+	("中間",14,"E",5,"reserved",0),
+	("中間",14,"A",6,"reserved",0),
+	("中間",14,"B",6,"reserved",0),
+	("中間",14,"C",6,"reserved",0),
+	("中間",14,"D",6,"reserved",0),
+	("中間",14,"E",6,"reserved",0),
+	("中間",14,"A",7,"reserved",0),
+	("中間",14,"B",7,"reserved",0),
+	("中間",14,"C",7,"reserved",0),
+	("中間",14,"D",7,"reserved",0),
+	("中間",14,"E",7,"reserved",0),
+	("中間",14,"A",8,"reserved",0),
+	("中間",14,"B",8,"reserved",0),
+	("中間",14,"C",8,"reserved",0),
+	("中間",14,"D",8,"reserved",0),
+	("中間",14,"E",8,"reserved",0),
+	("中間",14,"A",9,"reserved",0),
+	("中間",14,"B",9,"reserved",0),
+	("中間",14,"C",9,"reserved",0),
+	("中間",14,"D",9,"reserved",0),
+	("中間",14,"E",9,"reserved",0),
+	("中間",14,"A",10,"reserved",0),
+	("中間",14,"B",10,"reserved",0),
+	("中間",14,"C",10,"reserved",0),
+	("中間",14,"D",10,"reserved",0),
+	("中間",14,"E",10,"reserved",0),
+	("中間",14,"A",11,"reserved",0),
+	("中間",14,"B",11,"reserved",0),
+	("中間",14,"C",11,"reserved",0),
+	("中間",14,"D",11,"reserved",0),
+	("中間",14,"E",11,"reserved",0),
+	("中間",14,"A",12,"reserved",0),
+	("中間",14,"B",12,"reserved",0),
+	("中間",14,"C",12,"reserved",0),
+	("中間",14,"D",12,"reserved",0),
+	("中間",14,"E",12,"reserved",0),
+	("中間",14,"A",13,"reserved",0),
+	("中間",14,"B",13,"reserved",0),
+	("中間",14,"C",13,"reserved",0),
+	("中間",14,"D",13,"reserved",0),
+	("中間",14,"E",13,"reserved",0),
+	("中間",14,"A",14,"reserved",0),
+	("中間",14,"B",14,"reserved",0),
+	("中間",14,"C",14,"reserved",0),
+	("中間",14,"D",14,"reserved",0),
+	("中間",14,"E",14,"reserved",0),
+	("中間",14,"A",15,"reserved",0),
+	("中間",14,"B",15,"reserved",0),
+	("中間",14,"C",15,"reserved",0),
+	("中間",14,"D",15,"reserved",0),
+	("中間",14,"E",15,"reserved",0),
+	("中間",14,"A",16,"reserved",0),
+	("中間",14,"B",16,"reserved",0),
+	("中間",14,"C",16,"reserved",0),
+	("中間",14,"D",16,"reserved",0),
+	("中間",14,"E",16,"reserved",0),
+	("中間",14,"A",17,"reserved",0),
+	("中間",14,"B",17,"reserved",0),
+	("中間",14,"C",17,"reserved",0),
+	("中間",14,"D",17,"reserved",0),
+	("中間",14,"E",17,"reserved",0),
+	("中間",14,"A",18,"reserved",0),
+	("中間",14,"B",18,"reserved",0),
+	("中間",14,"C",18,"reserved",0),
+	("中間",14,"D",18,"reserved",0),
+	("中間",14,"E",18,"reserved",0),
+	("中間",14,"A",19,"reserved",0),
+	("中間",14,"B",19,"reserved",0),
+	("中間",14,"C",19,"reserved",0),
+	("中間",14,"D",19,"reserved",0),
+	("中間",14,"E",19,"reserved",0),
+	("中間",14,"A",20,"reserved",0),
+	("中間",14,"B",20,"reserved",0),
+	("中間",14,"C",20,"reserved",0),
+	("中間",14,"D",20,"reserved",0),
+	("中間",14,"E",20,"reserved",0),
+	("中間",15,"A",1,"reserved",0),
+	("中間",15,"B",1,"reserved",0),
+	("中間",15,"C",1,"reserved",0),
+	("中間",15,"D",1,"reserved",0),
+	("中間",15,"E",1,"reserved",0),
+	("中間",15,"A",2,"reserved",0),
+	("中間",15,"B",2,"reserved",0),
+	("中間",15,"C",2,"reserved",0),
+	("中間",15,"D",2,"reserved",0),
+	("中間",15,"E",2,"reserved",0),
+	("中間",15,"A",3,"reserved",0),
+	("中間",15,"B",3,"reserved",0),
+	("中間",15,"C",3,"reserved",0),
+	("中間",15,"D",3,"reserved",0),
+	("中間",15,"E",3,"reserved",0),
+	("中間",15,"A",4,"reserved",0),
+	("中間",15,"B",4,"reserved",0),
+	("中間",15,"C",4,"reserved",0),
+	("中間",15,"D",4,"reserved",0),
+	("中間",15,"E",4,"reserved",0),
+	("中間",15,"A",5,"reserved",0),
+	("中間",15,"B",5,"reserved",0),
+	("中間",15,"C",5,"reserved",0),
+	("中間",15,"D",5,"reserved",0),
+	("中間",15,"E",5,"reserved",0),
+	("中間",15,"A",6,"reserved",0),
+	("中間",15,"B",6,"reserved",0),
+	("中間",15,"C",6,"reserved",0),
+	("中間",15,"D",6,"reserved",0),
+	("中間",15,"E",6,"reserved",0),
+	("中間",15,"A",7,"reserved",0),
+	("中間",15,"B",7,"reserved",0),
+	("中間",15,"C",7,"reserved",0),
+	("中間",15,"D",7,"reserved",0),
+	("中間",15,"E",7,"reserved",0),
+	("中間",15,"A",8,"reserved",0),
+	("中間",15,"B",8,"reserved",0),
+	("中間",15,"C",8,"reserved",0),
+	("中間",15,"D",8,"reserved",0),
+	("中間",15,"E",8,"reserved",0),
+	("中間",15,"A",9,"reserved",0),
+	("中間",15,"B",9,"reserved",0),
+	("中間",15,"C",9,"reserved",0),
+	("中間",15,"D",9,"reserved",0),
+	("中間",15,"E",9,"reserved",0),
+	("中間",15,"A",10,"reserved",0),
+	("中間",15,"B",10,"reserved",0),
+	("中間",15,"C",10,"reserved",0),
+	("中間",15,"D",10,"reserved",0),
+	("中間",15,"E",10,"reserved",0),
+	("中間",15,"A",11,"reserved",1),
+	("中間",15,"B",11,"reserved",1),
+	("中間",15,"C",11,"reserved",1),
+	("中間",15,"D",11,"reserved",1),
+	("中間",15,"E",11,"reserved",1),
+	("中間",15,"A",12,"reserved",1),
+	("中間",15,"B",12,"reserved",1),
+	("中間",15,"C",12,"reserved",1),
+	("中間",15,"D",12,"reserved",1),
+	("中間",15,"E",12,"reserved",1),
+	("中間",15,"A",13,"reserved",1),
+	("中間",15,"B",13,"reserved",1),
+	("中間",15,"C",13,"reserved",1),
+	("中間",15,"D",13,"reserved",1),
+	("中間",15,"E",13,"reserved",1),
+	("中間",15,"A",14,"reserved",1),
+	("中間",15,"B",14,"reserved",1),
+	("中間",15,"C",14,"reserved",1),
+	("中間",15,"D",14,"reserved",1),
+	("中間",15,"E",14,"reserved",1),
+	("中間",15,"A",15,"reserved",1),
+	("中間",15,"B",15,"reserved",1),
+	("中間",15,"C",15,"reserved",1),
+	("中間",15,"D",15,"reserved",1),
+	("中間",15,"E",15,"reserved",1),
+	("中間",15,"A",16,"reserved",1),
+	("中間",15,"B",16,"reserved",1),
+	("中間",15,"C",16,"reserved",1),
+	("中間",15,"D",16,"reserved",1),
+	("中間",15,"E",16,"reserved",1),
+	("中間",16,"A",1,"reserved",0),
+	("中間",16,"B",1,"reserved",0),
+	("中間",16,"C",1,"reserved",0),
+	("中間",16,"D",1,"reserved",0),
+	("中間",16,"E",1,"reserved",0),
+	("中間",16,"A",2,"reserved",0),
+	("中間",16,"B",2,"reserved",0),
+	("中間",16,"C",2,"reserved",0),
+	("中間",16,"D",2,"reserved",0),
+	("中間",16,"E",2,"reserved",0),
+	("中間",16,"A",3,"reserved",0),
+	("中間",16,"B",3,"reserved",0),
+	("中間",16,"C",3,"reserved",0),
+	("中間",16,"D",3,"reserved",0),
+	("中間",16,"E",3,"reserved",0),
+	("中間",16,"A",4,"reserved",0),
+	("中間",16,"B",4,"reserved",0),
+	("中間",16,"C",4,"reserved",0),
+	("中間",16,"D",4,"reserved",0),
+	("中間",16,"E",4,"reserved",0),
+	("中間",16,"A",5,"reserved",0),
+	("中間",16,"B",5,"reserved",0),
+	("中間",16,"C",5,"reserved",0),
+	("中間",16,"D",5,"reserved",0),
+	("中間",16,"E",5,"reserved",0),
+	("中間",16,"A",6,"reserved",0),
+	("中間",16,"B",6,"reserved",0),
+	("中間",16,"C",6,"reserved",0),
+	("中間",16,"D",6,"reserved",0),
+	("中間",16,"E",6,"reserved",0),
+	("中間",16,"A",7,"reserved",0),
+	("中間",16,"B",7,"reserved",0),
+	("中間",16,"C",7,"reserved",0),
+	("中間",16,"D",7,"reserved",0),
+	("中間",16,"E",7,"reserved",0),
+	("中間",16,"A",8,"reserved",0),
+	("中間",16,"B",8,"reserved",0),
+	("中間",16,"C",8,"reserved",0),
+	("中間",16,"D",8,"reserved",0),
+	("中間",16,"E",8,"reserved",0),
+	("中間",16,"A",9,"reserved",0),
+	("中間",16,"B",9,"reserved",0),
+	("中間",16,"C",9,"reserved",0),
+	("中間",16,"D",9,"reserved",0),
+	("中間",16,"E",9,"reserved",0),
+	("中間",16,"A",10,"reserved",0),
+	("中間",16,"B",10,"reserved",0),
+	("中間",16,"C",10,"reserved",0),
+	("中間",16,"D",10,"reserved",0),
+	("中間",16,"E",10,"reserved",0),
+	("中間",16,"A",11,"reserved",0),
+	("中間",16,"B",11,"reserved",0),
+	("中間",16,"C",11,"reserved",0),
+	("中間",16,"D",11,"reserved",0),
+	("中間",16,"E",11,"reserved",0),
+	("中間",16,"A",12,"reserved",0),
+	("中間",16,"B",12,"reserved",0),
+	("中間",16,"C",12,"reserved",0),
+	("中間",16,"D",12,"reserved",0),
+	("中間",16,"E",12,"reserved",0),
+	("中間",16,"A",13,"reserved",0),
+	("中間",16,"B",13,"reserved",0),
+	("中間",16,"C",13,"reserved",0),
+	("中間",16,"D",13,"reserved",0),
+	("中間",16,"E",13,"reserved",0),
+	("遅いやつ",1,"A",1,"non-reserved",0),
+	("遅いやつ",1,"B",1,"non-reserved",0),
+	("遅いやつ",1,"C",1,"non-reserved",0),
+	("遅いやつ",1,"D",1,"non-reserved",0),
+	("遅いやつ",1,"E",1,"non-reserved",0),
+	("遅いやつ",1,"A",2,"non-reserved",0),
+	("遅いやつ",1,"B",2,"non-reserved",0),
+	("遅いやつ",1,"C",2,"non-reserved",0),
+	("遅いやつ",1,"D",2,"non-reserved",0),
+	("遅いやつ",1,"E",2,"non-reserved",0),
+	("遅いやつ",1,"A",3,"non-reserved",0),
+	("遅いやつ",1,"B",3,"non-reserved",0),
+	("遅いやつ",1,"C",3,"non-reserved",0),
+	("遅いやつ",1,"D",3,"non-reserved",0),
+	("遅いやつ",1,"E",3,"non-reserved",0),
+	("遅いやつ",1,"A",4,"non-reserved",0),
+	("遅いやつ",1,"B",4,"non-reserved",0),
+	("遅いやつ",1,"C",4,"non-reserved",0),
+	("遅いやつ",1,"D",4,"non-reserved",0),
+	("遅いやつ",1,"E",4,"non-reserved",0),
+	("遅いやつ",1,"A",5,"non-reserved",0),
+	("遅いやつ",1,"B",5,"non-reserved",0),
+	("遅いやつ",1,"C",5,"non-reserved",0),
+	("遅いやつ",1,"D",5,"non-reserved",0),
+	("遅いやつ",1,"E",5,"non-reserved",0),
+	("遅いやつ",1,"A",6,"non-reserved",0),
+	("遅いやつ",1,"B",6,"non-reserved",0),
+	("遅いやつ",1,"C",6,"non-reserved",0),
+	("遅いやつ",1,"D",6,"non-reserved",0),
+	("遅いやつ",1,"E",6,"non-reserved",0),
+	("遅いやつ",1,"A",7,"non-reserved",0),
+	("遅いやつ",1,"B",7,"non-reserved",0),
+	("遅いやつ",1,"C",7,"non-reserved",0),
+	("遅いやつ",1,"D",7,"non-reserved",0),
+	("遅いやつ",1,"E",7,"non-reserved",0),
+	("遅いやつ",1,"A",8,"non-reserved",0),
+	("遅いやつ",1,"B",8,"non-reserved",0),
+	("遅いやつ",1,"C",8,"non-reserved",0),
+	("遅いやつ",1,"D",8,"non-reserved",0),
+	("遅いやつ",1,"E",8,"non-reserved",0),
+	("遅いやつ",1,"A",9,"non-reserved",0),
+	("遅いやつ",1,"B",9,"non-reserved",0),
+	("遅いやつ",1,"C",9,"non-reserved",0),
+	("遅いやつ",1,"D",9,"non-reserved",0),
+	("遅いやつ",1,"E",9,"non-reserved",0),
+	("遅いやつ",1,"A",10,"non-reserved",0),
+	("遅いやつ",1,"B",10,"non-reserved",0),
+	("遅いやつ",1,"C",10,"non-reserved",0),
+	("遅いやつ",1,"D",10,"non-reserved",0),
+	("遅いやつ",1,"E",10,"non-reserved",0),
+	("遅いやつ",1,"A",11,"non-reserved",0),
+	("遅いやつ",1,"B",11,"non-reserved",0),
+	("遅いやつ",1,"C",11,"non-reserved",0),
+	("遅いやつ",1,"D",11,"non-reserved",0),
+	("遅いやつ",1,"E",11,"non-reserved",0),
+	("遅いやつ",1,"A",12,"non-reserved",0),
+	("遅いやつ",1,"B",12,"non-reserved",0),
+	("遅いやつ",1,"C",12,"non-reserved",0),
+	("遅いやつ",1,"D",12,"non-reserved",0),
+	("遅いやつ",1,"E",12,"non-reserved",0),
+	("遅いやつ",1,"A",13,"non-reserved",0),
+	("遅いやつ",1,"B",13,"non-reserved",0),
+	("遅いやつ",1,"C",13,"non-reserved",0),
+	("遅いやつ",1,"D",13,"non-reserved",0),
+	("遅いやつ",1,"E",13,"non-reserved",0),
+	("遅いやつ",2,"A",1,"non-reserved",0),
+	("遅いやつ",2,"B",1,"non-reserved",0),
+	("遅いやつ",2,"C",1,"non-reserved",0),
+	("遅いやつ",2,"D",1,"non-reserved",0),
+	("遅いやつ",2,"E",1,"non-reserved",0),
+	("遅いやつ",2,"A",2,"non-reserved",0),
+	("遅いやつ",2,"B",2,"non-reserved",0),
+	("遅いやつ",2,"C",2,"non-reserved",0),
+	("遅いやつ",2,"D",2,"non-reserved",0),
+	("遅いやつ",2,"E",2,"non-reserved",0),
+	("遅いやつ",2,"A",3,"non-reserved",0),
+	("遅いやつ",2,"B",3,"non-reserved",0),
+	("遅いやつ",2,"C",3,"non-reserved",0),
+	("遅いやつ",2,"D",3,"non-reserved",0),
+	("遅いやつ",2,"E",3,"non-reserved",0),
+	("遅いやつ",2,"A",4,"non-reserved",0),
+	("遅いやつ",2,"B",4,"non-reserved",0),
+	("遅いやつ",2,"C",4,"non-reserved",0),
+	("遅いやつ",2,"D",4,"non-reserved",0),
+	("遅いやつ",2,"E",4,"non-reserved",0),
+	("遅いやつ",2,"A",5,"non-reserved",0),
+	("遅いやつ",2,"B",5,"non-reserved",0),
+	("遅いやつ",2,"C",5,"non-reserved",0),
+	("遅いやつ",2,"D",5,"non-reserved",0),
+	("遅いやつ",2,"E",5,"non-reserved",0),
+	("遅いやつ",2,"A",6,"non-reserved",0),
+	("遅いやつ",2,"B",6,"non-reserved",0),
+	("遅いやつ",2,"C",6,"non-reserved",0),
+	("遅いやつ",2,"D",6,"non-reserved",0),
+	("遅いやつ",2,"E",6,"non-reserved",0),
+	("遅いやつ",2,"A",7,"non-reserved",0),
+	("遅いやつ",2,"B",7,"non-reserved",0),
+	("遅いやつ",2,"C",7,"non-reserved",0),
+	("遅いやつ",2,"D",7,"non-reserved",0),
+	("遅いやつ",2,"E",7,"non-reserved",0),
+	("遅いやつ",2,"A",8,"non-reserved",0),
+	("遅いやつ",2,"B",8,"non-reserved",0),
+	("遅いやつ",2,"C",8,"non-reserved",0),
+	("遅いやつ",2,"D",8,"non-reserved",0),
+	("遅いやつ",2,"E",8,"non-reserved",0),
+	("遅いやつ",2,"A",9,"non-reserved",0),
+	("遅いやつ",2,"B",9,"non-reserved",0),
+	("遅いやつ",2,"C",9,"non-reserved",0),
+	("遅いやつ",2,"D",9,"non-reserved",0),
+	("遅いやつ",2,"E",9,"non-reserved",0),
+	("遅いやつ",2,"A",10,"non-reserved",0),
+	("遅いやつ",2,"B",10,"non-reserved",0),
+	("遅いやつ",2,"C",10,"non-reserved",0),
+	("遅いやつ",2,"D",10,"non-reserved",0),
+	("遅いやつ",2,"E",10,"non-reserved",0),
+	("遅いやつ",2,"A",11,"non-reserved",0),
+	("遅いやつ",2,"B",11,"non-reserved",0),
+	("遅いやつ",2,"C",11,"non-reserved",0),
+	("遅いやつ",2,"D",11,"non-reserved",0),
+	("遅いやつ",2,"E",11,"non-reserved",0),
+	("遅いやつ",2,"A",12,"non-reserved",0),
+	("遅いやつ",2,"B",12,"non-reserved",0),
+	("遅いやつ",2,"C",12,"non-reserved",0),
+	("遅いやつ",2,"D",12,"non-reserved",0),
+	("遅いやつ",2,"E",12,"non-reserved",0),
+	("遅いやつ",2,"A",13,"non-reserved",0),
+	("遅いやつ",2,"B",13,"non-reserved",0),
+	("遅いやつ",2,"C",13,"non-reserved",0),
+	("遅いやつ",2,"D",13,"non-reserved",0),
+	("遅いやつ",2,"E",13,"non-reserved",0),
+	("遅いやつ",2,"A",14,"non-reserved",0),
+	("遅いやつ",2,"B",14,"non-reserved",0),
+	("遅いやつ",2,"C",14,"non-reserved",0),
+	("遅いやつ",2,"D",14,"non-reserved",0),
+	("遅いやつ",2,"E",14,"non-reserved",0),
+	("遅いやつ",2,"A",15,"non-reserved",0),
+	("遅いやつ",2,"B",15,"non-reserved",0),
+	("遅いやつ",2,"C",15,"non-reserved",0),
+	("遅いやつ",2,"D",15,"non-reserved",0),
+	("遅いやつ",2,"E",15,"non-reserved",0),
+	("遅いやつ",2,"A",16,"non-reserved",0),
+	("遅いやつ",2,"B",16,"non-reserved",0),
+	("遅いやつ",2,"C",16,"non-reserved",0),
+	("遅いやつ",2,"D",16,"non-reserved",0),
+	("遅いやつ",2,"E",16,"non-reserved",0),
+	("遅いやつ",2,"A",17,"non-reserved",0),
+	("遅いやつ",2,"B",17,"non-reserved",0),
+	("遅いやつ",2,"C",17,"non-reserved",0),
+	("遅いやつ",2,"D",17,"non-reserved",0),
+	("遅いやつ",2,"E",17,"non-reserved",0),
+	("遅いやつ",2,"A",18,"non-reserved",0),
+	("遅いやつ",2,"B",18,"non-reserved",0),
+	("遅いやつ",2,"C",18,"non-reserved",0),
+	("遅いやつ",2,"D",18,"non-reserved",0),
+	("遅いやつ",2,"E",18,"non-reserved",0),
+	("遅いやつ",2,"A",19,"non-reserved",0),
+	("遅いやつ",2,"B",19,"non-reserved",0),
+	("遅いやつ",2,"C",19,"non-reserved",0),
+	("遅いやつ",2,"D",19,"non-reserved",0),
+	("遅いやつ",2,"E",19,"non-reserved",0),
+	("遅いやつ",2,"A",20,"non-reserved",0),
+	("遅いやつ",2,"B",20,"non-reserved",0),
+	("遅いやつ",2,"C",20,"non-reserved",0),
+	("遅いやつ",2,"D",20,"non-reserved",0),
+	("遅いやつ",2,"E",20,"non-reserved",0),
+	("遅いやつ",3,"A",1,"non-reserved",0),
+	("遅いやつ",3,"B",1,"non-reserved",0),
+	("遅いやつ",3,"C",1,"non-reserved",0),
+	("遅いやつ",3,"D",1,"non-reserved",0),
+	("遅いやつ",3,"E",1,"non-reserved",0),
+	("遅いやつ",3,"A",2,"non-reserved",0),
+	("遅いやつ",3,"B",2,"non-reserved",0),
+	("遅いやつ",3,"C",2,"non-reserved",0),
+	("遅いやつ",3,"D",2,"non-reserved",0),
+	("遅いやつ",3,"E",2,"non-reserved",0),
+	("遅いやつ",3,"A",3,"non-reserved",0),
+	("遅いやつ",3,"B",3,"non-reserved",0),
+	("遅いやつ",3,"C",3,"non-reserved",0),
+	("遅いやつ",3,"D",3,"non-reserved",0),
+	("遅いやつ",3,"E",3,"non-reserved",0),
+	("遅いやつ",3,"A",4,"non-reserved",0),
+	("遅いやつ",3,"B",4,"non-reserved",0),
+	("遅いやつ",3,"C",4,"non-reserved",0),
+	("遅いやつ",3,"D",4,"non-reserved",0),
+	("遅いやつ",3,"E",4,"non-reserved",0),
+	("遅いやつ",3,"A",5,"non-reserved",0),
+	("遅いやつ",3,"B",5,"non-reserved",0),
+	("遅いやつ",3,"C",5,"non-reserved",0),
+	("遅いやつ",3,"D",5,"non-reserved",0),
+	("遅いやつ",3,"E",5,"non-reserved",0),
+	("遅いやつ",3,"A",6,"non-reserved",0),
+	("遅いやつ",3,"B",6,"non-reserved",0),
+	("遅いやつ",3,"C",6,"non-reserved",0),
+	("遅いやつ",3,"D",6,"non-reserved",0),
+	("遅いやつ",3,"E",6,"non-reserved",0),
+	("遅いやつ",3,"A",7,"non-reserved",0),
+	("遅いやつ",3,"B",7,"non-reserved",0),
+	("遅いやつ",3,"C",7,"non-reserved",0),
+	("遅いやつ",3,"D",7,"non-reserved",0),
+	("遅いやつ",3,"E",7,"non-reserved",0),
+	("遅いやつ",3,"A",8,"non-reserved",0),
+	("遅いやつ",3,"B",8,"non-reserved",0),
+	("遅いやつ",3,"C",8,"non-reserved",0),
+	("遅いやつ",3,"D",8,"non-reserved",0),
+	("遅いやつ",3,"E",8,"non-reserved",0),
+	("遅いやつ",3,"A",9,"non-reserved",0),
+	("遅いやつ",3,"B",9,"non-reserved",0),
+	("遅いやつ",3,"C",9,"non-reserved",0),
+	("遅いやつ",3,"D",9,"non-reserved",0),
+	("遅いやつ",3,"E",9,"non-reserved",0),
+	("遅いやつ",3,"A",10,"non-reserved",0),
+	("遅いやつ",3,"B",10,"non-reserved",0),
+	("遅いやつ",3,"C",10,"non-reserved",0),
+	("遅いやつ",3,"D",10,"non-reserved",0),
+	("遅いやつ",3,"E",10,"non-reserved",0),
+	("遅いやつ",3,"A",11,"non-reserved",1),
+	("遅いやつ",3,"B",11,"non-reserved",1),
+	("遅いやつ",3,"C",11,"non-reserved",1),
+	("遅いやつ",3,"D",11,"non-reserved",1),
+	("遅いやつ",3,"E",11,"non-reserved",1),
+	("遅いやつ",3,"A",12,"non-reserved",1),
+	("遅いやつ",3,"B",12,"non-reserved",1),
+	("遅いやつ",3,"C",12,"non-reserved",1),
+	("遅いやつ",3,"D",12,"non-reserved",1),
+	("遅いやつ",3,"E",12,"non-reserved",1),
+	("遅いやつ",3,"A",13,"non-reserved",1),
+	("遅いやつ",3,"B",13,"non-reserved",1),
+	("遅いやつ",3,"C",13,"non-reserved",1),
+	("遅いやつ",3,"D",13,"non-reserved",1),
+	("遅いやつ",3,"E",13,"non-reserved",1),
+	("遅いやつ",3,"A",14,"non-reserved",1),
+	("遅いやつ",3,"B",14,"non-reserved",1),
+	("遅いやつ",3,"C",14,"non-reserved",1),
+	("遅いやつ",3,"D",14,"non-reserved",1),
+	("遅いやつ",3,"E",14,"non-reserved",1),
+	("遅いやつ",3,"A",15,"non-reserved",1),
+	("遅いやつ",3,"B",15,"non-reserved",1),
+	("遅いやつ",3,"C",15,"non-reserved",1),
+	("遅いやつ",3,"D",15,"non-reserved",1),
+	("遅いやつ",3,"E",15,"non-reserved",1),
+	("遅いやつ",3,"A",16,"non-reserved",1),
+	("遅いやつ",3,"B",16,"non-reserved",1),
+	("遅いやつ",3,"C",16,"non-reserved",1),
+	("遅いやつ",3,"D",16,"non-reserved",1),
+	("遅いやつ",3,"E",16,"non-reserved",1),
+	("遅いやつ",4,"A",1,"non-reserved",0),
+	("遅いやつ",4,"B",1,"non-reserved",0),
+	("遅いやつ",4,"C",1,"non-reserved",0),
+	("遅いやつ",4,"D",1,"non-reserved",0),
+	("遅いやつ",4,"E",1,"non-reserved",0),
+	("遅いやつ",4,"A",2,"non-reserved",0),
+	("遅いやつ",4,"B",2,"non-reserved",0),
+	("遅いやつ",4,"C",2,"non-reserved",0),
+	("遅いやつ",4,"D",2,"non-reserved",0),
+	("遅いやつ",4,"E",2,"non-reserved",0),
+	("遅いやつ",4,"A",3,"non-reserved",0),
+	("遅いやつ",4,"B",3,"non-reserved",0),
+	("遅いやつ",4,"C",3,"non-reserved",0),
+	("遅いやつ",4,"D",3,"non-reserved",0),
+	("遅いやつ",4,"E",3,"non-reserved",0),
+	("遅いやつ",4,"A",4,"non-reserved",0),
+	("遅いやつ",4,"B",4,"non-reserved",0),
+	("遅いやつ",4,"C",4,"non-reserved",0),
+	("遅いやつ",4,"D",4,"non-reserved",0),
+	("遅いやつ",4,"E",4,"non-reserved",0),
+	("遅いやつ",4,"A",5,"non-reserved",0),
+	("遅いやつ",4,"B",5,"non-reserved",0),
+	("遅いやつ",4,"C",5,"non-reserved",0),
+	("遅いやつ",4,"D",5,"non-reserved",0),
+	("遅いやつ",4,"E",5,"non-reserved",0),
+	("遅いやつ",4,"A",6,"non-reserved",0),
+	("遅いやつ",4,"B",6,"non-reserved",0),
+	("遅いやつ",4,"C",6,"non-reserved",0),
+	("遅いやつ",4,"D",6,"non-reserved",0),
+	("遅いやつ",4,"E",6,"non-reserved",0),
+	("遅いやつ",4,"A",7,"non-reserved",0),
+	("遅いやつ",4,"B",7,"non-reserved",0),
+	("遅いやつ",4,"C",7,"non-reserved",0),
+	("遅いやつ",4,"D",7,"non-reserved",0),
+	("遅いやつ",4,"E",7,"non-reserved",0),
+	("遅いやつ",4,"A",8,"non-reserved",0),
+	("遅いやつ",4,"B",8,"non-reserved",0),
+	("遅いやつ",4,"C",8,"non-reserved",0),
+	("遅いやつ",4,"D",8,"non-reserved",0),
+	("遅いやつ",4,"E",8,"non-reserved",0),
+	("遅いやつ",4,"A",9,"non-reserved",0),
+	("遅いやつ",4,"B",9,"non-reserved",0),
+	("遅いやつ",4,"C",9,"non-reserved",0),
+	("遅いやつ",4,"D",9,"non-reserved",0),
+	("遅いやつ",4,"E",9,"non-reserved",0),
+	("遅いやつ",4,"A",10,"non-reserved",0),
+	("遅いやつ",4,"B",10,"non-reserved",0),
+	("遅いやつ",4,"C",10,"non-reserved",0),
+	("遅いやつ",4,"D",10,"non-reserved",0),
+	("遅いやつ",4,"E",10,"non-reserved",0),
+	("遅いやつ",4,"A",11,"non-reserved",0),
+	("遅いやつ",4,"B",11,"non-reserved",0),
+	("遅いやつ",4,"C",11,"non-reserved",0),
+	("遅いやつ",4,"D",11,"non-reserved",0),
+	("遅いやつ",4,"E",11,"non-reserved",0),
+	("遅いやつ",4,"A",12,"non-reserved",0),
+	("遅いやつ",4,"B",12,"non-reserved",0),
+	("遅いやつ",4,"C",12,"non-reserved",0),
+	("遅いやつ",4,"D",12,"non-reserved",0),
+	("遅いやつ",4,"E",12,"non-reserved",0),
+	("遅いやつ",4,"A",13,"non-reserved",0),
+	("遅いやつ",4,"B",13,"non-reserved",0),
+	("遅いやつ",4,"C",13,"non-reserved",0),
+	("遅いやつ",4,"D",13,"non-reserved",0),
+	("遅いやつ",4,"E",13,"non-reserved",0),
+	("遅いやつ",4,"A",14,"non-reserved",0),
+	("遅いやつ",4,"B",14,"non-reserved",0),
+	("遅いやつ",4,"C",14,"non-reserved",0),
+	("遅いやつ",4,"D",14,"non-reserved",0),
+	("遅いやつ",4,"E",14,"non-reserved",0),
+	("遅いやつ",4,"A",15,"non-reserved",0),
+	("遅いやつ",4,"B",15,"non-reserved",0),
+	("遅いやつ",4,"C",15,"non-reserved",0),
+	("遅いやつ",4,"D",15,"non-reserved",0),
+	("遅いやつ",4,"E",15,"non-reserved",0),
+	("遅いやつ",4,"A",16,"non-reserved",0),
+	("遅いやつ",4,"B",16,"non-reserved",0),
+	("遅いやつ",4,"C",16,"non-reserved",0),
+	("遅いやつ",4,"D",16,"non-reserved",0),
+	("遅いやつ",4,"E",16,"non-reserved",0),
+	("遅いやつ",4,"A",17,"non-reserved",0),
+	("遅いやつ",4,"B",17,"non-reserved",0),
+	("遅いやつ",4,"C",17,"non-reserved",0),
+	("遅いやつ",4,"D",17,"non-reserved",0),
+	("遅いやつ",4,"E",17,"non-reserved",0),
+	("遅いやつ",4,"A",18,"non-reserved",0),
+	("遅いやつ",4,"B",18,"non-reserved",0),
+	("遅いやつ",4,"C",18,"non-reserved",0),
+	("遅いやつ",4,"D",18,"non-reserved",0),
+	("遅いやつ",4,"E",18,"non-reserved",0),
+	("遅いやつ",4,"A",19,"non-reserved",0),
+	("遅いやつ",4,"B",19,"non-reserved",0),
+	("遅いやつ",4,"C",19,"non-reserved",0),
+	("遅いやつ",4,"D",19,"non-reserved",0),
+	("遅いやつ",4,"E",19,"non-reserved",0),
+	("遅いやつ",4,"A",20,"non-reserved",0),
+	("遅いやつ",4,"B",20,"non-reserved",0),
+	("遅いやつ",4,"C",20,"non-reserved",0),
+	("遅いやつ",4,"D",20,"non-reserved",0),
+	("遅いやつ",4,"E",20,"non-reserved",0),
+	("遅いやつ",5,"A",1,"non-reserved",0),
+	("遅いやつ",5,"B",1,"non-reserved",0),
+	("遅いやつ",5,"C",1,"non-reserved",0),
+	("遅いやつ",5,"D",1,"non-reserved",0),
+	("遅いやつ",5,"E",1,"non-reserved",0),
+	("遅いやつ",5,"A",2,"non-reserved",0),
+	("遅いやつ",5,"B",2,"non-reserved",0),
+	("遅いやつ",5,"C",2,"non-reserved",0),
+	("遅いやつ",5,"D",2,"non-reserved",0),
+	("遅いやつ",5,"E",2,"non-reserved",0),
+	("遅いやつ",5,"A",3,"non-reserved",0),
+	("遅いやつ",5,"B",3,"non-reserved",0),
+	("遅いやつ",5,"C",3,"non-reserved",0),
+	("遅いやつ",5,"D",3,"non-reserved",0),
+	("遅いやつ",5,"E",3,"non-reserved",0),
+	("遅いやつ",5,"A",4,"non-reserved",0),
+	("遅いやつ",5,"B",4,"non-reserved",0),
+	("遅いやつ",5,"C",4,"non-reserved",0),
+	("遅いやつ",5,"D",4,"non-reserved",0),
+	("遅いやつ",5,"E",4,"non-reserved",0),
+	("遅いやつ",5,"A",5,"non-reserved",0),
+	("遅いやつ",5,"B",5,"non-reserved",0),
+	("遅いやつ",5,"C",5,"non-reserved",0),
+	("遅いやつ",5,"D",5,"non-reserved",0),
+	("遅いやつ",5,"E",5,"non-reserved",0),
+	("遅いやつ",5,"A",6,"non-reserved",0),
+	("遅いやつ",5,"B",6,"non-reserved",0),
+	("遅いやつ",5,"C",6,"non-reserved",0),
+	("遅いやつ",5,"D",6,"non-reserved",0),
+	("遅いやつ",5,"E",6,"non-reserved",0),
+	("遅いやつ",5,"A",7,"non-reserved",0),
+	("遅いやつ",5,"B",7,"non-reserved",0),
+	("遅いやつ",5,"C",7,"non-reserved",0),
+	("遅いやつ",5,"D",7,"non-reserved",0),
+	("遅いやつ",5,"E",7,"non-reserved",0),
+	("遅いやつ",5,"A",8,"non-reserved",0),
+	("遅いやつ",5,"B",8,"non-reserved",0),
+	("遅いやつ",5,"C",8,"non-reserved",0),
+	("遅いやつ",5,"D",8,"non-reserved",0),
+	("遅いやつ",5,"E",8,"non-reserved",0),
+	("遅いやつ",5,"A",9,"non-reserved",0),
+	("遅いやつ",5,"B",9,"non-reserved",0),
+	("遅いやつ",5,"C",9,"non-reserved",0),
+	("遅いやつ",5,"D",9,"non-reserved",0),
+	("遅いやつ",5,"E",9,"non-reserved",0),
+	("遅いやつ",5,"A",10,"non-reserved",0),
+	("遅いやつ",5,"B",10,"non-reserved",0),
+	("遅いやつ",5,"C",10,"non-reserved",0),
+	("遅いやつ",5,"D",10,"non-reserved",0),
+	("遅いやつ",5,"E",10,"non-reserved",0),
+	("遅いやつ",5,"A",11,"non-reserved",1),
+	("遅いやつ",5,"B",11,"non-reserved",1),
+	("遅いやつ",5,"C",11,"non-reserved",1),
+	("遅いやつ",5,"D",11,"non-reserved",1),
+	("遅いやつ",5,"E",11,"non-reserved",1),
+	("遅いやつ",5,"A",12,"non-reserved",1),
+	("遅いやつ",5,"B",12,"non-reserved",1),
+	("遅いやつ",5,"C",12,"non-reserved",1),
+	("遅いやつ",5,"D",12,"non-reserved",1),
+	("遅いやつ",5,"E",12,"non-reserved",1),
+	("遅いやつ",5,"A",13,"non-reserved",1),
+	("遅いやつ",5,"B",13,"non-reserved",1),
+	("遅いやつ",5,"C",13,"non-reserved",1),
+	("遅いやつ",5,"D",13,"non-reserved",1),
+	("遅いやつ",5,"E",13,"non-reserved",1),
+	("遅いやつ",5,"A",14,"non-reserved",1),
+	("遅いやつ",5,"B",14,"non-reserved",1),
+	("遅いやつ",5,"C",14,"non-reserved",1),
+	("遅いやつ",5,"D",14,"non-reserved",1),
+	("遅いやつ",5,"E",14,"non-reserved",1),
+	("遅いやつ",5,"A",15,"non-reserved",1),
+	("遅いやつ",5,"B",15,"non-reserved",1),
+	("遅いやつ",5,"C",15,"non-reserved",1),
+	("遅いやつ",5,"D",15,"non-reserved",1),
+	("遅いやつ",5,"E",15,"non-reserved",1),
+	("遅いやつ",5,"A",16,"non-reserved",1),
+	("遅いやつ",5,"B",16,"non-reserved",1),
+	("遅いやつ",5,"C",16,"non-reserved",1),
+	("遅いやつ",5,"D",16,"non-reserved",1),
+	("遅いやつ",5,"E",16,"non-reserved",1),
+	("遅いやつ",6,"A",1,"non-reserved",0),
+	("遅いやつ",6,"B",1,"non-reserved",0),
+	("遅いやつ",6,"C",1,"non-reserved",0),
+	("遅いやつ",6,"D",1,"non-reserved",0),
+	("遅いやつ",6,"E",1,"non-reserved",0),
+	("遅いやつ",6,"A",2,"non-reserved",0),
+	("遅いやつ",6,"B",2,"non-reserved",0),
+	("遅いやつ",6,"C",2,"non-reserved",0),
+	("遅いやつ",6,"D",2,"non-reserved",0),
+	("遅いやつ",6,"E",2,"non-reserved",0),
+	("遅いやつ",6,"A",3,"non-reserved",0),
+	("遅いやつ",6,"B",3,"non-reserved",0),
+	("遅いやつ",6,"C",3,"non-reserved",0),
+	("遅いやつ",6,"D",3,"non-reserved",0),
+	("遅いやつ",6,"E",3,"non-reserved",0),
+	("遅いやつ",6,"A",4,"non-reserved",0),
+	("遅いやつ",6,"B",4,"non-reserved",0),
+	("遅いやつ",6,"C",4,"non-reserved",0),
+	("遅いやつ",6,"D",4,"non-reserved",0),
+	("遅いやつ",6,"E",4,"non-reserved",0),
+	("遅いやつ",6,"A",5,"non-reserved",0),
+	("遅いやつ",6,"B",5,"non-reserved",0),
+	("遅いやつ",6,"C",5,"non-reserved",0),
+	("遅いやつ",6,"D",5,"non-reserved",0),
+	("遅いやつ",6,"E",5,"non-reserved",0),
+	("遅いやつ",6,"A",6,"non-reserved",0),
+	("遅いやつ",6,"B",6,"non-reserved",0),
+	("遅いやつ",6,"C",6,"non-reserved",0),
+	("遅いやつ",6,"D",6,"non-reserved",0),
+	("遅いやつ",6,"E",6,"non-reserved",0),
+	("遅いやつ",6,"A",7,"non-reserved",0),
+	("遅いやつ",6,"B",7,"non-reserved",0),
+	("遅いやつ",6,"C",7,"non-reserved",0),
+	("遅いやつ",6,"D",7,"non-reserved",0),
+	("遅いやつ",6,"E",7,"non-reserved",0),
+	("遅いやつ",6,"A",8,"non-reserved",0),
+	("遅いやつ",6,"B",8,"non-reserved",0),
+	("遅いやつ",6,"C",8,"non-reserved",0),
+	("遅いやつ",6,"D",8,"non-reserved",0),
+	("遅いやつ",6,"E",8,"non-reserved",0),
+	("遅いやつ",6,"A",9,"non-reserved",0),
+	("遅いやつ",6,"B",9,"non-reserved",0),
+	("遅いやつ",6,"C",9,"non-reserved",0),
+	("遅いやつ",6,"D",9,"non-reserved",0),
+	("遅いやつ",6,"E",9,"non-reserved",0),
+	("遅いやつ",6,"A",10,"non-reserved",0),
+	("遅いやつ",6,"B",10,"non-reserved",0),
+	("遅いやつ",6,"C",10,"non-reserved",0),
+	("遅いやつ",6,"D",10,"non-reserved",0),
+	("遅いやつ",6,"E",10,"non-reserved",0),
+	("遅いやつ",6,"A",11,"non-reserved",0),
+	("遅いやつ",6,"B",11,"non-reserved",0),
+	("遅いやつ",6,"C",11,"non-reserved",0),
+	("遅いやつ",6,"D",11,"non-reserved",0),
+	("遅いやつ",6,"E",11,"non-reserved",0),
+	("遅いやつ",6,"A",12,"non-reserved",0),
+	("遅いやつ",6,"B",12,"non-reserved",0),
+	("遅いやつ",6,"C",12,"non-reserved",0),
+	("遅いやつ",6,"D",12,"non-reserved",0),
+	("遅いやつ",6,"E",12,"non-reserved",0),
+	("遅いやつ",6,"A",13,"non-reserved",0),
+	("遅いやつ",6,"B",13,"non-reserved",0),
+	("遅いやつ",6,"C",13,"non-reserved",0),
+	("遅いやつ",6,"D",13,"non-reserved",0),
+	("遅いやつ",6,"E",13,"non-reserved",0),
+	("遅いやつ",6,"A",14,"non-reserved",0),
+	("遅いやつ",6,"B",14,"non-reserved",0),
+	("遅いやつ",6,"C",14,"non-reserved",0),
+	("遅いやつ",6,"D",14,"non-reserved",0),
+	("遅いやつ",6,"E",14,"non-reserved",0),
+	("遅いやつ",6,"A",15,"non-reserved",0),
+	("遅いやつ",6,"B",15,"non-reserved",0),
+	("遅いやつ",6,"C",15,"non-reserved",0),
+	("遅いやつ",6,"D",15,"non-reserved",0),
+	("遅いやつ",6,"E",15,"non-reserved",0),
+	("遅いやつ",6,"A",16,"non-reserved",0),
+	("遅いやつ",6,"B",16,"non-reserved",0),
+	("遅いやつ",6,"C",16,"non-reserved",0),
+	("遅いやつ",6,"D",16,"non-reserved",0),
+	("遅いやつ",6,"E",16,"non-reserved",0),
+	("遅いやつ",6,"A",17,"non-reserved",0),
+	("遅いやつ",6,"B",17,"non-reserved",0),
+	("遅いやつ",6,"C",17,"non-reserved",0),
+	("遅いやつ",6,"D",17,"non-reserved",0),
+	("遅いやつ",6,"E",17,"non-reserved",0),
+	("遅いやつ",6,"A",18,"non-reserved",0),
+	("遅いやつ",6,"B",18,"non-reserved",0),
+	("遅いやつ",6,"C",18,"non-reserved",0),
+	("遅いやつ",6,"D",18,"non-reserved",0),
+	("遅いやつ",6,"E",18,"non-reserved",0),
+	("遅いやつ",6,"A",19,"non-reserved",0),
+	("遅いやつ",6,"B",19,"non-reserved",0),
+	("遅いやつ",6,"C",19,"non-reserved",0),
+	("遅いやつ",6,"D",19,"non-reserved",0),
+	("遅いやつ",6,"E",19,"non-reserved",0),
+	("遅いやつ",6,"A",20,"non-reserved",0),
+	("遅いやつ",6,"B",20,"non-reserved",0),
+	("遅いやつ",6,"C",20,"non-reserved",0),
+	("遅いやつ",6,"D",20,"non-reserved",0),
+	("遅いやつ",6,"E",20,"non-reserved",0),
+	("遅いやつ",7,"A",1,"non-reserved",0),
+	("遅いやつ",7,"B",1,"non-reserved",0),
+	("遅いやつ",7,"C",1,"non-reserved",0),
+	("遅いやつ",7,"D",1,"non-reserved",0),
+	("遅いやつ",7,"E",1,"non-reserved",0),
+	("遅いやつ",7,"A",2,"non-reserved",0),
+	("遅いやつ",7,"B",2,"non-reserved",0),
+	("遅いやつ",7,"C",2,"non-reserved",0),
+	("遅いやつ",7,"D",2,"non-reserved",0),
+	("遅いやつ",7,"E",2,"non-reserved",0),
+	("遅いやつ",7,"A",3,"non-reserved",0),
+	("遅いやつ",7,"B",3,"non-reserved",0),
+	("遅いやつ",7,"C",3,"non-reserved",0),
+	("遅いやつ",7,"D",3,"non-reserved",0),
+	("遅いやつ",7,"E",3,"non-reserved",0),
+	("遅いやつ",7,"A",4,"non-reserved",0),
+	("遅いやつ",7,"B",4,"non-reserved",0),
+	("遅いやつ",7,"C",4,"non-reserved",0),
+	("遅いやつ",7,"D",4,"non-reserved",0),
+	("遅いやつ",7,"E",4,"non-reserved",0),
+	("遅いやつ",7,"A",5,"non-reserved",0),
+	("遅いやつ",7,"B",5,"non-reserved",0),
+	("遅いやつ",7,"C",5,"non-reserved",0),
+	("遅いやつ",7,"D",5,"non-reserved",0),
+	("遅いやつ",7,"E",5,"non-reserved",0),
+	("遅いやつ",7,"A",6,"non-reserved",0),
+	("遅いやつ",7,"B",6,"non-reserved",0),
+	("遅いやつ",7,"C",6,"non-reserved",0),
+	("遅いやつ",7,"D",6,"non-reserved",0),
+	("遅いやつ",7,"E",6,"non-reserved",0),
+	("遅いやつ",7,"A",7,"non-reserved",0),
+	("遅いやつ",7,"B",7,"non-reserved",0),
+	("遅いやつ",7,"C",7,"non-reserved",0),
+	("遅いやつ",7,"D",7,"non-reserved",0),
+	("遅いやつ",7,"E",7,"non-reserved",0),
+	("遅いやつ",7,"A",8,"non-reserved",0),
+	("遅いやつ",7,"B",8,"non-reserved",0),
+	("遅いやつ",7,"C",8,"non-reserved",0),
+	("遅いやつ",7,"D",8,"non-reserved",0),
+	("遅いやつ",7,"E",8,"non-reserved",0),
+	("遅いやつ",7,"A",9,"non-reserved",0),
+	("遅いやつ",7,"B",9,"non-reserved",0),
+	("遅いやつ",7,"C",9,"non-reserved",0),
+	("遅いやつ",7,"D",9,"non-reserved",0),
+	("遅いやつ",7,"E",9,"non-reserved",0),
+	("遅いやつ",7,"A",10,"non-reserved",0),
+	("遅いやつ",7,"B",10,"non-reserved",0),
+	("遅いやつ",7,"C",10,"non-reserved",0),
+	("遅いやつ",7,"D",10,"non-reserved",0),
+	("遅いやつ",7,"E",10,"non-reserved",0),
+	("遅いやつ",7,"A",11,"non-reserved",1),
+	("遅いやつ",7,"B",11,"non-reserved",1),
+	("遅いやつ",7,"C",11,"non-reserved",1),
+	("遅いやつ",7,"D",11,"non-reserved",1),
+	("遅いやつ",7,"E",11,"non-reserved",1),
+	("遅いやつ",7,"A",12,"non-reserved",1),
+	("遅いやつ",7,"B",12,"non-reserved",1),
+	("遅いやつ",7,"C",12,"non-reserved",1),
+	("遅いやつ",7,"D",12,"non-reserved",1),
+	("遅いやつ",7,"E",12,"non-reserved",1),
+	("遅いやつ",7,"A",13,"non-reserved",1),
+	("遅いやつ",7,"B",13,"non-reserved",1),
+	("遅いやつ",7,"C",13,"non-reserved",1),
+	("遅いやつ",7,"D",13,"non-reserved",1),
+	("遅いやつ",7,"E",13,"non-reserved",1),
+	("遅いやつ",7,"A",14,"non-reserved",1),
+	("遅いやつ",7,"B",14,"non-reserved",1),
+	("遅いやつ",7,"C",14,"non-reserved",1),
+	("遅いやつ",7,"D",14,"non-reserved",1),
+	("遅いやつ",7,"E",14,"non-reserved",1),
+	("遅いやつ",7,"A",15,"non-reserved",1),
+	("遅いやつ",7,"B",15,"non-reserved",1),
+	("遅いやつ",7,"C",15,"non-reserved",1),
+	("遅いやつ",7,"D",15,"non-reserved",1),
+	("遅いやつ",7,"E",15,"non-reserved",1),
+	("遅いやつ",7,"A",16,"non-reserved",1),
+	("遅いやつ",7,"B",16,"non-reserved",1),
+	("遅いやつ",7,"C",16,"non-reserved",1),
+	("遅いやつ",7,"D",16,"non-reserved",1),
+	("遅いやつ",7,"E",16,"non-reserved",1),
+	("遅いやつ",8,"A",1,"premium",0),
+	("遅いやつ",8,"B",1,"premium",0),
+	("遅いやつ",8,"C",1,"premium",0),
+	("遅いやつ",8,"D",1,"premium",0),
+	("遅いやつ",8,"A",2,"premium",0),
+	("遅いやつ",8,"B",2,"premium",0),
+	("遅いやつ",8,"C",2,"premium",0),
+	("遅いやつ",8,"D",2,"premium",0),
+	("遅いやつ",8,"A",3,"premium",0),
+	("遅いやつ",8,"B",3,"premium",0),
+	("遅いやつ",8,"C",3,"premium",0),
+	("遅いやつ",8,"D",3,"premium",0),
+	("遅いやつ",8,"A",4,"premium",0),
+	("遅いやつ",8,"B",4,"premium",0),
+	("遅いやつ",8,"C",4,"premium",0),
+	("遅いやつ",8,"D",4,"premium",0),
+	("遅いやつ",8,"A",5,"premium",0),
+	("遅いやつ",8,"B",5,"premium",0),
+	("遅いやつ",8,"C",5,"premium",0),
+	("遅いやつ",8,"D",5,"premium",0),
+	("遅いやつ",8,"A",6,"premium",0),
+	("遅いやつ",8,"B",6,"premium",0),
+	("遅いやつ",8,"C",6,"premium",0),
+	("遅いやつ",8,"D",6,"premium",0),
+	("遅いやつ",8,"A",7,"premium",0),
+	("遅いやつ",8,"B",7,"premium",0),
+	("遅いやつ",8,"C",7,"premium",0),
+	("遅いやつ",8,"D",7,"premium",0),
+	("遅いやつ",8,"A",8,"premium",0),
+	("遅いやつ",8,"B",8,"premium",0),
+	("遅いやつ",8,"C",8,"premium",0),
+	("遅いやつ",8,"D",8,"premium",0),
+	("遅いやつ",8,"A",9,"premium",0),
+	("遅いやつ",8,"B",9,"premium",0),
+	("遅いやつ",8,"C",9,"premium",0),
+	("遅いやつ",8,"D",9,"premium",0),
+	("遅いやつ",8,"A",10,"premium",0),
+	("遅いやつ",8,"B",10,"premium",0),
+	("遅いやつ",8,"C",10,"premium",0),
+	("遅いやつ",8,"D",10,"premium",0),
+	("遅いやつ",8,"A",11,"premium",0),
+	("遅いやつ",8,"B",11,"premium",0),
+	("遅いやつ",8,"C",11,"premium",0),
+	("遅いやつ",8,"D",11,"premium",0),
+	("遅いやつ",8,"A",12,"premium",0),
+	("遅いやつ",8,"B",12,"premium",0),
+	("遅いやつ",8,"C",12,"premium",0),
+	("遅いやつ",8,"D",12,"premium",0),
+	("遅いやつ",8,"A",13,"premium",0),
+	("遅いやつ",8,"B",13,"premium",0),
+	("遅いやつ",8,"C",13,"premium",0),
+	("遅いやつ",8,"D",13,"premium",0),
+	("遅いやつ",8,"A",14,"premium",0),
+	("遅いやつ",8,"B",14,"premium",0),
+	("遅いやつ",8,"C",14,"premium",0),
+	("遅いやつ",8,"D",14,"premium",0),
+	("遅いやつ",8,"A",15,"premium",0),
+	("遅いやつ",8,"B",15,"premium",0),
+	("遅いやつ",8,"C",15,"premium",0),
+	("遅いやつ",8,"D",15,"premium",0),
+	("遅いやつ",8,"A",16,"premium",0),
+	("遅いやつ",8,"B",16,"premium",0),
+	("遅いやつ",8,"C",16,"premium",0),
+	("遅いやつ",8,"D",16,"premium",0),
+	("遅いやつ",8,"A",17,"premium",0),
+	("遅いやつ",8,"B",17,"premium",0),
+	("遅いやつ",8,"C",17,"premium",0),
+	("遅いやつ",8,"D",17,"premium",0),
+	("遅いやつ",9,"A",1,"premium",0),
+	("遅いやつ",9,"B",1,"premium",0),
+	("遅いやつ",9,"C",1,"premium",0),
+	("遅いやつ",9,"D",1,"premium",0),
+	("遅いやつ",9,"A",2,"premium",0),
+	("遅いやつ",9,"B",2,"premium",0),
+	("遅いやつ",9,"C",2,"premium",0),
+	("遅いやつ",9,"D",2,"premium",0),
+	("遅いやつ",9,"A",3,"premium",0),
+	("遅いやつ",9,"B",3,"premium",0),
+	("遅いやつ",9,"C",3,"premium",0),
+	("遅いやつ",9,"D",3,"premium",0),
+	("遅いやつ",9,"A",4,"premium",0),
+	("遅いやつ",9,"B",4,"premium",0),
+	("遅いやつ",9,"C",4,"premium",0),
+	("遅いやつ",9,"D",4,"premium",0),
+	("遅いやつ",9,"A",5,"premium",0),
+	("遅いやつ",9,"B",5,"premium",0),
+	("遅いやつ",9,"C",5,"premium",0),
+	("遅いやつ",9,"D",5,"premium",0),
+	("遅いやつ",9,"A",6,"premium",0),
+	("遅いやつ",9,"B",6,"premium",0),
+	("遅いやつ",9,"C",6,"premium",0),
+	("遅いやつ",9,"D",6,"premium",0),
+	("遅いやつ",9,"A",7,"premium",0),
+	("遅いやつ",9,"B",7,"premium",0),
+	("遅いやつ",9,"C",7,"premium",0),
+	("遅いやつ",9,"D",7,"premium",0),
+	("遅いやつ",9,"A",8,"premium",0),
+	("遅いやつ",9,"B",8,"premium",0),
+	("遅いやつ",9,"C",8,"premium",0),
+	("遅いやつ",9,"D",8,"premium",0),
+	("遅いやつ",9,"A",9,"premium",0),
+	("遅いやつ",9,"B",9,"premium",0),
+	("遅いやつ",9,"C",9,"premium",0),
+	("遅いやつ",9,"D",9,"premium",0),
+	("遅いやつ",9,"A",10,"premium",0),
+	("遅いやつ",9,"B",10,"premium",0),
+	("遅いやつ",9,"C",10,"premium",0),
+	("遅いやつ",9,"D",10,"premium",0),
+	("遅いやつ",9,"A",11,"premium",0),
+	("遅いやつ",9,"B",11,"premium",0),
+	("遅いやつ",9,"C",11,"premium",0),
+	("遅いやつ",9,"D",11,"premium",0),
+	("遅いやつ",9,"A",12,"premium",0),
+	("遅いやつ",9,"B",12,"premium",0),
+	("遅いやつ",9,"C",12,"premium",0),
+	("遅いやつ",9,"D",12,"premium",0),
+	("遅いやつ",9,"A",13,"premium",0),
+	("遅いやつ",9,"B",13,"premium",0),
+	("遅いやつ",9,"C",13,"premium",0),
+	("遅いやつ",9,"D",13,"premium",0),
+	("遅いやつ",9,"A",14,"premium",0),
+	("遅いやつ",9,"B",14,"premium",0),
+	("遅いやつ",9,"C",14,"premium",0),
+	("遅いやつ",9,"D",14,"premium",0),
+	("遅いやつ",9,"A",15,"premium",0),
+	("遅いやつ",9,"B",15,"premium",0),
+	("遅いやつ",9,"C",15,"premium",0),
+	("遅いやつ",9,"D",15,"premium",0),
+	("遅いやつ",9,"A",16,"premium",0),
+	("遅いやつ",9,"B",16,"premium",0),
+	("遅いやつ",9,"C",16,"premium",0),
+	("遅いやつ",9,"D",16,"premium",0),
+	("遅いやつ",9,"A",17,"premium",0),
+	("遅いやつ",9,"B",17,"premium",0),
+	("遅いやつ",9,"C",17,"premium",0),
+	("遅いやつ",9,"D",17,"premium",0),
+	("遅いやつ",10,"A",1,"premium",0),
+	("遅いやつ",10,"B",1,"premium",0),
+	("遅いやつ",10,"C",1,"premium",0),
+	("遅いやつ",10,"D",1,"premium",0),
+	("遅いやつ",10,"A",2,"premium",0),
+	("遅いやつ",10,"B",2,"premium",0),
+	("遅いやつ",10,"C",2,"premium",0),
+	("遅いやつ",10,"D",2,"premium",0),
+	("遅いやつ",10,"A",3,"premium",0),
+	("遅いやつ",10,"B",3,"premium",0),
+	("遅いやつ",10,"C",3,"premium",0),
+	("遅いやつ",10,"D",3,"premium",0),
+	("遅いやつ",10,"A",4,"premium",0),
+	("遅いやつ",10,"B",4,"premium",0),
+	("遅いやつ",10,"C",4,"premium",0),
+	("遅いやつ",10,"D",4,"premium",0),
+	("遅いやつ",10,"A",5,"premium",0),
+	("遅いやつ",10,"B",5,"premium",0),
+	("遅いやつ",10,"C",5,"premium",0),
+	("遅いやつ",10,"D",5,"premium",0),
+	("遅いやつ",10,"A",6,"premium",0),
+	("遅いやつ",10,"B",6,"premium",0),
+	("遅いやつ",10,"C",6,"premium",0),
+	("遅いやつ",10,"D",6,"premium",0),
+	("遅いやつ",10,"A",7,"premium",0),
+	("遅いやつ",10,"B",7,"premium",0),
+	("遅いやつ",10,"C",7,"premium",0),
+	("遅いやつ",10,"D",7,"premium",0),
+	("遅いやつ",10,"A",8,"premium",0),
+	("遅いやつ",10,"B",8,"premium",0),
+	("遅いやつ",10,"C",8,"premium",0),
+	("遅いやつ",10,"D",8,"premium",0),
+	("遅いやつ",10,"A",9,"premium",0),
+	("遅いやつ",10,"B",9,"premium",0),
+	("遅いやつ",10,"C",9,"premium",0),
+	("遅いやつ",10,"D",9,"premium",0),
+	("遅いやつ",10,"A",10,"premium",0),
+	("遅いやつ",10,"B",10,"premium",0),
+	("遅いやつ",10,"C",10,"premium",0),
+	("遅いやつ",10,"D",10,"premium",0),
+	("遅いやつ",10,"A",11,"premium",0),
+	("遅いやつ",10,"B",11,"premium",0),
+	("遅いやつ",10,"C",11,"premium",0),
+	("遅いやつ",10,"D",11,"premium",0),
+	("遅いやつ",10,"A",12,"premium",0),
+	("遅いやつ",10,"B",12,"premium",0),
+	("遅いやつ",10,"C",12,"premium",0),
+	("遅いやつ",10,"D",12,"premium",0),
+	("遅いやつ",10,"A",13,"premium",0),
+	("遅いやつ",10,"B",13,"premium",0),
+	("遅いやつ",10,"C",13,"premium",0),
+	("遅いやつ",10,"D",13,"premium",0),
+	("遅いやつ",10,"A",14,"premium",0),
+	("遅いやつ",10,"B",14,"premium",0),
+	("遅いやつ",10,"C",14,"premium",0),
+	("遅いやつ",10,"D",14,"premium",0),
+	("遅いやつ",10,"A",15,"premium",0),
+	("遅いやつ",10,"B",15,"premium",0),
+	("遅いやつ",10,"C",15,"premium",0),
+	("遅いやつ",10,"D",15,"premium",0),
+	("遅いやつ",10,"A",16,"premium",0),
+	("遅いやつ",10,"B",16,"premium",0),
+	("遅いやつ",10,"C",16,"premium",0),
+	("遅いやつ",10,"D",16,"premium",0),
+	("遅いやつ",10,"A",17,"premium",0),
+	("遅いやつ",10,"B",17,"premium",0),
+	("遅いやつ",10,"C",17,"premium",0),
+	("遅いやつ",10,"D",17,"premium",0),
+	("遅いやつ",11,"A",1,"non-reserved",0),
+	("遅いやつ",11,"B",1,"non-reserved",0),
+	("遅いやつ",11,"C",1,"non-reserved",0),
+	("遅いやつ",11,"D",1,"non-reserved",0),
+	("遅いやつ",11,"E",1,"non-reserved",0),
+	("遅いやつ",11,"A",2,"non-reserved",0),
+	("遅いやつ",11,"B",2,"non-reserved",0),
+	("遅いやつ",11,"C",2,"non-reserved",0),
+	("遅いやつ",11,"D",2,"non-reserved",0),
+	("遅いやつ",11,"E",2,"non-reserved",0),
+	("遅いやつ",11,"A",3,"non-reserved",0),
+	("遅いやつ",11,"B",3,"non-reserved",0),
+	("遅いやつ",11,"C",3,"non-reserved",0),
+	("遅いやつ",11,"D",3,"non-reserved",0),
+	("遅いやつ",11,"E",3,"non-reserved",0),
+	("遅いやつ",11,"A",4,"non-reserved",0),
+	("遅いやつ",11,"B",4,"non-reserved",0),
+	("遅いやつ",11,"C",4,"non-reserved",0),
+	("遅いやつ",11,"D",4,"non-reserved",0),
+	("遅いやつ",11,"E",4,"non-reserved",0),
+	("遅いやつ",11,"A",5,"non-reserved",0),
+	("遅いやつ",11,"B",5,"non-reserved",0),
+	("遅いやつ",11,"C",5,"non-reserved",0),
+	("遅いやつ",11,"D",5,"non-reserved",0),
+	("遅いやつ",11,"E",5,"non-reserved",0),
+	("遅いやつ",11,"A",6,"non-reserved",0),
+	("遅いやつ",11,"B",6,"non-reserved",0),
+	("遅いやつ",11,"C",6,"non-reserved",0),
+	("遅いやつ",11,"D",6,"non-reserved",0),
+	("遅いやつ",11,"E",6,"non-reserved",0),
+	("遅いやつ",11,"A",7,"non-reserved",0),
+	("遅いやつ",11,"B",7,"non-reserved",0),
+	("遅いやつ",11,"C",7,"non-reserved",0),
+	("遅いやつ",11,"D",7,"non-reserved",0),
+	("遅いやつ",11,"E",7,"non-reserved",0),
+	("遅いやつ",11,"A",8,"non-reserved",0),
+	("遅いやつ",11,"B",8,"non-reserved",0),
+	("遅いやつ",11,"C",8,"non-reserved",0),
+	("遅いやつ",11,"D",8,"non-reserved",0),
+	("遅いやつ",11,"E",8,"non-reserved",0),
+	("遅いやつ",11,"A",9,"non-reserved",0),
+	("遅いやつ",11,"B",9,"non-reserved",0),
+	("遅いやつ",11,"C",9,"non-reserved",0),
+	("遅いやつ",11,"D",9,"non-reserved",0),
+	("遅いやつ",11,"E",9,"non-reserved",0),
+	("遅いやつ",11,"A",10,"non-reserved",0),
+	("遅いやつ",11,"B",10,"non-reserved",0),
+	("遅いやつ",11,"C",10,"non-reserved",0),
+	("遅いやつ",11,"D",10,"non-reserved",0),
+	("遅いやつ",11,"E",10,"non-reserved",0),
+	("遅いやつ",11,"A",11,"non-reserved",1),
+	("遅いやつ",11,"B",11,"non-reserved",1),
+	("遅いやつ",11,"C",11,"non-reserved",1),
+	("遅いやつ",11,"D",11,"non-reserved",1),
+	("遅いやつ",11,"E",11,"non-reserved",1),
+	("遅いやつ",11,"A",12,"non-reserved",1),
+	("遅いやつ",11,"B",12,"non-reserved",1),
+	("遅いやつ",11,"C",12,"non-reserved",1),
+	("遅いやつ",11,"D",12,"non-reserved",1),
+	("遅いやつ",11,"E",12,"non-reserved",1),
+	("遅いやつ",11,"A",13,"non-reserved",1),
+	("遅いやつ",11,"B",13,"non-reserved",1),
+	("遅いやつ",11,"C",13,"non-reserved",1),
+	("遅いやつ",11,"D",13,"non-reserved",1),
+	("遅いやつ",11,"E",13,"non-reserved",1),
+	("遅いやつ",11,"A",14,"non-reserved",1),
+	("遅いやつ",11,"B",14,"non-reserved",1),
+	("遅いやつ",11,"C",14,"non-reserved",1),
+	("遅いやつ",11,"D",14,"non-reserved",1),
+	("遅いやつ",11,"E",14,"non-reserved",1),
+	("遅いやつ",11,"A",15,"non-reserved",1),
+	("遅いやつ",11,"B",15,"non-reserved",1),
+	("遅いやつ",11,"C",15,"non-reserved",1),
+	("遅いやつ",11,"D",15,"non-reserved",1),
+	("遅いやつ",11,"E",15,"non-reserved",1),
+	("遅いやつ",11,"A",16,"non-reserved",1),
+	("遅いやつ",11,"B",16,"non-reserved",1),
+	("遅いやつ",11,"C",16,"non-reserved",1),
+	("遅いやつ",11,"D",16,"non-reserved",1),
+	("遅いやつ",11,"E",16,"non-reserved",1),
+	("遅いやつ",12,"A",1,"non-reserved",0),
+	("遅いやつ",12,"B",1,"non-reserved",0),
+	("遅いやつ",12,"C",1,"non-reserved",0),
+	("遅いやつ",12,"D",1,"non-reserved",0),
+	("遅いやつ",12,"E",1,"non-reserved",0),
+	("遅いやつ",12,"A",2,"non-reserved",0),
+	("遅いやつ",12,"B",2,"non-reserved",0),
+	("遅いやつ",12,"C",2,"non-reserved",0),
+	("遅いやつ",12,"D",2,"non-reserved",0),
+	("遅いやつ",12,"E",2,"non-reserved",0),
+	("遅いやつ",12,"A",3,"non-reserved",0),
+	("遅いやつ",12,"B",3,"non-reserved",0),
+	("遅いやつ",12,"C",3,"non-reserved",0),
+	("遅いやつ",12,"D",3,"non-reserved",0),
+	("遅いやつ",12,"E",3,"non-reserved",0),
+	("遅いやつ",12,"A",4,"non-reserved",0),
+	("遅いやつ",12,"B",4,"non-reserved",0),
+	("遅いやつ",12,"C",4,"non-reserved",0),
+	("遅いやつ",12,"D",4,"non-reserved",0),
+	("遅いやつ",12,"E",4,"non-reserved",0),
+	("遅いやつ",12,"A",5,"non-reserved",0),
+	("遅いやつ",12,"B",5,"non-reserved",0),
+	("遅いやつ",12,"C",5,"non-reserved",0),
+	("遅いやつ",12,"D",5,"non-reserved",0),
+	("遅いやつ",12,"E",5,"non-reserved",0),
+	("遅いやつ",12,"A",6,"non-reserved",0),
+	("遅いやつ",12,"B",6,"non-reserved",0),
+	("遅いやつ",12,"C",6,"non-reserved",0),
+	("遅いやつ",12,"D",6,"non-reserved",0),
+	("遅いやつ",12,"E",6,"non-reserved",0),
+	("遅いやつ",12,"A",7,"non-reserved",0),
+	("遅いやつ",12,"B",7,"non-reserved",0),
+	("遅いやつ",12,"C",7,"non-reserved",0),
+	("遅いやつ",12,"D",7,"non-reserved",0),
+	("遅いやつ",12,"E",7,"non-reserved",0),
+	("遅いやつ",12,"A",8,"non-reserved",0),
+	("遅いやつ",12,"B",8,"non-reserved",0),
+	("遅いやつ",12,"C",8,"non-reserved",0),
+	("遅いやつ",12,"D",8,"non-reserved",0),
+	("遅いやつ",12,"E",8,"non-reserved",0),
+	("遅いやつ",12,"A",9,"non-reserved",0),
+	("遅いやつ",12,"B",9,"non-reserved",0),
+	("遅いやつ",12,"C",9,"non-reserved",0),
+	("遅いやつ",12,"D",9,"non-reserved",0),
+	("遅いやつ",12,"E",9,"non-reserved",0),
+	("遅いやつ",12,"A",10,"non-reserved",0),
+	("遅いやつ",12,"B",10,"non-reserved",0),
+	("遅いやつ",12,"C",10,"non-reserved",0),
+	("遅いやつ",12,"D",10,"non-reserved",0),
+	("遅いやつ",12,"E",10,"non-reserved",0),
+	("遅いやつ",12,"A",11,"non-reserved",0),
+	("遅いやつ",12,"B",11,"non-reserved",0),
+	("遅いやつ",12,"C",11,"non-reserved",0),
+	("遅いやつ",12,"D",11,"non-reserved",0),
+	("遅いやつ",12,"E",11,"non-reserved",0),
+	("遅いやつ",12,"A",12,"non-reserved",0),
+	("遅いやつ",12,"B",12,"non-reserved",0),
+	("遅いやつ",12,"C",12,"non-reserved",0),
+	("遅いやつ",12,"D",12,"non-reserved",0),
+	("遅いやつ",12,"E",12,"non-reserved",0),
+	("遅いやつ",12,"A",13,"non-reserved",0),
+	("遅いやつ",12,"B",13,"non-reserved",0),
+	("遅いやつ",12,"C",13,"non-reserved",0),
+	("遅いやつ",12,"D",13,"non-reserved",0),
+	("遅いやつ",12,"E",13,"non-reserved",0),
+	("遅いやつ",12,"A",14,"non-reserved",0),
+	("遅いやつ",12,"B",14,"non-reserved",0),
+	("遅いやつ",12,"C",14,"non-reserved",0),
+	("遅いやつ",12,"D",14,"non-reserved",0),
+	("遅いやつ",12,"E",14,"non-reserved",0),
+	("遅いやつ",12,"A",15,"non-reserved",0),
+	("遅いやつ",12,"B",15,"non-reserved",0),
+	("遅いやつ",12,"C",15,"non-reserved",0),
+	("遅いやつ",12,"D",15,"non-reserved",0),
+	("遅いやつ",12,"E",15,"non-reserved",0),
+	("遅いやつ",12,"A",16,"non-reserved",0),
+	("遅いやつ",12,"B",16,"non-reserved",0),
+	("遅いやつ",12,"C",16,"non-reserved",0),
+	("遅いやつ",12,"D",16,"non-reserved",0),
+	("遅いやつ",12,"E",16,"non-reserved",0),
+	("遅いやつ",12,"A",17,"non-reserved",0),
+	("遅いやつ",12,"B",17,"non-reserved",0),
+	("遅いやつ",12,"C",17,"non-reserved",0),
+	("遅いやつ",12,"D",17,"non-reserved",0),
+	("遅いやつ",12,"E",17,"non-reserved",0),
+	("遅いやつ",12,"A",18,"non-reserved",0),
+	("遅いやつ",12,"B",18,"non-reserved",0),
+	("遅いやつ",12,"C",18,"non-reserved",0),
+	("遅いやつ",12,"D",18,"non-reserved",0),
+	("遅いやつ",12,"E",18,"non-reserved",0),
+	("遅いやつ",12,"A",19,"non-reserved",0),
+	("遅いやつ",12,"B",19,"non-reserved",0),
+	("遅いやつ",12,"C",19,"non-reserved",0),
+	("遅いやつ",12,"D",19,"non-reserved",0),
+	("遅いやつ",12,"E",19,"non-reserved",0),
+	("遅いやつ",12,"A",20,"non-reserved",0),
+	("遅いやつ",12,"B",20,"non-reserved",0),
+	("遅いやつ",12,"C",20,"non-reserved",0),
+	("遅いやつ",12,"D",20,"non-reserved",0),
+	("遅いやつ",12,"E",20,"non-reserved",0),
+	("遅いやつ",13,"A",1,"non-reserved",0),
+	("遅いやつ",13,"B",1,"non-reserved",0),
+	("遅いやつ",13,"C",1,"non-reserved",0),
+	("遅いやつ",13,"D",1,"non-reserved",0),
+	("遅いやつ",13,"E",1,"non-reserved",0),
+	("遅いやつ",13,"A",2,"non-reserved",0),
+	("遅いやつ",13,"B",2,"non-reserved",0),
+	("遅いやつ",13,"C",2,"non-reserved",0),
+	("遅いやつ",13,"D",2,"non-reserved",0),
+	("遅いやつ",13,"E",2,"non-reserved",0),
+	("遅いやつ",13,"A",3,"non-reserved",0),
+	("遅いやつ",13,"B",3,"non-reserved",0),
+	("遅いやつ",13,"C",3,"non-reserved",0),
+	("遅いやつ",13,"D",3,"non-reserved",0),
+	("遅いやつ",13,"E",3,"non-reserved",0),
+	("遅いやつ",13,"A",4,"non-reserved",0),
+	("遅いやつ",13,"B",4,"non-reserved",0),
+	("遅いやつ",13,"C",4,"non-reserved",0),
+	("遅いやつ",13,"D",4,"non-reserved",0),
+	("遅いやつ",13,"E",4,"non-reserved",0),
+	("遅いやつ",13,"A",5,"non-reserved",0),
+	("遅いやつ",13,"B",5,"non-reserved",0),
+	("遅いやつ",13,"C",5,"non-reserved",0),
+	("遅いやつ",13,"D",5,"non-reserved",0),
+	("遅いやつ",13,"E",5,"non-reserved",0),
+	("遅いやつ",13,"A",6,"non-reserved",0),
+	("遅いやつ",13,"B",6,"non-reserved",0),
+	("遅いやつ",13,"C",6,"non-reserved",0),
+	("遅いやつ",13,"D",6,"non-reserved",0),
+	("遅いやつ",13,"E",6,"non-reserved",0),
+	("遅いやつ",13,"A",7,"non-reserved",0),
+	("遅いやつ",13,"B",7,"non-reserved",0),
+	("遅いやつ",13,"C",7,"non-reserved",0),
+	("遅いやつ",13,"D",7,"non-reserved",0),
+	("遅いやつ",13,"E",7,"non-reserved",0),
+	("遅いやつ",13,"A",8,"non-reserved",0),
+	("遅いやつ",13,"B",8,"non-reserved",0),
+	("遅いやつ",13,"C",8,"non-reserved",0),
+	("遅いやつ",13,"D",8,"non-reserved",0),
+	("遅いやつ",13,"E",8,"non-reserved",0),
+	("遅いやつ",13,"A",9,"non-reserved",0),
+	("遅いやつ",13,"B",9,"non-reserved",0),
+	("遅いやつ",13,"C",9,"non-reserved",0),
+	("遅いやつ",13,"D",9,"non-reserved",0),
+	("遅いやつ",13,"E",9,"non-reserved",0),
+	("遅いやつ",13,"A",10,"non-reserved",0),
+	("遅いやつ",13,"B",10,"non-reserved",0),
+	("遅いやつ",13,"C",10,"non-reserved",0),
+	("遅いやつ",13,"D",10,"non-reserved",0),
+	("遅いやつ",13,"E",10,"non-reserved",0),
+	("遅いやつ",13,"A",11,"non-reserved",1),
+	("遅いやつ",13,"B",11,"non-reserved",1),
+	("遅いやつ",13,"C",11,"non-reserved",1),
+	("遅いやつ",13,"D",11,"non-reserved",1),
+	("遅いやつ",13,"E",11,"non-reserved",1),
+	("遅いやつ",13,"A",12,"non-reserved",1),
+	("遅いやつ",13,"B",12,"non-reserved",1),
+	("遅いやつ",13,"C",12,"non-reserved",1),
+	("遅いやつ",13,"D",12,"non-reserved",1),
+	("遅いやつ",13,"E",12,"non-reserved",1),
+	("遅いやつ",13,"A",13,"non-reserved",1),
+	("遅いやつ",13,"B",13,"non-reserved",1),
+	("遅いやつ",13,"C",13,"non-reserved",1),
+	("遅いやつ",13,"D",13,"non-reserved",1),
+	("遅いやつ",13,"E",13,"non-reserved",1),
+	("遅いやつ",13,"A",14,"non-reserved",1),
+	("遅いやつ",13,"B",14,"non-reserved",1),
+	("遅いやつ",13,"C",14,"non-reserved",1),
+	("遅いやつ",13,"D",14,"non-reserved",1),
+	("遅いやつ",13,"E",14,"non-reserved",1),
+	("遅いやつ",13,"A",15,"non-reserved",1),
+	("遅いやつ",13,"B",15,"non-reserved",1),
+	("遅いやつ",13,"C",15,"non-reserved",1),
+	("遅いやつ",13,"D",15,"non-reserved",1),
+	("遅いやつ",13,"E",15,"non-reserved",1),
+	("遅いやつ",13,"A",16,"non-reserved",1),
+	("遅いやつ",13,"B",16,"non-reserved",1),
+	("遅いやつ",13,"C",16,"non-reserved",1),
+	("遅いやつ",13,"D",16,"non-reserved",1),
+	("遅いやつ",13,"E",16,"non-reserved",1),
+	("遅いやつ",14,"A",1,"non-reserved",0),
+	("遅いやつ",14,"B",1,"non-reserved",0),
+	("遅いやつ",14,"C",1,"non-reserved",0),
+	("遅いやつ",14,"D",1,"non-reserved",0),
+	("遅いやつ",14,"E",1,"non-reserved",0),
+	("遅いやつ",14,"A",2,"non-reserved",0),
+	("遅いやつ",14,"B",2,"non-reserved",0),
+	("遅いやつ",14,"C",2,"non-reserved",0),
+	("遅いやつ",14,"D",2,"non-reserved",0),
+	("遅いやつ",14,"E",2,"non-reserved",0),
+	("遅いやつ",14,"A",3,"non-reserved",0),
+	("遅いやつ",14,"B",3,"non-reserved",0),
+	("遅いやつ",14,"C",3,"non-reserved",0),
+	("遅いやつ",14,"D",3,"non-reserved",0),
+	("遅いやつ",14,"E",3,"non-reserved",0),
+	("遅いやつ",14,"A",4,"non-reserved",0),
+	("遅いやつ",14,"B",4,"non-reserved",0),
+	("遅いやつ",14,"C",4,"non-reserved",0),
+	("遅いやつ",14,"D",4,"non-reserved",0),
+	("遅いやつ",14,"E",4,"non-reserved",0),
+	("遅いやつ",14,"A",5,"non-reserved",0),
+	("遅いやつ",14,"B",5,"non-reserved",0),
+	("遅いやつ",14,"C",5,"non-reserved",0),
+	("遅いやつ",14,"D",5,"non-reserved",0),
+	("遅いやつ",14,"E",5,"non-reserved",0),
+	("遅いやつ",14,"A",6,"non-reserved",0),
+	("遅いやつ",14,"B",6,"non-reserved",0),
+	("遅いやつ",14,"C",6,"non-reserved",0),
+	("遅いやつ",14,"D",6,"non-reserved",0),
+	("遅いやつ",14,"E",6,"non-reserved",0),
+	("遅いやつ",14,"A",7,"non-reserved",0),
+	("遅いやつ",14,"B",7,"non-reserved",0),
+	("遅いやつ",14,"C",7,"non-reserved",0),
+	("遅いやつ",14,"D",7,"non-reserved",0),
+	("遅いやつ",14,"E",7,"non-reserved",0),
+	("遅いやつ",14,"A",8,"non-reserved",0),
+	("遅いやつ",14,"B",8,"non-reserved",0),
+	("遅いやつ",14,"C",8,"non-reserved",0),
+	("遅いやつ",14,"D",8,"non-reserved",0),
+	("遅いやつ",14,"E",8,"non-reserved",0),
+	("遅いやつ",14,"A",9,"non-reserved",0),
+	("遅いやつ",14,"B",9,"non-reserved",0),
+	("遅いやつ",14,"C",9,"non-reserved",0),
+	("遅いやつ",14,"D",9,"non-reserved",0),
+	("遅いやつ",14,"E",9,"non-reserved",0),
+	("遅いやつ",14,"A",10,"non-reserved",0),
+	("遅いやつ",14,"B",10,"non-reserved",0),
+	("遅いやつ",14,"C",10,"non-reserved",0),
+	("遅いやつ",14,"D",10,"non-reserved",0),
+	("遅いやつ",14,"E",10,"non-reserved",0),
+	("遅いやつ",14,"A",11,"non-reserved",0),
+	("遅いやつ",14,"B",11,"non-reserved",0),
+	("遅いやつ",14,"C",11,"non-reserved",0),
+	("遅いやつ",14,"D",11,"non-reserved",0),
+	("遅いやつ",14,"E",11,"non-reserved",0),
+	("遅いやつ",14,"A",12,"non-reserved",0),
+	("遅いやつ",14,"B",12,"non-reserved",0),
+	("遅いやつ",14,"C",12,"non-reserved",0),
+	("遅いやつ",14,"D",12,"non-reserved",0),
+	("遅いやつ",14,"E",12,"non-reserved",0),
+	("遅いやつ",14,"A",13,"non-reserved",0),
+	("遅いやつ",14,"B",13,"non-reserved",0),
+	("遅いやつ",14,"C",13,"non-reserved",0),
+	("遅いやつ",14,"D",13,"non-reserved",0),
+	("遅いやつ",14,"E",13,"non-reserved",0),
+	("遅いやつ",14,"A",14,"non-reserved",0),
+	("遅いやつ",14,"B",14,"non-reserved",0),
+	("遅いやつ",14,"C",14,"non-reserved",0),
+	("遅いやつ",14,"D",14,"non-reserved",0),
+	("遅いやつ",14,"E",14,"non-reserved",0),
+	("遅いやつ",14,"A",15,"non-reserved",0),
+	("遅いやつ",14,"B",15,"non-reserved",0),
+	("遅いやつ",14,"C",15,"non-reserved",0),
+	("遅いやつ",14,"D",15,"non-reserved",0),
+	("遅いやつ",14,"E",15,"non-reserved",0),
+	("遅いやつ",14,"A",16,"non-reserved",0),
+	("遅いやつ",14,"B",16,"non-reserved",0),
+	("遅いやつ",14,"C",16,"non-reserved",0),
+	("遅いやつ",14,"D",16,"non-reserved",0),
+	("遅いやつ",14,"E",16,"non-reserved",0),
+	("遅いやつ",14,"A",17,"non-reserved",0),
+	("遅いやつ",14,"B",17,"non-reserved",0),
+	("遅いやつ",14,"C",17,"non-reserved",0),
+	("遅いやつ",14,"D",17,"non-reserved",0),
+	("遅いやつ",14,"E",17,"non-reserved",0),
+	("遅いやつ",14,"A",18,"non-reserved",0),
+	("遅いやつ",14,"B",18,"non-reserved",0),
+	("遅いやつ",14,"C",18,"non-reserved",0),
+	("遅いやつ",14,"D",18,"non-reserved",0),
+	("遅いやつ",14,"E",18,"non-reserved",0),
+	("遅いやつ",14,"A",19,"non-reserved",0),
+	("遅いやつ",14,"B",19,"non-reserved",0),
+	("遅いやつ",14,"C",19,"non-reserved",0),
+	("遅いやつ",14,"D",19,"non-reserved",0),
+	("遅いやつ",14,"E",19,"non-reserved",0),
+	("遅いやつ",14,"A",20,"non-reserved",0),
+	("遅いやつ",14,"B",20,"non-reserved",0),
+	("遅いやつ",14,"C",20,"non-reserved",0),
+	("遅いやつ",14,"D",20,"non-reserved",0),
+	("遅いやつ",14,"E",20,"non-reserved",0),
+	("遅いやつ",15,"A",1,"non-reserved",0),
+	("遅いやつ",15,"B",1,"non-reserved",0),
+	("遅いやつ",15,"C",1,"non-reserved",0),
+	("遅いやつ",15,"D",1,"non-reserved",0),
+	("遅いやつ",15,"E",1,"non-reserved",0),
+	("遅いやつ",15,"A",2,"non-reserved",0),
+	("遅いやつ",15,"B",2,"non-reserved",0),
+	("遅いやつ",15,"C",2,"non-reserved",0),
+	("遅いやつ",15,"D",2,"non-reserved",0),
+	("遅いやつ",15,"E",2,"non-reserved",0),
+	("遅いやつ",15,"A",3,"non-reserved",0),
+	("遅いやつ",15,"B",3,"non-reserved",0),
+	("遅いやつ",15,"C",3,"non-reserved",0),
+	("遅いやつ",15,"D",3,"non-reserved",0),
+	("遅いやつ",15,"E",3,"non-reserved",0),
+	("遅いやつ",15,"A",4,"non-reserved",0),
+	("遅いやつ",15,"B",4,"non-reserved",0),
+	("遅いやつ",15,"C",4,"non-reserved",0),
+	("遅いやつ",15,"D",4,"non-reserved",0),
+	("遅いやつ",15,"E",4,"non-reserved",0),
+	("遅いやつ",15,"A",5,"non-reserved",0),
+	("遅いやつ",15,"B",5,"non-reserved",0),
+	("遅いやつ",15,"C",5,"non-reserved",0),
+	("遅いやつ",15,"D",5,"non-reserved",0),
+	("遅いやつ",15,"E",5,"non-reserved",0),
+	("遅いやつ",15,"A",6,"non-reserved",0),
+	("遅いやつ",15,"B",6,"non-reserved",0),
+	("遅いやつ",15,"C",6,"non-reserved",0),
+	("遅いやつ",15,"D",6,"non-reserved",0),
+	("遅いやつ",15,"E",6,"non-reserved",0),
+	("遅いやつ",15,"A",7,"non-reserved",0),
+	("遅いやつ",15,"B",7,"non-reserved",0),
+	("遅いやつ",15,"C",7,"non-reserved",0),
+	("遅いやつ",15,"D",7,"non-reserved",0),
+	("遅いやつ",15,"E",7,"non-reserved",0),
+	("遅いやつ",15,"A",8,"non-reserved",0),
+	("遅いやつ",15,"B",8,"non-reserved",0),
+	("遅いやつ",15,"C",8,"non-reserved",0),
+	("遅いやつ",15,"D",8,"non-reserved",0),
+	("遅いやつ",15,"E",8,"non-reserved",0),
+	("遅いやつ",15,"A",9,"non-reserved",0),
+	("遅いやつ",15,"B",9,"non-reserved",0),
+	("遅いやつ",15,"C",9,"non-reserved",0),
+	("遅いやつ",15,"D",9,"non-reserved",0),
+	("遅いやつ",15,"E",9,"non-reserved",0),
+	("遅いやつ",15,"A",10,"non-reserved",0),
+	("遅いやつ",15,"B",10,"non-reserved",0),
+	("遅いやつ",15,"C",10,"non-reserved",0),
+	("遅いやつ",15,"D",10,"non-reserved",0),
+	("遅いやつ",15,"E",10,"non-reserved",0),
+	("遅いやつ",15,"A",11,"non-reserved",1),
+	("遅いやつ",15,"B",11,"non-reserved",1),
+	("遅いやつ",15,"C",11,"non-reserved",1),
+	("遅いやつ",15,"D",11,"non-reserved",1),
+	("遅いやつ",15,"E",11,"non-reserved",1),
+	("遅いやつ",15,"A",12,"non-reserved",1),
+	("遅いやつ",15,"B",12,"non-reserved",1),
+	("遅いやつ",15,"C",12,"non-reserved",1),
+	("遅いやつ",15,"D",12,"non-reserved",1),
+	("遅いやつ",15,"E",12,"non-reserved",1),
+	("遅いやつ",15,"A",13,"non-reserved",1),
+	("遅いやつ",15,"B",13,"non-reserved",1),
+	("遅いやつ",15,"C",13,"non-reserved",1),
+	("遅いやつ",15,"D",13,"non-reserved",1),
+	("遅いやつ",15,"E",13,"non-reserved",1),
+	("遅いやつ",15,"A",14,"non-reserved",1),
+	("遅いやつ",15,"B",14,"non-reserved",1),
+	("遅いやつ",15,"C",14,"non-reserved",1),
+	("遅いやつ",15,"D",14,"non-reserved",1),
+	("遅いやつ",15,"E",14,"non-reserved",1),
+	("遅いやつ",15,"A",15,"non-reserved",1),
+	("遅いやつ",15,"B",15,"non-reserved",1),
+	("遅いやつ",15,"C",15,"non-reserved",1),
+	("遅いやつ",15,"D",15,"non-reserved",1),
+	("遅いやつ",15,"E",15,"non-reserved",1),
+	("遅いやつ",15,"A",16,"non-reserved",1),
+	("遅いやつ",15,"B",16,"non-reserved",1),
+	("遅いやつ",15,"C",16,"non-reserved",1),
+	("遅いやつ",15,"D",16,"non-reserved",1),
+	("遅いやつ",15,"E",16,"non-reserved",1),
+	("遅いやつ",16,"A",1,"reserved",0),
+	("遅いやつ",16,"B",1,"reserved",0),
+	("遅いやつ",16,"C",1,"reserved",0),
+	("遅いやつ",16,"D",1,"reserved",0),
+	("遅いやつ",16,"E",1,"reserved",0),
+	("遅いやつ",16,"A",2,"reserved",0),
+	("遅いやつ",16,"B",2,"reserved",0),
+	("遅いやつ",16,"C",2,"reserved",0),
+	("遅いやつ",16,"D",2,"reserved",0),
+	("遅いやつ",16,"E",2,"reserved",0),
+	("遅いやつ",16,"A",3,"reserved",0),
+	("遅いやつ",16,"B",3,"reserved",0),
+	("遅いやつ",16,"C",3,"reserved",0),
+	("遅いやつ",16,"D",3,"reserved",0),
+	("遅いやつ",16,"E",3,"reserved",0),
+	("遅いやつ",16,"A",4,"reserved",0),
+	("遅いやつ",16,"B",4,"reserved",0),
+	("遅いやつ",16,"C",4,"reserved",0),
+	("遅いやつ",16,"D",4,"reserved",0),
+	("遅いやつ",16,"E",4,"reserved",0),
+	("遅いやつ",16,"A",5,"reserved",0),
+	("遅いやつ",16,"B",5,"reserved",0),
+	("遅いやつ",16,"C",5,"reserved",0),
+	("遅いやつ",16,"D",5,"reserved",0),
+	("遅いやつ",16,"E",5,"reserved",0),
+	("遅いやつ",16,"A",6,"reserved",0),
+	("遅いやつ",16,"B",6,"reserved",0),
+	("遅いやつ",16,"C",6,"reserved",0),
+	("遅いやつ",16,"D",6,"reserved",0),
+	("遅いやつ",16,"E",6,"reserved",0),
+	("遅いやつ",16,"A",7,"reserved",0),
+	("遅いやつ",16,"B",7,"reserved",0),
+	("遅いやつ",16,"C",7,"reserved",0),
+	("遅いやつ",16,"D",7,"reserved",0),
+	("遅いやつ",16,"E",7,"reserved",0),
+	("遅いやつ",16,"A",8,"reserved",0),
+	("遅いやつ",16,"B",8,"reserved",0),
+	("遅いやつ",16,"C",8,"reserved",0),
+	("遅いやつ",16,"D",8,"reserved",0),
+	("遅いやつ",16,"E",8,"reserved",0),
+	("遅いやつ",16,"A",9,"reserved",0),
+	("遅いやつ",16,"B",9,"reserved",0),
+	("遅いやつ",16,"C",9,"reserved",0),
+	("遅いやつ",16,"D",9,"reserved",0),
+	("遅いやつ",16,"E",9,"reserved",0),
+	("遅いやつ",16,"A",10,"reserved",0),
+	("遅いやつ",16,"B",10,"reserved",0),
+	("遅いやつ",16,"C",10,"reserved",0),
+	("遅いやつ",16,"D",10,"reserved",0),
+	("遅いやつ",16,"E",10,"reserved",0),
+	("遅いやつ",16,"A",11,"reserved",0),
+	("遅いやつ",16,"B",11,"reserved",0),
+	("遅いやつ",16,"C",11,"reserved",0),
+	("遅いやつ",16,"D",11,"reserved",0),
+	("遅いやつ",16,"E",11,"reserved",0),
+	("遅いやつ",16,"A",12,"reserved",0),
+	("遅いやつ",16,"B",12,"reserved",0),
+	("遅いやつ",16,"C",12,"reserved",0),
+	("遅いやつ",16,"D",12,"reserved",0),
+	("遅いやつ",16,"E",12,"reserved",0),
+	("遅いやつ",16,"A",13,"reserved",0),
+	("遅いやつ",16,"B",13,"reserved",0),
+	("遅いやつ",16,"C",13,"reserved",0),
+	("遅いやつ",16,"D",13,"reserved",0),
+	("遅いやつ",16,"E",13,"reserved",0);
