@@ -32,7 +32,7 @@ ${EDITOR} webapp/${LANGUAGE}/Dockerfile
   * MySQLサーバへの接続ユーザー名
 * MYSQL_PASSWORD
   * MySQLサーバへの接続パスワード
-* PAYMENT_URL
+* PAYMENT_API
   * 決済代行サービスURL
 
 

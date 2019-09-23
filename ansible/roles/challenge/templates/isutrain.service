@@ -4,6 +4,8 @@ Requires=docker.service
 
 [Service]
 EnvironmentFile=-/home/isucon/isutrain/webapp/.env
+Environment="PAYMENT_API={{ payment_api }}"
+
 WorkingDirectory=/home/isucon/isutrain/webapp
 
 Type=simple
