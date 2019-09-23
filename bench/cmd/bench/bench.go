@@ -31,7 +31,7 @@ func uniqueMsgs(msgs []string) (uniqMsgs []string) {
 			continue
 		}
 		dedup[msg] = struct{}{}
-		msgs = append(uniqMsgs, msg)
+		uniqMsgs = append(uniqMsgs, msg)
 	}
 	return
 }

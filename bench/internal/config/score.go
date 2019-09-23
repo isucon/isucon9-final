@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	ApplicationPenaltyWeight = 500
+	ApplicationPenaltyWeight = 5
 
 	// TrivialPenaltyThreshold = 200
 	TrivialPenaltyThreshold = 1

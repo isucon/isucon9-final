@@ -109,7 +109,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		"最速", "1", 8, "東京", "大阪", nil)
 	if err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "列車の座席座席列挙できません"))
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "列車の座席列挙できません"))
 		return
 	}
 

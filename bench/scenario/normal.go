@@ -9,10 +9,13 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/payment"
+	"go.uber.org/zap"
 )
 
 // NormalScenario は基本的な予約フローのシナリオです
 func NormalScenario(ctx context.Context) error {
+	lgr := zap.S()
+
 	client, err := isutrain.NewClient()
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
@@ -34,6 +37,11 @@ func NormalScenario(ctx context.Context) error {
 
 	err = client.Signup(ctx, user.Email, user.Password, nil)
 	if err != nil {
+		lgr.Infow("ユーザ登録失敗",
+			"error", err,
+			"email", user.Email,
+			"password", user.Password,
+		)
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザ登録ができません"))
 	}
 
@@ -56,12 +64,16 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車検索ができません"))
 	}
 
-	_, err = client.ListTrainSeats(ctx, time.Now().AddDate(1, 0, 0), "こだま", "96号", 1, "東京", "大阪", nil)
+	seatResp, err := client.ListTrainSeats(ctx,
+		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		"最速", "1", 8, "東京", "大阪", nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席座席列挙できません"))
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席列挙できません"))
 	}
 
-	reservation, err := client.Reserve(ctx, "こだま", "69号", "premium", isutrain.TrainSeats{}, "東京", "名古屋", time.Now().AddDate(1, 0, 0), 1, 1, 1, "isle", nil)
+	reservation, err := client.Reserve(ctx, "最速", "1", "premium", seatResp.Seats[:2], "東京", "大阪",
+		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		8, 1, 1, "isle", nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約ができません"))
 	}
@@ -144,7 +156,7 @@ func NormalCancelScenario(ctx context.Context) error {
 
 	_, err = client.ListTrainSeats(ctx, time.Now().AddDate(1, 0, 0), "こだま", "96号", 1, "東京", "大阪", nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席座席列挙できません"))
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席列挙できません"))
 	}
 
 	reservation, err := client.Reserve(ctx, "こだま", "69号", "premium", isutrain.TrainSeats{}, "東京", "名古屋", time.Now().AddDate(1, 0, 0), 1, 1, 1, "isle", nil)

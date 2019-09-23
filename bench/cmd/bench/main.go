@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"os"
 	"time"
 
@@ -14,6 +15,8 @@ func init() {
 		log.Fatalln(err)
 	}
 	time.Local = loc
+
+	rand.Seed(time.Now().UnixNano())
 }
 
 func main() {

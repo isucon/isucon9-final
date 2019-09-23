@@ -31,7 +31,7 @@ var isutrainEndpoints = []*Endpoint{
 	&Endpoint{path: "/api/stations", weight: 1},
 	&Endpoint{path: "/api/train/search", weight: 1},
 	&Endpoint{path: "/api/train/seats", weight: 1},
-	&Endpoint{path: "/api/user/reservation", weight: 1},
+	&Endpoint{path: "/api/user/reservations", weight: 1},
 }
 
 const (

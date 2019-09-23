@@ -1,6 +1,6 @@
 package isutrain
 
 type User struct {
-	Email    string
-	Password string
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
