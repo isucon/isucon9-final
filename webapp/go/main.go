@@ -197,6 +197,10 @@ type Settings struct {
 	PaymentAPI string `json:"payment_api"`
 }
 
+type InitializeResponse struct {
+	AllowedDays int `json:"allowed_days"`
+}
+
 const (
 	sessionName = "session_isutrain"
 )
@@ -1654,8 +1658,15 @@ func initializeHandler(w http.ResponseWriter, r *http.Request) {
 		initialize
 	*/
 
-	// TODO: 実装する
-	messageResponse(w, "ok")
+	dbx.Exec("TRUNCATE seat_reservations")
+	dbx.Exec("TRUNCATE reservations")
+	dbx.Exec("TRUNCATE users")
+
+	resp := InitializeResponse{
+		10,
+	}
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	json.NewEncoder(w).Encode(resp)
 }
 
 func settingsHandler(w http.ResponseWriter, r *http.Request) {
