@@ -116,6 +116,7 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 			s.mu.Lock()
 			s.PayInfoMap[guid.String()] = pb.PaymentInformation{
 				CardToken:  req.PaymentInformation.CardToken,
+				ReservationId: req.PaymentInformation.ReservationId,
 				Datetime:   date,
 				Amount:     req.PaymentInformation.Amount,
 				IsCanceled: false,
@@ -250,6 +251,7 @@ func (s *Server) GetResult(ctx context.Context, req *pb.GetResultRequest) (*pb.G
 			rawData := getRawData()
 			defer putRawData(rawData)
 			rawData.PaymentInformation.CardToken = k
+			rawData.PaymentInformation.ReservationId = v.ReservationId
 			rawData.PaymentInformation.Datetime = v.Datetime
 			rawData.PaymentInformation.Amount = v.Amount
 			rawData.PaymentInformation.IsCanceled = v.IsCanceled
