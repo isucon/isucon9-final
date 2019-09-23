@@ -1,4 +1,4 @@
-import { httpService } from './http.js'
+import { httpService, HttpService } from './http.js'
 import moment from 'moment';
 
 class ApiService {
@@ -90,6 +90,28 @@ class ApiService {
 
       return await this.httpService.post('/api/train/reservation', request).then(function(resp){
         return resp
+      });
+    }
+
+    async tokenizeCard (data) {
+      var data = {
+        card_information:data,
+      }
+
+      /*
+      data =
+      {
+          card_number: "12345678",
+          cvv: "123",
+          expiry_date: "12/22"
+      }
+      */
+
+      return await this.httpService.get('/api/settings').then(function(res){
+        var paymentService = new HttpService(res.payment_api)
+        return paymentService.post('/card', data).then(function(res){
+          return res
+        })
       });
     }
 }

@@ -9,8 +9,10 @@ services:
       - ./frontend/dist:/opt/isucon/public
     ports:
       - "8080:80"
+      - "5000:5000"
     links:
       - "webapp"
+      - "payment"
 
   mysql:
     image: mysql:8
@@ -40,8 +42,6 @@ services:
     working_dir: /go/src/payment
     env_file:
       - ".env"
-    ports:
-      - "5000:5000"
 
   # development only
   phpmyadmin:

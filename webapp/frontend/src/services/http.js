@@ -21,12 +21,12 @@ class ErrorHandler {
 /**
  * Axiosラッパー
  */
-class HttpService {
+export class HttpService {
 
-    constructor () {
+    constructor (apiBase) {
         const svc = axios.create({
-            baseURL: API_BASE,
-            timeout: 600*1000
+            baseURL: apiBase,
+            timeout: 10000
         })
         this.svc = svc
     }
@@ -96,4 +96,4 @@ class HttpService {
     }
 }
 
-export const httpService = new HttpService()
+export const httpService = new HttpService(API_BASE)
