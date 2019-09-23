@@ -1,4 +1,4 @@
-.PHONY: frontend archive payment bench
+.PHONY: frontend webapp payment bench
 
 all: frontend webapp payment bench
 

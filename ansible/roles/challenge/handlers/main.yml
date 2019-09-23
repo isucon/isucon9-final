@@ -4,3 +4,6 @@
 
 - name: reload nginx
   service: name=nginx state=reloaded
+
+- name: restart golang
+  service: name=isutrain-go state=restarted

@@ -7,6 +7,7 @@
   tags:
     - challenge
     - webapp
+  notify: restart golang
 
 - name: copy frontend
   unarchive: src=frontend.tar.gz dest=/var/www/html/ owner=www-data group=www-data
