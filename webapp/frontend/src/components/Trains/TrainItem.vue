@@ -23,7 +23,7 @@
       </div>
 
       <div class="available">
-        <p class="start" v-on:click="select">この候補を選択</p>
+        <p class="start" v-on:click="select(item)">この候補を選択</p>
       </div>
     </div>
   </article>

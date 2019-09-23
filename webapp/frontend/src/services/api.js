@@ -23,6 +23,21 @@ class ApiService {
         return await this.httpService.get('/api/train/search', {"params": params})
     }
 
+    //座席検索
+    async getSeats (condition) {
+      var date = new Date(condition.year, condition.month - 1, condition.day)
+
+      var params = {
+        date: moment(date).toISOString(),
+        from: condition.from_station,
+        to: condition.to_station,
+        train_class: condition.train_class,
+        train_name: condition.train_name,
+        car_number: condition.car_number,
+      }
+      return await this.httpService.get('/api/train/seats', {"params": params})
+    }
+
     async getStations () {
       var self = this
       if (this.stations.length > 0){
@@ -54,6 +69,27 @@ class ApiService {
     async login(data) {
       return await this.httpService.post('/api/auth/login', data).then(function(res){
         return res
+      });
+    }
+
+    async reserve(condition) {
+      var date = new Date(condition.year, condition.month - 1, condition.day)
+      var request = {
+        date: moment(date).toISOString(),
+        train_class: condition.train_class,
+        train_name: condition.train_name,
+        car_number: condition.car_number,
+        seat_class: condition.seat_class,
+        departure: condition.from_station,
+        arrival: condition.to_station,
+        child: condition.child,
+        adult: condition.adult,
+        type: "",
+        seats: condition.seats,
+      }
+
+      return await this.httpService.post('/api/train/reservation', request).then(function(resp){
+        return resp
       });
     }
 }
