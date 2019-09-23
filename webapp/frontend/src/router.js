@@ -6,6 +6,7 @@ import Login from './views/Login.vue'
 import Reservation from './views/Reservation.vue'
 import Trains from './views/Trains.vue'
 import Seats from './views/Seats.vue'
+import Test from './views/Test.vue'
 
 Vue.use(Router)
 
@@ -16,6 +17,11 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: Test
     },
     {
       path: '/register',
