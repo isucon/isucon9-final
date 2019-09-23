@@ -1029,13 +1029,13 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	err = tx.Get(&fromStation, query, req.Departure)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		errorResponse(w, http.StatusNotFound, "リクエストされた列車の乗車駅データがみつかりません")
+		errorResponse(w, http.StatusNotFound, fmt.Sprintf("乗車駅データがみつかりません %s", req.Departure))
 		log.Println(err.Error())
 		return
 	}
 	if err != nil {
 		tx.Rollback()
-		errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の乗車駅データの取得に失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "乗車駅データの取得に失敗しました")
 		log.Println(err.Error())
 		return
 	}
@@ -1044,13 +1044,13 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	err = tx.Get(&toStation, query, req.Arrival)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		errorResponse(w, http.StatusNotFound, "リクエストされた列車の降車駅データがみつかりません")
+		errorResponse(w, http.StatusNotFound, fmt.Sprintf("降車駅データがみつかりません %s", req.Arrival))
 		log.Println(err.Error())
 		return
 	}
 	if err != nil {
 		tx.Rollback()
-		errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の降車駅データの取得に失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "降車駅データの取得に失敗しました")
 		log.Println(err.Error())
 		return
 	}

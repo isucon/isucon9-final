@@ -132,7 +132,7 @@ export default {
       }
 
       if (seat.text != "○") {
-        return
+        // return
       }
 
       seat.selected = !seat.selected
