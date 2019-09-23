@@ -244,12 +244,12 @@ func getUser(r *http.Request) (user User, errCode int, errMsg string) {
 	session := getSession(r)
 	userID, ok := session.Values["user_id"]
 	if !ok {
-		return user, http.StatusForbidden, "no session"
+		return user, http.StatusUnauthorized, "no session"
 	}
 
 	err := dbx.Get(&user, "SELECT * FROM `users` WHERE `id` = ?", userID)
 	if err == sql.ErrNoRows {
-		return user, http.StatusNotFound, "user not found"
+		return user, http.StatusUnauthorized, "user not found"
 	}
 	if err != nil {
 		log.Print(err)
@@ -1717,7 +1717,7 @@ func main() {
 
 	// 予約関係
 	mux.HandleFunc(pat.Get("/api/stations"), getStationsHandler)
-	mux.HandleFunc(pat.Post("/api/train/search"), trainSearchHandler)
+	mux.HandleFunc(pat.Get("/api/train/search"), trainSearchHandler)
 	mux.HandleFunc(pat.Get("/api/train/seats"), trainSeatsHandler)
 	mux.HandleFunc(pat.Post("/api/train/reservation"), trainReservationHandler)
 	mux.HandleFunc(pat.Post("/api/train/reservation/commit"), reservationPaymentHandler)
