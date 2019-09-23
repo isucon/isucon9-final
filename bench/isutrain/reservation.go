@@ -49,7 +49,7 @@ type ReservationRequest struct {
 	Arrival   string `json:"arrival"`
 	// 日付
 	Date   time.Time `json:"date"`
-	CarNum int       `json:"car_num"`
+	CarNum int       `json:"car_number"`
 	Child  int       `json:"child"`
 	Adult  int       `json:"adult"`
 	// 座席位置(通路、真ん中、窓側)

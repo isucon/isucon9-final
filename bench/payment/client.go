@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -61,8 +60,6 @@ func (c *Client) Initialize() error {
 func (c *Client) RegistCard(ctx context.Context, cardNumber, cvv, expiryDate string) (string, error) {
 	u := *c.BaseURL
 	u.Path = filepath.Join(u.Path, endpoint.PaymentRegistCardPath)
-
-	log.Println(u.String())
 
 	b, err := json.Marshal(map[string]*CardInformation{
 		"card_information": &CardInformation{

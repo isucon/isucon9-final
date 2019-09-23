@@ -71,16 +71,12 @@ func (errs *BenchErrors) Penalty() int64 {
 }
 
 func (errs *BenchErrors) AddError(err error) error {
-	lgr := zap.S()
-
 	errs.mu.Lock()
 	defer errs.mu.Unlock()
 
 	if err == nil {
 		return nil
 	}
-
-	lgr.Warnf("エラーを追加: %+v", err)
 
 	// エラーに応じたメッセージを追加し、カウンタをインクリメント
 	if msg, code, ok := extractCode(err); ok {

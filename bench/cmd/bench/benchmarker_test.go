@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
 	"testing"
 	"time"
 
@@ -33,7 +32,6 @@ var (
 var testBenchTimeoutSec = flag.Int("timeout-sec", 5, "timeout [sec]")
 
 func setDelay(m *mock.Mock) {
-	log.Printf("searchtrains-delay = %d\n", *testBenchSearchTrainsDelayMsec)
 	m.LoginDelay = time.Duration(*testBenchLoginDelayMsec) * time.Millisecond
 	m.ReserveDelay = time.Duration(*testBenchReserveDelayMsec) * time.Millisecond
 	m.ListStationsDelay = time.Duration(*testBenchListStationsDelayMsec) * time.Millisecond
