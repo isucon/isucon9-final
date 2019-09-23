@@ -7,6 +7,7 @@ import Search from './views/Search.vue'
 import Trains from './views/Trains.vue'
 import Seats from './views/Seats.vue'
 import Payment from './views/Payment.vue'
+import Reservations from './views/Reservations.vue'
 import Test from './views/Test.vue'
 
 Vue.use(Router)
@@ -53,6 +54,11 @@ export default new Router({
       path: '/reservation/payment',
       name: 'payment',
       component: Payment
-    }
+    },
+    {
+      path: '/mypage/reservations',
+      name: 'reservations',
+      component: Reservations
+    },
   ]
 })

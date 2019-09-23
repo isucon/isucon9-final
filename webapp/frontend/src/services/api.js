@@ -109,6 +109,10 @@ class ApiService {
       })
     }
 
+    async getReservations() {
+      return await this.httpService.get('/api/user/reservations')
+    }
+
     async getReservation(reservationId) {
       return await this.httpService.get('/api/user/reservations/' + reservationId)
     }
