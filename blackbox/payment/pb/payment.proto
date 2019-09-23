@@ -67,7 +67,7 @@ message RegistCardResponse {
 
 message PaymentInformation {
 	string card_token = 1;
-	string reservation_id = 2;
+	int32 reservation_id = 2;
 	google.protobuf.Timestamp datetime = 3;
 	int32 amount = 4;
 	bool is_canceled = 5;
