@@ -8,6 +8,7 @@ WorkingDirectory=/home/admin/isucon/bin
 
 Type=simple
 ExecStart=/home/admin/isucon/bin/payment
+Nice=-1
 
 Restart=always
 RestartSec=10s

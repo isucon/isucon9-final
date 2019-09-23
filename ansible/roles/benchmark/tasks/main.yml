@@ -6,13 +6,19 @@
     - /home/admin/isucon/bin
     - /home/admin/isucon/assets
 
-- name: copy files
-  copy: src="{{ item }}" dest="/home/admin/isucon/bin/{{ item }}" owner=admin group=admin mode=0755
-  with_items:
-    - payment
-    - bench
-    - benchworker
+- name: copy payment
+  copy: src="payment" dest="/home/admin/isucon/bin/payment" owner=admin group=admin mode=0755
   tags: benchmark
+  notify: restart payment
+
+- name: copy bench
+  copy: src="bench" dest="/home/admin/isucon/bin/bench" owner=admin group=admin mode=0755
+  tags: benchmark
+
+- name: copy benchworker
+  copy: src="benchworker" dest="/home/admin/isucon/bin/benchworker" owner=admin group=admin mode=0755
+  tags: benchmark
+  notify: restart benchworker
 
 - name: copy frontend
   unarchive: src=frontend.tar.gz dest=/home/admin/isucon/assets/ owner=www-data group=www-data
@@ -40,6 +46,13 @@
 - name: install nginx
   apt: name=nginx state=latest update_cache=yes
   tags: benchmark
+
+- name: modify nginx.service
+  template: src=nginx.service dest=/lib/systemd/system/nginx.service owner=root group=root mode=0644
+  tags: benchmark
+  notify:
+    - systemctl daemon-reload
+    - restart nginx
 
 - name: nginx config
   template: src=nginx/default dest=/etc/nginx/sites-available/default owner=root group=root mode=0644
