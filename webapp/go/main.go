@@ -96,11 +96,17 @@ type SeatReservation struct {
 // 未整理
 
 type CarInformation struct {
-	Date                string            `json:"date"`
-	TrainClass          string            `json:"train_class"`
-	TrainName           string            `json:"train_name"`
-	CarNumber           int               `json:"car_number"`
-	SeatInformationList []SeatInformation `json:"seats"`
+	Date                string                 `json:"date"`
+	TrainClass          string                 `json:"train_class"`
+	TrainName           string                 `json:"train_name"`
+	CarNumber           int                    `json:"car_number"`
+	SeatInformationList []SeatInformation      `json:"seats"`
+	Cars                []SimpleCarInformation `json:"cars"`
+}
+
+type SimpleCarInformation struct {
+	CarNumber int `json:"car_number"`
+	SeatClass string `json:"seat_class"`
 }
 
 type SeatInformation struct {
@@ -239,7 +245,7 @@ func getUser(r *http.Request) (user User, errCode int, errMsg string) {
 	session := getSession(r)
 	userID, ok := session.Values["user_id"]
 	if !ok {
-		return user, http.StatusNotFound, "no session"
+		return user, http.StatusForbidden, "no session"
 	}
 
 	err := dbx.Get(&user, "SELECT * FROM `users` WHERE `id` = ?", userID)
@@ -835,7 +841,27 @@ WHERE
 		fmt.Println(s.IsOccupied)
 		seatInformationList = append(seatInformationList, s)
 	}
-	c := CarInformation{date.Format("2006/01/02"), trainClass, trainName, carNumber, seatInformationList}
+
+
+	// 各号車の情報
+
+	simpleCarInformationList := []SimpleCarInformation{}
+	seat := Seat{}
+	query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? ORDER BY seat_row, seat_column LIMIT 1"
+	i := 1
+	for{
+		err = dbx.Get(&seat, query, trainClass, i)
+		if err != nil {
+			break
+		}
+		simpleCarInformationList = append(simpleCarInformationList, SimpleCarInformation{i, seat.SeatClass})
+		i = i+1
+	}
+
+
+
+
+	c := CarInformation{date.Format("2006/01/02"), trainClass, trainName, carNumber, seatInformationList, simpleCarInformationList}
 	resp, err := json.Marshal(c)
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, err.Error())
