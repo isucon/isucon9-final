@@ -180,6 +180,10 @@ type ReservationDetail struct {
 	Seats []SeatReservation `json:"seats"`
 }
 
+type Settings struct {
+	PaymentAPI string `json:"payment_api"`
+}
+
 const (
 	sessionName = "session_isutrain"
 )
@@ -1515,6 +1519,16 @@ func initializeHandler(w http.ResponseWriter, r *http.Request) {
 	messageResponse(w, "ok")
 }
 
+func settingsHandler(w http.ResponseWriter, r *http.Request) {
+	settings := Settings{
+		PaymentAPI: "http://localhost:5000",
+	}
+
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	json.NewEncoder(w).Encode(settings)
+}
+
+
 func dummyHandler(w http.ResponseWriter, r *http.Request) {
 	messageResponse(w, "ok")
 }
@@ -1567,7 +1581,10 @@ func main() {
 
 	mux := goji.NewMux()
 
-	mux.HandleFunc(pat.Get("/initialize"), initializeHandler)
+	mux.HandleFunc(pat.Post("/initialize"), initializeHandler)
+	mux.HandleFunc(pat.Get("/api/settings"), settingsHandler)
+
+	// 予約関係
 	mux.HandleFunc(pat.Get("/api/stations"), getStationsHandler)
 	mux.HandleFunc(pat.Post("/api/train/search"), trainSearchHandler)
 	mux.HandleFunc(pat.Get("/api/train/seats"), trainSeatsHandler)
