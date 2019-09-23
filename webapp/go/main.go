@@ -81,7 +81,7 @@ type Reservation struct {
 	TrainName     string     `json:"train_name" db:"train_name"`
 	Departure     string     `json:"departure" db:"departure"`
 	Arrival       string     `json:"arrival" db:"arrival"`
-	PaymentStatus string     `json:"payment_method" db:"payment_method"`
+	PaymentStatus string     `json:"payment_status" db:"payment_status"`
 	Status        string     `json:"status" db:"status"`
 	PaymentId     string     `json:"payment_id,omitempty" db:"payment_id"`
 	Amount        int        `json:"amount" db:"amount"`
@@ -1374,6 +1374,17 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 		tx.Rollback()
 		paymentResponse(w, http.StatusInternalServerError, true, "予約情報の取得に失敗しました")
 		return
+	}
+
+
+	// 予約情報の支払いステータス確認
+	switch reservation.Status {
+	case "done":
+		tx.Rollback()
+		paymentResponse(w, http.StatusBadRequest, true, "既に支払いが完了している予約IDです")
+		return
+	default:
+		break
 	}
 
 	// 決済する
