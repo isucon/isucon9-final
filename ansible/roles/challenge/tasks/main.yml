@@ -1,3 +1,17 @@
+- name: set isucon password
+  user:
+    name: "isucon"
+    password: "{{ password | password_hash('sha512') }}"
+  tags: challenge
+
+- name: allow password authentication
+  replace:
+    dest: /etc/ssh/sshd_config
+    regexp: 'PasswordAuthentication no'
+    replace: 'PasswordAuthentication yes'
+  notify: restart ssh
+  tags: challenge
+
 - name: create isutrain directory
   file: path="/home/isucon/isutrain" state=directory mode=0755 owner=isucon group=isucon
   tags: challenge
