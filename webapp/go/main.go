@@ -1480,6 +1480,52 @@ func userReservationDetailHandler(w http.ResponseWriter, r *http.Request) {
 	// messageResponse(w, "login siteruyo "+user.Email)
 }
 
+func userReservationCancelHandler(w http.ResponseWriter, r *http.Request) {
+	user, errCode, errMsg := getUser(r)
+	if errCode != http.StatusOK {
+		errorResponse(w, errCode, errMsg)
+		return
+	}
+	itemIDStr := pat.Param(r, "item_id")
+	itemID, err := strconv.ParseInt(itemIDStr, 10, 64)
+	if err != nil || itemID <= 0 {
+		errorResponse(w, http.StatusBadRequest, "incorrect item id")
+		return
+	}
+
+	tx := dbx.MustBegin()
+	query := "DELETE FROM reservations WHERE reservation_id=? AND user_id=?"
+	_, err = tx.Exec(query, itemID, user.ID)
+	if err == sql.ErrNoRows {
+		tx.Rollback()
+		messageResponse(w, "reservations naiyo")
+		// errorResponse(w, http.Status, "authentication failed")
+		return
+	}
+	if err != nil {
+		tx.Rollback()
+		errorResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	query = "DELETE FROM seat_reservations WHERE reservation_id=?"
+	_, err = tx.Exec(query, itemID)
+	if err == sql.ErrNoRows {
+		tx.Rollback()
+		messageResponse(w, "seat naiyo")
+		// errorResponse(w, http.Status, "authentication failed")
+		return
+	}
+	if err != nil {
+		tx.Rollback()
+		errorResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	tx.Commit()
+	messageResponse(w, "cancell complete")
+}
+
 func initializeHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		initialize
@@ -1553,8 +1599,8 @@ func main() {
 	mux.HandleFunc(pat.Post("/api/auth/login"), loginHandler)
 	mux.HandleFunc(pat.Post("/api/auth/logout"), dummyHandler) // FIXME:
 	mux.HandleFunc(pat.Get("/api/user/reservations"), userReservationsHandler)
-	mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationDetailHandler) // FIXME:
-	mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), dummyHandler)         // FIXME:
+	mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationDetailHandler)
+	mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), userReservationCancelHandler)
 
 	fmt.Println(banner)
 	err = http.ListenAndServe(":8000", mux)
