@@ -71,6 +71,27 @@ class ApiService {
         return res
       });
     }
+
+    async reserve(condition) {
+      var date = new Date(condition.year, condition.month - 1, condition.day)
+      var request = {
+        date: moment(date).toISOString(),
+        train_class: condition.train_class,
+        train_name: condition.train_name,
+        car_number: condition.car_number,
+        seat_class: condition.seat_class,
+        departure: condition.from_station,
+        arrival: condition.to_station,
+        child: condition.child,
+        adult: condition.adult,
+        type: "",
+        seats: condition.seats,
+      }
+
+      return await this.httpService.post('/api/train/reservation', request).then(function(resp){
+        return resp
+      });
+    }
 }
 
 export const apiService = new ApiService()

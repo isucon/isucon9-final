@@ -56,6 +56,7 @@
 
   </div>
 
+  <button type="button" v-on:click="reserve()">送信</button>
 </div>
 
 
@@ -103,19 +104,19 @@ export default {
         to_station: this.to_station,
       }
     },
+    selectedSeats () {
+      var ret = []
+      Object.keys(this.seatCols).forEach(function(key) {
+        var col = this[key];
+        ret = ret.concat(col.seats.filter(seat => seat.selected));
+      }, this.seatCols);
+      return ret
+    },
     totalCount () {
       return this.adult + this.child
     },
     selectedCount () {
-      var count = 0
-
-      Object.keys(this.seatCols).forEach(function(key) {
-        var col = this[key];
-
-        count += col.seats.filter(seat => seat.selected).length
-      }, this.seatCols);
-
-      return count
+      return this.selectedSeats.length
     },
     availableCount () {
       return this.totalCount - this.selectedCount
@@ -203,6 +204,26 @@ export default {
       Router.push({ path: '/reservation/seats', query: query})
       this.car_number = car_number
       this.search()
+    },
+    reserve () {
+      var condition = {
+        year: this.year,
+        month: this.month,
+        day: this.day,
+        train_class: this.train_class,
+        train_name: this.train_name,
+        car_number: this.car_number,
+        from_station: this.from_station,
+        to_station: this.to_station,
+        adult: this.adult,
+        child: this.child,
+        seat_class: this.seat_class,
+        seats: this.selectedSeats,
+      }
+
+      apiService.reserve(condition).then((res) => {
+        console.log("Reserve", res)
+      })
     }
   },
   mounted() {
