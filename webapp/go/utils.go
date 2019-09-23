@@ -56,6 +56,7 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 	reservationList := []Reservation{}
 	query = "SELECT * FROM reservations WHERE train_class=?"
 	err = dbx.Select(&reservationList, query, train.TrainClass)
+	fmt.Println(reservationList, train.TrainClass)
 	if err != nil {
 		return nil, err
 	}
@@ -74,6 +75,7 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 			return nil, err
 		}
 
+		fmt.Println(reservation, seatClass, isSmokingSeat, train.IsNobori)
 		if train.IsNobori {
 			if (arrivalStationID < fromStation.ID && fromStation.ID <= departureStationID) || (arrivalStationID < toStation.ID && toStation.ID <= departureStationID) || (fromStation.ID < arrivalStationID && departureStationID < toStation.ID) {
 				ok, err := checkSeatClass(reservation, seatClass, isSmokingSeat)
@@ -138,15 +140,30 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 	// 		(sta.id < fromStation.ID AND toStation.ID < std.id))"
 	// }
 	
-	
-	query = "SELECT * FROM seat_reservations WHERE "
-	for range applicableReservationList {
-		query += "reservation_id=? OR "
-	}
-	seatReservationList := []SeatReservation{}
-	err = dbx.Select(&seatReservationList, query, applicableReservationList)
-	if err != nil {
-		return nil, err
+	if len(applicableReservationList) > 0 {
+		query = "SELECT * FROM seat_reservations"
+		for i, v := range applicableReservationList {
+			if i == 0 {
+				query += " WHERE "
+			} else {
+				query += " OR "
+			}
+			query += fmt.Sprintf("reservation_id=%d", v.ReservationId)
+		}
+		fmt.Println(query)
+		fmt.Printf("%#v\n", applicableReservationList)
+		seatReservationList := []SeatReservation{}
+		err = dbx.Select(&seatReservationList, query)
+		if err != nil {
+			panic(err)
+			return nil, err
+		}
+
+		
+		for _, seatReservation := range seatReservationList {
+			key := fmt.Sprintf("%d_%d_%s", seatReservation.CarNumber, seatReservation.SeatRow, seatReservation.SeatColumn)
+			delete(availableSeatMap, key)
+		}
 	}
 
 	// ok := []SeatReservation{}
@@ -158,10 +175,6 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 
 
 
-	for _, seatReservation := range seatReservationList {
-		key := fmt.Sprintf("%d_%d_%s", seatReservation.CarNumber, seatReservation.SeatRow, seatReservation.SeatColumn)
-		delete(availableSeatMap, key)
-	}
 
 	ret := []Seat{}
 	for _, seat := range availableSeatMap {
@@ -178,6 +191,7 @@ func checkSeatClass(reservation Reservation, seatClass string, isSmokingSeat boo
 
 	err := dbx.Get(&result, "SELECT seat_class,is_smoking_seat FROM seat_master JOIN seat_reservations ON seat_master.car_number=seat_reservations.car_number AND seat_master.seat_column=seat_reservations.seat_column AND seat_master.seat_row=seat_reservations.seat_row WHERE reservation_id=? AND train_class=?", reservation.ReservationId, reservation.TrainClass)
 	if err != nil {
+		panic(err)
 		return false, err
 	}
 
