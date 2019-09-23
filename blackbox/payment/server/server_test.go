@@ -18,7 +18,7 @@ func TestServer(t *testing.T) {
 	}
 	g := grpc.NewServer()
 
-	s, err := NewNetworkServer(nil)
+	s, err := NewNetworkServer()
 	if err != nil {
 		t.Fatalf("failed to create new server:%s", err)
 	}
