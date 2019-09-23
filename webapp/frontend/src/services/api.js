@@ -44,6 +44,18 @@ class ApiService {
       })
       return ret
     }
+
+    async register(data) {
+      return await this.httpService.post('/api/auth/signup', data).then(function(res){
+        return res
+      });
+    }
+
+    async login(data) {
+      return await this.httpService.post('/api/auth/login', data).then(function(res){
+        return res
+      });
+    }
 }
 
 export const apiService = new ApiService()
