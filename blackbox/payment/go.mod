@@ -2,6 +2,7 @@ module payment
 
 require (
 	github.com/golang/protobuf v1.3.2
+	github.com/gorilla/handlers v1.4.2
 	github.com/grpc-ecosystem/grpc-gateway v1.9.5
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 	github.com/pkg/errors v0.8.1
