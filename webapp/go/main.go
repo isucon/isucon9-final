@@ -81,7 +81,7 @@ type Reservation struct {
 	Arrival       string    `json:"arrival" db:"arrival"`
 	PaymentStatus string    `json:"payment_method" db:"payment_method"`
 	Status        string    `json:"status" db:"status"`
-	PaymentId     int       `json:"payment_id" db:"payment_id"`
+	PaymentId     string       `json:"payment_id" db:"payment_id"`
 }
 
 type SeatReservation struct {
@@ -151,6 +151,21 @@ type RequestSeat struct {
 	Column string `json:"column"`
 }
 
+type ReservationPaymentRequest struct {
+	CardToken 		string 	`json:"card_token"`
+	ReservationId 	string 	`json:"reservation_id"`
+	Amount			int		`json:"amount"`
+}
+
+type PaymentInformation struct {
+	PayInfo ReservationPaymentRequest `json:"payment_information"`
+}
+
+type PaymentResponse struct {
+	PaymentId 	string	`json:"payment_id"`
+	IsOk 		bool	`json:"is_ok"`
+}
+
 const (
 	sessionName = "session_isutrain"
 )
@@ -187,6 +202,17 @@ func reservationResponse(w http.ResponseWriter, errCode int, id int64, ok bool, 
 	e := map[string]interface{}{
 		"is_error": ok,
 		"ReservationId": id,
+		"message":  message,
+	}
+	errResp, _ := json.Marshal(e)
+
+	w.WriteHeader(errCode)
+	w.Write(errResp)
+}
+
+func paymentResponse(w http.ResponseWriter, errCode int, ok bool, message string) {
+	e := map[string]interface{}{
+		"is_error": ok,
 		"message":  message,
 	}
 	errResp, _ := json.Marshal(e)
@@ -1136,11 +1162,11 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		req.Origin,
 		req.Destination,
 		"requesting",
-		0,
+		"a",
 	)
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w,500,0,true,"列車予約の登録に失敗しました")
+		reservationResponse(w,500,0,true,err.Error())
 		return
 	}
 
@@ -1171,6 +1197,101 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 	tx.Commit()
 	reservationResponse(w,200,id,false,"座席予約の登録に成功しました")
+}
+
+func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		支払い及び予約確定API
+		POST /api/train/reservation/commit
+		{
+			"card_token": "161b2f8f-791b-4798-42a5-ca95339b852b",
+			"reservation_id": "1"
+		}
+
+		前段でフロントがクレカ非保持化対応用のpayment-APIを叩き、card_tokenを手に入れている必要がある
+		レスポンスは成功か否かのみ返す
+	*/
+
+	// json parse
+	req := new(ReservationPaymentRequest)
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		paymentResponse(w,500,true,"JSON parseに失敗しました")
+		return
+	}
+
+	tx := dbx.MustBegin()
+
+	// 予約IDで検索
+	reservation := Reservation{}
+	query := "SELECT * FROM reservations WHERE reservation_id=?"
+	err = tx.Get(
+		&reservation, query,
+		req.ReservationId,
+	)
+	if err == sql.ErrNoRows {
+		tx.Rollback()
+		paymentResponse(w,http.StatusNotFound,true,"予約情報がみつかりません")
+		return
+	}
+	if err != nil {
+		tx.Rollback()
+		paymentResponse(w,http.StatusInternalServerError,true,"予約情報の取得に失敗しました")
+		return
+	}
+
+	// 決済する
+	j, err := json.Marshal(PaymentInformation{PayInfo:*req})
+	if err != nil {
+		tx.Rollback()
+		paymentResponse(w,http.StatusInternalServerError,true,"JSON Marshalに失敗しました")
+		return
+	}
+	resp, err := http.Post("http://payment:5000/payment", "application/json", bytes.NewBuffer(j))
+	if err != nil {
+		tx.Rollback()
+		paymentResponse(w,http.StatusInternalServerError,true,"HTTP POSTに失敗しました")
+		// paymentResponse(w, http.StatusInternalServerError,true, err.Error())
+		return
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		tx.Rollback()
+		paymentResponse(w,http.StatusInternalServerError,true,"レスポンスの読み込みに失敗しました")
+		return
+	}
+
+	// リクエスト失敗
+	if resp.StatusCode != http.StatusOK {
+		tx.Rollback()
+		paymentResponse(w,resp.StatusCode,true,"決済に失敗しました。カードトークンや支払いIDが間違っている可能性があります")
+		return
+	}
+
+    output := PaymentResponse{}
+    err = json.Unmarshal(body, &output)
+	if err != nil {
+		paymentResponse(w,500,true,"JSON parseに失敗しました")
+		return
+	}
+
+	query = "UPDATE reservations SET status=?, payment_id=? WHERE reservation_id=?"
+	_, err = tx.Exec(
+		query,
+		"done",
+		output.PaymentId,
+		req.ReservationId,
+	)
+	if err != nil {
+		tx.Rollback()
+		// paymentResponse(w,http.StatusInternalServerError,true,"DBのレコード更新に失敗しました")
+		paymentResponse(w,http.StatusInternalServerError,true,err.Error())
+		return
+	}
+
+	tx.Commit()
+	paymentResponse(w,http.StatusOK,false,"決済に成功しました")
 }
 
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
@@ -1330,7 +1451,7 @@ func main() {
 	http.HandleFunc("/api/train/search", trainSearchHandler)
 	http.HandleFunc("/api/train/seats", trainSeatsHandler)
 	http.HandleFunc("/api/train/reservation", trainReservationHandler)
-	http.HandleFunc("/api/train/reservation/commit", dummyHandler) // FIXME:
+	http.HandleFunc("/api/train/reservation/commit", reservationPaymentHandler)
 
 
 	// 認証関連
