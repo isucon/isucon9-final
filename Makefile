@@ -6,7 +6,7 @@ frontend:
 	cd webapp/frontend && make
 
 archive:
-	tar zcvf ansible/roles/challenge/files/webapp.tar.gz \
+	tar zcvf ansible/files/webapp.tar.gz \
 	--exclude webapp/frontend \
 	webapp
 

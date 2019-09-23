@@ -4,11 +4,15 @@
 
 - name: copy webapp
   unarchive: src=webapp.tar.gz dest=/home/isucon/isutrain/ owner=isucon group=isucon
-  tags: challenge
+  tags:
+    - challenge
+    - webapp
 
 - name: copy frontend
   unarchive: src=frontend.tar.gz dest=/var/www/html/ owner=www-data group=www-data
-  tags: challenge
+  tags:
+    - challenge
+    - frontend
 
 - name: create systemd services
   template: src=isutrain.service dest="/etc/systemd/system/isutrain-{{ item }}.service" owner=root group=root mode=0644

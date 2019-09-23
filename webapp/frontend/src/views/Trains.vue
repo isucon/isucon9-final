@@ -175,12 +175,10 @@ export default {
         var items = []
 
         res.forEach(function(value){
-
           value["departure"] = apiService.getStation(value["departure"])
           value["destination"] = apiService.getStation(value["destination"])
-          value["departure_time"] = new Date(value["departure_time"])
-          value["arrival_time"] = new Date(value["arrival_time"])
-
+          value["departure_time"] = new Date("2000-01-01 " + value["departure_time"])
+          value["arrival_time"] = new Date("2000-01-01 " + value["arrival_time"])
           items.push(value)
         });
 
@@ -225,48 +223,6 @@ export default {
 </script>
 
 <style scoped>
-
-div.trains {
-  background: #18257F;
-
-}
-
-div.trains section.subcontent {
-  width: 320px;
-  float: left;
-  background: #18257F;
-  color: #ffffff;
-}
-
-div.trains section.trains {
-  width: 640px;
-  float: right;
-  background: #82B1F9;
-}
-
-div.trains section.information {
-  clear: both;
-}
-
-div.trains .condition {
-  border-collapse: collapse;
-  line-height: 1.1;
-  padding: 10px;
-}
-
-div.trains .condition div {
-  width: 100%;
-  text-align: center;
-  margin: 3px 0;
-}
-
-div.trains .condition .date {
-  font-size: 30px;
-}
-
-div.trains .condition .station {
-  font-size: 28px;
-}
 
 .cover {
   position: fixed;

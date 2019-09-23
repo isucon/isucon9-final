@@ -84,7 +84,7 @@ type Reservation struct {
 	PaymentStatus string     `json:"payment_method" db:"payment_method"`
 	Status        string     `json:"status" db:"status"`
 	PaymentId     string     `json:"payment_id,omitempty" db:"payment_id"`
-	Amount        string     `json:"amount" db:"amount"`
+	Amount        int        `json:"amount" db:"amount"`
 }
 
 type SeatReservation struct {
@@ -167,12 +167,18 @@ type TrainReservationResponse struct {
 
 type ReservationPaymentRequest struct {
 	CardToken     string `json:"card_token"`
-	ReservationId string `json:"reservation_id"`
+	ReservationId int    `json:"reservation_id"`
+}
+
+
+type PaymentInformationRequest struct {
+	CardToken     string `json:"card_token"`
+	ReservationId int    `json:"reservation_id"`
 	Amount        int    `json:"amount"`
 }
 
 type PaymentInformation struct {
-	PayInfo ReservationPaymentRequest `json:"payment_information"`
+	PayInfo PaymentInformationRequest `json:"payment_information"`
 }
 
 type PaymentResponse struct {
@@ -244,12 +250,12 @@ func getUser(r *http.Request) (user User, errCode int, errMsg string) {
 	session := getSession(r)
 	userID, ok := session.Values["user_id"]
 	if !ok {
-		return user, http.StatusForbidden, "no session"
+		return user, http.StatusUnauthorized, "no session"
 	}
 
 	err := dbx.Get(&user, "SELECT * FROM `users` WHERE `id` = ?", userID)
 	if err == sql.ErrNoRows {
-		return user, http.StatusNotFound, "user not found"
+		return user, http.StatusUnauthorized, "user not found"
 	}
 	if err != nil {
 		log.Print(err)
@@ -1346,7 +1352,7 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	req := new(ReservationPaymentRequest)
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		paymentResponse(w, 500, true, "JSON parseに失敗しました")
+		paymentResponse(w, 500, true, err.Error())
 		return
 	}
 
@@ -1371,7 +1377,8 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 決済する
-	j, err := json.Marshal(PaymentInformation{PayInfo: *req})
+	payInfo := PaymentInformationRequest{req.CardToken, req.ReservationId, reservation.Amount}
+	j, err := json.Marshal(PaymentInformation{PayInfo: payInfo})
 	if err != nil {
 		tx.Rollback()
 		paymentResponse(w, http.StatusInternalServerError, true, "JSON Marshalに失敗しました")
@@ -1717,7 +1724,7 @@ func main() {
 
 	// 予約関係
 	mux.HandleFunc(pat.Get("/api/stations"), getStationsHandler)
-	mux.HandleFunc(pat.Post("/api/train/search"), trainSearchHandler)
+	mux.HandleFunc(pat.Get("/api/train/search"), trainSearchHandler)
 	mux.HandleFunc(pat.Get("/api/train/seats"), trainSeatsHandler)
 	mux.HandleFunc(pat.Post("/api/train/reservation"), trainReservationHandler)
 	mux.HandleFunc(pat.Post("/api/train/reservation/commit"), reservationPaymentHandler)
