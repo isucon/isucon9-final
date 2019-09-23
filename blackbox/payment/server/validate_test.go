@@ -7,7 +7,7 @@ import (
 )
 
 func TestValidator(t *testing.T) {
-	s, err := NewNetworkServer()
+	s, err := NewNetworkServer(nil)
 	if err != nil {
 		t.Fatalf("failed to create new server:%s", err)
 	}

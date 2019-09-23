@@ -48,7 +48,7 @@ func main() {
 	}
 	g := grpc.NewServer()
 
-	s, err := server.NewNetworkServer()
+	s, err := server.NewNetworkServer(c)
 	if err != nil {
 		log.Fatalf("failed to create new server:%s", err)
 	}

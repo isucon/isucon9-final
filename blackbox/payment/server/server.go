@@ -12,6 +12,7 @@ import (
 	"github.com/rs/xid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"payment/config"
 	pb "payment/pb"
 )
 
@@ -44,7 +45,7 @@ type Server struct {
 	mu          sync.RWMutex
 }
 
-func NewNetworkServer() (*Server, error) {
+func NewNetworkServer(c config.Config) (*Server, error) {
 	ns := &Server{
 		PayInfoMap:  make(map[string]pb.PaymentInformation, 1000000),
 		CardInfoMap: make(map[string]pb.CardInformation, 1000000),

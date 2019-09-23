@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 	_ "net/http/pprof"
-	"strings"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/gorilla/handlers"
 	"payment/config"
 	pb "payment/pb"
 	"google.golang.org/grpc"
@@ -17,7 +17,11 @@ func newGateway(c config.Config, ctx context.Context, opts ...runtime.ServeMuxOp
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
 	}
 	mux := runtime.NewServeMux(opts...)
-	allow := allowCORS(mux)
+	newMux := handlers.CORS(
+		handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}),
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedHeaders([]string{"*"}),
+	)(mux)
 	dialOpts := []grpc.DialOption{grpc.WithInsecure()}
 	conn, err := grpc.Dial(c.GrpcPort, dialOpts...)
 	if err != nil {
@@ -28,7 +32,7 @@ func newGateway(c config.Config, ctx context.Context, opts ...runtime.ServeMuxOp
 		return nil, err
 	}
 
-	return allow, nil
+	return newMux, nil
 }
 
 func StartGRPCGateway(c config.Config, opts ...runtime.ServeMuxOption) error {
@@ -42,20 +46,4 @@ func StartGRPCGateway(c config.Config, opts ...runtime.ServeMuxOption) error {
 	}
 
 	return http.ListenAndServe(c.HttpPort, gw)
-}
-
-func allowCORS(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if origin := r.Header.Get("Origin"); origin != "" {
-			w.Header().Set("Access-Control-Allow-Origin", origin)
-			if r.Method == "OPTIONS" && r.Header.Get("Access-Control-Request-Method") != "" {
-				headers := []string{"Content-Type", "Accept", "Authorization"}
-				w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
-				methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"}
-				w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
-				return
-			}
-		}
-		h.ServeHTTP(w, r)
-	})
 }
