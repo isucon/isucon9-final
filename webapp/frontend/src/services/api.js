@@ -93,6 +93,10 @@ class ApiService {
       });
     }
 
+    async getReservation(reservationId) {
+      return await this.httpService.get('/api/user/reservations/' + reservationId)
+    }
+
     async tokenizeCard (data) {
       var data = {
         card_information:data,

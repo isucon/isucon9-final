@@ -168,11 +168,17 @@ type TrainReservationResponse struct {
 type ReservationPaymentRequest struct {
 	CardToken     string `json:"card_token"`
 	ReservationId string `json:"reservation_id"`
+}
+
+
+type PaymentInformationRequest struct {
+	CardToken     string `json:"card_token"`
+	ReservationId string `json:"reservation_id"`
 	Amount        int    `json:"amount"`
 }
 
 type PaymentInformation struct {
-	PayInfo ReservationPaymentRequest `json:"payment_information"`
+	PayInfo PaymentInformationRequest `json:"payment_information"`
 }
 
 type PaymentResponse struct {
@@ -1371,7 +1377,8 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 決済する
-	j, err := json.Marshal(PaymentInformation{PayInfo: *req})
+	payInfo := PaymentInformationRequest{req.CardToken, req.ReservationId, reservation.Amount}
+	j, err := json.Marshal(PaymentInformation{PayInfo: payInfo})
 	if err != nil {
 		tx.Rollback()
 		paymentResponse(w, http.StatusInternalServerError, true, "JSON Marshalに失敗しました")

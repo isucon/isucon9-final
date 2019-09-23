@@ -26,7 +26,7 @@ export class HttpService {
     constructor (apiBase) {
         const svc = axios.create({
             baseURL: apiBase,
-            timeout: 10000
+            timeout: 600*1000
         })
         this.svc = svc
     }

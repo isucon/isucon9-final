@@ -1,7 +1,7 @@
 <template>
   <div>
 
-  <form v-on:submit="onSubmit()">
+  <form>
 
   <section class="register">
 
@@ -16,7 +16,7 @@
       </p>
     </article>
     <article class="button">
-      <button type="submit">ログイン</button>
+      <button type="button" v-on:click="onSubmit()">ログイン</button>
     </article>
 
   </section>
@@ -51,7 +51,6 @@ export default {
         alert(error.response.data.message)
       })
 
-      return false
     }
   }
 }

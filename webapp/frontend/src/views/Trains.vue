@@ -224,48 +224,6 @@ export default {
 
 <style scoped>
 
-div.trains {
-  background: #18257F;
-
-}
-
-div.trains section.subcontent {
-  width: 320px;
-  float: left;
-  background: #18257F;
-  color: #ffffff;
-}
-
-div.trains section.trains {
-  width: 640px;
-  float: right;
-  background: #82B1F9;
-}
-
-div.trains section.information {
-  clear: both;
-}
-
-div.trains .condition {
-  border-collapse: collapse;
-  line-height: 1.1;
-  padding: 10px;
-}
-
-div.trains .condition div {
-  width: 100%;
-  text-align: center;
-  margin: 3px 0;
-}
-
-div.trains .condition .date {
-  font-size: 30px;
-}
-
-div.trains .condition .station {
-  font-size: 28px;
-}
-
 .cover {
   position: fixed;
   width: 100%;

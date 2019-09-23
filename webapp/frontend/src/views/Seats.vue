@@ -131,6 +131,10 @@ export default {
         return
       }
 
+      if (seat.text != "○") {
+        return
+      }
+
       seat.selected = !seat.selected
       var s = Array.from(this.seatCols)
       this.seatCols = []
@@ -223,7 +227,10 @@ export default {
       }
 
       apiService.reserve(condition).then((res) => {
-        console.log("Reserve", res)
+        var query = {
+          reservation_id: res.reservation_id,
+        }
+        Router.push({ path: '/reservation/payment', query: query})
       })
     }
   },

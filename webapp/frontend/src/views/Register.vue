@@ -1,7 +1,7 @@
 <template>
   <div>
 
-  <form v-on:submit="onSubmit()">
+  <form>
 
   <section class="register">
 
@@ -16,7 +16,7 @@
       </p>
     </article>
     <article class="button">
-      <button type="submit">登録</button>
+      <button type="button" v-on:click="onSubmit()">登録</button>
     </article>
 
   </section>

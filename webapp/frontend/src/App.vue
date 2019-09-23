@@ -11,7 +11,8 @@
         <h1>メニュー</h1>
         <ul>
           <li class="b1"><router-link to="/"><a>メニュー</a></router-link></li>
-          <li class="b2"><a href="#">ログアウト</a></li>
+          <li class="b2"><a href="#" v-on:click="login()">ログイン</a></li>
+          <li class="b3"><a href="#" v-on:click="register()">ユーザー登録</a></li>
         </ul>
       </div>
 
@@ -19,6 +20,23 @@
     <router-view/>
   </div>
 </template>
+
+<script>
+import Router from '@/router.js'
+
+export default {
+  data() {
+  },
+  methods:{
+    register() {
+      Router.push({ path: '/register'})
+    },
+    login() {
+      Router.push({ path: '/login'})
+    }
+  }
+}
+</script>
 
 <style>
 #app {
@@ -138,18 +156,35 @@ header div.title ul li.b2{
   margin:      0;
   padding:    0;
   position:    absolute;
-  right:      22px;
+  right:      130px;
   top:      9px;
 }
 
 header div.title ul li.b2 a{
+  width:      90px;
+  height:      30px;
+}
+
+header div.title ul li.b3{
+  margin:      0;
+  padding:    0;
+  position:    absolute;
+  right:      22px;
+  top:      9px;
+}
+
+header div.title ul li.b3 a{
+  width:      100px;
+  height:      30px;
+}
+
+header div.title ul li.b2 a ,
+header div.title ul li.b3 a{
   display:    inline-block;
   /display:    inline;
   /zoom:      1;
   margin:      0;
   padding:    0;
-  width:      65px;
-  height:      30px;
   background:    #CCD6E0;
   border-radius:    8px;
   font-size:    12px;
@@ -159,7 +194,8 @@ header div.title ul li.b2 a{
   text-decoration:  none;
 }
 
-header div.title ul li.b2 a:hover{
+header div.title ul li.b2 a:hover ,
+header div.title ul li.b3 a:hover {
   background:    #B7C5D2;
 }
 
@@ -238,5 +274,144 @@ header div.title ul li.b2 a:hover{
   color:      #666666;
   line-height:    1.4;
 }
+
+div.trains {
+  background: #18257F;
+  color: white;
+}
+
+div.trains section.subcontent {
+  width: 320px;
+  float: left;
+  background: #18257F;
+  color: #ffffff;
+}
+
+div.trains section.trains {
+  width: 640px;
+  float: right;
+  background: #82B1F9;
+}
+
+div.trains section.price {
+  width: 640px;
+  float: right;
+  background: #1E39D5;
+}
+
+div.trains section.information {
+  clear: both;
+}
+
+div.trains .condition {
+  border-collapse: collapse;
+  line-height: 1.1;
+  padding: 10px;
+}
+
+div.trains .condition div {
+  width: 100%;
+  text-align: center;
+  margin: 3px 0;
+}
+
+div.trains .condition .date {
+  font-size: 30px;
+}
+
+div.trains .condition .station {
+  font-size: 28px;
+}
+
+
+.train-item .header{
+  margin:      0;
+  padding:    0 0 0 20px;
+  height:      30px;
+  font-size:    12px;
+  color:      #ffffff;
+  line-height:    30px;
+  font-weight:    normal;
+  background: #1a65eb;
+}
+
+.train-item div.train {
+    margin: 0;
+    padding: 0 32px 0 43px;
+    width: 565px;
+}
+
+.train-item div.departure,
+.train-item div.arrival {
+  margin:      0;
+  padding:    0;
+  height:      30px;
+  font-size:    17px;
+  color:      #ffffff;
+  line-height:    30px;
+}
+
+.train-item .station {
+  display: block;
+  float: right;
+  text-align: right;
+}
+
+.train-item div.departure {
+  border-bottom:    1px solid #161B60;
+}
+
+.train-item div.arrival {
+  border-top:    1px solid #161B60;
+}
+
+.train-item div.name span {
+  display: block;
+  margin: 0;
+  padding: 0 0 0 30px;
+  color: #172A87;
+  font-weight: normal;
+}
+
+.train-item div.name span.name {
+  font-size: 25px;
+  line-height: 27px;
+}
+
+.train-item .available {
+  color: #ffffff;
+  margin-left: auto;
+  width: 215px;
+  height: 42px;
+  line-height: 42px;
+  padding-left: 20px;
+  background: #e59836;
+  cursor: pointer;
+}
+
+.train-item .seats h3 {
+  color: #18257F;
+  font-size: 30px;
+}
+
+.train-item .seats p {
+  text-align: right;
+  color: #18257F;
+  font-size: 30px;
+}
+
+.price-item p {
+  margin: 0;
+}
+
+.price-item {
+  font-size: 20px;
+}
+.price-item .wrap {
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 
 </style>
