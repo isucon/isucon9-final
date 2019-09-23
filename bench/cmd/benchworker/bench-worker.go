@@ -64,7 +64,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		return nil, err
 	}
 
-	targetURI := fmt.Sprintf("http://%s:%d", targetServer.GlobalIP, targetPort)
+	targetURI := fmt.Sprintf("https://%s:%d", targetServer.GlobalIP, targetPort)
 
 	var stdout, stderr bytes.Buffer
 	cmd := exec.CommandContext(ctx, benchmarkerPath, []string{
@@ -133,7 +133,7 @@ var run = cli.Command{
 		},
 		cli.IntFlag{
 			Name:        "target-port",
-			Value:       80,
+			Value:       443,
 			Destination: &targetPort,
 			EnvVar:      "BENCHWORKER_TARGET_PORT",
 		},

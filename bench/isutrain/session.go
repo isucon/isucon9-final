@@ -32,7 +32,8 @@ func NewSession() (*Session, error) {
 		httpClient: &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
-					ServerName: "", // FIXME: ServerName設定
+					// ServerName: "", // FIXME: ServerName設定
+					InsecureSkipVerify: true,
 				},
 			},
 			Jar:     jar,
@@ -49,7 +50,8 @@ func newSessionForInitialize() (*Session, error) {
 		httpClient: &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
-					ServerName: "", // FIXME: ServerName設定
+					// ServerName: "", // FIXME: ServerName設定
+					InsecureSkipVerify: true,
 				},
 			},
 			Timeout: config.InitializeTimeout,
