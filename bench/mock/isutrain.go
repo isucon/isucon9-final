@@ -3,6 +3,7 @@ package mock
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -83,7 +84,7 @@ func (m *Mock) Signup(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
+	return []byte(http.StatusText(http.StatusOK)), http.StatusOK
 }
 
 // Login はログイン処理結果を返します
@@ -133,8 +134,8 @@ func (m *Mock) Login(req *http.Request) (*httptest.ResponseRecorder, int) {
 		Path:  "/",
 	})
 
-	wr.Write([]byte(http.StatusText(http.StatusAccepted)))
-	return wr, http.StatusAccepted
+	wr.Write([]byte(http.StatusText(http.StatusOK)))
+	return wr, http.StatusOK
 }
 
 func (m *Mock) Logout(req *http.Request) (*httptest.ResponseRecorder, int) {
@@ -215,28 +216,28 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 			string(isutrain.SaNonReserved):   15000,
 		}
 	)
-	b, err := json.Marshal(&isutrain.Trains{
+	b, err := json.Marshal(isutrain.Trains{
 		&isutrain.Train{
 			Class:            "のぞみ",
 			Name:             "96号",
-			Start:            1,
-			Last:             2,
+			Start:            "1",
+			Last:             "2",
 			Departure:        "東京",
-			Destination:      "名古屋",
-			DepartedAt:       time.Now(),
-			ArrivedAt:        time.Now(),
+			Arrival:          "名古屋",
+			DepartedAt:       util.FormatISO8601(time.Now()),
+			ArrivedAt:        util.FormatISO8601(time.Now()),
 			SeatAvailability: seatAvailability,
 			FareInformation:  fareInformation,
 		},
 		&isutrain.Train{
 			Class:            "こだま",
 			Name:             "96号",
-			Start:            3,
-			Last:             4,
+			Start:            "3",
+			Last:             "4",
 			Departure:        "名古屋",
-			Destination:      "大阪",
-			DepartedAt:       time.Now(),
-			ArrivedAt:        time.Now(),
+			Arrival:          "大阪",
+			DepartedAt:       util.FormatISO8601(time.Now()),
+			ArrivedAt:        util.FormatISO8601(time.Now()),
 			SeatAvailability: seatAvailability,
 			FareInformation:  fareInformation,
 		},
@@ -245,6 +246,7 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
 	}
 
+	log.Println(string(b))
 	return b, http.StatusOK
 }
 
@@ -257,12 +259,14 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 	}
 
 	// 列車特定情報を受け取る
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	var (
-		trainClass   = q.Get("train_class")
-		trainName    = q.Get("train_name")
-		carNumber, _ = strconv.Atoi(q.Get("car_number"))
-		fromName     = q.Get("from")
-		toName       = q.Get("to")
+		trainClass              = q.Get("train_class")
+		trainName               = q.Get("train_name")
+		carNumber, carNumberErr = strconv.Atoi(q.Get("car_number"))
+		date, dateErr           = time.Parse(time.RFC3339, q.Get("date"))
+		fromName                = q.Get("from")
+		toName                  = q.Get("to")
 	)
 	if len(trainClass) == 0 || len(trainName) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
@@ -270,9 +274,13 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 	if len(fromName) == 0 || len(toName) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
-	if carNumber == 0 {
+	if carNumberErr != nil || carNumber == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+	if dateErr != nil {
+		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
+	}
+	date = date.In(jst)
 
 	// 適当な席を返す
 	b, err := json.Marshal(&isutrain.TrainSeatSearchResponse{
@@ -321,7 +329,7 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 	}
 
 	// NOTE: とりあえず、パラメータガン無視でPOSTできるところ先にやる
-	return b, http.StatusAccepted
+	return b, http.StatusOK
 }
 
 // CommitReservation は予約を確定します
@@ -337,7 +345,7 @@ func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
 	// FIXME: ちゃんとした決済情報を追加する
 	m.paymentMock.addPaymentInformation()
 
-	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
+	return []byte(http.StatusText(http.StatusOK)), http.StatusOK
 }
 
 // CancelReservation は予約をキャンセルします

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -84,7 +83,6 @@ func Register() (*Mock, error) {
 				resp.Header.Add(headerKey, headerValue)
 			}
 		}
-		log.Printf("response header @ login: %+v", resp.Header)
 		return resp, nil
 	})
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.Logout)), func(req *http.Request) (*http.Response, error) {
@@ -101,7 +99,6 @@ func Register() (*Mock, error) {
 		body, status := isutrainMock.Reserve(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
-	log.Printf("mount commit")
 	httpmock.RegisterResponder("POST", endpoint.GetPath(endpoint.CommitReservation), func(req *http.Request) (*http.Response, error) {
 		body, status := isutrainMock.CommitReservation(req)
 		return httpmock.NewBytesResponse(status, body), nil
@@ -142,7 +139,6 @@ func Register() (*Mock, error) {
 		if err != nil {
 			return httpmock.NewBytesResponse(http.StatusInternalServerError, []byte(http.StatusText(http.StatusInternalServerError))), err
 		}
-		log.Println(string(b))
 		return httpmock.NewBytesResponse(http.StatusOK, b), nil
 	})
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/favicon.ico", baseURL), func(req *http.Request) (*http.Response, error) {
@@ -167,6 +163,10 @@ func Register() (*Mock, error) {
 	})
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s%s", paymentBaseURL, endpoint.PaymentResultPath), func(req *http.Request) (*http.Response, error) {
 		body, status := paymentMock.GetResult()
+		return httpmock.NewBytesResponse(status, body), nil
+	})
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s%s", paymentBaseURL, endpoint.PaymentRegistCardPath), func(req *http.Request) (*http.Response, error) {
+		body, status := paymentMock.RegistCard()
 		return httpmock.NewBytesResponse(status, body), nil
 	})
 

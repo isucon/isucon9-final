@@ -3,6 +3,7 @@ package scenario
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/cache"
@@ -68,6 +69,7 @@ func finalcheckVocantSeats(ctx context.Context, isutrainClient *isutrain.Client)
 	// FIXME: ReservationCacheから引っ張ってこれるようにする
 	isutrainClient.ListTrainSeats(
 		ctx,
+		time.Now(),
 		trainClass,
 		trainName,
 		carNum,

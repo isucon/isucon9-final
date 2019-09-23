@@ -24,3 +24,8 @@ type PaymentResult struct {
 	RawData []*RawData `json:"raw_data"`
 	IsOK    bool       `json:"is_ok"`
 }
+
+type RegistCardResponse struct {
+	CardToken string `json:"card_token"`
+	IsOK      bool   `json:"is_ok"`
+}

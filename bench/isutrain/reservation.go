@@ -45,8 +45,8 @@ type ReservationRequest struct {
 	Seats     TrainSeats `json:"seats"`
 	// それ以外
 	//// 区間
-	Departure string `json:"origin"`
-	Arrival   string `json:"destination"`
+	Departure string `json:"departure"`
+	Arrival   string `json:"arrival"`
 	// 日付
 	Date   time.Time `json:"date"`
 	CarNum int       `json:"car_num"`
@@ -56,7 +56,7 @@ type ReservationRequest struct {
 	Type string `json:"type"`
 }
 
-func NewReservationRequest(trains *TrainSearchResponse, seats TrainSeats) (*ReservationRequest, error) {
+func NewReservationRequest(trains Train, seats TrainSeats) (*ReservationRequest, error) {
 	req := &ReservationRequest{}
 
 	// Train構造体
@@ -79,7 +79,8 @@ type ReservationResponse struct {
 }
 
 type CommitReservationRequest struct {
-	ReservationID int `json:"reservation_id"`
+	ReservationID int    `json:"reservation_id"`
+	CardToken     string `json:"card_token"`
 }
 
 type ShowReservationResponse struct {

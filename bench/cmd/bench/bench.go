@@ -148,7 +148,7 @@ var run = cli.Command{
 
 		// pretest (まず、正しく動作できているかチェック. エラーが見つかったら、採点しようがないのでFAILにする)
 		lgr.Info("===== Pretest webapp =====")
-		scenario.Pretest(ctx, testClient, assets)
+		scenario.Pretest(ctx, testClient, paymentClient, assets)
 		if bencherror.PreTestErrs.IsError() {
 			dumpFailedResult(bencherror.PreTestErrs.Msgs)
 			return cli.NewExitError(fmt.Errorf("Pretestに失敗しました"), 0)

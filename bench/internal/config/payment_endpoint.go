@@ -1,6 +1,7 @@
 package config
 
-const (
-	PaymentInitializePath = "/initialize"
-	PaymentResultPath     = "/result"
-)
+// const (
+// 	PaymentInitializePath = "/initialize"
+// 	PaymentRegistCardPath = "/card"
+// 	PaymentResultPath     = "/result"
+// )

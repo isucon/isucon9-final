@@ -28,10 +28,10 @@ var isutrainEndpoints = []*Endpoint{
 	&Endpoint{path: "/api/train/reservation", weight: 1},
 	// FIXME: Bodyに予約IDを含める
 	&Endpoint{path: "/api/train/reservation/commit", weight: 1},
-	&Endpoint{path: "/stations", weight: 1},
-	&Endpoint{path: "/train/search", weight: 1},
-	&Endpoint{path: "/train/seats", weight: 1},
-	&Endpoint{path: "/reservation", weight: 1},
+	&Endpoint{path: "/api/stations", weight: 1},
+	&Endpoint{path: "/api/train/search", weight: 1},
+	&Endpoint{path: "/api/train/seats", weight: 1},
+	&Endpoint{path: "/api/user/reservation", weight: 1},
 }
 
 const (
@@ -41,7 +41,7 @@ const (
 
 var isutrainDynamicEndpoints = []*Endpoint{
 	// FIXME: 文字列ではなく整数値
-	&Endpoint{path: "/reservation/%d/cancel", weight: 1},
+	&Endpoint{path: "/api/user/reservations/%d/cancel", weight: 1},
 	&Endpoint{path: "/api/train/reservation/%d", weight: 1},
 }
 

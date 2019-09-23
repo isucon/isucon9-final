@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -96,6 +97,8 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		status = StatusTimeout
 	}
 
+	log.Println(stdout.Bytes())
+
 	// ベンチ結果をUnmarshal
 	var result *BenchResult
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
@@ -170,6 +173,7 @@ var run = cli.Command{
 	},
 	Action: func(cliCtx *cli.Context) error {
 		ctx := context.Background()
+		var reportWg sync.WaitGroup
 
 		sigCh := make(chan os.Signal, 1)
 		defer close(sigCh)
@@ -192,6 +196,7 @@ var run = cli.Command{
 
 				reportRetrier := retrier.New(retrier.ConstantBackoff(retryLimit, time.Duration(retryInterval)*time.Second), nil)
 
+				log.Println("===== Execute benchmarker =====")
 				result, err := execBench(ctx, job)
 				if err != nil {
 					// FIXME: ベンチ失敗した時のaction
@@ -207,15 +212,22 @@ var run = cli.Command{
 					break
 				}
 
+				log.Println("===== Report result =====")
 				// ポータルに結果を報告
-				err = reportRetrier.RunCtx(ctx, func(ctx context.Context) error {
-					return report(ctx, job.ID, result)
-				})
-				if err != nil {
-					log.Println(err)
-				}
+				reportWg.Add(1)
+				go func() {
+					defer reportWg.Done()
+					err = reportRetrier.RunCtx(ctx, func(ctx context.Context) error {
+						return report(ctx, job.ID, result)
+					})
+					if err != nil {
+						log.Println(err)
+					}
+				}()
 			}
 		}
+
+		reportWg.Wait()
 
 		return nil
 	},

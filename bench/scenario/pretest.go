@@ -10,6 +10,7 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/assets"
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
+	"github.com/chibiegg/isucon9-final/bench/payment"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -20,7 +21,7 @@ var (
 )
 
 // Pretest は、ベンチマーク前のアプリケーションが正常に動作できているか検証し、できていなければFAILとします
-func Pretest(ctx context.Context, client *isutrain.Client, assets []*assets.Asset) {
+func Pretest(ctx context.Context, client *isutrain.Client, paymentClient *payment.Client, assets []*assets.Asset) {
 	pretestGrp, _ := errgroup.WithContext(ctx)
 
 	// 静的ファイル
@@ -30,7 +31,7 @@ func Pretest(ctx context.Context, client *isutrain.Client, assets []*assets.Asse
 	})
 	// 正常系
 	pretestGrp.Go(func() error {
-		pretestNormalReservation(ctx, client)
+		pretestNormalReservation(ctx, client, paymentClient)
 		return nil
 	})
 	pretestGrp.Go(func() error {
@@ -66,7 +67,7 @@ func pretestStaticFiles(ctx context.Context, client *isutrain.Client, assets []*
 // 正常系
 
 // preTestNormalReservation は予約までの一連の流れを検証します
-func pretestNormalReservation(ctx context.Context, client *isutrain.Client) {
+func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paymentClient *payment.Client) {
 	// FIXME: 最初から登録されて入る、２つくらいのユーザで試す
 
 	// FIXME: ランダムなユーザ情報を使う
@@ -97,26 +98,36 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client) {
 	// * 空席情報 (プレミアムにできる？プレミアムかつ喫煙にできる？そもそも予約できる？予約できてかつ喫煙できる？未予約？)
 	// * 空席情報それぞれの料金
 	// を得られる
-	_, err = client.SearchTrains(ctx, time.Now(), "東京", "大阪", nil)
+	_, err = client.SearchTrains(ctx, time.Now().AddDate(1, 0, 0), "東京", "大阪", nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "列車検索ができません"))
 		return
 	}
 
 	// FIXME: 日付、列車クラス、名前、車両番号、乗車駅降車駅を指定
-	_, err = client.ListTrainSeats(ctx, "こだま", "96号", 1, "東京", "大阪", nil)
+	seatsResp, err := client.ListTrainSeats(ctx,
+		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		"最速", "1", 8, "東京", "大阪", nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "列車の座席座席列挙できません"))
 		return
 	}
 
-	reservation, err := client.Reserve(ctx, "こだま", "69号", "premium", isutrain.TrainSeats{}, "東京", "名古屋", time.Now(), 1, 1, 1, "isle", nil)
+	reservation, err := client.Reserve(ctx, "最速", "1", "premium", seatsResp.Seats[:2], "東京", "大阪",
+		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		1, 1, 1, "isle", nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "予約ができません"))
 		return
 	}
 
-	if err = client.CommitReservation(ctx, reservation.ReservationID, nil); err != nil {
+	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
+	if err != nil {
+		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "クレジットカードの登録ができませんでした. 運営にご確認をお願いいたします"))
+		return
+	}
+
+	if err = client.CommitReservation(ctx, reservation.ReservationID, cardToken, nil); err != nil {
 		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "予約を確定できませんでした"))
 		return
 	}

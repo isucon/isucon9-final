@@ -93,6 +93,7 @@ func AttackSearchScenario(ctx context.Context) error {
 				default:
 					_, err := client.ListTrainSeats(
 						listTrainSeatsCtx,
+						time.Now().AddDate(1, 0, 0),
 						"ほげ",
 						"ほげ",
 						1,
