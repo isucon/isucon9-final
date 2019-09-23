@@ -1,5 +1,154 @@
 [user]
-user-test-01 ansible_host=47.74.27.58
+user-test-01.isucon9.hinatan.net
+
+#  team003-a.isucon9.hinatan.net
+#  team003-b.isucon9.hinatan.net
+#  team003-c.isucon9.hinatan.net
+
+#  team015-a.isucon9.hinatan.net
+#  team015-b.isucon9.hinatan.net
+#  team015-c.isucon9.hinatan.net
+
+#  team041-a.isucon9.hinatan.net
+#  team041-b.isucon9.hinatan.net
+#  team041-c.isucon9.hinatan.net
+
+#  team046-a.isucon9.hinatan.net
+#  team046-b.isucon9.hinatan.net
+#  team046-c.isucon9.hinatan.net
+
+#  team059-a.isucon9.hinatan.net
+#  team059-b.isucon9.hinatan.net
+#  team059-c.isucon9.hinatan.net
+
+#  team067-a.isucon9.hinatan.net
+#  team067-b.isucon9.hinatan.net
+#  team067-c.isucon9.hinatan.net
+
+#  team073-a.isucon9.hinatan.net
+#  team073-b.isucon9.hinatan.net
+#  team073-c.isucon9.hinatan.net
+
+#  team095-a.isucon9.hinatan.net
+#  team095-b.isucon9.hinatan.net
+#  team095-c.isucon9.hinatan.net
+
+#  team103-a.isucon9.hinatan.net
+#  team103-b.isucon9.hinatan.net
+#  team103-c.isucon9.hinatan.net
+
+#  team105-a.isucon9.hinatan.net
+#  team105-b.isucon9.hinatan.net
+#  team105-c.isucon9.hinatan.net
+
+#  team130-a.isucon9.hinatan.net
+#  team130-b.isucon9.hinatan.net
+#  team130-c.isucon9.hinatan.net
+
+#  team146-a.isucon9.hinatan.net
+#  team146-b.isucon9.hinatan.net
+#  team146-c.isucon9.hinatan.net
+
+#  team159-a.isucon9.hinatan.net
+#  team159-b.isucon9.hinatan.net
+#  team159-c.isucon9.hinatan.net
+
+#  team170-a.isucon9.hinatan.net
+#  team170-b.isucon9.hinatan.net
+#  team170-c.isucon9.hinatan.net
+
+#  team203-a.isucon9.hinatan.net
+#  team203-b.isucon9.hinatan.net
+#  team203-c.isucon9.hinatan.net
+
+#  team220-a.isucon9.hinatan.net
+#  team220-b.isucon9.hinatan.net
+#  team220-c.isucon9.hinatan.net
+
+#  team265-a.isucon9.hinatan.net
+#  team265-b.isucon9.hinatan.net
+#  team265-c.isucon9.hinatan.net
+
+#  team272-a.isucon9.hinatan.net
+#  team272-b.isucon9.hinatan.net
+#  team272-c.isucon9.hinatan.net
+
+#  team324-a.isucon9.hinatan.net
+#  team324-b.isucon9.hinatan.net
+#  team324-c.isucon9.hinatan.net
+
+#  team333-a.isucon9.hinatan.net
+#  team333-b.isucon9.hinatan.net
+#  team333-c.isucon9.hinatan.net
+
+#  team351-a.isucon9.hinatan.net
+#  team351-b.isucon9.hinatan.net
+#  team351-c.isucon9.hinatan.net
+
+#  team384-a.isucon9.hinatan.net
+#  team384-b.isucon9.hinatan.net
+#  team384-c.isucon9.hinatan.net
+
+#  team389-a.isucon9.hinatan.net
+#  team389-b.isucon9.hinatan.net
+#  team389-c.isucon9.hinatan.net
+
+#  team407-a.isucon9.hinatan.net
+#  team407-b.isucon9.hinatan.net
+#  team407-c.isucon9.hinatan.net
+
+#  team420-a.isucon9.hinatan.net
+#  team420-b.isucon9.hinatan.net
+#  team420-c.isucon9.hinatan.net
+
+#  team460-a.isucon9.hinatan.net
+#  team460-b.isucon9.hinatan.net
+#  team460-c.isucon9.hinatan.net
+
+#  team462-a.isucon9.hinatan.net
+#  team462-b.isucon9.hinatan.net
+#  team462-c.isucon9.hinatan.net
+
+#  team467-a.isucon9.hinatan.net
+#  team467-b.isucon9.hinatan.net
+#  team467-c.isucon9.hinatan.net
+
+#  team478-a.isucon9.hinatan.net
+#  team478-b.isucon9.hinatan.net
+#  team478-c.isucon9.hinatan.net
+
+#  team516-a.isucon9.hinatan.net
+#  team516-b.isucon9.hinatan.net
+#  team516-c.isucon9.hinatan.net
+
+#  team574-a.isucon9.hinatan.net
+#  team574-b.isucon9.hinatan.net
+#  team574-c.isucon9.hinatan.net
+
+#  team578-a.isucon9.hinatan.net
+#  team578-b.isucon9.hinatan.net
+#  team578-c.isucon9.hinatan.net
+
 
 [bench]
-bench-test-01 ansible_host=47.74.38.153
+bench-test-01.isucon9.hinatan.net
+# benchmark-01.isucon9.hinatan.net
+# benchmark-02.isucon9.hinatan.net
+# benchmark-03.isucon9.hinatan.net
+# benchmark-04.isucon9.hinatan.net
+# benchmark-05.isucon9.hinatan.net
+# benchmark-06.isucon9.hinatan.net
+# benchmark-07.isucon9.hinatan.net
+# benchmark-08.isucon9.hinatan.net
+# benchmark-09.isucon9.hinatan.net
+# benchmark-10.isucon9.hinatan.net
+# benchmark-11.isucon9.hinatan.net
+# benchmark-12.isucon9.hinatan.net
+# benchmark-13.isucon9.hinatan.net
+# benchmark-14.isucon9.hinatan.net
+# benchmark-15.isucon9.hinatan.net
+# benchmark-16.isucon9.hinatan.net
+# benchmark-17.isucon9.hinatan.net
+# benchmark-18.isucon9.hinatan.net
+# benchmark-19.isucon9.hinatan.net
+# benchmark-20.isucon9.hinatan.net
