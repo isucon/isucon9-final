@@ -337,7 +337,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 	*/
 
-	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	jst := time.FixedZone("JST", 9*60*60)
 	date, err := time.Parse(time.RFC3339, r.URL.Query().Get("use_at"))
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, err.Error())
@@ -467,7 +467,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		if isContainsOriginStation && isContainsDestStation {
 			// 列車情報
 
-			// 所要時間計算
+			// 所要時間
 			var departure, arrival string
 
 			err = dbx.Get(&departure, "SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?", date.Format("2006/01/02"), train.TrainClass, train.TrainName, fromStation.Name)
@@ -475,6 +475,18 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				errorResponse(w, http.StatusInternalServerError, err.Error())
 				return
 			}
+			
+			departureDate, err := time.Parse("2006/01/02 15:04:05 MST", fmt.Sprintf("%s %s %s", date.Format("2006/01/02"), departure, date.Format("MST")))
+			if err != nil {
+				errorResponse(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+
+			if !date.Before(departureDate){
+				// 乗りたい時刻より出発時刻が前なので除外
+				continue
+			}
+
 			err = dbx.Get(&arrival, "SELECT arrival FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?", date.Format("2006/01/02"), train.TrainClass, train.TrainName, toStation.Name)
 			if err != nil {
 				errorResponse(w, http.StatusInternalServerError, err.Error())
@@ -579,6 +591,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				train.TrainClass, train.TrainName, train.StartStation, train.LastStation,
 				fromStation.Name, toStation.Name, departure, arrival, seatAvailability, fareInformation,
 			})
+
 			if len(trainSearchResponseList) >= 10 {
 				break
 			}
