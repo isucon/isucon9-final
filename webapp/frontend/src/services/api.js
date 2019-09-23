@@ -8,6 +8,16 @@ class ApiService {
         this.stations = []
     }
 
+    // ログイン状態
+    async getAuth () {
+      return await this.httpService.get('/api/auth')
+    }
+
+    // ログアウト
+    async logout () {
+      return await this.httpService.post('/api/auth/logout')
+    }
+
     // 列車検索
     async getTrains (condition) {
         var date = new Date(condition.year, condition.month - 1, condition.day)

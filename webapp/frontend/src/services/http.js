@@ -5,7 +5,13 @@ const API_BASE = "";
 
 class ErrorHandler {
     handle (error) {
+        if (error.response.status == 401) {
+            Router.push({ path: '/login' })
+            return;
+        }
+
         console.log(error);
+
         /*
         if (error.response.status === 404) {
             Router.push({ name: 'notfound' })
