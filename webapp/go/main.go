@@ -116,8 +116,8 @@ type TrainSearchResponse struct {
 	Last             string            `json:"last"`
 	Departure        string            `json:"departure"`
 	Destination      string            `json:"destination"`
-	DepartureTime    time.Time         `json:"departure_time"`
-	ArrivalTime      time.Time         `json:"arrival_time"`
+	DepartureTime    string            `json:"departure_time"`
+	ArrivalTime      string            `json:"arrival_time"`
 	SeatAvailability map[string]string `json:"seat_availability"`
 	Fare             map[string]int    `json:"seat_fare"`
 }
@@ -467,11 +467,19 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		if isContainsOriginStation && isContainsDestStation {
 			// 列車情報
 
-			// TODO: 所要時間計算
-			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
-			departureAt := time.Now()
-			// TODO: ここの値はダミーなのでちゃんと計算して突っ込む
-			arrivalAt := time.Now()
+			// 所要時間計算
+			var departure, arrival string
+
+			err = dbx.Get(&departure, "SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?", date.Format("2006/01/02"), train.TrainClass, train.TrainName, fromStation.Name)
+			if err != nil {
+				errorResponse(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+			err = dbx.Get(&arrival, "SELECT arrival FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?", date.Format("2006/01/02"), train.TrainClass, train.TrainName, toStation.Name)
+			if err != nil {
+				errorResponse(w, http.StatusInternalServerError, err.Error())
+				return
+			}
 
 			premium_avail_seats, err := train.getAvailableSeats(fromStation, toStation, "premium", false)
 			if err != nil {
@@ -569,8 +577,11 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			trainSearchResponseList = append(trainSearchResponseList, TrainSearchResponse{
 				train.TrainClass, train.TrainName, train.StartStation, train.LastStation,
-				fromStation.Name, toStation.Name, departureAt, arrivalAt, seatAvailability, fareInformation,
+				fromStation.Name, toStation.Name, departure, arrival, seatAvailability, fareInformation,
 			})
+			if len(trainSearchResponseList) >= 10 {
+				break
+			}
 		}
 	}
 	resp, err := json.Marshal(trainSearchResponseList)
