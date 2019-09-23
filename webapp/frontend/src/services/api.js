@@ -93,6 +93,12 @@ class ApiService {
       });
     }
 
+    async commit(data) {
+      return await this.httpService.post('/api/train/reservation/commit', data).then(function(resp){
+        return resp
+      })
+    }
+
     async getReservation(reservationId) {
       return await this.httpService.get('/api/user/reservations/' + reservationId)
     }

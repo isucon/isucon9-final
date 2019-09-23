@@ -84,7 +84,7 @@ type Reservation struct {
 	PaymentStatus string     `json:"payment_method" db:"payment_method"`
 	Status        string     `json:"status" db:"status"`
 	PaymentId     string     `json:"payment_id,omitempty" db:"payment_id"`
-	Amount        string     `json:"amount" db:"amount"`
+	Amount        int        `json:"amount" db:"amount"`
 }
 
 type SeatReservation struct {
@@ -167,13 +167,13 @@ type TrainReservationResponse struct {
 
 type ReservationPaymentRequest struct {
 	CardToken     string `json:"card_token"`
-	ReservationId string `json:"reservation_id"`
+	ReservationId int    `json:"reservation_id"`
 }
 
 
 type PaymentInformationRequest struct {
 	CardToken     string `json:"card_token"`
-	ReservationId string `json:"reservation_id"`
+	ReservationId int    `json:"reservation_id"`
 	Amount        int    `json:"amount"`
 }
 
@@ -1352,7 +1352,7 @@ func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	req := new(ReservationPaymentRequest)
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		paymentResponse(w, 500, true, "JSON parseに失敗しました")
+		paymentResponse(w, 500, true, err.Error())
 		return
 	}
 
