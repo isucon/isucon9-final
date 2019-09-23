@@ -554,7 +554,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			departureDate, err := time.Parse("2006/01/02 15:04:05 MST", fmt.Sprintf("%s %s %s", date.Format("2006/01/02"), departure, date.Format("MST")))
+			departureDate, err := time.Parse("2006/01/02 15:04:05 -07:00 MST", fmt.Sprintf("%s %s +09:00 JST", date.Format("2006/01/02"), departure))
 			if err != nil {
 				errorResponse(w, http.StatusInternalServerError, err.Error())
 				return

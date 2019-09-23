@@ -20,8 +20,8 @@ class ApiService {
 
     // 列車検索
     async getTrains (condition) {
-        var date = new Date(condition.year, condition.month - 1, condition.day)
-
+        var date = new Date(condition.year, condition.month - 1, condition.day, condition.hour, condition.minute, 0)
+        console.log(date.toISOString())
         var params = {
           use_at: moment(date).toISOString(),
           from: condition.from_station,
