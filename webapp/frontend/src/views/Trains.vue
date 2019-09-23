@@ -7,7 +7,7 @@
     <section class="subcontent">
       <article class="condition">
         <div class="date">{{year}}年{{month}}月{{day}}日</div>
-        <div class="station">{{ from_station.name }}→{{ to_station.name }}</div>
+        <div class="station">{{ from_station }}→{{ to_station }}</div>
         <div class="person">おとな {{ adult }} 名 こども {{ child }} 名</div>
       </article>
     </section>
@@ -55,12 +55,12 @@
           禁煙
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="ek" v-bind:disabled="selectedItem.seat_availability.reserved == '×'"/><label for="ek"></label>
+          <input type="radio" name="price" id="ek" v-bind:disabled="selectedItem.seat_availability.reserved == '×'" v-on:click="selectSeatClass('reserved')"/><label for="ek"></label>
           <div class="available">{{ selectedItem.seat_availability.reserved }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.reserved }}</div>
         </div>
         <div class="td green">
-          <input type="radio" name="price" id="gk" v-bind:disabled="selectedItem.seat_availability.premium == '×'"/><label for="gk"></label>
+          <input type="radio" name="price" id="gk" v-bind:disabled="selectedItem.seat_availability.premium == '×'" v-on:click="selectSeatClass('premium')"/><label for="gk"></label>
           <div class="available">{{ selectedItem.seat_availability.premium }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.premium }}</div>
         </div>
@@ -69,12 +69,12 @@
           禁煙（喫煙ルーム付近）
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="es" v-bind:disabled="selectedItem.seat_availability.reserved_smoke == '×'"/><label for="es"></label>
+          <input type="radio" name="price" id="es" v-bind:disabled="selectedItem.seat_availability.reserved_smoke == '×'" v-on:click="selectSeatClass('reserved')"/><label for="es"></label>
           <div class="available">{{ selectedItem.seat_availability.reserved_smoke }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.reserved }}</div>
         </div>
         <div class="td green">
-          <input type="radio" name="price" id="gs" v-bind:disabled="selectedItem.seat_availability.premium_smoke == '×'"/><label for="gs"></label>
+          <input type="radio" name="price" id="gs" v-bind:disabled="selectedItem.seat_availability.premium_smoke == '×'" v-on:click="selectSeatClass('premium')"/><label for="gs"></label>
           <div class="available">{{ selectedItem.seat_availability.premium_smoke }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.premium }}</div>
         </div>
@@ -82,7 +82,7 @@
           <h3>自由席</h3>
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="f" v-bind:disabled="selectedItem.seat_availability.non_reserved == '×'"/><label for="f"></label>
+          <input type="radio" name="price" id="f" v-bind:disabled="selectedItem.seat_availability.non_reserved == '×'" v-on:click="selectSeatClass('')"/><label for="f"></label>
           <div class="available">{{ selectedItem.seat_availability.non_reserved }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.non_reserved }}</div>
         </div>
@@ -91,7 +91,7 @@
       </div>
 
 
-      <div class="seat" v-on:click="selectSeat()">
+      <div class="seat" v-on:click="selectSeat()" v-bind:class="{ disabled: !seat_class }">
         座席表を見る
       </div>
 
@@ -134,12 +134,13 @@ export default {
       month: null,
       day: null,
       train_class: "",
-      from_station_id: null,
-      to_station_id: null,
+      from_station: "",
+      to_station: "",
       adult: null,
       child: null,
       position: "指定しない",
       selectedItem: null,
+      seat_class: "",
       items: null,
     }
   },
@@ -148,20 +149,14 @@ export default {
     itemCount () {
       return this.items.length;
     },
-    from_station() {
-      return apiService.getStation(this.from_station_id)
-    },
-    to_station() {
-      return apiService.getStation(this.to_station_id)
-    },
     condition () {
       return {
         year: this.year,
         month: this.month,
         day: this.day,
         train_class: this.train_class,
-        from_station: this.from_station.name,
-        to_station: this.to_station.name,
+        from_station: this.from_station,
+        to_station: this.to_station,
         adult: this.adult,
         child: this.child,
       }
@@ -192,6 +187,9 @@ export default {
         this.items = items
       })
     },
+    selectSeatClass(seat_class) {
+      this.seat_class = seat_class
+    },
     selectSeat() {
       var query = {
         year: this.year,
@@ -200,12 +198,15 @@ export default {
         train_class: this.selectedItem.train_class,
         train_name: this.selectedItem.train_name,
         car_number: 4,
-        from_station: this.from_station.name,
-        to_station: this.to_station.name,
+        from_station: this.from_station,
+        to_station: this.to_station,
         adult: this.adult,
-        child: this.child
+        child: this.child,
+        seat_class: this.seat_class
       }
-      Router.push({ path: '/reservation/seats', query: query})
+      if(this.seat_class!=""){
+        Router.push({ path: '/reservation/seats', query: query})
+      }
     }
   },
   mounted() {
@@ -215,8 +216,8 @@ export default {
     this.train_class = this.$route.query.train_class
     this.adult = this.$route.query.adult
     this.child = this.$route.query.child
-    this.from_station_id = this.$route.query.from_station
-    this.to_station_id = this.$route.query.to_station
+    this.from_station = this.$route.query.from_station
+    this.to_station = this.$route.query.to_station
 
     return this.search();
   }
@@ -230,40 +231,40 @@ div.trains {
 
 }
 
-section.subcontent {
+div.trains section.subcontent {
   width: 320px;
   float: left;
   background: #18257F;
   color: #ffffff;
 }
 
-section.trains {
+div.trains section.trains {
   width: 640px;
   float: right;
   background: #82B1F9;
 }
 
-section.information {
+div.trains section.information {
   clear: both;
 }
 
-.condition {
+div.trains .condition {
   border-collapse: collapse;
   line-height: 1.1;
   padding: 10px;
 }
 
-.condition div {
+div.trains .condition div {
   width: 100%;
   text-align: center;
   margin: 3px 0;
 }
 
-.condition .date {
+div.trains .condition .date {
   font-size: 30px;
 }
 
-.condition .station {
+div.trains .condition .station {
   font-size: 28px;
 }
 
@@ -409,6 +410,10 @@ section.information {
   float: left;
   background: #faae36;
   cursor: pointer;
+}
+
+.popup .seat.disabled {
+  background: #aaaaaa;
 }
 
 .popup .position {
