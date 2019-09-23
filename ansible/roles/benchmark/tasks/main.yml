@@ -46,6 +46,18 @@
   tags: benchmark
   notify: reload nginx
 
+- name: create ssl directory
+  file: path=/etc/nginx/keys state=directory owner=root group=root mode=0700
+  tags: benchmark
+
+- name: copy ssl keys
+  copy: src="certs/isucon9.hinatan.net/{{ item }}" dest="/etc/nginx/keys/{{ item }}" owner=root group=root mode=0600
+  tags: benchmark
+  with_items:
+    - fullchain.pem
+    - privkey.pem
+  notify: reload nginx
+
 - name: robots.txt
   template: src=nginx/robots.txt dest=/var/www/html/robots.txt owner=root group=root mode=0644
   tags: benchmark
