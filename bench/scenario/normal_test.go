@@ -33,7 +33,8 @@ func TestInitializeBenchError(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	m := mock.Register()
+	m, err := mock.Register()
+	assert.NoError(t, err)
 	m.Inject(func(path string) error {
 		if path == endpoint.GetPath(endpoint.Initialize) {
 			return fmt.Errorf("POST /initialize: テスト用のエラーです")

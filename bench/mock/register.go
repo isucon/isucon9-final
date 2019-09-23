@@ -15,9 +15,12 @@ import (
 
 // RegisterMockEndpoints はhttpmockのエンドポイントを登録する
 // NOTE: httpmock.Activate, httpmock.Deactivateは別途実施する必要があります
-func Register() *Mock {
+func Register() (*Mock, error) {
 	paymentMock := newPaymentMock()
-	isutrainMock := NewMock(paymentMock)
+	isutrainMock, err := NewMock(paymentMock)
+	if err != nil {
+		return nil, err
+	}
 	isutrainMock.LoginDelay = 100 * time.Millisecond
 	isutrainMock.ReserveDelay = 100 * time.Millisecond
 	isutrainMock.ListStationsDelay = 100 * time.Millisecond
@@ -76,6 +79,7 @@ func Register() *Mock {
 		return httpmock.NewBytesResponse(status, body), nil
 	})
 
+
 	// Assets
 	_, file, _, _ := runtime.Caller(0)
 	testDir := filepath.Join(filepath.Dir(file), "testdata")
@@ -133,5 +137,5 @@ func Register() *Mock {
 		return httpmock.NewBytesResponse(status, body), nil
 	})
 
-	return isutrainMock
+	return isutrainMock, nil
 }

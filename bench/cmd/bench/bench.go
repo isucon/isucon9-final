@@ -124,7 +124,11 @@ var run = cli.Command{
 			httpmock.Activate()
 			defer httpmock.DeactivateAndReset()
 
-			mock.Register()
+			_, err = mock.Register()
+			if err != nil {
+				dumpFailedResult([]string{err.Error()})
+				return cli.NewExitError(err, 1)
+			}
 			initClient.ReplaceMockTransport()
 			testClient.ReplaceMockTransport()
 		}

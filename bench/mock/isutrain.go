@@ -10,7 +10,9 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
+	"github.com/gorilla/sessions"
 	"github.com/jarcoal/httpmock"
+	"net/http/httptest"
 )
 
 // Mock は `isutrain` のモック実装です
@@ -24,18 +26,36 @@ type Mock struct {
 	CancelReservationDelay time.Duration
 	ListReservationDelay   time.Duration
 
+	sessionName string
+	session     sessions.Store
+
 	injectFunc func(path string) error
 
 	paymentMock *paymentMock
 }
 
-func NewMock(paymentMock *paymentMock) *Mock {
+func NewMock(paymentMock *paymentMock) (*Mock, error) {
+	randomStr, err := util.SecureRandomStr(20)
+	if err != nil {
+		return nil, err
+	}
 	return &Mock{
 		injectFunc: func(path string) error {
 			return nil
 		},
 		paymentMock: paymentMock,
+		sessionName: "session_isutrain",
+		session:     sessions.NewCookieStore([]byte(randomStr)),
+	}, nil
+}
+
+func (m *Mock) getSession(req *http.Request) (*sessions.Session, error) {
+	session, err := m.session.Get(req, m.sessionName)
+	if err != nil {
+		return nil, err
 	}
+
+	return session, nil
 }
 
 func (m *Mock) Inject(f func(path string) error) {
@@ -80,6 +100,20 @@ func (m *Mock) Login(req *http.Request) ([]byte, int) {
 	if len(username) == 0 || len(password) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
+
+	session, err := m.getSession(req)
+	if err != nil {
+		return []byte(http.StatusText(http.StatusNotFound)), http.StatusNotFound
+	}
+	session.Values["user_id"] = 1
+	session.Values["csrf_token"], err = util.SecureRandomStr(20)
+
+	if err != nil {
+		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
+	}
+
+	wr := httptest.NewRecorder()
+
 
 	return []byte(http.StatusText(http.StatusAccepted)), http.StatusAccepted
 }

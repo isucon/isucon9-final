@@ -58,7 +58,7 @@ func BenchmarkScore(b *testing.B) {
 	isutrainClient, _ := isutrain.NewClient()
 	paymentClient, _ := payment.NewClient()
 
-	m := mock.Register()
+	m, _ := mock.Register()
 	setDelay(m)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*testBenchTimeoutSec)*time.Second)
