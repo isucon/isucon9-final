@@ -59,17 +59,20 @@ func (s *Server) RegistCard(ctx context.Context, req *pb.RegistCardRequest) (*pb
 	ec := make(chan error, 1)
 	go func() {
 		if req.CardInformation == nil {
+			log.Println("Invalid POST data. CardInformation is nil.")
 			ec <- status.Errorf(codes.InvalidArgument, "Invalid POST data")
 			return
 		}
 		err := s.ValidateCardInformation(req)
 		if err != nil {
+			log.Println(err.Error())
 			ec <- status.Errorf(codes.InvalidArgument, err.Error())
 			return
 		}
 
 		id, err := uuid.NewV4()
 		if err != nil {
+			log.Println(err.Error())
 			ec <- status.Errorf(codes.Internal, "Internal Error, Generate UUID")
 			return
 		}
@@ -98,6 +101,7 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 	ec := make(chan error, 1)
 	go func() {
 		if req.PaymentInformation == nil {
+			log.Println("Invalid POST Data. PaymentInformation is nil.")
 			ec <- status.Errorf(codes.InvalidArgument, "Invalid POST data")
 			return
 		}
@@ -108,6 +112,7 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 		if ok {
 			date, err := ptypes.TimestampProto(time.Now())
 			if err != nil {
+				log.Println(err.Error())
 				ec <- err
 				return
 			}
@@ -125,6 +130,7 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 
 			done <- &pb.ExecutePaymentResponse{PaymentId: guid.String(), IsOk: true}
 		}
+		log.Println("Card_Token Not Found")
 		ec <- status.Errorf(codes.NotFound, "Card_Token Not Found")
 	}()
 	select {
@@ -148,6 +154,7 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 			done <- struct{}{}
 		}
 
+		log.Println("PaymentID Not Found")
 		ec <- status.Errorf(codes.NotFound, "PaymentID Not Found")
 	}()
 	select {
@@ -206,6 +213,7 @@ func (s *Server) GetPaymentInformation(ctx context.Context, req *pb.GetPaymentIn
 			done <- &pb.GetPaymentInformationResponse{PaymentInformation: &id, IsOk: true}
 		}
 
+		log.Println("PaymentID Not Found")
 		ec <- status.Errorf(codes.NotFound, "PaymentID Not Found")
 	}()
 	select {
