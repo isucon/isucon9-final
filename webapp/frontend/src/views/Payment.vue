@@ -138,7 +138,7 @@ export default {
   computed: {
     year() { return this.reservation.date.getYear() + 1900},
     month() { return this.reservation.date.getMonth() + 1 },
-    day() { return this.reservation.date.getDay() },
+    day() { return this.reservation.date.getDate() },
     expiry_date() { return this.expiry_date_month + "/" + this.expiry_date_year }
   },
   methods: {
