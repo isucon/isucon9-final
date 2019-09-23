@@ -834,9 +834,14 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	date = date.In(jst)
 
-	// 重複検索
-	tx := dbx.MustBegin()
 
+	/*
+		３段階の予約前チェック
+		・reservationが見つからなければそのまま予約へ
+		・reservationがあれば乗車区間に重複があるか確認。していなければ予約へ
+		・乗車区間重複があれば座席に重複があるか確認。していなければ予約へ
+	*/
+	tx := dbx.MustBegin()
 	// まずは乗車予定の区間をチェックする
 	reservations := []Reservation{}
 	query := "SELECT * FROM reservations WHERE date=? AND train_class=? AND train_name=? AND departure=? AND arrival=?"
@@ -855,7 +860,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 止まらない駅の予約を取ろうとしていないかチェックする
-	// 列車自体の駅IDを求める
+	// 列車データを取得
 	tmas := Train{}
 	query = "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
 	err = tx.Get(
@@ -875,7 +880,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 列車自体
+	// 列車自体の駅IDを求める
 	var departureStation, arrivalStation Station
 	query = "SELECT * FROM station_master WHERE name=?"
 	// Departure
@@ -971,7 +976,8 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 区間重複をチェック
+	// 予約の区間重複をチェック
+	// ここでreservationsが存在しない場合は区間も座席も被っていないため即時予約可とする
 	if len(reservations) != 0 {
 		for i, _ := range reservations {
 			// train_masterから列車情報を取得(上り・下りが分かる)
@@ -1023,7 +1029,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			// 区間重複判定
+			// 予約の区間重複判定
 			secdup := false
 			if tmas.IsNobori {
 				// 上り
@@ -1093,6 +1099,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	// 3段階の予約前チェック終わり
 
 	//予約ID発行と予約情報登録
 	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
@@ -1121,7 +1128,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//席の予約情報登録
-	//Reservationレコード1に対してReservationSeatが複数レコード登録される
+	//Reservationレコード1に対してReservationSeatが1以上登録される
 	query = "INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES (?, ?, ?, ?)"
 	for _, v := range req.Seats {
 		_, err = tx.Exec(
