@@ -175,12 +175,10 @@ export default {
         var items = []
 
         res.forEach(function(value){
-
           value["departure"] = apiService.getStation(value["departure"])
           value["destination"] = apiService.getStation(value["destination"])
-          value["departure_time"] = new Date(value["departure_time"])
-          value["arrival_time"] = new Date(value["arrival_time"])
-
+          value["departure_time"] = new Date("2000-01-01 " + value["departure_time"])
+          value["arrival_time"] = new Date("2000-01-01 " + value["arrival_time"])
           items.push(value)
         });
 
