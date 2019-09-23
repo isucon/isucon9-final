@@ -106,7 +106,7 @@ type CarInformation struct {
 }
 
 type SimpleCarInformation struct {
-	CarNumber int `json:"car_number"`
+	CarNumber int    `json:"car_number"`
 	SeatClass string `json:"seat_class"`
 }
 
@@ -157,6 +157,12 @@ type TrainReservationRequest struct {
 type RequestSeat struct {
 	Row    int    `json:"row"`
 	Column string `json:"column"`
+}
+
+type TrainReservationResponse struct {
+	ReservationId int64 `json:"reservation_id"`
+	Amount        int   `json:"amount"`
+	IsOk          bool  `json:"is_ok"`
 }
 
 type ReservationPaymentRequest struct {
@@ -210,18 +216,6 @@ func errorResponse(w http.ResponseWriter, errCode int, message string) {
 	e := map[string]interface{}{
 		"is_error": true,
 		"message":  message,
-	}
-	errResp, _ := json.Marshal(e)
-
-	w.WriteHeader(errCode)
-	w.Write(errResp)
-}
-
-func reservationResponse(w http.ResponseWriter, errCode int, id int64, ok bool, message string) {
-	e := map[string]interface{}{
-		"is_error":      ok,
-		"ReservationId": id,
-		"message":       message,
 	}
 	errResp, _ := json.Marshal(e)
 
@@ -847,24 +841,20 @@ WHERE
 		seatInformationList = append(seatInformationList, s)
 	}
 
-
 	// 各号車の情報
 
 	simpleCarInformationList := []SimpleCarInformation{}
 	seat := Seat{}
 	query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? ORDER BY seat_row, seat_column LIMIT 1"
 	i := 1
-	for{
+	for {
 		err = dbx.Get(&seat, query, trainClass, i)
 		if err != nil {
 			break
 		}
 		simpleCarInformationList = append(simpleCarInformationList, SimpleCarInformation{i, seat.SeatClass})
-		i = i+1
+		i = i + 1
 	}
-
-
-
 
 	c := CarInformation{date.Format("2006/01/02"), trainClass, trainName, carNumber, seatInformationList, simpleCarInformationList}
 	resp, err := json.Marshal(c)
@@ -911,7 +901,8 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	req := new(TrainReservationRequest)
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		reservationResponse(w, 500, 0, true, "JSON parseに失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "JSON parseに失敗しました")
+		log.Println(err.Error())
 		return
 	}
 
@@ -919,7 +910,8 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	date, err := time.Parse(time.RFC3339, req.Date)
 	if err != nil {
-		reservationResponse(w, 500, 0, true, "時刻のParseに失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "時刻のparseに失敗しました")
+		log.Println(err.Error())
 	}
 	date = date.In(jst)
 
@@ -943,7 +935,8 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w, 500, 0, true, "列車予約情報の取得に失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "列車予約情報の取得に失敗しました")
+		log.Println(err.Error())
 		return
 	}
 
@@ -959,12 +952,14 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		reservationResponse(w, 404, 0, true, "列車データがみつかりません")
+		errorResponse(w, http.StatusNotFound, "列車データがみつかりません")
+		log.Println(err.Error())
 		return
 	}
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w, 500, 0, true, "列車データの取得に失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "列車データの取得に失敗しました")
+		log.Println(err.Error())
 		return
 	}
 
@@ -975,12 +970,14 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	err = tx.Get(&departureStation, query, tmas.StartStation)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		reservationResponse(w, 404, 0, true, "リクエストされた列車の始発駅データがみつかりません")
+		errorResponse(w, http.StatusNotFound, "リクエストされた列車の始発駅データがみつかりません")
+		log.Println(err.Error())
 		return
 	}
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w, 500, 0, true, "リクエストされた列車の始発駅データの取得に失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の始発駅データの取得に失敗しました")
+		log.Println(err.Error())
 		return
 	}
 
@@ -988,12 +985,14 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	err = tx.Get(&arrivalStation, query, tmas.LastStation)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		reservationResponse(w, 404, 0, true, "リクエストされた列車の終着駅データがみつかりません")
+		errorResponse(w, http.StatusNotFound, "リクエストされた列車の終着駅データがみつかりません")
+		log.Println(err.Error())
 		return
 	}
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w, 500, 0, true, "リクエストされた列車の終着駅データの取得に失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の終着駅データの取得に失敗しました")
+		log.Println(err.Error())
 		return
 	}
 
@@ -1001,24 +1000,28 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	case "最速":
 		if !departureStation.IsStopExpress || !arrivalStation.IsStopExpress {
 			tx.Rollback()
-			reservationResponse(w, 400, 0, true, "最速の止まらない駅です")
+			errorResponse(w, http.StatusBadRequest, "最速の止まらない駅です")
+			log.Println(err.Error())
 			return
 		}
 	case "中間":
 		if !departureStation.IsStopSemiExpress || !arrivalStation.IsStopSemiExpress {
 			tx.Rollback()
-			reservationResponse(w, 400, 0, true, "中間の止まらない駅です")
+			errorResponse(w, http.StatusBadRequest, "中間の止まらない駅です")
+			log.Println(err.Error())
 			return
 		}
 	case "遅いやつ":
 		if !departureStation.IsStopLocal || !arrivalStation.IsStopLocal {
 			tx.Rollback()
-			reservationResponse(w, 400, 0, true, "遅いやつの止まらない駅です")
+			errorResponse(w, http.StatusBadRequest, "遅いやつの止まらない駅です")
+			log.Println(err.Error())
 			return
 		}
 	default:
 		tx.Rollback()
-		reservationResponse(w, 400, 0, true, "列車クラスが不明です")
+		errorResponse(w, http.StatusBadRequest, "リクエストされた列車クラスが不明です")
+		log.Println(err.Error())
 		return
 	}
 
@@ -1030,12 +1033,14 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	err = tx.Get(&fromStation, query, req.Departure)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		reservationResponse(w, 404, 0, true, "リクエストされた列車の乗車駅データがみつかりません")
+		errorResponse(w, http.StatusNotFound, "リクエストされた列車の乗車駅データがみつかりません")
+		log.Println(err.Error())
 		return
 	}
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w, 404, 0, true, "リクエストされた列車の乗車駅データの取得に失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の乗車駅データの取得に失敗しました")
+		log.Println(err.Error())
 		return
 	}
 
@@ -1043,24 +1048,28 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	err = tx.Get(&toStation, query, req.Arrival)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		reservationResponse(w, 404, 0, true, "リクエストされた列車の降車駅データがみつかりません")
+		errorResponse(w, http.StatusNotFound, "リクエストされた列車の降車駅データがみつかりません")
+		log.Println(err.Error())
 		return
 	}
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w, 404, 0, true, "リクエストされた列車の降車駅データの取得に失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の降車駅データの取得に失敗しました")
+		log.Println(err.Error())
 		return
 	}
 
 	// 運行していない区間を予約していないかチェックする
 	if fromStation.ID < departureStation.ID || toStation.ID < departureStation.ID {
 		tx.Rollback()
-		reservationResponse(w, 400, 0, true, "リクエストされた区間に列車が運行していない区間が含まれています")
+		errorResponse(w, http.StatusBadRequest, "リクエストされた区間に列車が運行していない区間が含まれています")
+		log.Println(err.Error())
 		return
 	}
 	if arrivalStation.ID < fromStation.ID || arrivalStation.ID < toStation.ID {
 		tx.Rollback()
-		reservationResponse(w, 400, 0, true, "リクエストされた区間に列車が運行していない区間が含まれています")
+		errorResponse(w, http.StatusBadRequest, "リクエストされた区間に列車が運行していない区間が含まれています")
+		log.Println(err.Error())
 		return
 	}
 
@@ -1079,12 +1088,14 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			)
 			if err == sql.ErrNoRows {
 				tx.Rollback()
-				reservationResponse(w, 404, 0, true, "列車データがみつかりません")
+				errorResponse(w, http.StatusNotFound, "列車データがみつかりません")
+				log.Println(err.Error())
 				return
 			}
 			if err != nil {
 				tx.Rollback()
-				reservationResponse(w, 500, 0, true, "列車データの取得に失敗しました")
+				errorResponse(w, http.StatusInternalServerError, "列車データの取得に失敗しました")
+				log.Println(err.Error())
 				return
 			}
 
@@ -1095,12 +1106,14 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			err = tx.Get(&departureStation, query, tmas.StartStation)
 			if err == sql.ErrNoRows {
 				tx.Rollback()
-				reservationResponse(w, 404, 0, true, "リクエストされた列車の始発駅データがみつかりません")
+				errorResponse(w, http.StatusNotFound, "リクエストされた列車の始発駅データがみつかりません")
+				log.Println(err.Error())
 				return
 			}
 			if err != nil {
 				tx.Rollback()
-				reservationResponse(w, 500, 0, true, "リクエストされた列車の始発駅データの取得に失敗しました")
+				errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の始発駅データの取得に失敗しました")
+				log.Println(err.Error())
 				return
 			}
 
@@ -1108,12 +1121,14 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			err = tx.Get(&arrivalStation, query, tmas.LastStation)
 			if err == sql.ErrNoRows {
 				tx.Rollback()
-				reservationResponse(w, 404, 0, true, "リクエストされた列車の終着駅データがみつかりません")
+				errorResponse(w, http.StatusNotFound, "リクエストされた列車の終着駅データがみつかりません")
+				log.Println(err.Error())
 				return
 			}
 			if err != nil {
 				tx.Rollback()
-				reservationResponse(w, 500, 0, true, "リクエストされた列車の終着駅データの取得に失敗しました")
+				errorResponse(w, http.StatusInternalServerError, "リクエストされた列車の終着駅データの取得に失敗しました")
+				log.Println(err.Error())
 				return
 			}
 
@@ -1157,7 +1172,8 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 					)
 					if err != nil {
 						tx.Rollback()
-						reservationResponse(w, 400, 0, true, "座席情報が存在しません")
+						errorResponse(w, http.StatusNotFound, "座席情報が存在しません")
+						log.Println(err.Error())
 						return
 					}
 				}
@@ -1170,7 +1186,8 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 				)
 				if err != nil {
 					tx.Rollback()
-					reservationResponse(w, 404, 0, true, "座席予約情報の取得に失敗しました")
+					errorResponse(w, http.StatusInternalServerError, "座席予約情報の取得に失敗しました")
+					log.Println(err.Error())
 					return
 				}
 
@@ -1178,7 +1195,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 					for j, _ := range req.Seats {
 						if v.CarNumber == req.CarNumber && v.SeatRow == req.Seats[j].Row && v.SeatColumn == req.Seats[j].Column {
 							tx.Rollback()
-							reservationResponse(w, 400, 0, true, "リクエストに既に予約された席が含まれています")
+							errorResponse(w, http.StatusBadRequest, "リクエストに既に予約された席が含まれています")
 							return
 						}
 					}
@@ -1195,49 +1212,56 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "premium")
 		if err != nil {
 			tx.Rollback()
-			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			errorResponse(w, http.StatusBadRequest, err.Error())
+			log.Println(err.Error())
 			return
 		}
 	case "premium_smoke":
 		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "premium_smoke")
 		if err != nil {
 			tx.Rollback()
-			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			errorResponse(w, http.StatusBadRequest, err.Error())
+			log.Println(err.Error())
 			return
 		}
 	case "reserved":
 		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "reserved")
 		if err != nil {
 			tx.Rollback()
-			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			errorResponse(w, http.StatusBadRequest, err.Error())
+			log.Println(err.Error())
 			return
 		}
 	case "reserved_smoke":
 		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "reserved_smoke")
 		if err != nil {
 			tx.Rollback()
-			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			errorResponse(w, http.StatusBadRequest, err.Error())
+			log.Println(err.Error())
 			return
 		}
 	case "non_reserved":
 		fare, err = fareCalc(date, fromStation.ID, toStation.ID, req.TrainClass, "non_reserved")
 		if err != nil {
 			tx.Rollback()
-			reservationResponse(w, http.StatusBadRequest, 0, true, err.Error())
+			errorResponse(w, http.StatusBadRequest, err.Error())
+			log.Println(err.Error())
 			return
 		}
 	default:
 		tx.Rollback()
-		reservationResponse(w, http.StatusBadRequest, 0, true, "リクエストされた座席クラスが不明です")
+		errorResponse(w, http.StatusBadRequest, "リクエストされた座席クラスが不明です")
+		log.Println(err.Error())
 		return
 	}
-	sumFare := (req.Adult * fare) + (req.Child * fare)/2
+	sumFare := (req.Adult * fare) + (req.Child*fare)/2
 
 	// userID取得。ログインしてないと怒られる。
 	user, errCode, errMsg := getUser(r)
 	if errCode != http.StatusOK {
 		tx.Rollback()
-		reservationResponse(w, errCode, 0, true, errMsg)
+		errorResponse(w, errCode, errMsg)
+		log.Printf("%s", errMsg)
 		return
 	}
 
@@ -1257,14 +1281,16 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w, 500, 0, true, err.Error())
+		errorResponse(w, http.StatusBadRequest, err.Error())
+		log.Println(err.Error())
 		return
 	}
 
 	id, err := result.LastInsertId() //予約ID
 	if err != nil {
 		tx.Rollback()
-		reservationResponse(w, 500, 0, true, "予約IDの取得に失敗しました")
+		errorResponse(w, http.StatusInternalServerError, "予約IDの取得に失敗しました")
+		log.Println(err.Error())
 		return
 	}
 
@@ -1281,13 +1307,26 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		if err != nil {
 			tx.Rollback()
-			reservationResponse(w, 500, 0, true, "座席予約の登録に失敗しました")
+			errorResponse(w, http.StatusInternalServerError, "座席予約の登録に失敗しました")
+			log.Println(err.Error())
 			return
 		}
 	}
 
+	rr := TrainReservationResponse{
+		ReservationId: id,
+		Amount:        sumFare,
+		IsOk:          true,
+	}
+	response, err := json.Marshal(rr)
+	if err != nil {
+		tx.Rollback()
+		errorResponse(w, http.StatusInternalServerError, "レスポンスの生成に失敗しました")
+		log.Println(err.Error())
+		return
+	}
 	tx.Commit()
-	reservationResponse(w, 200, id, false, "座席予約の登録に成功しました")
+	w.Write(response)
 }
 
 func reservationPaymentHandler(w http.ResponseWriter, r *http.Request) {
@@ -1620,7 +1659,6 @@ func settingsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	json.NewEncoder(w).Encode(settings)
 }
-
 
 func dummyHandler(w http.ResponseWriter, r *http.Request) {
 	messageResponse(w, "ok")
