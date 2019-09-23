@@ -1,7 +1,3 @@
-- name: limit memory
-  template: src=grub dest=/etc/default/grub owner=root group=root mode=0644
-  tags: benchmark
-
 - name: create isucon directory
   file: path="{{ item }}" state=directory mode=0755 owner=admin group=admin
   tags: benchmark

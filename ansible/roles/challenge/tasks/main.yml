@@ -1,3 +1,8 @@
+- name: limit memory
+  template: src=grub dest=/etc/default/grub owner=root group=root mode=0644
+  tags: x
+  notify: update-grub2
+
 - name: set isucon password
   user:
     name: "isucon"
@@ -22,12 +27,6 @@
     - challenge
     - webapp
   notify: restart golang
-
-- name: copy frontend
-  unarchive: src=frontend.tar.gz dest=/var/www/html/ owner=www-data group=www-data
-  tags:
-    - challenge
-    - frontend
 
 - name: create systemd services
   template: src=isutrain.service dest="/etc/systemd/system/isutrain-{{ item }}.service" owner=root group=root mode=0644
@@ -64,3 +63,10 @@
 - name: robots.txt
   template: src=nginx/robots.txt dest=/var/www/html/robots.txt owner=root group=root mode=0644
   tags: challenge
+
+
+- name: copy frontend
+  unarchive: src=frontend.tar.gz dest=/var/www/html/ owner=www-data group=www-data
+  tags:
+    - challenge
+    - frontend

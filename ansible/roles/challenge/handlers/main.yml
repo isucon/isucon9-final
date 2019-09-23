@@ -10,3 +10,6 @@
 
 - name: restart ssh
   service: name=ssh state=restarted
+
+- name: update-grub2
+  shell: update-grub2
