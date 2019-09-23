@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Register from './views/Register.vue'
 import Login from './views/Login.vue'
-import Reservation from './views/Reservation.vue'
+import Search from './views/Search.vue'
 import Trains from './views/Trains.vue'
 import Seats from './views/Seats.vue'
 import Payment from './views/Payment.vue'
@@ -36,8 +36,8 @@ export default new Router({
     },
     {
       path: '/reservation',
-      name: 'reservation',
-      component: Reservation
+      name: 'search',
+      component: Search
     },
     {
       path: '/reservation/trains',

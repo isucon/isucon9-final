@@ -179,7 +179,7 @@ import Router from '@/router.js'
 import { apiService } from '../services/api.js'
 
 export default {
-  name: 'reservation',
+  name: 'search',
   components: {},
   data () {
     return {
