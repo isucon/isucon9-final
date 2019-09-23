@@ -1155,7 +1155,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 	result, err := tx.Exec(
 		query,
-		req.UserId,
+		1, // あとでなおす
 		date.Format("2006/01/02"),
 		req.TrainClass,
 		req.TrainName,
