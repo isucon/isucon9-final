@@ -55,12 +55,12 @@
           禁煙
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="ek" v-bind:disabled="selectedItem.seat_availability.reserved == '×'" v-on:click="selectSeatClass('reserved')"/><label for="ek"></label>
+          <input type="radio" name="price" id="ek" v-bind:disabled="selectedItem.seat_availability.reserved == '×'" v-on:click="selectSeatClass('reserved', false)"/><label for="ek"></label>
           <div class="available">{{ selectedItem.seat_availability.reserved }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.reserved }}</div>
         </div>
         <div class="td green">
-          <input type="radio" name="price" id="gk" v-bind:disabled="selectedItem.seat_availability.premium == '×'" v-on:click="selectSeatClass('premium')"/><label for="gk"></label>
+          <input type="radio" name="price" id="gk" v-bind:disabled="selectedItem.seat_availability.premium == '×'" v-on:click="selectSeatClass('premium', false)"/><label for="gk"></label>
           <div class="available">{{ selectedItem.seat_availability.premium }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.premium }}</div>
         </div>
@@ -69,12 +69,12 @@
           禁煙（喫煙ルーム付近）
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="es" v-bind:disabled="selectedItem.seat_availability.reserved_smoke == '×'" v-on:click="selectSeatClass('reserved')"/><label for="es"></label>
+          <input type="radio" name="price" id="es" v-bind:disabled="selectedItem.seat_availability.reserved_smoke == '×'" v-on:click="selectSeatClass('reserved', true)"/><label for="es"></label>
           <div class="available">{{ selectedItem.seat_availability.reserved_smoke }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.reserved }}</div>
         </div>
         <div class="td green">
-          <input type="radio" name="price" id="gs" v-bind:disabled="selectedItem.seat_availability.premium_smoke == '×'" v-on:click="selectSeatClass('premium')"/><label for="gs"></label>
+          <input type="radio" name="price" id="gs" v-bind:disabled="selectedItem.seat_availability.premium_smoke == '×'" v-on:click="selectSeatClass('premium', true)"/><label for="gs"></label>
           <div class="available">{{ selectedItem.seat_availability.premium_smoke }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.premium }}</div>
         </div>
@@ -82,7 +82,7 @@
           <h3>自由席</h3>
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="f" v-bind:disabled="selectedItem.seat_availability.non_reserved == '×'" v-on:click="selectSeatClass('')"/><label for="f"></label>
+          <input type="radio" name="price" id="f" v-bind:disabled="selectedItem.seat_availability.non_reserved == '×'" v-on:click="selectSeatClass('non-reserved', false)"/><label for="f"></label>
           <div class="available">{{ selectedItem.seat_availability.non_reserved }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.non_reserved }}</div>
         </div>
@@ -91,7 +91,7 @@
       </div>
 
 
-      <div class="seat" v-on:click="selectSeat()" v-bind:class="{ disabled: !seat_class }">
+      <div class="seat" v-on:click="selectSeat()" v-bind:class="{ disabled: !canSelectSeat }">
         座席表を見る
       </div>
 
@@ -100,16 +100,16 @@
       <div class="position">
         <div>{{ position }}</div>
         <select v-model="position">
-          <option>指定しない</option>
-          <option>窓　側（普A／グA）</option>
-          <option>中　央（普B）</option>
-          <option>通路側（普C／グB）</option>
-          <option>通路側（普D／グC）</option>
-          <option>窓　側（普E／グD）</option>
+          <option value="">指定しない</option>
+          <option value="A">窓　側（普A／グA）</option>
+          <option value="B">中　央（普B）</option>
+          <option value="C">通路側（普C／グB）</option>
+          <option value="D">通路側（普D／グC）</option>
+          <option value="E">窓　側（普E／グD）</option>
         </select>
       </div>
 
-      <div class="continue">
+      <div class="continue" v-on:click="reserve()" v-bind:class="{ disabled: !seat_class }">
         予約を続ける
       </div>
 
@@ -141,6 +141,7 @@ export default {
       position: "指定しない",
       selectedItem: null,
       seat_class: "",
+      is_smoking_seat: false,
       items: null,
     }
   },
@@ -160,6 +161,12 @@ export default {
         adult: this.adult,
         child: this.child,
       }
+    },
+    canSelectSeat () {
+      if (this.seat_class == "" || this.seat_class == "non-reserved") {
+        return false
+      }
+      return true
     }
   },
   methods: {
@@ -185,8 +192,9 @@ export default {
         this.items = items
       })
     },
-    selectSeatClass(seat_class) {
+    selectSeatClass(seat_class, is_smoking_seat) {
       this.seat_class = seat_class
+      this.is_smoking_seat = is_smoking_seat
     },
     selectSeat() {
       var query = {
@@ -205,6 +213,34 @@ export default {
       if(this.seat_class!=""){
         Router.push({ path: '/reservation/seats', query: query})
       }
+    },
+    reserve() {
+      if (thid.train_class == "") {
+        return
+      }
+      var condition = {
+        year: this.year,
+        month: this.month,
+        day: this.day,
+        train_class: this.selectedItem.train_class,
+        train_name: this.selectedItem.train_name,
+        car_number: 0,
+        from_station: this.from_station,
+        to_station: this.to_station,
+        adult: this.adult,
+        child: this.child,
+        seat_class: this.seat_class,
+        is_smoking_seat: this.is_smoking_seat,
+        column: "",
+        seats: [],
+      }
+
+      apiService.reserve(condition).then((res) => {
+        var query = {
+          reservation_id: res.reservation_id,
+        }
+        Router.push({ path: '/reservation/payment', query: query})
+      })
     }
   },
   mounted() {
@@ -370,6 +406,13 @@ export default {
 
 .popup .seat.disabled {
   background: #aaaaaa;
+  cursor: default;
+}
+
+.popup .continue.disabled {
+  background: #aaaaaa;
+  color: white;
+  cursor: default;
 }
 
 .popup .position {
