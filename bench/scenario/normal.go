@@ -110,7 +110,7 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約詳細を取得できませんでした"))
 	}
 
-	if reservation.ReservationID != reservation2.ID {
+	if reservation.ReservationID != reservation2.ReservationID {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "正しい予約詳細を取得できませんでした"))
 	}
 
