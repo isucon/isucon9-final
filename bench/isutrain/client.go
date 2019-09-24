@@ -138,24 +138,24 @@ func (c *Client) Signup(ctx context.Context, email, password string, opts *Clien
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBufferString(form.Encode()))
 	if err != nil {
-		return failure.Wrap(err, failure.Message("POST /register: リクエストに失敗しました"))
+		return failure.Wrap(err, failure.Message("POST /api/auth/register: リクエストに失敗しました"))
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return failure.Wrap(err, failure.Message("POST /register: リクエストに失敗しました"))
+		return failure.Wrap(err, failure.Message("POST /api/auth/register: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return failure.Wrap(err, failure.Message("POST /register: ステータスコードが不正です"))
+			return failure.Wrap(err, failure.Message("POST /api/auth/register: ステータスコードが不正です"))
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			return failure.Wrap(err, failure.Message("POST /register: ステータスコードが不正です"))
+			return failure.Wrap(err, failure.Message("POST /api/auth/register: ステータスコードが不正です"))
 		}
 	}
 
@@ -175,25 +175,25 @@ func (c *Client) Login(ctx context.Context, username, password string, opts *Cli
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBufferString(form.Encode()))
 	if err != nil {
-		return failure.Wrap(err, failure.Message("POST /login: リクエストに失敗しました"))
+		return failure.Wrap(err, failure.Message("POST /api/auth/login: リクエストに失敗しました"))
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return failure.Wrap(err, failure.Message("POST /login: リクエストに失敗しました"))
+		return failure.Wrap(err, failure.Message("POST /api/auth/login: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			failure.Wrap(err, failure.Message("POST /login: ステータスコードが不正です"))
+			failure.Wrap(err, failure.Message("POST /api/auth/login: ステータスコードが不正です"))
 			return err
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			failure.Wrap(err, failure.Message("POST /login: ステータスコードが不正です"))
+			failure.Wrap(err, failure.Message("POST /api/auth/login: ステータスコードが不正です"))
 			return err
 		}
 	}
@@ -209,23 +209,23 @@ func (c *Client) Logout(ctx context.Context, opts *ClientOption) error {
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
 	if err != nil {
-		return failure.Wrap(err, failure.Message("POST /logout: リクエストに失敗しました"))
+		return failure.Wrap(err, failure.Message("POST /api/auth/logout: リクエストに失敗しました"))
 	}
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return failure.Wrap(err, failure.Message("POST /logout: リクエストに失敗しました"))
+		return failure.Wrap(err, failure.Message("POST /api/auth/logout: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusNoContent); err != nil {
-			failure.Wrap(err, failure.Message("POST /logout: ステータスコードが不正です"))
+			failure.Wrap(err, failure.Message("POST /api/auth/logout: ステータスコードが不正です"))
 			return err
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			failure.Wrap(err, failure.Message("POST /logout: ステータスコードが不正です"))
+			failure.Wrap(err, failure.Message("POST /api/auth/logout: ステータスコードが不正です"))
 			return err
 		}
 	}
@@ -240,29 +240,29 @@ func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Stati
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
-		return []*Station{}, failure.Wrap(err, failure.Message("GET /stations: リクエストに失敗しました"))
+		return []*Station{}, failure.Wrap(err, failure.Message("GET /api/train/stations: リクエストに失敗しました"))
 	}
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return []*Station{}, failure.Wrap(err, failure.Message("GET /stations: リクエストに失敗しました"))
+		return []*Station{}, failure.Wrap(err, failure.Message("GET /api/train/stations: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return []*Station{}, failure.Wrap(err, failure.Message("GET /stations: ステータスコードが不正です"))
+			return []*Station{}, failure.Wrap(err, failure.Message("GET /api/train/stations: ステータスコードが不正です"))
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			return []*Station{}, failure.Wrap(err, failure.Message("GET /stations: ステータスコードが不正です"))
+			return []*Station{}, failure.Wrap(err, failure.Message("GET /api/train/stations: ステータスコードが不正です"))
 		}
 	}
 
 	var stations []*Station
 	if err := json.NewDecoder(resp.Body).Decode(&stations); err != nil {
 		// FIXME: 実装
-		return []*Station{}, failure.Wrap(err, failure.Message("GET /stations: レスポンスのUnmarshalに失敗しました"))
+		return []*Station{}, failure.Wrap(err, failure.Message("GET /api/train/stations: レスポンスのUnmarshalに失敗しました"))
 	}
 
 	endpoint.IncPathCounter(endpoint.ListStations)
@@ -299,18 +299,18 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return Trains{}, failure.Wrap(err, failure.Message("GET /trains: ステータスコードが不正です"))
+			return Trains{}, failure.Wrap(err, failure.Message("GET /api/train/search: ステータスコードが不正です"))
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			return Trains{}, failure.Wrap(err, failure.Message("GET /trains: ステータスコードが不正です"))
+			return Trains{}, failure.Wrap(err, failure.Message("GET /api/train/search: ステータスコードが不正です"))
 		}
 	}
 
 	var trains Trains
 	if err := json.NewDecoder(resp.Body).Decode(&trains); err != nil {
 		// FIXME: 実装
-		return Trains{}, failure.Wrap(err, failure.Message("GET /trains: レスポンスのUnmarshalに失敗しました"))
+		return Trains{}, failure.Wrap(err, failure.Message("GET /api/train/search: レスポンスのUnmarshalに失敗しました"))
 	}
 
 	endpoint.IncPathCounter(endpoint.SearchTrains)
@@ -326,7 +326,7 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
-		return nil, failure.Wrap(err, failure.Message("GET /train/seats: リクエストに失敗しました"))
+		return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: リクエストに失敗しました"))
 	}
 
 	query := req.URL.Query()
@@ -342,23 +342,23 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return nil, failure.Wrap(err, failure.Message("GET /train/seats: リクエストに失敗しました"))
+		return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return nil, failure.Wrap(err, failure.Message("GET /train/seats: ステータスコードが不正です"))
+			return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: ステータスコードが不正です"))
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			return nil, failure.Wrap(err, failure.Message("GET /train/seats: ステータスコードが不正です"))
+			return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: ステータスコードが不正です"))
 		}
 	}
 
 	var listTrainSeatsResp *TrainSeatSearchResponse
 	if err := json.NewDecoder(resp.Body).Decode(&listTrainSeatsResp); err != nil {
-		return nil, failure.Wrap(err, failure.Message("GET /train/seats: レスポンスのUnmarshalに失敗しました"))
+		return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: レスポンスのUnmarshalに失敗しました"))
 	}
 
 	endpoint.IncPathCounter(endpoint.ListTrainSeats)
@@ -402,38 +402,38 @@ func (c *Client) Reserve(
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
-		return nil, failure.Wrap(err, failure.Message("POST /reserve: リクエストに失敗しました"))
+		return nil, failure.Wrap(err, failure.Message("POST /api/train/reservation: リクエストに失敗しました"))
 	}
 
 	// FIXME: csrfトークン検証
 	// _, err = req.Cookie("csrf_token")
 	// if err != nil {
-	// 	return nil, failure.Wrap(err, failure.Message("POST /reserve: CSRFトークンが不正です"))
+	// 	return nil, failure.Wrap(err, failure.Message("POST /api/train/reservation: CSRFトークンが不正です"))
 	// }
 
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return nil, failure.Wrap(err, failure.Message("POST /reserve: リクエストに失敗しました"))
+		return nil, failure.Wrap(err, failure.Message("POST /api/train/reservation: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: ステータスコードが不正です")))
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /api/train/reservation: ステータスコードが不正です")))
 			return nil, err
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: ステータスコードが不正です")))
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /api/train/reservation: ステータスコードが不正です")))
 			return nil, err
 		}
 	}
 
 	var reservation *ReservationResponse
 	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
-		bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: JSONのUnmarshalに失敗しました")))
+		bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /api/train/reservation: JSONのUnmarshalに失敗しました")))
 		return nil, err
 	}
 
@@ -471,12 +471,12 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reservation/:id/commit: ステータスコードが不正です")))
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /api/train/reservation/:id/commit: ステータスコードが不正です")))
 			return err
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reservation/:id/commit: ステータスコードが不正です")))
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /api/train/reservation/:id/commit: ステータスコードが不正です")))
 			return err
 		}
 	}
@@ -503,12 +503,12 @@ func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*S
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /reservations: ステータスコードが不正です")))
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /api/user/reservations: ステータスコードが不正です")))
 			return []*SeatReservation{}, err
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /reservations: ステータスコードが不正です")))
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /api/user/reservations: ステータスコードが不正です")))
 			return []*SeatReservation{}, err
 		}
 	}
@@ -566,12 +566,12 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID int, opts 
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("DELETE /reservation/:id/cancel: ステータスコードが不正です")))
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("DELETE /api/user/reservation/:id/cancel: ステータスコードが不正です")))
 			return err
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("DELETE /reservation/:id/cancel: ステータスコードが不正です")))
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("DELETE /api/user/reservation/:id/cancel: ステータスコードが不正です")))
 			return err
 		}
 	}
