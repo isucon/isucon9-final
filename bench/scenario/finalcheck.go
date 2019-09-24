@@ -11,7 +11,6 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/payment"
-	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -24,24 +23,25 @@ var (
 
 // FinalCheck は、課金サービスとwebappとで決済情報を突き合わせ、売上を計上します
 func FinalCheck(ctx context.Context, isutrainClient *isutrain.Client, paymentClient *payment.Client) {
-	finalcheckGrp := errgroup.Group{}
+	return // 未実装
+	// finalcheckGrp := errgroup.Group{}
 
-	// 予約一覧と突き合わせて、不足チェック
-	finalcheckGrp.Go(func() error {
-		finalcheckReservations(ctx, isutrainClient, paymentClient)
-		return nil
-	})
-
-	// 空席であるべき座席のチェック
+	// // 予約一覧と突き合わせて、不足チェック
 	// finalcheckGrp.Go(func() error {
-	// 	finalcheckVocantSeats(ctx, isutrainClient)
+	// 	finalcheckReservations(ctx, isutrainClient, paymentClient)
 	// 	return nil
 	// })
-	lgr := zap.S()
-	if err := finalcheckGrp.Wait(); err != nil {
-		lgr.Warnf("最終チェックでエラーが発生しました: %+v", err)
-	}
-	log.Println("finish finalcheck")
+
+	// // 空席であるべき座席のチェック
+	// // finalcheckGrp.Go(func() error {
+	// // 	finalcheckVocantSeats(ctx, isutrainClient)
+	// // 	return nil
+	// // })
+	// lgr := zap.S()
+	// if err := finalcheckGrp.Wait(); err != nil {
+	// 	lgr.Warnf("最終チェックでエラーが発生しました: %+v", err)
+	// }
+	// log.Println("finish finalcheck")
 }
 
 func finalcheckReservations(ctx context.Context, isutrainClient *isutrain.Client, paymentClient *payment.Client) error {
@@ -71,11 +71,6 @@ func finalcheckReservations(ctx context.Context, isutrainClient *isutrain.Client
 	if err != nil {
 		log.Printf("list reservations error: %+v\n", err)
 		return bencherror.FinalCheckErrs.AddError(bencherror.NewApplicationError(err, "finalcheckにて予約確認画面閲覧に失敗しました"))
-	}
-
-	if len(reservations) == 0 {
-		log.Println("reservations is zero")
-		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(ErrInvalidReservationForPaymentAPI, "課金APIとの整合性チェックに失敗"))
 	}
 
 	if len(paymentAPIResult.RawData) == 0 {
