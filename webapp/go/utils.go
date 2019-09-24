@@ -2,7 +2,16 @@ package main
 
 import (
   "fmt"
+  "time"
 )
+
+func checkAvailableDate(date time.Time) bool {
+  jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+  t := time.Date(2020, 1, 1, 0, 0, 0, 0, jst)
+  t = t.AddDate(0, 0, availableDays)
+
+  return date.Before(t)
+}
 
 func getUsableTrainClassList(fromStation Station, toStation Station) []string {
   usable := map[string]string{}
