@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -161,7 +162,7 @@ func (c *Client) Signup(ctx context.Context, email, password string, opts *Clien
 			return failure.Wrap(err, failure.Message("POST /api/auth/register: ステータスコードが不正です"))
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			return failure.Wrap(err, failure.Message("POST /api/auth/register: ステータスコードが不正です"))
 		}
 	}
@@ -202,7 +203,7 @@ func (c *Client) Login(ctx context.Context, email, password string, opts *Client
 			return err
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			failure.Wrap(err, failure.Message("POST /api/auth/login: ステータスコードが不正です"))
 			return err
 		}
@@ -234,7 +235,7 @@ func (c *Client) Logout(ctx context.Context, opts *ClientOption) error {
 			return err
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			failure.Wrap(err, failure.Message("POST /api/auth/logout: ステータスコードが不正です"))
 			return err
 		}
@@ -266,7 +267,7 @@ func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Stati
 			return []*Station{}, failure.Wrap(err, failure.Message("GET /api/train/stations: ステータスコードが不正です"))
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			return []*Station{}, failure.Wrap(err, failure.Message("GET /api/train/stations: ステータスコードが不正です"))
 		}
 	}
@@ -310,7 +311,7 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 			return Trains{}, failure.Wrap(err, failure.Message("GET /api/train/search: ステータスコードが不正です"))
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			return Trains{}, failure.Wrap(err, failure.Message("GET /api/train/search: ステータスコードが不正です"))
 		}
 	}
@@ -507,7 +508,7 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 			return err
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /api/train/reservation/:id/commit: ステータスコードが不正です")))
 			return err
 		}
@@ -539,7 +540,7 @@ func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*S
 			return []*SeatReservation{}, err
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("GET /api/user/reservations: ステータスコードが不正です")))
 			return []*SeatReservation{}, err
 		}
@@ -600,7 +601,7 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID int, opts 
 			return err
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("DELETE /api/user/reservation/:id/cancel: ステータスコードが不正です")))
 			return err
 		}
