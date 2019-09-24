@@ -988,21 +988,18 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if !departureStation.IsStopExpress || !arrivalStation.IsStopExpress {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, "最速の止まらない駅です")
-			log.Println(err.Error())
 			return
 		}
 	case "中間":
 		if !departureStation.IsStopSemiExpress || !arrivalStation.IsStopSemiExpress {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, "中間の止まらない駅です")
-			log.Println(err.Error())
 			return
 		}
 	case "遅いやつ":
 		if !departureStation.IsStopLocal || !arrivalStation.IsStopLocal {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, "遅いやつの止まらない駅です")
-			log.Println(err.Error())
 			return
 		}
 	default:
@@ -1077,10 +1074,13 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 	/*
 		あいまい座席検索
-		columnに A/B/C/D/E/空白(自由席) が入っておりseatsが空白の時に発動する
+		seatsが空白の時に発動する
 	*/
 	switch len(req.Seats) {
 	case 0:
+		if req.SeatClass == "non-reserved" {
+			break // non-reservedはそもそもあいまい検索もせずダミーのRow/Columnで予約を確定させる。
+		}
 		//当該列車・号車中の空き座席検索
 		var train Train
 		query := "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
@@ -1109,9 +1109,9 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		for carnum := 1; carnum <= 16; carnum++{
+		req.Seats = []RequestSeat{}  // 座席リクエスト情報は空に
+		for carnum := 1; carnum <= 16; carnum++ {
 			seatList := []Seat{}
-
 			query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_class=? AND is_smoking_seat=? ORDER BY seat_row, seat_column"
 			err = dbx.Select(&seatList, query, req.TrainClass, carnum, req.SeatClass, req.IsSmokingSeat)
 			if err != nil {
@@ -1139,7 +1139,6 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 					errorResponse(w, http.StatusBadRequest, err.Error())
 					return
 				}
-
 
 				for _, seatReservation := range seatReservationList {
 					reservation := Reservation{}
@@ -1188,24 +1187,25 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// 曖昧予約席とその他の候補席を選出
-			var seatnum int
-			var reserved bool
-			var vargue bool
-			var VagueSeat RequestSeat
+			var seatnum int           // 予約する座席の合計数
+			var reserved bool         // あいまい指定席確保済フラグ
+			var vargue bool           // あいまい検索フラグ
+			var VagueSeat RequestSeat // あいまい指定席保存用
 			reserved = false
 			vargue = true
-			seatnum = (req.Adult + req.Child - 1)
-			if req.Column == "" {
-				seatnum = (req.Adult + req.Child) // あいまい指定せず大人＋小人分の座席を取る
-				reserved = true                   // dummy
-				vargue = false
+			seatnum = (req.Adult + req.Child - 1) 	// 全体の人数からあいまい指定席分を引いておく
+			if req.Column == "" {					// A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
+				seatnum = (req.Adult + req.Child) 	// あいまい指定せず大人＋小人分の座席を取る
+				reserved = true                   	// dummy
+				vargue = false                    	// dummy
 			}
 			var CandidateSeat RequestSeat
 			CandidateSeats := []RequestSeat{}
 
 
-			// シート分だけ回す。曖昧予約席が見つかり、かつ他の人も収容できそうな空き席を見つけたら抜ける。
-			i := 0
+
+			// シート分だけ回して予約できる席を検索
+			var i int
 			for _, seat := range seatInformationList {
 				if seat.Column == req.Column && !seat.IsOccupied && !reserved && vargue { // あいまい席があいてる
 					VagueSeat.Row = seat.Row
@@ -1219,20 +1219,36 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			req.Seats = []RequestSeat{}
-			if vargue {
-				req.Seats = append(req.Seats, VagueSeat) // 曖昧予約席追加
+			if vargue && reserved { // あいまい席が見つかり、予約できそうだった
+				req.Seats = append(req.Seats, VagueSeat) // あいまい予約席を追加
 			}
-			req.Seats = append(req.Seats, CandidateSeats...) // 予約候補席追加
-			fmt.Printf("予約できそう: %d号車 %v\n",carnum, req.Seats)
+			if i>0 { // 候補席があった
+				req.Seats = append(req.Seats, CandidateSeats...) // 予約候補席追加
+			}
+
+			if len(req.Seats) < req.Adult+req.Child{
+				// リクエストに対して席数が足りてない
+				// 次の号車にうつしたい
+				fmt.Println("-----------------")
+				fmt.Printf("現在検索中の車両: %d号車, リクエスト座席数: %d, 予約できそうな座席数: %d, 不足数: %d\n",carnum,req.Adult+req.Child,len(req.Seats),req.Adult+req.Child-len(req.Seats))
+				fmt.Println("リクエストに対して座席数が不足しているため、次の車両を検索します。")
+				req.Seats = []RequestSeat{}
+				if carnum == 16 {
+					fmt.Println("この新幹線にまとめて予約できる席数がなかったから検索をやめるよ")
+					req.Seats = []RequestSeat{}
+					break
+				}
+			}
+			fmt.Printf("空き実績: %d号車 シート:%v 席数:%d\n", carnum, req.Seats, len(req.Seats))
 			if len(req.Seats) >= req.Adult+req.Child{
-				req.Seats = req.Seats[:req.Adult+req.Child]
+				fmt.Println("予約情報に追加したよ")
+				req.Seats = req.Seats[:req.Adult+req.Child] 
 				req.CarNumber = carnum
 				break
-			}
+			} 
 		}
-		if len(req.Seats) == 0{
-			errorResponse(w, http.StatusNotFound, "あいまい座席予約ができませんでした。希望の席は全部埋まっています。")
+		if len(req.Seats) == 0 {
+			errorResponse(w, http.StatusNotFound, "あいまい座席予約ができませんでした。指定した席、もしくは1車両内に希望の席数をご用意できませんでした。")
 			tx.Rollback()
 			return
 		}
@@ -1257,6 +1273,9 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, reservation := range reservations {
+		if req.SeatClass == "non-reserved" {
+			break
+		}
 		// train_masterから列車情報を取得(上り・下りが分かる)
 		tmas = Train{}
 		query = "SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?"
@@ -1339,21 +1358,24 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			// 座席情報のValidate
 			seatList := Seat{}
 			for _, z := range req.Seats {
-				query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=?"
+				query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=? AND seat_class=? AND is_smoking_seat=?"
 				err = dbx.Get(
 					&seatList, query,
 					req.TrainClass,
 					req.CarNumber,
 					z.Column,
 					z.Row,
+					req.SeatClass,
+					req.IsSmokingSeat,
 				)
 				if err != nil {
 					tx.Rollback()
-					errorResponse(w, http.StatusNotFound, "座席情報が存在しません")
+					errorResponse(w, http.StatusNotFound, "リクエストされた座席情報は存在しません。号車・喫煙席・座席クラスなど組み合わせを見直してください")
 					log.Println(err.Error())
 					return
 				}
 			}
+
 			// 区間重複の場合は更に座席の重複をチェックする
 			SeatReservations := []SeatReservation{}
 			query := "SELECT * FROM seat_reservations WHERE reservation_id=?"
@@ -1381,6 +1403,18 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	// 3段階の予約前チェック終わり
+
+	// 自由席は強制的にSeats情報をダミーにする（自由席なのに席指定予約は不可）
+	if req.SeatClass == "non-reserved" {
+		req.Seats = []RequestSeat{}
+		dummySeat := RequestSeat{}
+		req.CarNumber = 0
+		for num := 0; num < req.Adult+req.Child; num++ {
+			dummySeat.Row = 0
+			dummySeat.Column = ""
+			req.Seats = append(req.Seats, dummySeat)
+		}
+	}
 
 	// 運賃計算
 	var fare int
