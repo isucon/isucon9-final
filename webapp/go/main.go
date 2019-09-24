@@ -84,6 +84,8 @@ type Reservation struct {
 	PaymentStatus string     `json:"payment_status" db:"payment_status"`
 	Status        string     `json:"status" db:"status"`
 	PaymentId     string     `json:"payment_id,omitempty" db:"payment_id"`
+	Adult					int  			 `json:"adult" db:"adult"`
+	Child					int  			 `json:"child" db:"child"`
 	Amount        int        `json:"amount" db:"amount"`
 }
 
@@ -194,10 +196,20 @@ type PaymentResponse struct {
 	IsOk      bool   `json:"is_ok"`
 }
 
-type ReservationDetail struct {
-	Date      string `json:"date"`
-	CarNumber int    `json:"car_number"`
-	Reservation
+type ReservationResponse struct {
+	ReservationId int `json:"reservation_id"`
+	Date      string 	`json:"date"`
+	TrainClass    string     `json:"train_class"`
+	TrainName     string     `json:"train_name"`
+	CarNumber int    	`json:"car_number"`
+	SeatClass string `json:"seat_class"`
+	Amount int `json:"amount"`
+	Adult int `json:"adult"`
+	Child int `json:"child"`
+	Departure     string        `json:"departure"`
+	Arrival       string        `json:"arrival"`
+	DepartureTime    string            `json:"departure_time"`
+	ArrivalTime      string            `json:"arrival_time"`
 	Seats []SeatReservation `json:"seats"`
 }
 
@@ -1378,7 +1390,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, err.Error())
-			log.Println(err.Error())
+			log.Println("fareCalc "+ err.Error())
 			return
 		}
 	case "reserved":
@@ -1386,7 +1398,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, err.Error())
-			log.Println(err.Error())
+			log.Println("fareCalc "+ err.Error())
 			return
 		}
 	case "non-reserved":
@@ -1394,7 +1406,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, err.Error())
-			log.Println(err.Error())
+			log.Println("fareCalc "+ err.Error())
 			return
 		}
 	default:
@@ -1403,6 +1415,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sumFare := (req.Adult * fare) + (req.Child*fare)/2
+	fmt.Println("SUMFARE")
 
 	// userID取得。ログインしてないと怒られる。
 	user, errCode, errMsg := getUser(r)
@@ -1414,7 +1427,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//予約ID発行と予約情報登録
-	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `amount`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	query = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `adult`, `child`, `amount`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	result, err := tx.Exec(
 		query,
 		user.ID,
@@ -1425,11 +1438,13 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		req.Arrival,
 		"requesting",
 		"a",
+		req.Adult,
+		req.Child,
 		sumFare,
 	)
 	if err != nil {
 		tx.Rollback()
-		errorResponse(w, http.StatusBadRequest, err.Error())
+		errorResponse(w, http.StatusBadRequest, "予約の保存に失敗しました。" + err.Error())
 		log.Println(err.Error())
 		return
 	}
@@ -1749,11 +1764,6 @@ func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 
 	query := "SELECT * FROM reservations WHERE user_id=?"
 	err := dbx.Select(&reservationList, query, user.ID)
-	if err == sql.ErrNoRows {
-		messageResponse(w, "yoyaku naiyo "+user.Email)
-		// errorResponse(w, http.Status, "authentication failed")
-		return
-	}
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
@@ -1763,7 +1773,7 @@ func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(reservationList)
 }
 
-func userReservationDetailHandler(w http.ResponseWriter, r *http.Request) {
+func userReservationResponseHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		ログイン
 		POST /auth/login
@@ -1780,13 +1790,11 @@ func userReservationDetailHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reservationDetail := ReservationDetail{}
-
-	query := "SELECT * FROM reservations WHERE reservation_id=?"
-	err = dbx.Get(&reservationDetail.Reservation, query, itemID)
+	reservation := Reservation{}
+	query := "SELECT * FROM reservations WHERE reservation_id=? AND user_id=?"
+	err = dbx.Get(&reservation, query, itemID, user.ID)
 	if err == sql.ErrNoRows {
-		messageResponse(w, "yoyaku sonzaisi naiyo "+user.Email)
-		// errorResponse(w, http.Status, "authentication failed")
+		errorResponse(w, http.StatusNotFound, "Reservation not found")
 		return
 	}
 	if err != nil {
@@ -1794,26 +1802,69 @@ func userReservationDetailHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query = "SELECT * FROM seat_reservations WHERE reservation_id=?"
-	err = dbx.Select(&reservationDetail.Seats, query, itemID)
-	if err == sql.ErrNoRows {
-		messageResponse(w, "yoyaku sonzaisi naiyo "+user.Email)
-		// errorResponse(w, http.Status, "authentication failed")
+	var departure, arrival string
+	err = dbx.Get(
+		&departure,
+		"SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?",
+		reservation.Date.Format("2006/01/02"), reservation.TrainClass, reservation.TrainName, reservation.Departure,
+	)
+	if err != nil {
+		errorResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	err = dbx.Get(
+		&arrival,
+		"SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?",
+		reservation.Date.Format("2006/01/02"), reservation.TrainClass, reservation.TrainName, reservation.Arrival,
+	)
+	if err != nil {
+		errorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
+
+	reservationResponse := ReservationResponse{}
+	reservationResponse.ReservationId = reservation.ReservationId
+	reservationResponse.Date = reservation.Date.Format("2006/01/02")
+	reservationResponse.Amount = reservation.Amount
+	reservationResponse.Adult = reservation.Adult
+	reservationResponse.Child = reservation.Child
+	reservationResponse.Departure = reservation.Departure
+	reservationResponse.Arrival = reservation.Arrival
+	reservationResponse.TrainClass = reservation.TrainClass
+	reservationResponse.TrainName = reservation.TrainName
+	reservationResponse.DepartureTime = departure
+	reservationResponse.ArrivalTime = arrival
+
+	query = "SELECT * FROM seat_reservations WHERE reservation_id=?"
+	err = dbx.Select(&reservationResponse.Seats, query, itemID)
+
 	// 1つの予約内で車両番号は全席同じ
-	reservationDetail.CarNumber = reservationDetail.Seats[0].CarNumber
-	for i, v := range reservationDetail.Seats {
+	reservationResponse.CarNumber = reservationResponse.Seats[0].CarNumber
+	for i, v := range reservationResponse.Seats {
 		v.CarNumber = 0
 		v.ReservationId = 0
-		reservationDetail.Seats[i] = v
+		reservationResponse.Seats[i] = v
 	}
 
-	reservationDetail.Date = reservationDetail.Reservation.Date.Format("2006/01/02")
-	reservationDetail.Reservation.Date = nil
-	reservationDetail.UserId = nil
-	reservationDetail.PaymentId = ""
+	// 座席種別を取得
+	seat := Seat{}
+	query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=?"
+	err = dbx.Get(
+		&seat, query,
+		reservation.TrainClass, reservationResponse.CarNumber,
+		reservationResponse.Seats[0].SeatColumn, reservationResponse.Seats[0].SeatRow,
+	)
+	if err == sql.ErrNoRows {
+		errorResponse(w, http.StatusNotFound, "Seat not found")
+		return
+	}
+	if err != nil {
+		errorResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	reservationResponse.SeatClass = seat.SeatClass
 
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, err.Error())
@@ -1821,9 +1872,7 @@ func userReservationDetailHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	json.NewEncoder(w).Encode(reservationDetail)
-
-	// messageResponse(w, "login siteruyo "+user.Email)
+	json.NewEncoder(w).Encode(reservationResponse)
 }
 
 func userReservationCancelHandler(w http.ResponseWriter, r *http.Request) {
@@ -1970,7 +2019,7 @@ func main() {
 	mux.HandleFunc(pat.Post("/api/auth/login"), loginHandler)
 	mux.HandleFunc(pat.Post("/api/auth/logout"), logoutHandler)
 	mux.HandleFunc(pat.Get("/api/user/reservations"), userReservationsHandler)
-	mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationDetailHandler)
+	mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationResponseHandler)
 	mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), userReservationCancelHandler)
 
 	fmt.Println(banner)
