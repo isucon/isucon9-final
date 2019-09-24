@@ -1750,6 +1750,74 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	messageResponse(w, "logged out")
 }
 
+
+func makeReservationResponse(reservation Reservation) (ReservationResponse, error) {
+
+	reservationResponse := ReservationResponse{}
+
+	var departure, arrival string
+	err := dbx.Get(
+		&departure,
+		"SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?",
+		reservation.Date.Format("2006/01/02"), reservation.TrainClass, reservation.TrainName, reservation.Departure,
+	)
+	if err != nil {
+		return reservationResponse, err
+	}
+	err = dbx.Get(
+		&arrival,
+		"SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?",
+		reservation.Date.Format("2006/01/02"), reservation.TrainClass, reservation.TrainName, reservation.Arrival,
+	)
+	if err != nil {
+		return reservationResponse, err
+	}
+
+
+	reservationResponse.ReservationId = reservation.ReservationId
+	reservationResponse.Date = reservation.Date.Format("2006/01/02")
+	reservationResponse.Amount = reservation.Amount
+	reservationResponse.Adult = reservation.Adult
+	reservationResponse.Child = reservation.Child
+	reservationResponse.Departure = reservation.Departure
+	reservationResponse.Arrival = reservation.Arrival
+	reservationResponse.TrainClass = reservation.TrainClass
+	reservationResponse.TrainName = reservation.TrainName
+	reservationResponse.DepartureTime = departure
+	reservationResponse.ArrivalTime = arrival
+
+	query := "SELECT * FROM seat_reservations WHERE reservation_id=?"
+	err = dbx.Select(&reservationResponse.Seats, query, reservation.ReservationId)
+
+	// 1つの予約内で車両番号は全席同じ
+	reservationResponse.CarNumber = reservationResponse.Seats[0].CarNumber
+	for i, v := range reservationResponse.Seats {
+		v.CarNumber = 0
+		v.ReservationId = 0
+		reservationResponse.Seats[i] = v
+	}
+
+	// 座席種別を取得
+	seat := Seat{}
+	query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=?"
+	err = dbx.Get(
+		&seat, query,
+		reservation.TrainClass, reservationResponse.CarNumber,
+		reservationResponse.Seats[0].SeatColumn, reservationResponse.Seats[0].SeatRow,
+	)
+	if err == sql.ErrNoRows {
+		return reservationResponse, err
+	}
+	if err != nil {
+		return reservationResponse, err
+	}
+
+	reservationResponse.SeatClass = seat.SeatClass
+
+	return reservationResponse, nil
+}
+
+
 func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		ログイン
@@ -1769,8 +1837,22 @@ func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	reservationResponseList := []ReservationResponse{}
+
+	for _, r := range reservationList {
+		res, err := makeReservationResponse(r)
+		if err != nil {
+			errorResponse(w, http.StatusBadRequest, err.Error())
+			log.Println("makeReservationResponse()", err)
+			return
+		}
+		reservationResponseList = append(reservationResponseList, res)
+	}
+
+
+
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	json.NewEncoder(w).Encode(reservationList)
+	json.NewEncoder(w).Encode(reservationResponseList)
 }
 
 func userReservationResponseHandler(w http.ResponseWriter, r *http.Request) {
@@ -1802,72 +1884,11 @@ func userReservationResponseHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var departure, arrival string
-	err = dbx.Get(
-		&departure,
-		"SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?",
-		reservation.Date.Format("2006/01/02"), reservation.TrainClass, reservation.TrainName, reservation.Departure,
-	)
-	if err != nil {
-		errorResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	err = dbx.Get(
-		&arrival,
-		"SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?",
-		reservation.Date.Format("2006/01/02"), reservation.TrainClass, reservation.TrainName, reservation.Arrival,
-	)
-	if err != nil {
-		errorResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-
-	reservationResponse := ReservationResponse{}
-	reservationResponse.ReservationId = reservation.ReservationId
-	reservationResponse.Date = reservation.Date.Format("2006/01/02")
-	reservationResponse.Amount = reservation.Amount
-	reservationResponse.Adult = reservation.Adult
-	reservationResponse.Child = reservation.Child
-	reservationResponse.Departure = reservation.Departure
-	reservationResponse.Arrival = reservation.Arrival
-	reservationResponse.TrainClass = reservation.TrainClass
-	reservationResponse.TrainName = reservation.TrainName
-	reservationResponse.DepartureTime = departure
-	reservationResponse.ArrivalTime = arrival
-
-	query = "SELECT * FROM seat_reservations WHERE reservation_id=?"
-	err = dbx.Select(&reservationResponse.Seats, query, itemID)
-
-	// 1つの予約内で車両番号は全席同じ
-	reservationResponse.CarNumber = reservationResponse.Seats[0].CarNumber
-	for i, v := range reservationResponse.Seats {
-		v.CarNumber = 0
-		v.ReservationId = 0
-		reservationResponse.Seats[i] = v
-	}
-
-	// 座席種別を取得
-	seat := Seat{}
-	query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=?"
-	err = dbx.Get(
-		&seat, query,
-		reservation.TrainClass, reservationResponse.CarNumber,
-		reservationResponse.Seats[0].SeatColumn, reservationResponse.Seats[0].SeatRow,
-	)
-	if err == sql.ErrNoRows {
-		errorResponse(w, http.StatusNotFound, "Seat not found")
-		return
-	}
-	if err != nil {
-		errorResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	reservationResponse.SeatClass = seat.SeatClass
+	reservationResponse, err := makeReservationResponse(reservation)
 
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, err.Error())
+		log.Println("makeReservationResponse() ", err)
 		return
 	}
 
