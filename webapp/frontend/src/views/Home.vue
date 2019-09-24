@@ -11,7 +11,11 @@
       </article>
 
       <article class="inquiry">
-        <p><a>予約の確認</a></p>
+        <p>
+          <router-link to="/mypage/reservations">
+            <a>予約の確認</a>
+          </router-link>
+        </p>
       </article>
 
     </section>
