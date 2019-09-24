@@ -152,13 +152,13 @@ team617-c.isucon9.hinatan.net payment_api="https://payment-05.isucon9.hinatan.ne
 
 
 [bench]
-bench-test-01.isucon9.hinatan.net
-bench-test-02.isucon9.hinatan.net
-# benchmark-01.isucon9.hinatan.net
-# benchmark-02.isucon9.hinatan.net
-# benchmark-03.isucon9.hinatan.net
-# benchmark-04.isucon9.hinatan.net
-# benchmark-05.isucon9.hinatan.net
+#bench-test-01.isucon9.hinatan.net
+#bench-test-02.isucon9.hinatan.net
+benchmark-01.isucon9.hinatan.net
+benchmark-02.isucon9.hinatan.net
+benchmark-03.isucon9.hinatan.net
+benchmark-04.isucon9.hinatan.net
+benchmark-05.isucon9.hinatan.net
 # benchmark-06.isucon9.hinatan.net
 # benchmark-07.isucon9.hinatan.net
 # benchmark-08.isucon9.hinatan.net
@@ -174,3 +174,6 @@ bench-test-02.isucon9.hinatan.net
 # benchmark-18.isucon9.hinatan.net
 # benchmark-19.isucon9.hinatan.net
 # benchmark-20.isucon9.hinatan.net
+
+[bench:vars]
+password=BTryJjnmh9XR
