@@ -10,6 +10,10 @@ class ErrorHandler {
             return;
         }
 
+        if (error.response.data && error.response.data.message ){
+          alert(error.response.data.message)
+        }
+
         console.log(error);
 
         /*

@@ -7,6 +7,7 @@
     <section class="subcontent">
       <article class="condition">
         <div class="date">{{year}}年{{month}}月{{day}}日</div>
+        <div class="time">{{hour}}時{{minute}}時 頃</div>
         <div class="station">{{ from_station }}→{{ to_station }}</div>
         <div class="person">おとな {{ adult }} 名 こども {{ child }} 名</div>
       </article>
@@ -55,12 +56,12 @@
           禁煙
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="ek" v-bind:disabled="selectedItem.seat_availability.reserved == '×'" v-on:click="selectSeatClass('reserved')"/><label for="ek"></label>
+          <input type="radio" name="price" id="ek" v-bind:disabled="selectedItem.seat_availability.reserved == '×'" v-on:click="selectSeatClass('reserved', false)"/><label for="ek"></label>
           <div class="available">{{ selectedItem.seat_availability.reserved }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.reserved }}</div>
         </div>
         <div class="td green">
-          <input type="radio" name="price" id="gk" v-bind:disabled="selectedItem.seat_availability.premium == '×'" v-on:click="selectSeatClass('premium')"/><label for="gk"></label>
+          <input type="radio" name="price" id="gk" v-bind:disabled="selectedItem.seat_availability.premium == '×'" v-on:click="selectSeatClass('premium', false)"/><label for="gk"></label>
           <div class="available">{{ selectedItem.seat_availability.premium }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.premium }}</div>
         </div>
@@ -69,12 +70,12 @@
           禁煙（喫煙ルーム付近）
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="es" v-bind:disabled="selectedItem.seat_availability.reserved_smoke == '×'" v-on:click="selectSeatClass('reserved')"/><label for="es"></label>
+          <input type="radio" name="price" id="es" v-bind:disabled="selectedItem.seat_availability.reserved_smoke == '×'" v-on:click="selectSeatClass('reserved', true)"/><label for="es"></label>
           <div class="available">{{ selectedItem.seat_availability.reserved_smoke }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.reserved }}</div>
         </div>
         <div class="td green">
-          <input type="radio" name="price" id="gs" v-bind:disabled="selectedItem.seat_availability.premium_smoke == '×'" v-on:click="selectSeatClass('premium')"/><label for="gs"></label>
+          <input type="radio" name="price" id="gs" v-bind:disabled="selectedItem.seat_availability.premium_smoke == '×'" v-on:click="selectSeatClass('premium', true)"/><label for="gs"></label>
           <div class="available">{{ selectedItem.seat_availability.premium_smoke }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.premium }}</div>
         </div>
@@ -82,7 +83,7 @@
           <h3>自由席</h3>
         </div>
         <div class="td economy">
-          <input type="radio" name="price" id="f" v-bind:disabled="selectedItem.seat_availability.non_reserved == '×'" v-on:click="selectSeatClass('')"/><label for="f"></label>
+          <input type="radio" name="price" id="f" v-bind:disabled="selectedItem.seat_availability.non_reserved == '×'" v-on:click="selectSeatClass('non-reserved', false)"/><label for="f"></label>
           <div class="available">{{ selectedItem.seat_availability.non_reserved }}</div>
           <div class="price">¥{{ selectedItem.seat_fare.non_reserved }}</div>
         </div>
@@ -91,7 +92,7 @@
       </div>
 
 
-      <div class="seat" v-on:click="selectSeat()" v-bind:class="{ disabled: !seat_class }">
+      <div class="seat" v-on:click="selectSeat()" v-bind:class="{ disabled: !canSelectSeat }">
         座席表を見る
       </div>
 
@@ -100,16 +101,16 @@
       <div class="position">
         <div>{{ position }}</div>
         <select v-model="position">
-          <option>指定しない</option>
-          <option>窓　側（普A／グA）</option>
-          <option>中　央（普B）</option>
-          <option>通路側（普C／グB）</option>
-          <option>通路側（普D／グC）</option>
-          <option>窓　側（普E／グD）</option>
+          <option value="">指定しない</option>
+          <option value="A">窓　側（普A／グA）</option>
+          <option value="B">中　央（普B）</option>
+          <option value="C">通路側（普C／グB）</option>
+          <option value="D">通路側（普D／グC）</option>
+          <option value="E">窓　側（普E／グD）</option>
         </select>
       </div>
 
-      <div class="continue">
+      <div class="continue" v-on:click="reserve()" v-bind:class="{ disabled: !seat_class }">
         予約を続ける
       </div>
 
@@ -133,6 +134,8 @@ export default {
       year: null,
       month: null,
       day: null,
+      hour: null,
+      minute: null,
       train_class: "",
       from_station: "",
       to_station: "",
@@ -141,6 +144,7 @@ export default {
       position: "指定しない",
       selectedItem: null,
       seat_class: "",
+      is_smoking_seat: false,
       items: null,
     }
   },
@@ -154,12 +158,20 @@ export default {
         year: this.year,
         month: this.month,
         day: this.day,
+        hour: this.hour,
+        minute: this.minute,
         train_class: this.train_class,
         from_station: this.from_station,
         to_station: this.to_station,
         adult: this.adult,
         child: this.child,
       }
+    },
+    canSelectSeat () {
+      if (this.seat_class == "" || this.seat_class == "non-reserved") {
+        return false
+      }
+      return true
     }
   },
   methods: {
@@ -176,7 +188,7 @@ export default {
 
         res.forEach(function(value){
           value["departure"] = apiService.getStation(value["departure"])
-          value["destination"] = apiService.getStation(value["destination"])
+          value["arrival"] = apiService.getStation(value["arrival"])
           value["departure_time"] = new Date("2000-01-01 " + value["departure_time"])
           value["arrival_time"] = new Date("2000-01-01 " + value["arrival_time"])
           items.push(value)
@@ -185,8 +197,9 @@ export default {
         this.items = items
       })
     },
-    selectSeatClass(seat_class) {
+    selectSeatClass(seat_class, is_smoking_seat) {
       this.seat_class = seat_class
+      this.is_smoking_seat = is_smoking_seat
     },
     selectSeat() {
       var query = {
@@ -205,15 +218,45 @@ export default {
       if(this.seat_class!=""){
         Router.push({ path: '/reservation/seats', query: query})
       }
+    },
+    reserve() {
+      if (this.seat_class == "") {
+        return
+      }
+      var condition = {
+        year: this.year,
+        month: this.month,
+        day: this.day,
+        train_class: this.selectedItem.train_class,
+        train_name: this.selectedItem.train_name,
+        car_number: 0,
+        from_station: this.from_station,
+        to_station: this.to_station,
+        adult: this.adult,
+        child: this.child,
+        seat_class: this.seat_class,
+        is_smoking_seat: this.is_smoking_seat,
+        column: "",
+        seats: [],
+      }
+
+      apiService.reserve(condition).then((res) => {
+        var query = {
+          reservation_id: res.reservation_id,
+        }
+        Router.push({ path: '/reservation/payment', query: query})
+      })
     }
   },
   mounted() {
     this.year = this.$route.query.year
     this.month = this.$route.query.month
     this.day = this.$route.query.day
+    this.hour = this.$route.query.hour
+    this.minute = this.$route.query.minute
     this.train_class = this.$route.query.train_class
-    this.adult = this.$route.query.adult
-    this.child = this.$route.query.child
+    this.adult = parseInt(this.$route.query.adult)
+    this.child = parseInt(this.$route.query.child)
     this.from_station = this.$route.query.from_station
     this.to_station = this.$route.query.to_station
 
@@ -370,6 +413,13 @@ export default {
 
 .popup .seat.disabled {
   background: #aaaaaa;
+  cursor: default;
+}
+
+.popup .continue.disabled {
+  background: #aaaaaa;
+  color: white;
+  cursor: default;
 }
 
 .popup .position {

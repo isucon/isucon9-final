@@ -25,6 +25,8 @@ CREATE TABLE `reservations` (
   `arrival` varchar(100) NOT NULL,
   `status` enum('requesting', 'done', 'rejected') NOT NULL,
   `payment_id` varchar(100) NOT NULL,
+  `adult` int NOT NULL,
+  `child` int NOT NULL,
   `amount` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

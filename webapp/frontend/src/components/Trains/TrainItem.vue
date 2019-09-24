@@ -18,7 +18,7 @@
 
         <div class="arrival">
           <span class="time">{{ item.arrival_time.getHours() }}時{{ item.arrival_time.getMinutes() }}分 着</span>
-          <span class="station">{{ item.destination.name }}</span>
+          <span class="station">{{ item.arrival.name }}</span>
         </div>
       </div>
 

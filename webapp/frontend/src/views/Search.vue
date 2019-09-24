@@ -63,6 +63,47 @@
         </select>
       </article>
 
+
+      <article class="hour">
+        <div>{{ hour }}時</div>
+        <select class="hour" v-model="hour">
+          <option value="6">06時</option>
+          <option value="7">07時</option>
+          <option value="8">08時</option>
+          <option value="9">09時</option>
+          <option value="10">10時</option>
+          <option value="11">11時</option>
+          <option value="12">12時</option>
+          <option value="13">13時</option>
+          <option value="14">14時</option>
+          <option value="15">15時</option>
+          <option value="16">16時</option>
+          <option value="17">17時</option>
+          <option value="18">18時</option>
+          <option value="19">19時</option>
+          <option value="20">20時</option>
+          <option value="21">21時</option>
+          <option value="22">22時</option>
+          <option value="23">23時</option>
+        </select>
+      </article>
+      <article class="minute">
+        <div>{{ minute }}分</div>
+        <select class="minute" v-model="minute">
+          <option value="0">00分</option>
+          <option value="10">10分</option>
+          <option value="20">20分</option>
+          <option value="30">30分</option>
+          <option value="40">40分</option>
+          <option value="50">50分</option>
+        </select>
+      </article>
+      <article class="minute-after">
+        <div>頃</div>
+      </article>
+
+
+
       <article class="train_class">
         <div>{{ train_class }}</div>
         <select class="train_class" v-model="train_class">
@@ -138,13 +179,15 @@ import Router from '@/router.js'
 import { apiService } from '../services/api.js'
 
 export default {
-  name: 'reservation',
+  name: 'search',
   components: {},
   data () {
     return {
       year: 2020,
       month: 1,
-      day: "1",
+      day: 1,
+      hour: 6,
+      minute: 0,
       train_class: "全て",
       from_station_id: 0,
       to_station_id: 0,
@@ -204,6 +247,8 @@ export default {
         year: this.year,
         month: this.month,
         day: this.day,
+        hour: this.hour,
+        minute: this.minute,
         train_class: this.train_class_query,
         from_station: this.from_station.name,
         to_station: this.to_station.name,
@@ -268,6 +313,23 @@ article.month {
 
 article.day {
   width: 213px;
+  background: #0057D3;
+}
+
+article.hour {
+  width: 250px;
+  background: #0057D3;
+}
+
+
+article.minute {
+  width: 250px;
+  background: #0057D3;
+}
+
+
+article.minute-after {
+  width: 140px;
   background: #0057D3;
 }
 
