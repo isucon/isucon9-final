@@ -8,11 +8,6 @@ const (
 	StopSemiExpress
 	StopLocal
 )
-import (
-	"fmt"
-
-	"github.com/chibiegg/isucon9-final/bench/internal/util"
-)
 
 // FIXME: 予約リクエスト生成
 // FIXME:
@@ -222,18 +217,4 @@ func GetSeatClass(trainClass string, carNum int) string {
 	default:
 		return ""
 	}
-
-func GenRandomUser() (*User, error) {
-	emailRandomStr, err := util.SecureRandomStr(10)
-	if err != nil {
-		return nil, err
-	}
-	passwdRandomStr, err := util.SecureRandomStr(20)
-	if err != nil {
-		return nil, err
-	}
-	return &User{
-		Email:    fmt.Sprintf("%s@example.com", emailRandomStr),
-		Password: passwdRandomStr,
-	}, nil
 }
