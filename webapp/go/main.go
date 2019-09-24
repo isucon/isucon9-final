@@ -658,7 +658,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
-			nonReservedFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "non_reserved")
+			nonReservedFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "non-reserved")
 			if err != nil {
 				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
