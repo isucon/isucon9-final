@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -128,20 +127,23 @@ func (c *Client) Settings(ctx context.Context) (*Settings, error) {
 }
 
 func (c *Client) Signup(ctx context.Context, email, password string, opts *ClientOption) error {
-	var (
-		u    = *c.baseURL
-		form = url.Values{}
-	)
+	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Signup))
-	form.Set("email", email)
-	form.Set("password", password)
 
-	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBufferString(form.Encode()))
+	b, err := json.Marshal(&User{
+		Email:    email,
+		Password: password,
+	})
 	if err != nil {
 		return failure.Wrap(err, failure.Message("POST /api/auth/register: リクエストに失敗しました"))
 	}
 
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBuffer(b))
+	if err != nil {
+		return failure.Wrap(err, failure.Message("POST /register: リクエストに失敗しました"))
+	}
+
+	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.sess.do(req)
 	if err != nil {
@@ -164,21 +166,24 @@ func (c *Client) Signup(ctx context.Context, email, password string, opts *Clien
 	return nil
 }
 
-func (c *Client) Login(ctx context.Context, username, password string, opts *ClientOption) error {
-	var (
-		u    = *c.baseURL
-		form = url.Values{}
-	)
+func (c *Client) Login(ctx context.Context, email, password string, opts *ClientOption) error {
+	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Login))
-	form.Set("username", username)
-	form.Set("password", password)
 
-	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBufferString(form.Encode()))
+	b, err := json.Marshal(&User{
+		Email:    email,
+		Password: password,
+	})
+	if err != nil {
+		return failure.Wrap(err, failure.Message("POST /login: リクエストに失敗しました"))
+	}
+
+	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
 		return failure.Wrap(err, failure.Message("POST /api/auth/login: リクエストに失敗しました"))
 	}
 
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.sess.do(req)
 	if err != nil {
@@ -275,8 +280,6 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.SearchTrains))
 
-	lgr := zap.S()
-
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return Trains{}, err
@@ -288,8 +291,6 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 	query.Set("from", from)
 	query.Set("to", to)
 	req.URL.RawQuery = query.Encode()
-
-	lgr.Infof("クエリ: %s\n", query.Encode())
 
 	resp, err := c.sess.do(req)
 	if err != nil {
@@ -326,7 +327,8 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
-		return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: リクエストに失敗しました"))
+		lgr.Warnf("座席列挙 リクエスト作成に失敗: %+v", err)
+		return nil, failure.Wrap(err, failure.Message("GET /train/seats: リクエストに失敗しました"))
 	}
 
 	query := req.URL.Query()
@@ -338,27 +340,38 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 	query.Set("to", arrival)
 	req.URL.RawQuery = query.Encode()
 
-	lgr.Infof("クエリ: %s\n", query.Encode())
+	lgr.Infow("座席列挙",
+		"date", util.FormatISO8601(date),
+		"train_class", trainClass,
+		"train_name", trainName,
+		"car_number", strconv.Itoa(carNum),
+		"from", departure,
+		"to", arrival,
+	)
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: リクエストに失敗しました"))
+		lgr.Warnf("座席列挙リクエスト失敗: %+v", err)
+		return nil, failure.Wrap(err, failure.Message("GET /train/seats: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: ステータスコードが不正です"))
+			lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
+			return nil, failure.Wrap(err, failure.Messagef("GET /train/seats: ステータスコードが不正です: got=%d, want=%d", resp.StatusCode, http.StatusOK))
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: ステータスコードが不正です"))
+			lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
+			return nil, failure.Wrap(err, failure.Message("GET /train/seats: ステータスコードが不正です"))
 		}
 	}
 
 	var listTrainSeatsResp *TrainSeatSearchResponse
 	if err := json.NewDecoder(resp.Body).Decode(&listTrainSeatsResp); err != nil {
-		return nil, failure.Wrap(err, failure.Message("GET /api/train/seats: レスポンスのUnmarshalに失敗しました"))
+		lgr.Warnf("座席列挙Unmarshal失敗: %+v", err)
+		return nil, failure.Wrap(err, failure.Message("GET /train/seats: レスポンスのUnmarshalに失敗しました"))
 	}
 
 	endpoint.IncPathCounter(endpoint.ListTrainSeats)
@@ -381,6 +394,8 @@ func (c *Client) Reserve(
 	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.Reserve))
 
+	lgr := zap.S()
+
 	b, err := json.Marshal(&ReservationRequest{
 		TrainClass: trainClass,
 		TrainName:  trainName,
@@ -398,11 +413,12 @@ func (c *Client) Reserve(
 		return nil, err
 	}
 
-	log.Printf("reserve request: %s\n", string(b))
+	lgr.Infof("予約クエリ: %s", string(b))
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
-		return nil, failure.Wrap(err, failure.Message("POST /api/train/reservation: リクエストに失敗しました"))
+		lgr.Warnf("予約リクエスト失敗: %+v", err)
+		return nil, failure.Wrap(err, failure.Message("POST /reserve: リクエストに失敗しました"))
 	}
 
 	// FIXME: csrfトークン検証
@@ -415,25 +431,29 @@ func (c *Client) Reserve(
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return nil, failure.Wrap(err, failure.Message("POST /api/train/reservation: リクエストに失敗しました"))
+		lgr.Warnf("予約リクエスト失敗: %+v", err)
+		return nil, failure.Wrap(err, failure.Message("POST /reserve: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /api/train/reservation: ステータスコードが不正です")))
+			lgr.Warnf("予約リクエストのレスポンスステータス不正: %+v", err)
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: ステータスコードが不正です")))
 			return nil, err
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /api/train/reservation: ステータスコードが不正です")))
+			lgr.Warnf("予約リクエストのレスポンスステータス不正: %+v", err)
+			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: ステータスコードが不正です")))
 			return nil, err
 		}
 	}
 
 	var reservation *ReservationResponse
 	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
-		bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /api/train/reservation: JSONのUnmarshalに失敗しました")))
+		lgr.Warnf("予約リクエストのUnmarshal失敗: %+v", err)
+		bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: JSONのUnmarshalに失敗しました")))
 		return nil, err
 	}
 
@@ -550,8 +570,6 @@ func (c *Client) ShowReservation(ctx context.Context, reservationID int, opts *C
 func (c *Client) CancelReservation(ctx context.Context, reservationID int, opts *ClientOption) error {
 	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetDynamicPath(endpoint.CancelReservation, reservationID))
-
-	log.Printf("cancel reservation uri: %s\n", u.String())
 
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
 	if err != nil {

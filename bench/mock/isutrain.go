@@ -3,7 +3,6 @@ package mock
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -72,15 +71,12 @@ func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 
 // Signup はユーザ登録を行います
 func (m *Mock) Signup(req *http.Request) ([]byte, int) {
-	if err := req.ParseForm(); err != nil {
+	user := &isutrain.User{}
+	if err := json.NewDecoder(req.Body).Decode(&user); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	var (
-		username = req.Form.Get("email")
-		password = req.Form.Get("password")
-	)
-	if len(username) == 0 || len(password) == 0 {
+	if len(user.Email) == 0 || len(user.Password) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
@@ -93,16 +89,13 @@ func (m *Mock) Login(req *http.Request) (*httptest.ResponseRecorder, int) {
 
 	wr := httptest.NewRecorder()
 
-	if err := req.ParseForm(); err != nil {
+	user := &isutrain.User{}
+	if err := json.NewDecoder(req.Body).Decode(&user); err != nil {
 		wr.Write([]byte(http.StatusText(http.StatusBadRequest)))
 		return wr, http.StatusBadRequest
 	}
 
-	var (
-		username = req.Form.Get("username")
-		password = req.Form.Get("password")
-	)
-	if len(username) == 0 || len(password) == 0 {
+	if len(user.Email) == 0 || len(user.Password) == 0 {
 		wr.Write([]byte(http.StatusText(http.StatusBadRequest)))
 		return wr, http.StatusBadRequest
 	}
@@ -246,7 +239,6 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
 	}
 
-	log.Println(string(b))
 	return b, http.StatusOK
 }
 
