@@ -2,12 +2,12 @@
   <article class="reservation-item">
     <div class="wrap">
       <div class="header">
-          予約ID {{ item.reservation_id }}
+          予約ID {{ item.reservation_id }} {{ item.date }}
       </div>
 
       <div class="train">
         <div class="departure">
-          <span class="time"> XX時XX分 発</span>
+          <span class="time">{{ item.departure_time }} 発</span>
           <span class="station">{{ item.departure }}</span>
         </div>
 
@@ -17,8 +17,8 @@
         </div>
 
         <div class="arrival">
-          <span class="time">XX時XX分 着</span>
-          <span class="station">{{ item.destination }}</span>
+          <span class="time">{{ item.arrival_time }} 着</span>
+          <span class="station">{{ item.arrival }}</span>
         </div>
       </div>
 

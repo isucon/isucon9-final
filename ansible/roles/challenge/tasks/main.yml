@@ -3,12 +3,6 @@
   tags: x
   notify: update-grub2
 
-- name: set isucon password
-  user:
-    name: "isucon"
-    password: "{{ password | password_hash('sha512') }}"
-  tags: challenge
-
 - name: allow password authentication
   replace:
     dest: /etc/ssh/sshd_config
