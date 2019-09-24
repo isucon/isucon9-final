@@ -131,7 +131,7 @@ type TrainSearchResponse struct {
 	Start            string            `json:"start"`
 	Last             string            `json:"last"`
 	Departure        string            `json:"departure"`
-	Destination      string            `json:"destination"`
+	Arrival          string            `json:"arrival"`
 	DepartureTime    string            `json:"departure_time"`
 	ArrivalTime      string            `json:"arrival_time"`
 	SeatAvailability map[string]string `json:"seat_availability"`
