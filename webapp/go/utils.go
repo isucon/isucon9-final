@@ -184,18 +184,15 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 }
 
 func checkSeatClass(reservation Reservation, seatClass string, isSmokingSeat bool) (bool, error) {
-	var result struct {
-		SeatClass string `db:"seat_class"`
-		isSmokingSeat bool `db:"is_smoking_seat"`
-	}
+	var seat []Seat
 
-	err := dbx.Get(&result, "SELECT seat_class,is_smoking_seat FROM seat_master JOIN seat_reservations ON seat_master.car_number=seat_reservations.car_number AND seat_master.seat_column=seat_reservations.seat_column AND seat_master.seat_row=seat_reservations.seat_row WHERE reservation_id=? AND train_class=?", reservation.ReservationId, reservation.TrainClass)
+	err := dbx.Select(&seat, "SELECT seat_class,is_smoking_seat FROM seat_master JOIN seat_reservations ON seat_master.car_number=seat_reservations.car_number AND seat_master.seat_column=seat_reservations.seat_column AND seat_master.seat_row=seat_reservations.seat_row WHERE reservation_id=? AND train_class=?", reservation.ReservationId, reservation.TrainClass)
 	if err != nil {
 		panic(err)
 		return false, err
 	}
 
-	return (result.SeatClass == seatClass && result.isSmokingSeat == isSmokingSeat), nil
+	return (seat[0].SeatClass == seatClass && seat[0].IsSmokingSeat == isSmokingSeat), nil
 
 }
 
