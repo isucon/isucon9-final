@@ -1,6 +1,6 @@
 [user]
-user-test-01.isucon9.hinatan.net payment_api="https://payment-test-01.isucon9.hinatan.net" password="isuconnet"
-user-test-02.isucon9.hinatan.net payment_api="https://payment-test-02.isucon9.hinatan.net" password="isuconnet"
+#user-test-01.isucon9.hinatan.net payment_api="https://payment-test-01.isucon9.hinatan.net" password="isuconnet"
+#user-test-02.isucon9.hinatan.net payment_api="https://payment-test-02.isucon9.hinatan.net" password="isuconnet"
 
 team612-a.isucon9.hinatan.net payment_api="https://payment-01.isucon9.hinatan.net" password="JKyVDjRkPPRxsYHcf4GZ"
 team612-b.isucon9.hinatan.net payment_api="https://payment-01.isucon9.hinatan.net" password="JKyVDjRkPPRxsYHcf4GZ"
