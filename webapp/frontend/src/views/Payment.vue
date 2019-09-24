@@ -26,7 +26,7 @@
 
         <div class="train">
           <div class="departure">
-            <span class="time">XX時XX分 発</span>
+            <span class="time">{{ departure_time.getHours() }}時{{ departure_time.getMinutes() }}分 発</span>
             <span class="station">{{ reservation.departure }}</span>
           </div>
 
@@ -36,7 +36,7 @@
           </div>
 
           <div class="arrival">
-            <span class="time">XX時XX分 着</span>
+            <span class="time">{{ arrival_time.getHours() }}時{{ arrival_time.getMinutes() }}分 着</span>
             <span class="station">{{ reservation.arrival }}</span>
           </div>
 
@@ -140,6 +140,12 @@ export default {
     month() { return this.reservation.date.getMonth() + 1 },
     day() { return this.reservation.date.getDate() },
     expiry_date() { return this.expiry_date_month + "/" + this.expiry_date_year },
+    arrival_time() {
+      return new Date("2020-01-01 " + this.reservation.arrival_time)
+    },
+    departure_time() {
+      return new Date("2020-01-01 " + this.reservation.departure_time)
+    },
     seat_class_name () {
       var m = {
         premium: "プレミアム",
