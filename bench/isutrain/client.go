@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -19,8 +20,12 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	ErrTrainSeatsNotFound = errors.New("列車の座席が見つかりませんでした")
+)
+
 type ClientOption struct {
-	wantStatusCode int
+	WantStatusCode int
 }
 
 type Client struct {
@@ -243,6 +248,8 @@ func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Stati
 	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.ListStations))
 
+	log.Printf("[ListStations] uri=%s\n", u.String())
+
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return []*Station{}, failure.Wrap(err, failure.Message("GET /api/train/stations: リクエストに失敗しました"))
@@ -356,13 +363,18 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == http.StatusNotFound || resp.StatusCode == http.StatusBadRequest {
+		// NOTE: 検索結果が見つからないことはあるので、その場合はスルーするように実装
+		return nil, ErrTrainSeatsNotFound
+	}
+
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
 			lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
 			return nil, failure.Wrap(err, failure.Messagef("GET /train/seats: ステータスコードが不正です: got=%d, want=%d", resp.StatusCode, http.StatusOK))
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
 			return nil, failure.Wrap(err, failure.Message("GET /train/seats: ステータスコードが不正です"))
 		}
@@ -443,7 +455,7 @@ func (c *Client) Reserve(
 			return nil, err
 		}
 	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			lgr.Warnf("予約リクエストのレスポンスステータス不正: %+v", err)
 			bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Message("POST /reserve: ステータスコードが不正です")))
 			return nil, err

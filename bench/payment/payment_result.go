@@ -3,10 +3,11 @@ package payment
 import "time"
 
 type PaymentInformation struct {
-	CardToken  string    `json:"card_token"`
-	Datetime   time.Time `json:"datetime"`
-	Amount     int64     `json:"amount"`
-	IsCanceled bool      `json:"is_canceled"`
+	CardToken     string    `json:"card_token"`
+	ReservationID int       `json:"reservation_id"`
+	Datetime      time.Time `json:"datetime"`
+	Amount        int64     `json:"amount"`
+	IsCanceled    bool      `json:"is_canceled"`
 }
 
 type CardInformation struct {

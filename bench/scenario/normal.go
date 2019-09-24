@@ -2,6 +2,8 @@ package scenario
 
 import (
 	"context"
+	"log"
+	"math/rand"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
@@ -30,7 +32,7 @@ func NormalScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	user, err := xrandom.GenRandomUser()
+	user, err := xrandom.GetRandomUser()
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ランダムデータの生成ができません. 運営に確認をお願いいたします"))
 	}
@@ -55,25 +57,35 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "駅一覧を取得できません"))
 	}
 
-	var (
-		departure = xrandom.GetRandomStations()
-		arrival   = xrandom.GetRandomStations()
-	)
-	_, err = client.SearchTrains(ctx, time.Now().AddDate(1, 0, 0), departure, arrival, nil)
+	useAt := xrandom.GetRandomUseAt()
+	departure, arrival := xrandom.GetRandomSection()
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車検索ができません"))
 	}
 
+	if len(trains) == 0 {
+		return nil
+	}
+
+	trainIdx := rand.Intn(len(trains))
+	train := trains[trainIdx]
+	log.Printf("[normal:NormalScenario] train=%+v\n", train)
+	log.Printf("[normal:NormalScenario] trainClass=%s trainName=%s\n", train.Class, train.Name)
+	carNum := 8
 	seatResp, err := client.ListTrainSeats(ctx,
-		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		"最速", "1", 8, "東京", "大阪", nil)
+		useAt,
+		train.Class, train.Name, carNum, train.Departure, train.Arrival, nil)
+	// if errors.Is(err, isutrain.ErrTrainSeatsNotFound) {
+	// 	return nil // 検索結果が見つからなかったら、検索条件が悪いとしてスルー (加点もしない)
+	// }
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席列挙できません"))
 	}
 
-	reservation, err := client.Reserve(ctx, "最速", "1", "premium", seatResp.Seats[:2], "東京", "大阪",
-		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		8, 1, 1, "isle", nil)
+	reservation, err := client.Reserve(ctx, train.Class, train.Name, xrandom.GetSeatClass(train.Class, carNum), seatResp.Seats[:2], "東京", "大阪",
+		useAt,
+		carNum, 1, 1, "isle", nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約ができません"))
 	}
@@ -98,7 +110,7 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約詳細を取得できませんでした"))
 	}
 
-	if reservation.ReservationID != reservation2.ID {
+	if reservation.ReservationID != reservation2.ReservationID {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "正しい予約詳細を取得できませんでした"))
 	}
 
@@ -125,7 +137,7 @@ func NormalCancelScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	user, err := xrandom.GenRandomUser()
+	user, err := xrandom.GetRandomUser()
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ランダムデータの生成ができません. 運営に確認をお願いいたします"))
 	}

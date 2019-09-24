@@ -23,14 +23,19 @@ const (
 
 // SeatReservation は座席予約です
 type SeatReservation struct {
-	// ID は採番された予約IDです
-	ID int `json:"id"`
-	// PaymentMethod は決済種別です
-	PaymentMethod string `json:"payment_method"`
-	// Status は予約の決済状況です
-	Status string `json:"status"`
-	// ReserveAt は予約時刻です
-	ReserveAt time.Time `json:"reserve_at"`
+	ReservationID int        `json:"reservation_id"`
+	UserID        *int       `json:"user_id"`
+	Date          *time.Time `json:"date"`
+	TrainClass    string     `json:"train_class"`
+	TrainName     string     `json:"train_name"`
+	Departure     string     `json:"departure"`
+	Arrival       string     `json:"arrival"`
+	PaymentStatus string     `json:"payment_status"`
+	Status        string     `json:"status"`
+	PaymentID     string     `json:"payment_id,omitempty"`
+	Adult         int        `json:"adult"`
+	Child         int        `json:"child"`
+	Amount        int64      `json:"amount"`
 }
 
 // SeatReservations は座席一覧です
