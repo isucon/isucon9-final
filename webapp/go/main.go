@@ -84,8 +84,8 @@ type Reservation struct {
 	PaymentStatus string     `json:"payment_status" db:"payment_status"`
 	Status        string     `json:"status" db:"status"`
 	PaymentId     string     `json:"payment_id,omitempty" db:"payment_id"`
-	Adult					int  			 `json:"adult" db:"adult"`
-	Child					int  			 `json:"child" db:"child"`
+	Adult         int        `json:"adult" db:"adult"`
+	Child         int        `json:"child" db:"child"`
 	Amount        int        `json:"amount" db:"amount"`
 }
 
@@ -197,20 +197,20 @@ type PaymentResponse struct {
 }
 
 type ReservationResponse struct {
-	ReservationId int `json:"reservation_id"`
-	Date      string 	`json:"date"`
-	TrainClass    string     `json:"train_class"`
-	TrainName     string     `json:"train_name"`
-	CarNumber int    	`json:"car_number"`
-	SeatClass string `json:"seat_class"`
-	Amount int `json:"amount"`
-	Adult int `json:"adult"`
-	Child int `json:"child"`
-	Departure     string        `json:"departure"`
-	Arrival       string        `json:"arrival"`
-	DepartureTime    string            `json:"departure_time"`
-	ArrivalTime      string            `json:"arrival_time"`
-	Seats []SeatReservation `json:"seats"`
+	ReservationId int               `json:"reservation_id"`
+	Date          string            `json:"date"`
+	TrainClass    string            `json:"train_class"`
+	TrainName     string            `json:"train_name"`
+	CarNumber     int               `json:"car_number"`
+	SeatClass     string            `json:"seat_class"`
+	Amount        int               `json:"amount"`
+	Adult         int               `json:"adult"`
+	Child         int               `json:"child"`
+	Departure     string            `json:"departure"`
+	Arrival       string            `json:"arrival"`
+	DepartureTime string            `json:"departure_time"`
+	ArrivalTime   string            `json:"arrival_time"`
+	Seats         []SeatReservation `json:"seats"`
 }
 
 type Settings struct {
@@ -1109,7 +1109,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		req.Seats = []RequestSeat{}  // 座席リクエスト情報は空に
+		req.Seats = []RequestSeat{} // 座席リクエスト情報は空に
 		for carnum := 1; carnum <= 16; carnum++ {
 			seatList := []Seat{}
 			query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_class=? AND is_smoking_seat=? ORDER BY seat_row, seat_column"
@@ -1193,16 +1193,14 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			var VagueSeat RequestSeat // あいまい指定席保存用
 			reserved = false
 			vargue = true
-			seatnum = (req.Adult + req.Child - 1) 	// 全体の人数からあいまい指定席分を引いておく
-			if req.Column == "" {					// A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
-				seatnum = (req.Adult + req.Child) 	// あいまい指定せず大人＋小人分の座席を取る
-				reserved = true                   	// dummy
-				vargue = false                    	// dummy
+			seatnum = (req.Adult + req.Child - 1) // 全体の人数からあいまい指定席分を引いておく
+			if req.Column == "" {                 // A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
+				seatnum = (req.Adult + req.Child) // あいまい指定せず大人＋小人分の座席を取る
+				reserved = true                   // dummy
+				vargue = false                    // dummy
 			}
 			var CandidateSeat RequestSeat
 			CandidateSeats := []RequestSeat{}
-
-
 
 			// シート分だけ回して予約できる席を検索
 			var i int
@@ -1222,15 +1220,15 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			if vargue && reserved { // あいまい席が見つかり、予約できそうだった
 				req.Seats = append(req.Seats, VagueSeat) // あいまい予約席を追加
 			}
-			if i>0 { // 候補席があった
+			if i > 0 { // 候補席があった
 				req.Seats = append(req.Seats, CandidateSeats...) // 予約候補席追加
 			}
 
-			if len(req.Seats) < req.Adult+req.Child{
+			if len(req.Seats) < req.Adult+req.Child {
 				// リクエストに対して席数が足りてない
 				// 次の号車にうつしたい
 				fmt.Println("-----------------")
-				fmt.Printf("現在検索中の車両: %d号車, リクエスト座席数: %d, 予約できそうな座席数: %d, 不足数: %d\n",carnum,req.Adult+req.Child,len(req.Seats),req.Adult+req.Child-len(req.Seats))
+				fmt.Printf("現在検索中の車両: %d号車, リクエスト座席数: %d, 予約できそうな座席数: %d, 不足数: %d\n", carnum, req.Adult+req.Child, len(req.Seats), req.Adult+req.Child-len(req.Seats))
 				fmt.Println("リクエストに対して座席数が不足しているため、次の車両を検索します。")
 				req.Seats = []RequestSeat{}
 				if carnum == 16 {
@@ -1240,12 +1238,12 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			fmt.Printf("空き実績: %d号車 シート:%v 席数:%d\n", carnum, req.Seats, len(req.Seats))
-			if len(req.Seats) >= req.Adult+req.Child{
+			if len(req.Seats) >= req.Adult+req.Child {
 				fmt.Println("予約情報に追加したよ")
-				req.Seats = req.Seats[:req.Adult+req.Child] 
+				req.Seats = req.Seats[:req.Adult+req.Child]
 				req.CarNumber = carnum
 				break
-			} 
+			}
 		}
 		if len(req.Seats) == 0 {
 			errorResponse(w, http.StatusNotFound, "あいまい座席予約ができませんでした。指定した席、もしくは1車両内に希望の席数をご用意できませんでした。")
@@ -1424,7 +1422,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, err.Error())
-			log.Println("fareCalc "+ err.Error())
+			log.Println("fareCalc " + err.Error())
 			return
 		}
 	case "reserved":
@@ -1432,7 +1430,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, err.Error())
-			log.Println("fareCalc "+ err.Error())
+			log.Println("fareCalc " + err.Error())
 			return
 		}
 	case "non-reserved":
@@ -1440,7 +1438,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, err.Error())
-			log.Println("fareCalc "+ err.Error())
+			log.Println("fareCalc " + err.Error())
 			return
 		}
 	default:
@@ -1478,7 +1476,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		tx.Rollback()
-		errorResponse(w, http.StatusBadRequest, "予約の保存に失敗しました。" + err.Error())
+		errorResponse(w, http.StatusBadRequest, "予約の保存に失敗しました。"+err.Error())
 		log.Println(err.Error())
 		return
 	}
@@ -1784,7 +1782,6 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	messageResponse(w, "logged out")
 }
 
-
 func makeReservationResponse(reservation Reservation) (ReservationResponse, error) {
 
 	reservationResponse := ReservationResponse{}
@@ -1806,7 +1803,6 @@ func makeReservationResponse(reservation Reservation) (ReservationResponse, erro
 	if err != nil {
 		return reservationResponse, err
 	}
-
 
 	reservationResponse.ReservationId = reservation.ReservationId
 	reservationResponse.Date = reservation.Date.Format("2006/01/02")
@@ -1831,26 +1827,28 @@ func makeReservationResponse(reservation Reservation) (ReservationResponse, erro
 		reservationResponse.Seats[i] = v
 	}
 
-	// 座席種別を取得
-	seat := Seat{}
-	query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=?"
-	err = dbx.Get(
-		&seat, query,
-		reservation.TrainClass, reservationResponse.CarNumber,
-		reservationResponse.Seats[0].SeatColumn, reservationResponse.Seats[0].SeatRow,
-	)
-	if err == sql.ErrNoRows {
-		return reservationResponse, err
+	if reservationResponse.Seats[0].CarNumber == 0 {
+		reservationResponse.SeatClass = "non-reserve"
+	} else {
+		// 座席種別を取得
+		seat := Seat{}
+		query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=?"
+		err = dbx.Get(
+			&seat, query,
+			reservation.TrainClass, reservationResponse.CarNumber,
+			reservationResponse.Seats[0].SeatColumn, reservationResponse.Seats[0].SeatRow,
+		)
+		if err == sql.ErrNoRows {
+			return reservationResponse, err
+		}
+		if err != nil {
+			return reservationResponse, err
+		}
+		reservationResponse.SeatClass = seat.SeatClass
 	}
-	if err != nil {
-		return reservationResponse, err
-	}
-
-	reservationResponse.SeatClass = seat.SeatClass
 
 	return reservationResponse, nil
 }
-
 
 func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 	/*
@@ -1882,8 +1880,6 @@ func userReservationsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		reservationResponseList = append(reservationResponseList, res)
 	}
-
-
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	json.NewEncoder(w).Encode(reservationResponseList)
