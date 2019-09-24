@@ -109,9 +109,9 @@ func (fi FareInformation) Value() int {
 //   * 列車リストを返す(TranSearchResponse, 未定義)
 type Train struct {
 	// Class は列車種別です
-	Class string `json:"class"`
+	Class string `json:"train_class"`
 	// Name は列車名です
-	Name string `json:"name"`
+	Name string `json:"train_name"`
 	// Start は始点駅IDです
 	Start string `json:"start"`
 	// EndStation は終点駅IDです

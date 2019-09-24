@@ -32,7 +32,7 @@ func NewTemporaryError(err error, msg string, args ...interface{}) error {
 }
 
 func NewHTTPStatusCodeError(req *http.Request, resp *http.Response, wantStatusCode int) error {
-	prefix := fmt.Sprintf("%s %s", req.Method, req.URL.Path)
+	prefix := fmt.Sprintf("%s %s: ", req.Method, req.URL.Path)
 
 	if resp.StatusCode != wantStatusCode {
 		body, err := ioutil.ReadAll(resp.Body)

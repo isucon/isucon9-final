@@ -8,6 +8,7 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
 
@@ -35,7 +36,11 @@ func AttackSearchScenario(ctx context.Context) error {
 				client.ReplaceMockTransport()
 			}
 
-			err = client.Login(ctx, "hoge", "hoge", nil)
+			user, err := xrandom.GetRandomUser()
+			if err != nil {
+				bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします"))
+			}
+			err = client.Login(ctx, user.Email, user.Password, nil)
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
 				return
@@ -46,13 +51,11 @@ func AttackSearchScenario(ctx context.Context) error {
 				case <-searchTrainCtx.Done():
 					return
 				default:
-					_, err := client.SearchTrains(
-						searchTrainCtx,
-						time.Now(),
-						"東京",
-						"名古屋",
-						nil,
+					var (
+						useAt    = xrandom.GetRandomUseAt()
+						from, to = xrandom.GetRandomSection()
 					)
+					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, nil)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車検索に失敗しました"))
 						return
@@ -80,7 +83,11 @@ func AttackSearchScenario(ctx context.Context) error {
 				client.ReplaceMockTransport()
 			}
 
-			err = client.Login(ctx, "hoge", "hoge", nil)
+			user, err := xrandom.GetRandomUser()
+			if err != nil {
+				bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします"))
+			}
+			err = client.Login(ctx, user.Email, user.Password, nil)
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
 				return
@@ -91,16 +98,23 @@ func AttackSearchScenario(ctx context.Context) error {
 				case <-listTrainSeatsCtx.Done():
 					return
 				default:
-					_, err := client.ListTrainSeats(
-						listTrainSeatsCtx,
-						time.Now().AddDate(1, 0, 0),
-						"ほげ",
-						"ほげ",
-						1,
-						"東京",
-						"名古屋",
-						nil,
+					var (
+						useAt              = xrandom.GetRandomUseAt()
+						departure, arrival = xrandom.GetRandomSection()
 					)
+					trains, err := client.SearchTrains(ctx, useAt, departure, arrival, nil)
+					if err != nil {
+						bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車検索ができません"))
+					}
+					if len(trains) == 0 {
+						break
+					}
+
+					trainIdx := rand.Intn(len(trains))
+					train := trains[trainIdx]
+					carNum := 8
+
+					_, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival, nil)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席列挙に失敗しました"))
 						return
@@ -118,6 +132,7 @@ func AttackSearchScenario(ctx context.Context) error {
 func AttackLoginScenario(ctx context.Context) error {
 	var loginGrp sync.WaitGroup
 
+	// 正常ログイン
 	loginCtx, cancelLogin := context.WithTimeout(ctx, 20*time.Second)
 	defer cancelLogin()
 	for i := 0; i < 10; i++ {
@@ -153,6 +168,8 @@ func AttackLoginScenario(ctx context.Context) error {
 			}
 		}()
 	}
+
+	// 異常
 
 	loginGrp.Wait()
 	return nil

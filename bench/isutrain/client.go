@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -17,6 +19,10 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/morikuni/failure"
 	"go.uber.org/zap"
+)
+
+var (
+	ErrTrainSeatsNotFound = errors.New("列車の座席が見つかりませんでした")
 )
 
 type ClientOption struct {
@@ -243,6 +249,8 @@ func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Stati
 	u := *c.baseURL
 	u.Path = filepath.Join(u.Path, endpoint.GetPath(endpoint.ListStations))
 
+	log.Printf("[ListStations] uri=%s\n", u.String())
+
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return []*Station{}, failure.Wrap(err, failure.Message("GET /stations: リクエストに失敗しました"))
@@ -355,6 +363,11 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 		return nil, failure.Wrap(err, failure.Message("GET /train/seats: リクエストに失敗しました"))
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusNotFound || resp.StatusCode == http.StatusBadRequest {
+		// NOTE: 検索結果が見つからないことはあるので、その場合はスルーするように実装
+		return nil, ErrTrainSeatsNotFound
+	}
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {

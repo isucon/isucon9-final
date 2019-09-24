@@ -3,6 +3,7 @@ module github.com/chibiegg/isucon9-final/bench
 go 1.12
 
 require (
+	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/eapache/go-resiliency v1.2.0
 	github.com/gorilla/sessions v1.2.0
 	github.com/jarcoal/httpmock v1.0.4
