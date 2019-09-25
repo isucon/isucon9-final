@@ -136,7 +136,7 @@ var run = cli.Command{
 		// initialize
 		lgr.Info("===== Initialize payment =====")
 		if err := paymentClient.Initialize(); err != nil {
-			dumpFailedResult([]string{})
+			dumpFailedResult(bencherror.InitializeErrs.Msgs)
 			return cli.NewExitError(bencherror.InitializeErrs.AddError(err), 0)
 		}
 		lgr.Info("===== Initialize webapp =====")
