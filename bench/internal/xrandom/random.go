@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 )
 
@@ -22,9 +23,20 @@ func GetRandomTrainClass() string {
 }
 
 func GetRandomUseAt() time.Time {
-	startTime := time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local)
+	var (
+		hourMin   = 6
+		hourMax   = 15
+		hour      = rand.Intn(hourMax-hourMin) + hourMin
+		minuteMin = 0
+		minuteMax = 59
+		minute    = rand.Intn(minuteMax-minuteMin) + minuteMin
+		sec       = rand.Intn(minuteMax-minuteMin) + minuteMin
+	)
+	startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.Local)
 	days := rand.Intn(366)
-	return startTime.AddDate(0, 0, days)
+
+	useAt := startTime.AddDate(0, 0, days)
+	return useAt
 }
 
 func GetRandomSection() (string, string) {
@@ -39,11 +51,11 @@ func GetRandomSection() (string, string) {
 func GetRandomUser() (*User, error) {
 	emailRandomStr, err := util.SecureRandomStr(10)
 	if err != nil {
-		return nil, err
+		return nil, bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします")
 	}
 	passwdRandomStr, err := util.SecureRandomStr(20)
 	if err != nil {
-		return nil, err
+		return nil, bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします")
 	}
 	return &User{
 		Email:    fmt.Sprintf("%s@example.com", emailRandomStr),
