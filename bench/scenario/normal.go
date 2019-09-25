@@ -76,9 +76,6 @@ func NormalScenario(ctx context.Context) error {
 	seatResp, err := client.ListTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, train.Departure, train.Arrival, nil)
-	// if errors.Is(err, isutrain.ErrTrainSeatsNotFound) {
-	// 	return nil // 検索結果が見つからなかったら、検索条件が悪いとしてスルー (加点もしない)
-	// }
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}

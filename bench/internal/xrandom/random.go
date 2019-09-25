@@ -23,9 +23,20 @@ func GetRandomTrainClass() string {
 }
 
 func GetRandomUseAt() time.Time {
-	startTime := time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local)
+	var (
+		hourMin   = 6
+		hourMax   = 15
+		hour      = rand.Intn(hourMax-hourMin) + hourMin
+		minuteMin = 0
+		minuteMax = 59
+		minute    = rand.Intn(minuteMax-minuteMin) + minuteMin
+		sec       = rand.Intn(minuteMax-minuteMin) + minuteMin
+	)
+	startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.Local)
 	days := rand.Intn(366)
-	return startTime.AddDate(0, 0, days)
+
+	useAt := startTime.AddDate(0, 0, days)
+	return useAt
 }
 
 func GetRandomSection() (string, string) {

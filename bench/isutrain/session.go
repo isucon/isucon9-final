@@ -39,7 +39,7 @@ func NewSession() (*Session, error) {
 			Jar:     jar,
 			Timeout: config.APITimeout,
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				return ErrRedirect
+				return bencherror.NewApplicationError(ErrRedirect, "アプリケーションへのリクエストでリダイレクトを検出しました")
 			},
 		},
 	}, nil
@@ -56,7 +56,7 @@ func newSessionForInitialize() (*Session, error) {
 			},
 			Timeout: config.InitializeTimeout,
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				return ErrRedirect
+				return bencherror.NewApplicationError(ErrRedirect, "アプリケーションへのリクエストでリダイレクトを検出しました")
 			},
 		},
 	}, nil
@@ -67,7 +67,7 @@ func newSessionForInitialize() (*Session, error) {
 func (sess *Session) newRequest(ctx context.Context, method, uri string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, uri, body)
 	if err != nil {
-		return nil, err
+		return nil, bencherror.NewCriticalError(err, "HTTPリクエストの作成に失敗しました. 運営に確認をお願いいたします")
 	}
 
 	req.WithContext(ctx)
@@ -82,9 +82,9 @@ func (sess *Session) do(req *http.Request) (*http.Response, error) {
 		var netErr net.Error
 		if xerrors.As(err, &netErr) {
 			if netErr.Timeout() {
-				return nil, bencherror.NewTimeoutError(err, "")
+				return nil, bencherror.NewTimeoutError(err, "アプリケーションへのリクエストがタイムアウトしました")
 			} else if netErr.Temporary() {
-				return nil, bencherror.NewTemporaryError(err, "")
+				return nil, bencherror.NewTemporaryError(err, "アプリケーションへのリクエストで一時的エラーが発生しました")
 			}
 		}
 

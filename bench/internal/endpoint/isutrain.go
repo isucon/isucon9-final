@@ -2,6 +2,8 @@ package endpoint
 
 import (
 	"fmt"
+
+	"go.uber.org/zap"
 )
 
 const (
@@ -70,11 +72,14 @@ func AddDynamicPathExtraScore(idx EndpointIdx, extraScore int64) {
 }
 
 func CalcFinalScore() (score int64) {
+	lgr := zap.S()
 	for _, endpoint := range isutrainEndpoints {
 		score += endpoint.score()
+		lgr.Infof("[%s] score = %d", endpoint.path, endpoint.score())
 	}
 	for _, endpoint := range isutrainDynamicEndpoints {
 		score += endpoint.score()
+		lgr.Infof("[%s] score = %d", endpoint.path, endpoint.score())
 	}
 	return
 }
