@@ -37,12 +37,12 @@ type Client struct {
 func NewClient() (*Client, error) {
 	sess, err := NewSession()
 	if err != nil {
-		return nil, err
+		return nil, bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします")
 	}
 
 	u, err := url.Parse(config.TargetBaseURL)
 	if err != nil {
-		return nil, err
+		return nil, bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします")
 	}
 
 	return &Client{

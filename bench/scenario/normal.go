@@ -20,12 +20,12 @@ func NormalScenario(ctx context.Context) error {
 
 	client, err := isutrain.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	paymentClient, err := payment.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "Paymentクライアントが作成できません. 運営に確認をお願いいたします"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	if config.Debug {
@@ -34,7 +34,7 @@ func NormalScenario(ctx context.Context) error {
 
 	user, err := xrandom.GetRandomUser()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ランダムデータの生成ができません. 運営に確認をお願いいたします"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	err = client.Signup(ctx, user.Email, user.Password, nil)
@@ -44,24 +44,24 @@ func NormalScenario(ctx context.Context) error {
 			"email", user.Email,
 			"password", user.Password,
 		)
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザ登録ができません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	err = client.Login(ctx, user.Email, user.Password, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	_, err = client.ListStations(ctx, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "駅一覧を取得できません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	useAt := xrandom.GetRandomUseAt()
 	departure, arrival := xrandom.GetRandomSection()
 	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車検索ができません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	if len(trains) == 0 {
@@ -80,42 +80,42 @@ func NormalScenario(ctx context.Context) error {
 	// 	return nil // 検索結果が見つからなかったら、検索条件が悪いとしてスルー (加点もしない)
 	// }
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席列挙できません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	reservation, err := client.Reserve(ctx, train.Class, train.Name, xrandom.GetSeatClass(train.Class, carNum), seatResp.Seats[:2], "東京", "大阪",
 		useAt,
 		carNum, 1, 1, "isle", nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約ができません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "クレジットカードの登録ができません. 運営にご確認をお願いいたします"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	err = client.CommitReservation(ctx, reservation.ReservationID, cardToken, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約を確定できませんでした"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	_, err = client.ListReservations(ctx, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約を列挙できませんでした"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	reservation2, err := client.ShowReservation(ctx, reservation.ReservationID, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約詳細を取得できませんでした"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	if reservation.ReservationID != reservation2.ReservationID {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "正しい予約詳細を取得できませんでした"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	if err := client.Logout(ctx, nil); err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ログアウトできません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	return nil
@@ -125,12 +125,12 @@ func NormalScenario(ctx context.Context) error {
 func NormalCancelScenario(ctx context.Context) error {
 	client, err := isutrain.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	paymentClient, err := payment.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "Paymentクライアントが作成できません. 運営に確認をお願いいたします"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	if config.Debug {
@@ -139,22 +139,22 @@ func NormalCancelScenario(ctx context.Context) error {
 
 	user, err := xrandom.GetRandomUser()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ランダムデータの生成ができません. 運営に確認をお願いいたします"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	err = client.Signup(ctx, user.Email, user.Password, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザ登録ができません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	err = client.Login(ctx, user.Email, user.Password, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	_, err = client.ListStations(ctx, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "駅一覧を取得できません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	var (
@@ -163,37 +163,37 @@ func NormalCancelScenario(ctx context.Context) error {
 	)
 	_, err = client.SearchTrains(ctx, time.Now().AddDate(1, 0, 0), departure, arrival, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車検索ができません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	_, err = client.ListTrainSeats(ctx, time.Now().AddDate(1, 0, 0), "こだま", "96号", 1, "東京", "大阪", nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席列挙できません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	reservation, err := client.Reserve(ctx, "こだま", "69号", "premium", isutrain.TrainSeats{}, "東京", "名古屋", time.Now().AddDate(1, 0, 0), 1, 1, 1, "isle", nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約ができません"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "20/20")
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "クレジットカードの登録ができませんでした. 運営にご確認をお願いいたします"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	err = client.CommitReservation(ctx, reservation.ReservationID, cardToken, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約を確定できませんでした"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	_, err = client.ListReservations(ctx, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約を列挙できませんでした"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	err = client.CancelReservation(ctx, reservation.ReservationID, nil)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "予約をキャンセルできませんでした"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	return nil

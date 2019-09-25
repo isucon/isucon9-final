@@ -41,17 +41,22 @@ func (c *Client) Initialize() error {
 
 	req, err := http.NewRequest(http.MethodPost, u.String(), nil)
 	if err != nil {
-		return bencherror.NewCriticalError(err, "課金APIへのリクエストが失敗しました. 運営に確認をお願いいたします")
+		return bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "課金APIへのinitializeリクエストが失敗しました. 運営に確認をお願いいたします"))
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return bencherror.NewCriticalError(err, "課金APIへのリクエストが失敗しました. 運営に確認をお願いいたします")
+		return bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "課金APIへのinitializeリクエストが失敗しました. 運営に確認をお願いいたします"))
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return bencherror.NewCriticalError(ErrPaymentResult, "課金APIから決済結果取得時、不正なステータスコード(=%d)が返却されました. 運営に確認をお願いいたします", resp.StatusCode)
+		return bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(
+			ErrPaymentResult,
+			"課金APIへのinitialize時、不正なステータスコードが返却されました(got=%d, want=%d). 運営に確認をお願いいたします",
+			resp.StatusCode,
+			http.StatusOK,
+		))
 	}
 
 	return nil
@@ -69,31 +74,36 @@ func (c *Client) RegistCard(ctx context.Context, cardNumber, cvv, expiryDate str
 		},
 	})
 	if err != nil {
-		return "", bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(ErrRegistCard, "課金APIにクレジットカードを登録できませんでした. 運営に確認をお願いいたします"))
+		return "", bencherror.NewCriticalError(ErrRegistCard, "課金APIへのRegistCard時、Marshal処理で失敗しました. 運営に確認をお願いいたします")
 	}
 
 	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
-		return "", bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(ErrRegistCard, "課金APIにクレジットカードを登録できませんでした. 運営に確認をお願いいたします"))
+		return "", bencherror.NewCriticalError(ErrRegistCard, "課金APIにクレジットカードを登録できませんでした. 運営に確認をお願いいたします")
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(ErrRegistCard, "課金APIにクレジットカードを登録できませんでした. 運営に確認をお願いいたします"))
+		return "", bencherror.NewCriticalError(ErrRegistCard, "課金APIにクレジットカードを登録できませんでした. 運営に確認をお願いいたします")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(ErrRegistCard, "クレジットカードの登録時、不正なステータスコードが返却されました(=%d). 運営に確認をお願いいたします", resp.StatusCode))
+		return "", bencherror.NewCriticalError(
+			ErrRegistCard,
+			"クレジットカードの登録時、不正なステータスコードが返却されました(got=%d, want=%d). 運営に確認をお願いいたします",
+			resp.StatusCode,
+			http.StatusOK,
+		)
 	}
 
 	registCardResp := &RegistCardResponse{}
 	if err := json.NewDecoder(resp.Body).Decode(&registCardResp); err != nil {
-		return "", bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(ErrRegistCard, "課金APIにクレジットカードを登録できませんでした. 運営に確認をお願いいたします"))
+		return "", bencherror.NewCriticalError(ErrRegistCard, "課金APIにクレジットカードを登録できませんでした. 運営に確認をお願いいたします")
 	}
 
 	if !registCardResp.IsOK {
-		return "", bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(ErrRegistCard, "課金APIにクレジットカードを登録できませんでした. 運営に確認をお願いいたします"))
+		return "", bencherror.NewCriticalError(ErrRegistCard, "課金APIがIsOK=falseでレスポンスを返しました. 運営に確認をお願いいたします")
 	}
 
 	return registCardResp.CardToken, nil
@@ -105,34 +115,31 @@ func (c *Client) Result(ctx context.Context) (*PaymentResult, error) {
 
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
-		return nil, bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "課金APIから決済結果を取得できませんでした. 運営に確認をお願いいたします"))
+		return nil, bencherror.NewCriticalError(err, "課金APIから決済結果を取得できませんでした. 運営に確認をお願いいたします")
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		paymentErr := bencherror.NewCriticalError(err, "課金APIへのリクエストに失敗しました. 運営に確認をお願いいたします")
-		bencherror.InitializeErrs.AddError(paymentErr)
-		return nil, paymentErr
+		return nil, bencherror.NewCriticalError(err, "課金APIへのリクエストに失敗しました. 運営に確認をお願いいたします")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		paymentErr := bencherror.NewCriticalError(ErrPaymentResult, "課金APIから決済結果取得時、不正なステータスコード(=%d)が返却されました. 運営に確認をお願いいたします", resp.StatusCode)
-		bencherror.InitializeErrs.AddError(paymentErr)
-		return nil, paymentErr
+		return nil, bencherror.NewCriticalError(
+			ErrPaymentResult,
+			"課金APIから決済結果取得時、不正なステータスコード(got=%d, want=%d)が返却されました. 運営に確認をお願いいたします",
+			resp.StatusCode,
+			http.StatusOK,
+		)
 	}
 
 	result := &PaymentResult{}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		paymentErr := bencherror.NewCriticalError(err, "課金APIのレスポンスが不正です.運営に確認をお願いいたします")
-		bencherror.InitializeErrs.AddError(paymentErr)
-		return nil, paymentErr
+		return nil, bencherror.NewCriticalError(err, "課金APIのレスポンスが不正です.運営に確認をお願いいたします")
 	}
 
 	if !result.IsOK {
-		paymentErr := bencherror.NewCriticalError(ErrPaymentResult, "課金APIで処理が失敗しました. 運営に確認をお願いいたします")
-		bencherror.InitializeErrs.AddError(paymentErr)
-		return nil, paymentErr
+		return nil, bencherror.NewCriticalError(ErrPaymentResult, "課金APIがIsOK=falseでレスポンスを返しました. 運営に確認をお願いいたします")
 	}
 
 	return result, nil

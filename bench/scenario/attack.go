@@ -28,7 +28,7 @@ func AttackSearchScenario(ctx context.Context) error {
 
 			client, err := isutrain.NewClient()
 			if err != nil {
-				bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
+				bencherror.BenchmarkErrs.AddError(err)
 				return
 			}
 
@@ -38,11 +38,11 @@ func AttackSearchScenario(ctx context.Context) error {
 
 			user, err := xrandom.GetRandomUser()
 			if err != nil {
-				bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします"))
+				bencherror.BenchmarkErrs.AddError(err)
 			}
 			err = client.Login(ctx, user.Email, user.Password, nil)
 			if err != nil {
-				bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
+				bencherror.BenchmarkErrs.AddError(err)
 				return
 			}
 
@@ -57,7 +57,7 @@ func AttackSearchScenario(ctx context.Context) error {
 					)
 					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, nil)
 					if err != nil {
-						bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車検索に失敗しました"))
+						bencherror.BenchmarkErrs.AddError(err)
 						return
 					}
 				}
@@ -75,7 +75,7 @@ func AttackSearchScenario(ctx context.Context) error {
 
 			client, err := isutrain.NewClient()
 			if err != nil {
-				bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
+				bencherror.BenchmarkErrs.AddError(err)
 				return
 			}
 
@@ -89,7 +89,7 @@ func AttackSearchScenario(ctx context.Context) error {
 			}
 			err = client.Login(ctx, user.Email, user.Password, nil)
 			if err != nil {
-				bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
+				bencherror.BenchmarkErrs.AddError(err)
 				return
 			}
 
@@ -104,7 +104,7 @@ func AttackSearchScenario(ctx context.Context) error {
 					)
 					trains, err := client.SearchTrains(ctx, useAt, departure, arrival, nil)
 					if err != nil {
-						bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車検索ができません"))
+						bencherror.BenchmarkErrs.AddError(err)
 					}
 					if len(trains) == 0 {
 						break
@@ -116,7 +116,7 @@ func AttackSearchScenario(ctx context.Context) error {
 
 					_, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival, nil)
 					if err != nil {
-						bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "列車の座席列挙に失敗しました"))
+						bencherror.BenchmarkErrs.AddError(err)
 						return
 					}
 				}

@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 )
 
@@ -39,11 +40,11 @@ func GetRandomSection() (string, string) {
 func GetRandomUser() (*User, error) {
 	emailRandomStr, err := util.SecureRandomStr(10)
 	if err != nil {
-		return nil, err
+		return nil, bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします")
 	}
 	passwdRandomStr, err := util.SecureRandomStr(20)
 	if err != nil {
-		return nil, err
+		return nil, bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします")
 	}
 	return &User{
 		Email:    fmt.Sprintf("%s@example.com", emailRandomStr),
