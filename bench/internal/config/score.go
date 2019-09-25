@@ -10,11 +10,11 @@ const (
 	ApplicationPenaltyWeight = 5
 
 	// TrivialPenaltyThreshold = 200
-	TrivialPenaltyThreshold = 1
-	TrivialPenaltyWeight    = 1000
+	TrivialPenaltyThreshold = 100
+	TrivialPenaltyWeight    = 5
 	// TrivialPenaltyWeight    = 5000
 	// TrivialPenaltyPerCount  = 100
-	TrivialPenaltyPerCount = 3
+	TrivialPenaltyPerCount = 10
 )
 
 const (
