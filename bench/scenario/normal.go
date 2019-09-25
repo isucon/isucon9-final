@@ -75,7 +75,7 @@ func NormalScenario(ctx context.Context) error {
 	carNum := 8
 	seatResp, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, train.Departure, train.Arrival, nil)
+		train.Class, train.Name, carNum, departure, arrival, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -163,7 +163,7 @@ func NormalCancelScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListTrainSeats(ctx, time.Now().AddDate(1, 0, 0), "こだま", "96号", 1, "東京", "大阪", nil)
+	_, err = client.ListTrainSeats(ctx, time.Now().AddDate(1, 0, 0), "こだま", "96号", 1, departure, arrival, nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
