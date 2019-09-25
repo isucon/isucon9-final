@@ -80,7 +80,7 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	reservation, err := client.Reserve(ctx, train.Class, train.Name, xrandom.GetSeatClass(train.Class, carNum), seatResp.Seats[:2], "東京", "大阪",
+	reservation, err := client.Reserve(ctx, train.Class, train.Name, xrandom.GetSeatClass(train.Class, carNum), seatResp.Seats[:2], departure, arrival,
 		useAt,
 		carNum, 1, 1, "isle", nil)
 	if err != nil {
