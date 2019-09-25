@@ -73,19 +73,19 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	// FIXME: ランダムなユーザ情報を使う
 
 	if err := client.Signup(ctx, "hoge@example.com", "hoge", nil); err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "ユーザ登録に失敗しました: user=%s, password=%s", "hoge", "hoge"))
+		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
 	if err := client.Login(ctx, "hoge@example.com", "hoge", nil); err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "ユーザのログインに失敗しました: user=%s, password=%s", "hoge", "hoge"))
+		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
 	// 特にパラメータいらないし、得られる結果の駅名一覧もベンチマーカーでconstで持っているので、実質叩くだけ
 	_, err := client.ListStations(ctx, nil)
 	if err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "駅一覧を取得できません"))
+		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
@@ -100,7 +100,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	// を得られる
 	_, err = client.SearchTrains(ctx, time.Now().AddDate(1, 0, 0), "東京", "大阪", nil)
 	if err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "列車検索ができません"))
+		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
@@ -109,7 +109,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		"最速", "1", 8, "東京", "大阪", nil)
 	if err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "列車の座席列挙できません"))
+		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
@@ -117,23 +117,23 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		1, 1, 1, "isle", nil)
 	if err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "予約ができません"))
+		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
 	if err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "クレジットカードの登録ができませんでした. 運営にご確認をお願いいたします"))
+		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
 	if err = client.CommitReservation(ctx, reservation.ReservationID, cardToken, nil); err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "予約を確定できませんでした"))
+		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
 	if err := client.CancelReservation(ctx, reservation.ReservationID, nil); err != nil {
-		bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "予約をキャンセルできませんでした"))
+		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 }
