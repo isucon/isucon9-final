@@ -1048,26 +1048,22 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if fromStation.ID > departureStation.ID || toStation.ID > departureStation.ID {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, "リクエストされた区間に列車が運行していない区間が含まれています")
-			log.Println(err.Error())
 			return
 		}
 		if arrivalStation.ID >= fromStation.ID || arrivalStation.ID > toStation.ID {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, "リクエストされた区間に列車が運行していない区間が含まれています")
-			log.Println(err.Error())
 			return
 		}
 	} else {
 		if fromStation.ID < departureStation.ID || toStation.ID < departureStation.ID {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, "リクエストされた区間に列車が運行していない区間が含まれています")
-			log.Println(err.Error())
 			return
 		}
 		if arrivalStation.ID <= fromStation.ID || arrivalStation.ID < toStation.ID {
 			tx.Rollback()
 			errorResponse(w, http.StatusBadRequest, "リクエストされた区間に列車が運行していない区間が含まれています")
-			log.Println(err.Error())
 			return
 		}
 	}
