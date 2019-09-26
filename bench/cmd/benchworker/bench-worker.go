@@ -103,7 +103,15 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	var result *BenchResult
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
 		log.Println(string(stdout.Bytes()))
-		return nil, err
+		return &Result{
+			ID:       job.ID,
+			Stdout:   string(stdout.Bytes()),
+			Stderr:   string(stderr.Bytes()),
+			Reason:   "ベンチ結果の取得に失敗しました. 運営に報告してください",
+			IsPassed: false,
+			Score:    -1,
+			Status:   status,
+		}, nil
 	}
 
 	// FIXME: result.Messagesの扱い
