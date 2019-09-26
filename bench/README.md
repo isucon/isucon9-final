@@ -13,8 +13,8 @@ $ make
 $ make test
 ```
 
-
-## シナリオ作成の流れ
+## シナリオ開発者向け
+### シナリオ作成の流れ
 
 * `scenario/template.go` をコピーする。
     * ファイルをコピーしないでください
@@ -27,7 +27,7 @@ $ make test
 * cmd/bench/benchmarker.go で定義されている load(ctx context.Context) にシナリオ実行する実装をする
 * プルリクエストをだす
 
-## シナリオ作成における注意事項
+### シナリオ作成における注意事項
 
 * 負荷レベルをあげたい
     * デフォルトでは、ベンチマーカーが１ワークロード（シナリオ複数含む）が終わるごとレベルアップし、レベル数分だけgoroutineを生成します
@@ -67,3 +67,59 @@ $ make test
     * すみません、未実装です
     * internal/cache パッケージ内にて実装中で、これを用いて今予約しようとしている座席が予約可能かどうか判定できるようにしようと考えています
     * 予約できるなら 正常HTTPステータスコードが返るはずだし、そうでないなら異常HTTPステータスコードが返るはずという具合です
+
+
+## パッケージごとの役割
+
+```
+├── assets // 静的ファイルをローカルファイルシステムから読み出す
+├── bin // make build により、このディレクトリに実行ファイルが生成される
+├── cmd
+│   ├── bench // ベンチマークコマンド. benchworkerにより実行される
+│   │   ├── bench.go
+│   │   ├── benchmarker.go // ベンチマーカーの本体. ここでシナリオを追加できます
+│   │   ├── benchmarker_test.go
+│   │   └── main.go
+│   └── benchworker // 常駐benchworker. dequeueしたジョブに応じてベンチを実行し、結果を報告する
+│       ├── bench-worker.go
+│       ├── main.go
+│       ├── portal.go
+│       └── util.go
+├── internal
+│   ├── bencherror // ベンチマーク(Initialize, PreTest, Benchmark, PostTest) に関するエラーを集める
+│   ├── cache // ベンチマーク実行中、ベンチマーカーが覚えておかなくてはならない情報を格納し、判定関数を提供する
+│   ├── config // 設定情報はconstでここに定義し、バイナリに埋め込む
+│   ├── endpoint // ここでエンドポイントが定義され、基本スコア算出関数を提供する
+│   ├── logger // zapロガーの定義
+│   ├── util // 細かいユーティリティ
+│   │   ├── random.go
+│   │   ├── string.go
+│   │   ├── time.go
+│   │   └── url.go
+│   └── xrandom // ランダムデータ生成関数を提供する
+│       ├── random.go // 関数定義
+│       ├── random_data.go // ランダムデータ(DBから引っ張ってきたやつとか)
+│       └── random_data_test.go // 簡易テスト
+├── isutrain // Isutrainウェブアプリへリクエストを送ったり、結果をUnmarshalしたりする諸々
+│   ├── client.go // クライアントの本体定義
+│   ├── initialize.go // /initialize のレスポンス定義
+│   ├── reservation.go // 予約周りの構造体定義
+│   ├── seats.go // 座席周りの構造体定義
+│   ├── session.go // クライアントに用いられるセッション(認証状態などを覚えておく)
+│   ├── settings.go // /settings のレスポンス定義
+│   ├── station.go // 駅周りの構造体定義
+│   ├── train.go // 列車周りの構造体定義
+│   └── user.go // ユーザの構造体定義
+├── mock // テストに用いるモックサーバ. isutrain, paymentの両方利用できる
+├── payment // 課金にリクエストを送ったりする諸々
+│   ├── client.go
+│   └── payment_result.go
+├── scenario // シナリオ定義. ここにシナリオファイルを追加していく
+│   ├── abnormal.go // 異常テスト (不正なログイン情報でログインしてみるとか)
+│   ├── assertion.go // アサーション関数群 (レスポンスのデータが正しいか検証する関数などの定義)
+│   ├── attack.go // 攻撃テスト (やたらめったら検索をかけたり、ログイン試行したり)
+│   ├── normal.go // 正常テスト (シンプルなシナリオ、ユースケースをある程度網羅するシナリオ)
+│   └── template.go // シナリオのテンプレート (これを参考にシナリオを作る)
+│   ├── pretest.go // Pretest用のシナリオ. (webapp周りのシナリオ作成では触れることはないです)
+│   ├── finalcheck.go // FinalCheck(PostTestに改名予定)用のシナリオ. Pretestと似たような扱い
+```
