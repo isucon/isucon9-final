@@ -48,6 +48,8 @@ func dumpFailedResult(messages []string) {
 		lgr.Warnf("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました: messages=%+v err=%+v", messages, err)
 		fmt.Println(fmt.Sprintf(`{"pass": false, "score": 0, "messages": ["%s"]}`, string(b)))
 	}
+
+	fmt.Println(string(b))
 }
 
 var run = cli.Command{
@@ -134,22 +136,25 @@ var run = cli.Command{
 		// initialize
 		lgr.Info("===== Initialize payment =====")
 		if err := paymentClient.Initialize(); err != nil {
+			lgr.Warnf("課金APIへの /initialize でエラーが発生: %s", err.Error())
 			dumpFailedResult(bencherror.InitializeErrs.Msgs)
-			return cli.NewExitError(bencherror.InitializeErrs.AddError(err), 0)
+			return nil
 		}
 		lgr.Info("===== Initialize webapp =====")
 		initClient.Initialize(ctx)
 		if bencherror.InitializeErrs.IsError() {
+			lgr.Warnf("webappへの /initialize でエラーが発生: %+v", bencherror.InitializeErrs.Msgs)
 			dumpFailedResult(bencherror.InitializeErrs.Msgs)
-			return cli.NewExitError(fmt.Errorf("Initializeに失敗しました"), 0)
+			return nil
 		}
 
 		// pretest (まず、正しく動作できているかチェック. エラーが見つかったら、採点しようがないのでFAILにする)
 		lgr.Info("===== Pretest webapp =====")
 		scenario.Pretest(ctx, testClient, paymentClient, assets)
 		if bencherror.PreTestErrs.IsError() {
+			lgr.Warnf("webappへの pretest でエラーが発生: %+v", bencherror.PreTestErrs.Msgs)
 			dumpFailedResult(bencherror.PreTestErrs.Msgs)
-			return cli.NewExitError(fmt.Errorf("Pretestに失敗しました"), 0)
+			return nil
 		}
 
 		// bench (ISUCOIN売り上げ計上と、減点カウントを行う)
@@ -159,37 +164,44 @@ var run = cli.Command{
 
 		benchmarker := new(benchmarker)
 		if err := benchmarker.run(benchCtx); err != nil {
-			lgr.Warn("ベンチマークにてエラーが発生しました: %+v", err)
+			lgr.Warnf("ベンチマークにてエラーが発生しました: %+v", err)
 		}
 		if bencherror.BenchmarkErrs.IsFailure() {
 			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
-			return cli.NewExitError(fmt.Errorf("Benchmarkに失敗しました"), 0)
+			return nil
 		}
 
 		lgr.Info("===== Final check =====")
 		scenario.FinalCheck(ctx, testClient, paymentClient)
 		if bencherror.FinalCheckErrs.IsFailure() {
+			lgr.Warnf("webappへのfinalcheckで失格判定: %+v", bencherror.FinalCheckErrs.Msgs)
 			msgs := append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), bencherror.FinalCheckErrs.Msgs...)
 			dumpFailedResult(msgs)
-			return cli.NewExitError(fmt.Errorf("Finalcheckで失格となりました"), 0)
+			return nil
 		}
 
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
 		// FIXME: 課金用のクライアントを作り、それを渡す様に変更
 		lgr.Info("===== Calculate final score =====")
 
+		scoreMsgs := []string{
+			fmt.Sprintf("エンドポイント成功回数: %d", endpoint.CalcFinalEndpointCount()),
+		}
+
 		score := endpoint.CalcFinalScore()
 		lgr.Infof("Final score: %d", score)
+		scoreMsgs = append(scoreMsgs, fmt.Sprintf("スコア: %d", score))
 
 		// エラーカウントから、スコアを減点
 		score -= bencherror.BenchmarkErrs.Penalty()
 		lgr.Infof("Final score (with penalty): %d", score)
+		scoreMsgs = append(scoreMsgs, fmt.Sprintf("ペナルティ: %d", bencherror.BenchmarkErrs.Penalty()))
 
 		// 最終結果をstdoutへ書き出す
 		resultBytes, err := json.Marshal(map[string]interface{}{
 			"pass":     true,
 			"score":    score,
-			"messages": uniqueMsgs(bencherror.BenchmarkErrs.Msgs),
+			"messages": append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), scoreMsgs...),
 		})
 		if err != nil {
 			lgr.Warn("ベンチマーク結果のMarshalに失敗しました: %+v", err)

@@ -62,6 +62,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	// ターゲットサーバを取得
 	targetServer, err := getTargetServer(job)
 	if err != nil {
+		log.Printf("failed to get target server: %s", err.Error())
 		return nil, err
 	}
 
@@ -100,6 +101,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	log.Println(stdout.Bytes())
 
 	// ベンチ結果をUnmarshal
+	log.Printf("bench result = %s\n", string(stdout.Bytes()))
 	var result *BenchResult
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
 		log.Println(string(stdout.Bytes()))
@@ -110,7 +112,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 			Reason:   "ベンチ結果の取得に失敗しました. 運営に報告してください",
 			IsPassed: false,
 			Score:    -1,
-			Status:   status,
+			Status:   StatusFailed,
 		}, nil
 	}
 
@@ -207,6 +209,7 @@ var run = cli.Command{
 				log.Println("===== Execute benchmarker =====")
 				result, err := execBench(ctx, job)
 				if err != nil {
+					log.Printf("bench failed: %s\n", err.Error())
 					// FIXME: ベンチ失敗した時のaction
 					reportErr := reportRetrier.RunCtx(ctx, func(ctx context.Context) error {
 						return report(ctx, job.ID, &Result{
@@ -229,7 +232,7 @@ var run = cli.Command{
 						return report(ctx, job.ID, result)
 					})
 					if err != nil {
-						log.Println(err)
+						log.Printf("report failed: %s\n", err.Error())
 					}
 				}()
 			}

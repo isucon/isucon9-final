@@ -83,3 +83,13 @@ func CalcFinalScore() (score int64) {
 	}
 	return
 }
+
+func CalcFinalEndpointCount() (count int64) {
+	for _, endpoint := range isutrainEndpoints {
+		count += endpoint.count
+	}
+	for _, endpoint := range isutrainDynamicEndpoints {
+		count += endpoint.count
+	}
+	return
+}

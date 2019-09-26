@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"math/rand"
+	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
@@ -75,14 +76,9 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	validSeats := isutrain.TrainSeats{}
-	for _, seat := range seatResp.Seats {
-		if len(validSeats) == 2 {
-			break
-		}
-		if !seat.IsOccupied {
-			validSeats = append(validSeats, seat)
-		}
+	validSeats, err := assertListTrainSeats(seatResp)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	reservation, err := client.Reserve(ctx,
@@ -180,7 +176,12 @@ func NormalCancelScenario(ctx context.Context) error {
 	)
 	seatResp, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, arrival, carNum, departure, arrival, nil)
+		train.Class, train.Name, carNum, departure, arrival, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	validSeats, err := assertListTrainSeats(seatResp)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -188,7 +189,7 @@ func NormalCancelScenario(ctx context.Context) error {
 	reservation, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		xrandom.GetSeatClass(train.Class, carNum),
-		seatResp.Seats[:2], departure, arrival, useAt,
+		validSeats, departure, arrival, useAt,
 		carNum, 1, 1, "isle", nil,
 	)
 	if err != nil {
@@ -233,6 +234,40 @@ func NormalCancelScenario(ctx context.Context) error {
 
 // 曖昧検索シナリオ
 func NormalAmbigiousSearchScenario(ctx context.Context) error {
+	client, err := isutrain.NewClient()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if config.Debug {
+		client.ReplaceMockTransport()
+	}
+
+	user, err := xrandom.GetRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if err = client.Signup(ctx, user.Email, user.Password, nil); err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if err := client.Login(ctx, user.Email, user.Password, nil); err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	reserveResp, err := client.Reserve(ctx,
+		"最速", "1", "premium", isutrain.TrainSeats{},
+		"東京", "大阪", time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		1, 1, 1, "isle", nil)
+	if err != nil {
+		bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if err := assertReserve(reserveResp); err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
 	return nil
 }
 

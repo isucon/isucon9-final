@@ -113,7 +113,13 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	reservation, err := client.Reserve(ctx, "最速", "1", "premium", seatsResp.Seats[:2], "東京", "大阪",
+	validSeats, err := assertListTrainSeats(seatsResp)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	reservation, err := client.Reserve(ctx, "最速", "1", "premium", validSeats, "東京", "大阪",
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		1, 1, 1, "isle", nil)
 	if err != nil {
