@@ -15,4 +15,4 @@ payment:
 	cd blackbox/payment && make && cp bin/payment_linux ../../ansible/roles/benchmark/files/payment
 
 bench:
-	cd bench && make && cp bin/bench_linux ../ansible/roles/benchmark/files/bench && cp bin/benchworker_linux ../ansible/roles/benchmark/files/benchworker
+	cd bench && make && cp -av bin/bench_linux ../ansible/roles/benchmark/files/bench && cp -av bin/benchworker_linux ../ansible/roles/benchmark/files/benchworker
