@@ -8,21 +8,21 @@ import (
 )
 
 var (
-	ErrAvailReserveDaysNotSpecified = errors.New("予約可能日数が指定されていません")
-	ErrAvailReserveDaysTooLarge     = errors.New("予約日数が翌年の日付を含んでいます")
+	ErrAvailableDaysNotSpecified = errors.New("予約可能日数が指定されていません")
+	ErrAvailableDaysTooLarge     = errors.New("予約日数が翌年の日付を含んでいます")
 )
 
 var (
 	// initializeで設定される、予約日数
-	AvailReserveDays int
+	AvailableDays int
 
 	// 予約可能日数
-	maxReserveDays = 159
+	maxAvailableDays = 159
 )
 
 var (
 	// 予約受付開始日
-	ReservationStartDate time.Time = time.Date(2020, 3, 1, 0, 0, 0, 0, time.Local)
+	ReservationStartDate time.Time = time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local)
 	// 予約受付終了日
 	ReservationEndDate time.Time
 )
@@ -33,25 +33,25 @@ func SetAvailReserveDays(days int) error {
 
 	if days == 0 {
 		lgr.Warnf("予約日数が指定されていません")
-		return ErrAvailReserveDaysNotSpecified
+		return ErrAvailableDaysNotSpecified
 	}
 
-	if days > maxReserveDays {
-		lgr.Warnf("予約日数が予約可能日数を超過: 予約日数=%d, 予約可能日数=%d", AvailReserveDays, maxReserveDays)
-		return ErrAvailReserveDaysTooLarge
+	if days > maxAvailableDays {
+		lgr.Warnf("予約日数が予約可能日数を超過: 予約日数=%d, 予約可能日数=%d", AvailableDays, maxAvailableDays)
+		return ErrAvailableDaysTooLarge
 	}
 
-	AvailReserveDays = days
+	AvailableDays = days
 	ReservationEndDate = ReservationStartDate.Add(time.Duration(days) * 24 * time.Hour)
 
 	lgr.Infow("予約日数を設定",
-		"指定された予約日数", AvailReserveDays,
-		"予約可能日数", maxReserveDays,
+		"指定された予約日数", AvailableDays,
+		"予約可能日数", ReservationEndDate,
 		"予約受付開始日", ReservationStartDate,
 		"予約受付終了日", ReservationEndDate,
 	)
 
-	// FIXME: 日数に応じた負荷レベルを設定
+	// TODO: 日数に応じた負荷レベルを設定
 
 	return nil
 }

@@ -68,7 +68,7 @@ func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 	}
 
 	b, err := json.Marshal(&isutrain.InitializeResponse{
-		AllowedDays: 30,
+		AvailableDays: 30,
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError

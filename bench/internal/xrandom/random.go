@@ -2,7 +2,6 @@ package xrandom
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
 
@@ -30,9 +29,9 @@ func GetRandomUseAt() time.Time {
 		minute = util.RandRangeIntn(0, 59)
 		sec    = util.RandRangeIntn(0, 59)
 	)
-	startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.Local)
-	log.Printf("intn(%d)\n", config.AvailReserveDays-1)
-	days := rand.Intn(config.AvailReserveDays - 1)
+	startTime := config.ReservationStartDate.Add(time.Duration(hour*60*60+minute*60+sec) * time.Second)
+	// startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.Local)
+	days := rand.Intn(config.AvailableDays - 1)
 
 	useAt := startTime.AddDate(0, 0, days)
 	return useAt

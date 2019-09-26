@@ -107,12 +107,12 @@ func (c *Client) Initialize(ctx context.Context) {
 		return
 	}
 
-	if initializeResp.AllowedDays <= 0 {
-		bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約可能日数は正の整数値でなければなりません: got=%d", endpointPath, initializeResp.AllowedDays))
+	if initializeResp.AvailableDays <= 0 {
+		bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約可能日数は正の整数値でなければなりません: got=%d", endpointPath, initializeResp.AvailableDays))
 	}
 
 	// FIXME: 予約可能日数をレスポンスから受け取る
-	if err := config.SetAvailReserveDays(initializeResp.AllowedDays); err != nil {
+	if err := config.SetAvailReserveDays(initializeResp.AvailableDays); err != nil {
 		bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約可能日数の設定に失敗しました", endpointPath))
 		return
 	}
