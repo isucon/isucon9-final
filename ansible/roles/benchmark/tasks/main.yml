@@ -15,7 +15,7 @@
 
 - name: copy bench
   copy: src="bench" dest="/home/admin/isucon/bin/bench" owner=admin group=admin mode=0755
-  tags: benchmark
+  tags: benchmark-bin
 
 - name: copy benchworker
   copy: src="benchworker" dest="/home/admin/isucon/bin/benchworker" owner=admin group=admin mode=0755

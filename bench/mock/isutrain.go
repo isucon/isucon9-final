@@ -150,7 +150,7 @@ func (m *Mock) Logout(req *http.Request) (*httptest.ResponseRecorder, int) {
 		return wr, http.StatusInternalServerError
 	}
 
-	return wr, http.StatusNoContent
+	return wr, http.StatusOK
 }
 
 func (m *Mock) ListStations(req *http.Request) ([]byte, int) {

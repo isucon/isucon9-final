@@ -15,8 +15,16 @@ var (
 	errTemporary   failure.StringCode = "error temporary"
 )
 
+func NewSimpleCriticalError(msg string, args ...interface{}) error {
+	return failure.New(errCritical, failure.Messagef(msg, args...))
+}
+
 func NewCriticalError(err error, msg string, args ...interface{}) error {
 	return failure.Translate(err, errCritical, failure.Messagef(msg, args...))
+}
+
+func NewSimpleApplicationError(msg string, args ...interface{}) error {
+	return failure.New(errApplication, failure.Messagef(msg, args...))
 }
 
 func NewApplicationError(err error, msg string, args ...interface{}) error {
