@@ -11,6 +11,7 @@ ExecStart=/home/admin/isucon/bin/benchworker run
 
 Restart=always
 RestartSec=10s
+LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target

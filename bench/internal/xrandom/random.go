@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 )
 
@@ -28,8 +29,9 @@ func GetRandomUseAt() time.Time {
 		minute = util.RandRangeIntn(0, 59)
 		sec    = util.RandRangeIntn(0, 59)
 	)
-	startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.Local)
-	days := rand.Intn(366)
+	startTime := config.ReservationStartDate.Add(time.Duration(hour*60*60+minute*60+sec) * time.Second)
+	// startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.Local)
+	days := rand.Intn(config.AvailableDays - 1)
 
 	useAt := startTime.AddDate(0, 0, days)
 	return useAt

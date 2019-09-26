@@ -101,8 +101,18 @@ func (c *Client) Initialize(ctx context.Context) {
 		return
 	}
 
+	var initializeResp *InitializeResponse
+	if err := json.NewDecoder(resp.Body).Decode(&initializeResp); err != nil {
+		bencherror.BenchmarkErrs.AddError(failure.Wrap(err, failure.Messagef("POST %s: レスポンスの形式が不正です", endpointPath)))
+		return
+	}
+
+	if initializeResp.AvailableDays <= 0 {
+		bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約可能日数は正の整数値でなければなりません: got=%d", endpointPath, initializeResp.AvailableDays))
+	}
+
 	// FIXME: 予約可能日数をレスポンスから受け取る
-	if err := config.SetAvailReserveDays(30); err != nil {
+	if err := config.SetAvailReserveDays(initializeResp.AvailableDays); err != nil {
 		bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約可能日数の設定に失敗しました", endpointPath))
 		return
 	}
