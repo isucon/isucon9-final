@@ -60,3 +60,7 @@ var (
 	OlympicStartDate = time.Date(2020, 7, 24, 0, 0, 0, 0, time.Local)
 	OlympicEndDate   = time.Date(2020, 8, 9, 0, 0, 0, 0, time.Local)
 )
+
+func IsOlympic(t time.Time) bool {
+	return t.After(OlympicStartDate)
+}
