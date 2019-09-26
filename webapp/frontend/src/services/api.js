@@ -98,7 +98,7 @@ class ApiService {
         seats: condition.seats,
       }
 
-      return await this.httpService.post('/api/train/reservation', request).then(function(resp){
+      return await this.httpService.post('/api/train/reserve', request).then(function(resp){
         return resp
       });
     }
