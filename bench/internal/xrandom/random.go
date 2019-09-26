@@ -2,10 +2,12 @@ package xrandom
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 )
 
@@ -29,7 +31,8 @@ func GetRandomUseAt() time.Time {
 		sec    = util.RandRangeIntn(0, 59)
 	)
 	startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.Local)
-	days := rand.Intn(366)
+	log.Printf("intn(%d)\n", config.AvailReserveDays-1)
+	days := rand.Intn(config.AvailReserveDays - 1)
 
 	useAt := startTime.AddDate(0, 0, days)
 	return useAt

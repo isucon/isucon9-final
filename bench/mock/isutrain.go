@@ -66,7 +66,15 @@ func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 	if err := m.injectFunc(req.URL.Path); err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
 	}
-	return []byte(http.StatusText(http.StatusOK)), http.StatusOK
+
+	b, err := json.Marshal(&isutrain.InitializeResponse{
+		AllowedDays: 30,
+	})
+	if err != nil {
+		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
+	}
+
+	return b, http.StatusOK
 }
 
 // Signup はユーザ登録を行います
