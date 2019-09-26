@@ -226,7 +226,7 @@ type AuthResponse struct {
 }
 
 const (
-	sessionName = "session_isutrain"
+	sessionName   = "session_isutrain"
 	availableDays = 10
 )
 
@@ -891,7 +891,7 @@ WHERE
 func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	/*
 		列車の席予約API　支払いはまだ
-		POST /api/train/reservation
+		POST /api/train/reserve
 			{
 				"date": "2020-12-31T07:57:00+09:00",
 				"train_name": "183",
@@ -2073,7 +2073,7 @@ func main() {
 	mux.HandleFunc(pat.Get("/api/stations"), getStationsHandler)
 	mux.HandleFunc(pat.Get("/api/train/search"), trainSearchHandler)
 	mux.HandleFunc(pat.Get("/api/train/seats"), trainSeatsHandler)
-	mux.HandleFunc(pat.Post("/api/train/reservation"), trainReservationHandler)
+	mux.HandleFunc(pat.Post("/api/train/reserve"), trainReservationHandler)
 	mux.HandleFunc(pat.Post("/api/train/reservation/commit"), reservationPaymentHandler)
 
 	// 認証関連

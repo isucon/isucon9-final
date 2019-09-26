@@ -484,7 +484,7 @@ func (c *Client) Reserve(
 	// FIXME: csrfトークン検証
 	// _, err = req.Cookie("csrf_token")
 	// if err != nil {
-	// 	return nil, failure.Wrap(err, failure.Message("POST /api/train/reservation: CSRFトークンが不正です"))
+	// 	return nil, failure.Wrap(err, failure.Messagef("POST %s: CSRFトークンが不正です", endpointPath), failureCtx)
 	// }
 
 	req.Header.Set("Content-Type", "application/json")
