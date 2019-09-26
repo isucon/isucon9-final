@@ -218,7 +218,7 @@ type Settings struct {
 }
 
 type InitializeResponse struct {
-	AllowedDays int `json:"allowed_days"`
+	AvailableDays int `json:"available_days"`
 }
 
 type AuthResponse struct {
@@ -227,6 +227,7 @@ type AuthResponse struct {
 
 const (
 	sessionName = "session_isutrain"
+	availableDays = 10
 )
 
 var (
@@ -439,6 +440,11 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	date = date.In(jst)
+
+	if !checkAvailableDate(date) {
+		errorResponse(w, http.StatusNotFound, "予約可能期間外です")
+		return
+	}
 
 	trainClass := r.URL.Query().Get("train_class")
 	fromName := r.URL.Query().Get("from")
@@ -705,6 +711,11 @@ func trainSeatsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	date = date.In(jst)
 
+	if !checkAvailableDate(date) {
+		errorResponse(w, http.StatusNotFound, "予約可能期間外です")
+		return
+	}
+
 	trainClass := r.URL.Query().Get("train_class")
 	trainName := r.URL.Query().Get("train_name")
 	carNumber, _ := strconv.Atoi(r.URL.Query().Get("car_number"))
@@ -925,6 +936,11 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 	}
 	date = date.In(jst)
+
+	if !checkAvailableDate(date) {
+		errorResponse(w, http.StatusNotFound, "予約可能期間外です")
+		return
+	}
 
 	tx := dbx.MustBegin()
 	// 止まらない駅の予約を取ろうとしていないかチェックする
@@ -1978,7 +1994,7 @@ func initializeHandler(w http.ResponseWriter, r *http.Request) {
 	dbx.Exec("TRUNCATE users")
 
 	resp := InitializeResponse{
-		10,
+		availableDays,
 	}
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	json.NewEncoder(w).Encode(resp)
