@@ -21,7 +21,10 @@ type benchmarker struct {
 // ベンチ負荷の１単位. これの回転数を上げていく
 func (b *benchmarker) load(ctx context.Context) error {
 	// TODO: Load１単位で同期ポイント
+
 	scenario.NormalScenario(ctx)
+
+	scenario.NormalCancelScenario(ctx)
 
 	return nil
 }

@@ -46,10 +46,8 @@ func dumpFailedResult(messages []string) {
 	})
 	if err != nil {
 		lgr.Warnf("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました: messages=%+v err=%+v", messages, err)
-		fmt.Println(`{"pass": false, "score": 0, "messages": []}`)
+		fmt.Println(fmt.Sprintf(`{"pass": false, "score": 0, "messages": ["%s"]}`, string(b)))
 	}
-
-	fmt.Println(string(b))
 }
 
 var run = cli.Command{

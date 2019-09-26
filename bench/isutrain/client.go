@@ -398,12 +398,12 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
 			lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
-			return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", resp.StatusCode, http.StatusOK), failureCtx)
+			return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
 			lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
-			return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", resp.StatusCode, opts.WantStatusCode), failureCtx)
+			return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode), failureCtx)
 		}
 	}
 
@@ -553,11 +553,11 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", resp.StatusCode, http.StatusOK), failureCtx)
+			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", resp.StatusCode, opts.WantStatusCode), failureCtx)
+			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode), failureCtx)
 		}
 	}
 
@@ -653,11 +653,11 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID int, opts 
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
+			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です", endpointPath, resp.StatusCode, opts.WantStatusCode), failureCtx)
+			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode), failureCtx)
 		}
 	}
 
@@ -682,7 +682,7 @@ func (c *Client) DownloadAsset(ctx context.Context, path string) ([]byte, error)
 	defer resp.Body.Close()
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-		return []byte{}, bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "GET %s: ステータスコードが不正です", path))
+		return []byte{}, bencherror.PreTestErrs.AddError(bencherror.NewCriticalError(err, "GET %s: ステータスコードが不正です: got=%d, want=%d", path, resp.StatusCode, http.StatusOK))
 	}
 
 	return ioutil.ReadAll(resp.Body)
