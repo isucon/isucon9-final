@@ -2,7 +2,6 @@ package scenario
 
 import (
 	"context"
-	"log"
 	"math/rand"
 	"time"
 
@@ -62,8 +61,6 @@ func NormalScenario(ctx context.Context) error {
 
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
-	log.Printf("[normal:NormalScenario] train=%+v\n", train)
-	log.Printf("[normal:NormalScenario] trainClass=%s trainName=%s\n", train.Class, train.Name)
 	var (
 		carNumMin = 1
 		carNumMax = 16

@@ -3,7 +3,6 @@ package scenario
 import (
 	"context"
 	"errors"
-	"log"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
@@ -41,7 +40,6 @@ func FinalCheck(ctx context.Context, isutrainClient *isutrain.Client, paymentCli
 	// if err := finalcheckGrp.Wait(); err != nil {
 	// 	lgr.Warnf("最終チェックでエラーが発生しました: %+v", err)
 	// }
-	// log.Println("finish finalcheck")
 }
 
 func finalcheckReservations(ctx context.Context, isutrainClient *isutrain.Client, paymentClient *payment.Client) error {
@@ -51,7 +49,6 @@ func finalcheckReservations(ctx context.Context, isutrainClient *isutrain.Client
 	//
 	paymentAPIResult, err := paymentClient.Result(ctx)
 	if err != nil {
-		log.Printf("payment api error: %+v\n", err)
 		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(err, "決済結果を取得できませんでした. 運営に確認をお願いいたします"))
 	}
 
@@ -69,12 +66,10 @@ func finalcheckReservations(ctx context.Context, isutrainClient *isutrain.Client
 
 	reservations, err := isutrainClient.ListReservations(ctx, nil)
 	if err != nil {
-		log.Printf("list reservations error: %+v\n", err)
 		return bencherror.FinalCheckErrs.AddError(bencherror.NewApplicationError(err, "finalcheckにて予約確認画面閲覧に失敗しました"))
 	}
 
 	if len(paymentAPIResult.RawData) == 0 {
-		log.Println("rawdata is zero")
 		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(ErrInvalidReservationForPaymentAPI, "課金APIとの整合性チェックに失敗"))
 	}
 
@@ -87,14 +82,12 @@ func finalcheckReservations(ctx context.Context, isutrainClient *isutrain.Client
 		// 課金APIと突き合わせる
 		eg.Go(func() error {
 			for _, rawData := range paymentAPIResult.RawData {
-				log.Printf("compare payment %d and user %d\n", rawData.PaymentInfo.ReservationID, reservationID)
 				if rawData.PaymentInfo.ReservationID != reservationID {
 					continue
 				}
 				if rawData.PaymentInfo.Amount != amount {
 					return ErrInvalidReservationForPaymentAPI
 				}
-				log.Printf("[Finalcheck] %d and %d OK.", rawData.PaymentInfo.ReservationID, reservationID)
 			}
 			return nil
 		})

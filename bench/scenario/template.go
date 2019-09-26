@@ -2,8 +2,9 @@ package scenario
 
 import (
 	"context"
+	"fmt"
+
 	"go.uber.org/zap"
-	"log"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
@@ -12,7 +13,12 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/payment"
 )
 
+func DoSomething() (int, error) {
+	return -1, fmt.Errorf("always error")
+}
+
 func AwesomeScenario(ctx context.Context) error {
+	// zapロガー取得 (参考: https://qiita.com/emonuh/items/28dbee9bf2fe51d28153#sugaredlogger )
 	lgr := zap.S()
 
 	// ISUTRAIN APIのクライアントを作成
@@ -29,14 +35,16 @@ func AwesomeScenario(ctx context.Context) error {
 	}
 
 	// デバッグの場合はモックに差し替える
+	// NOTE: httpmockというライブラリが、http.Transporterを差し替えてエンドポイントをマウントする都合上、この処理が必要です
+	//       この処理がないと、テスト実行時に存在しない宛先にリクエストを送り、失敗します
 	if config.Debug {
 		client.ReplaceMockTransport()
 	}
 
 	// ここからシナリオ
 
-	// 運営だけが見る情報は log に投げる
-	log.Printf("[template:AwesomeScenario] これは素晴らしいシナリオです\n")
+	// 運営だけが見る情報は zap に投げる
+	lgr.Info("[template:AwesomeScenario] これは素晴らしいシナリオです")
 
 	// ユーザー作成とログイン
 	user, err := xrandom.GetRandomUser() // ランダムデータ生成系は xrandom に作成するかあるものを使う
@@ -46,12 +54,6 @@ func AwesomeScenario(ctx context.Context) error {
 
 	err = client.Signup(ctx, user.Email, user.Password, nil)
 	if err != nil {
-		// シナリオに於けるユーザーに見せるメッセージは `lgr.Infow()` に送る
-		lgr.Infow("ユーザ登録失敗",
-			"error", err,
-			"email", user.Email,
-			"password", user.Password,
-		)
 		// `bencherror.BenchmarkErrs.AddError(err)` も忘れずに
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -66,7 +68,16 @@ func AwesomeScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	log.Printf("[template:AwesomeScenario] カードのトークン %s\n", cardToken)
+	// 例) cardTokenが不正な場合に失格にしたい場合
+	if cardToken != "XXXXXXXX" {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleCriticalError("カードトークンが不正: %s", cardToken))
+	}
+	// 例) Client以外からエラーを得たが、これを減点要素にしたい場合
+	if num, err := DoSomething(); err != nil {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "エラー発生: %d", num))
+	}
+
+	lgr.Infof("[template:AwesomeScenario] カードのトークン %s", cardToken)
 
 	return nil
 
