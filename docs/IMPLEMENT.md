@@ -1,6 +1,5 @@
 # 移植作業マニュアル
 
-
 ## 新規言語の実装開始
 
 ### ディレクトリを作成し、言語固有のdocker-composeファイルを作成する。
@@ -16,11 +15,17 @@ cp webapp/docker-compose.go.yml webapp/docker-compose.${LANGUAGE}.yml
 ${EDITOR} webapp/${LANGUAGE}/Dockerfile
 ```
 
+8000番ポートでアプリケーションが動作するようにコンテナイメージを作成してください。
+
+また、ソースコードは実行時にVolumeでマウントするようにし、イメージにはソースコードを含めないでください。
+
 ## 実装時の注意点
 
 ### 環境変数の利用
 
 データベースの接続情報や、外部APIのURLは必ず [.env](../webapp/.env) ファイルに存在する環境変数を使ってください。
+
+環境変数が設定されていない場合のデフォルト値はGolangの参考実装を元にしてください。
 
 #### 利用すべき環境変数
 
@@ -43,6 +48,8 @@ ${EDITOR} webapp/${LANGUAGE}/Dockerfile
 
 #### fixtureのインポート方法
 
+docker-composeを利用する場合、初期データが投入された状態で起動します。
+
 docker-composeを使わない場合、 `CREATE DATABSE isutrain` してから `webapp/sql/` 以下の.sqlファイルを順にmysqlコマンドで取り込んでいくことでfixtureを投入できる
 
 ```bash
@@ -50,5 +57,12 @@ sudo mysql < webapp/sql/01_schema.sql
 sudo mysql < webapp/sql/90_train.sql
 sudo mysql < webapp/sql/91_station.sql
 sudo mysql < webapp/sql/92_fare.sql
+sudo mysql < webapp/sql/93_seat.sql
+sudo mysql < webapp/sql/94_0_train_timetable.sql
+sudo mysql < webapp/sql/94_1_train_timetable.sql
+sudo mysql < webapp/sql/94_2_train_timetable.sql
+sudo mysql < webapp/sql/94_3_train_timetable.sql
+sudo mysql < webapp/sql/94_4_train_timetable.sql
+sudo mysql < webapp/sql/94_5_train_timetable.sql
 sudo mysql < webapp/sql/99_fixture.sql
 ```
