@@ -320,7 +320,7 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	b, err = json.Marshal(&isutrain.ReservationResponse{
+	b, err = json.Marshal(&isutrain.ReserveResponse{
 		ReservationID: 11111111,
 		IsOk:          true,
 	})
@@ -364,8 +364,8 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 // ListReservations はアカウントにひもづく予約履歴を返します
 func (m *Mock) ListReservations(req *http.Request) ([]byte, int) {
 	<-time.After(m.ListReservationDelay)
-	b, err := json.Marshal(isutrain.SeatReservations{
-		&isutrain.SeatReservation{ReservationID: 1111, Status: string(isutrain.Pending)},
+	b, err := json.Marshal([]*isutrain.ReservationResponse{
+		&isutrain.ReservationResponse{ReservationID: 1111, Status: string(isutrain.Pending)},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest

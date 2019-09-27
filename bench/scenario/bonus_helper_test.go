@@ -1,36 +1,38 @@
-package isutrain
+package scenario
 
 import (
 	"log"
 	"testing"
 
-	"gopkg.in/go-playground/assert.v1"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
 
-func TestAmbigiousSearchCheck(t *testing.T) {
+func TestVagueSearchCheck(t *testing.T) {
 	tests := []struct {
-		seats          TrainSeats
+		seats          isutrain.TrainSeats
 		wantMultiplier float64
 	}{
 		{
-			seats: TrainSeats{
-				&TrainSeat{
+			seats: isutrain.TrainSeats{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "A",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    2,
 					Column: "B",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    3,
 					Column: "C",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    4,
 					Column: "D",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    5,
 					Column: "E",
 				},
@@ -38,24 +40,24 @@ func TestAmbigiousSearchCheck(t *testing.T) {
 			wantMultiplier: 0.0,
 		},
 		{
-			seats: TrainSeats{
-				&TrainSeat{
+			seats: isutrain.TrainSeats{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "A",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "B",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    2,
 					Column: "C",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    3,
 					Column: "A",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    3,
 					Column: "B",
 				},
@@ -63,24 +65,24 @@ func TestAmbigiousSearchCheck(t *testing.T) {
 			wantMultiplier: 0.2,
 		},
 		{
-			seats: TrainSeats{
-				&TrainSeat{
+			seats: isutrain.TrainSeats{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "A",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "B",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "C",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    3,
 					Column: "A",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    3,
 					Column: "B",
 				},
@@ -88,24 +90,24 @@ func TestAmbigiousSearchCheck(t *testing.T) {
 			wantMultiplier: 0.4,
 		},
 		{
-			seats: TrainSeats{
-				&TrainSeat{
+			seats: isutrain.TrainSeats{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "A",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "B",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "C",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    1,
 					Column: "D",
 				},
-				&TrainSeat{
+				&isutrain.TrainSeat{
 					Row:    2,
 					Column: "A",
 				},

@@ -2,28 +2,6 @@ package isutrain
 
 import "time"
 
-// Train は新幹線列車です
-// type Train struct {
-// 	// Class は列車種別です
-// 	Class string `json:"class"`
-// 	// Name は列車名です
-// 	Name string `json:"name"`
-// 	// Start は始点駅IDです
-// 	Start int `json:"start"`
-// 	// EndStation は終点駅IDです
-// 	Last int `json:"last"`
-
-// 	Departure        string            `json:"departure"`
-// 	Destination      string            `json:"destination"`
-// 	DepartedAt       time.Time         `json:"departure_time"`
-// 	ArrivedAt        time.Time         `json:"arrival_time"`
-// 	SeatAvailability map[string]string `json:"seat_availability"`
-// 	FareInformation  map[string]int    `json:"seat_fare"`
-// }
-
-// Trains は列車一覧です
-// type Trains []*Train
-
 // TrainSeat は座席です
 type TrainSeat struct {
 	// Row は席位置の列です(ex. １列)
@@ -39,7 +17,6 @@ type TrainSeat struct {
 }
 
 // TrainSeats は座席一覧です
-// TODO: 列でざっくり指定、行でざっくり指定
 type TrainSeats []*TrainSeat
 
 type SeatAvailability string

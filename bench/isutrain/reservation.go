@@ -21,25 +21,10 @@ const (
 	Ok ReservationStatus = "ok"
 )
 
-// SeatReservation は座席予約です
-type SeatReservation struct {
-	ReservationID int        `json:"reservation_id"`
-	UserID        *int       `json:"user_id"`
-	Date          *time.Time `json:"date"`
-	TrainClass    string     `json:"train_class"`
-	TrainName     string     `json:"train_name"`
-	Departure     string     `json:"departure"`
-	Arrival       string     `json:"arrival"`
-	PaymentStatus string     `json:"payment_status"`
-	Status        string     `json:"status"`
-	PaymentID     string     `json:"payment_id,omitempty"`
-	Adult         int        `json:"adult"`
-	Child         int        `json:"child"`
-	Amount        int64      `json:"amount"`
+type ReserveResponse struct {
+	ReservationID int  `json:"reservation_id"`
+	IsOk          bool `json:"is_ok"`
 }
-
-// SeatReservations は座席一覧です
-type SeatReservations []*SeatReservation
 
 type ReservationRequest struct {
 	// Train構造体
@@ -78,10 +63,23 @@ func NewReservationRequest(trains Train, seats TrainSeats) (*ReservationRequest,
 	return req, nil
 }
 
+// SeatReservation は座席予約です
 type ReservationResponse struct {
-	ReservationID int  `json:"reservation_id"`
-	IsOk          bool `json:"is_ok"`
+	ReservationID int        `json:"reservation_id"`
+	UserID        *int       `json:"user_id"`
+	Date          *time.Time `json:"date"`
+	TrainClass    string     `json:"train_class"`
+	TrainName     string     `json:"train_name"`
+	Departure     string     `json:"departure"`
+	Arrival       string     `json:"arrival"`
+	PaymentStatus string     `json:"payment_status"`
+	Status        string     `json:"status"`
+	PaymentID     string     `json:"payment_id,omitempty"`
+	Adult         int        `json:"adult"`
+	Child         int        `json:"child"`
+	Amount        int64      `json:"amount"`
 }
+
 
 type CommitReservationRequest struct {
 	ReservationID int    `json:"reservation_id"`

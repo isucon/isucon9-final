@@ -7,6 +7,7 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/payment"
@@ -66,7 +67,7 @@ func NormalScenario(ctx context.Context) error {
 
 	reservation, err := client.Reserve(ctx,
 		train.Class, train.Name,
-		xrandom.GetSeatClass(train.Class, carNum), validSeats,
+		isutraindb.GetSeatClass(train.Class, carNum), validSeats,
 		departure, arrival, useAt,
 		carNum, 1, 1, "isle", nil)
 	if err != nil {
@@ -162,7 +163,7 @@ func NormalCancelScenario(ctx context.Context) error {
 
 	reservation, err := client.Reserve(ctx,
 		train.Class, train.Name,
-		xrandom.GetSeatClass(train.Class, carNum),
+		isutraindb.GetSeatClass(train.Class, carNum),
 		validSeats, departure, arrival, useAt,
 		carNum, 1, 1, "isle", nil,
 	)
@@ -207,7 +208,7 @@ func NormalCancelScenario(ctx context.Context) error {
 }
 
 // 曖昧検索シナリオ
-func NormalAmbigiousSearchScenario(ctx context.Context) error {
+func NormalVagueSearchScenario(ctx context.Context) error {
 	client, err := isutrain.NewClient()
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)

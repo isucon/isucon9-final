@@ -120,7 +120,7 @@ func (c *Client) Initialize(ctx context.Context) {
 	endpoint.IncPathCounter(endpoint.Initialize)
 }
 
-func (c *Client) Settings(ctx context.Context) (*Settings, error) {
+func (c *Client) Settings(ctx context.Context) (*SettingsResponse, error) {
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.Settings)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -141,7 +141,7 @@ func (c *Client) Settings(ctx context.Context) (*Settings, error) {
 	}
 	// TODO: opts.WantStatusCodes制御
 
-	var settings *Settings
+	var settings *SettingsResponse
 	if err := json.NewDecoder(resp.Body).Decode(&settings); err != nil {
 		return nil, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath))
 	}
@@ -572,35 +572,35 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 	return nil
 }
 
-func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*SeatReservation, error) {
+func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*ReservationResponse, error) {
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.ListReservations)
 	u.Path = filepath.Join(u.Path, endpointPath)
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
-		return []*SeatReservation{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
+		return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
 	}
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return []*SeatReservation{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
+		return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
 	}
 	defer resp.Body.Close()
 
 	if opts == nil {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return []*SeatReservation{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK))
+			return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK))
 		}
 	} else {
 		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return []*SeatReservation{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode))
+			return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode))
 		}
 	}
 
-	var reservations []*SeatReservation
+	var reservations []*ReservationResponse
 	if err := json.NewDecoder(resp.Body).Decode(&reservations); err != nil {
-		return []*SeatReservation{}, failure.Wrap(err, failure.Messagef("GET %s: 予約のMarshalに失敗しました", endpointPath))
+		return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: 予約のMarshalに失敗しました", endpointPath))
 	}
 
 	endpoint.IncPathCounter(endpoint.ListReservations)
@@ -608,7 +608,7 @@ func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*S
 	return reservations, nil
 }
 
-func (c *Client) ShowReservation(ctx context.Context, reservationID int, opts *ClientOption) (*SeatReservation, error) {
+func (c *Client) ShowReservation(ctx context.Context, reservationID int, opts *ClientOption) (*ReservationResponse, error) {
 	u := *c.baseURL
 	endpointPath := endpoint.GetDynamicPath(endpoint.ShowReservation, reservationID)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -627,7 +627,7 @@ func (c *Client) ShowReservation(ctx context.Context, reservationID int, opts *C
 		return nil, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
 	}
 
-	var reservation *SeatReservation
+	var reservation *ReservationResponse
 	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
 		return nil, failure.Wrap(err, failure.Messagef("GET %s: Unmarshalに失敗しました", endpointPath), failureCtx)
 	}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -20,7 +21,7 @@ var (
 	ErrCanNotReserve     = errors.New("予約済みの座席が指定されたため予約できません")
 )
 
-// FIXME: 区間の考慮
+// NOTE: 区間の考慮
 // * 発駅が範囲内に入っている
 // * 着駅が範囲内に入って入る
 // * 発駅、着駅が範囲外で、ちょうど覆って入る
@@ -28,13 +29,12 @@ var (
 // TODO: 予約情報を覚えておいて、座席予約の時に
 // 取れるはずの予約を誤魔化されてないかちゃんとチェックする
 
-// FIXME: 決済情報のバリデーションができるようにする
+// TODO: 決済情報のバリデーションができるようにする
 
-// FIXME: 未予約の予約を取得できるものがあるといい
+// TODO: 未予約の予約を取得できるものがあるといい
 
 type Reservation struct {
-	ID     string
-	Amount int64
+	ID string
 
 	// 検索条件周り
 	Date                  time.Time
@@ -42,10 +42,42 @@ type Reservation struct {
 	TrainClass, TrainName string
 	CarNum                int
 
-	Seats isutrain.TrainSeats
+	SeatClass string
+	Seats     isutrain.TrainSeats
+
+	Adult, Child int
+
+	UseAt time.Time
+}
+
+// Fare は大人１人あたりの運賃を算出します
+func (r *Reservation) Fare() (int, error) {
+	var (
+		distanceFare, err = isutraindb.GetDistanceFare(r.Departure, r.Arrival)
+		fareMultiplier    = isutraindb.GetFareMultiplier(r.TrainClass, r.SeatClass, r.UseAt)
+	)
+	if err != nil {
+		return -1, err
+	}
+	return int(float64(distanceFare) * fareMultiplier), nil
+}
+
+// Amount は、大人と子供を考慮し、合計の運賃を算出します
+func (r *Reservation) Amount() (int, error) {
+	fare, err := r.Fare()
+	if err != nil {
+		return -1, err
+	}
+
+	var (
+		adultFare = fare * r.Adult
+		childFare = (fare * r.Child) / 2
+	)
+	return adultFare + childFare, nil
 }
 
 var (
+	// ReservationCache は、webappの予約に関する情報が適切か検証するために用いられるキャッシュです
 	ReservationCache = newReservationCache()
 )
 
@@ -167,20 +199,6 @@ func (r *reservationCache) Add(req *isutrain.ReservationRequest, reservationID s
 		CarNum:     req.CarNum,
 		Seats:      req.Seats,
 	})
-}
-
-func (r *reservationCache) Commit(reservationID string, amount int64) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	for _, reservation := range r.reservations {
-		if reservation.ID == reservationID {
-			reservation.Amount = amount
-			return nil
-		}
-	}
-
-	return bencherror.NewApplicationError(ErrCommitReservation, "予約が存在しません")
 }
 
 func (r *reservationCache) Cancel(reservationID string) error {

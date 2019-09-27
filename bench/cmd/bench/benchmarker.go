@@ -41,6 +41,7 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 
 	// scenario.NormalAmbigiousSearchScenario(ctx)
+	scenario.NormalVagueSearchScenario(ctx)
 
 	if config.AvailableDays > 200 { // FIXME: 値が適当
 		scenario.GoldenWeekScenario(ctx)
