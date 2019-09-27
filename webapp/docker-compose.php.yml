@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+  webapp:
+    build: ./php
+    volumes:
+      - ./php:/var/www/html
+    env_file:
+      - ".env"
+    environment:
+      - "PAYMENT_API"
+    links:
+      - payment
+    ports:
+      - "127.0.0.1:8000:8000"
