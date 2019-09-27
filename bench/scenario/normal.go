@@ -136,9 +136,8 @@ func NormalCancelScenario(ctx context.Context) error {
 	}
 
 	var (
-		useAt     = xrandom.GetRandomUseAt()
-		departure = xrandom.GetRandomStations()
-		arrival   = xrandom.GetRandomStations()
+		useAt              = xrandom.GetRandomUseAt()
+		departure, arrival = xrandom.GetRandomSection()
 	)
 	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
 	if err != nil {

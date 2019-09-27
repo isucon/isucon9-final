@@ -80,6 +80,5 @@ func GetFareMultiplier(trainClass, seatClass string, useAt time.Time) float64 {
 
 	// FIXME: webappでstart_dateをまだ見れてないらしいので、一旦つなぎ込みのためseasonMultiplierを無視する
 	//        webappで準備ができたら戻す
-	// return fareMultiplier * seasonMultiplier
-	return fareMultiplier
+	return fareMultiplier * seasonMultiplier
 }

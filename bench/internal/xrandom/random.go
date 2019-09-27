@@ -35,13 +35,11 @@ func GetRandomUseAt() time.Time {
 	return useAt
 }
 
-func GetRandomSection() (string, string) {
-	stations1 := stations
-	rand.Shuffle(len(stations1), func(i, j int) { stations1[i], stations1[j] = stations1[j], stations1[i] })
-	stations2 := stations1[1:]
-	rand.Shuffle(len(stations2), func(i, j int) { stations2[i], stations2[j] = stations2[j], stations2[i] })
+func GetRandomSection() (station1 string, station2 string) {
+	localStations := stations
+	randIndexes := rand.Perm(len(localStations))
 
-	return stations1[0], stations2[0]
+	return localStations[randIndexes[0]], localStations[randIndexes[1]]
 }
 
 func GetTokaiRandomSection() (string, string) {

@@ -62,6 +62,20 @@ func (r *Reservation) Fare() (int, error) {
 	if err != nil {
 		return -1, err
 	}
+
+	lgr := zap.S()
+	lgr.Infow("運賃取得情報",
+		"departure", r.Departure,
+		"arrival", r.Arrival,
+		"train_class", r.TrainClass,
+		"seat_class", r.SeatClass,
+		"use_at", r.UseAt,
+	)
+	lgr.Infow("運賃",
+		"distance_fare", distanceFare,
+		"fare_multiplier", fareMultiplier,
+	)
+
 	return int(float64(distanceFare) * fareMultiplier), nil
 }
 
@@ -72,10 +86,19 @@ func (r *Reservation) Amount() (int, error) {
 		return -1, err
 	}
 
+
 	var (
 		adultFare = fare * r.Adult
 		// 子供は半額
 		childFare = (fare * r.Child) / 2
+	)
+
+	lgr := zap.S()
+	lgr.Infow("Amount",
+		"adult", r.Adult,
+		"child", r.Child,
+		"adult_fare", adultFare,
+		"child_fare", childFare,
 	)
 	return adultFare + childFare, nil
 }

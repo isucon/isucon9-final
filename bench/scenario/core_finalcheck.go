@@ -8,6 +8,7 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/internal/cache"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/payment"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -25,6 +26,7 @@ func FinalCheck(ctx context.Context, isutrainClient *isutrain.Client, paymentCli
 }
 
 func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error {
+	lgr := zap.S()
 	//
 	paymentAPIResult, err := paymentClient.Result(ctx)
 	if err != nil {
@@ -43,6 +45,9 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 		)
 		if err != nil {
 			// FIXME: Slack通知
+			lgr.Warnf("決済情報の整合性チェックでエラー: %s", err.Error())
+			bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(err, "予約の運賃取得に失敗しました"))
+			return
 		}
 
 		eg.Go(func() error {
@@ -51,10 +56,15 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 					continue
 				}
 				if rawData.PaymentInfo.Amount != int64(amount) {
+					lgr.Warnf("not same amount %d != %d", rawData.PaymentInfo.Amount, amount)
 					return ErrInvalidReservationForPaymentAPI
 				}
+				lgr.Infof("same amount %d = %d", rawData.PaymentInfo.Amount, amount)
+				return nil
 			}
-			return nil
+
+			// 予約IDが見つからない場合は不正
+			return ErrInvalidReservationForPaymentAPI
 		})
 	})
 

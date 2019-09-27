@@ -97,6 +97,7 @@ var distanceMap = map[string]float64{
 
 // GetDistance は２駅間の距離を取得します
 func getDistance(from, to string) (float64, error) {
+
 	fromPos, ok := distanceMap[from]
 	if !ok {
 		return -1, ErrStationNotFound
@@ -111,6 +112,7 @@ func getDistance(from, to string) (float64, error) {
 
 // GetDistanceFare は距離運賃を取得します
 func GetDistanceFare(from, to string) (int, error) {
+
 	distance, err := getDistance(from, to)
 	if err != nil {
 		return -1, err

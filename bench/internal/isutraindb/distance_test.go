@@ -21,3 +21,16 @@ func TestGetDistanceFare(t *testing.T) {
 		}
 	}
 }
+
+func TestGetDistance(t *testing.T) {
+	for station1 := range distanceMap {
+		for station2 := range distanceMap {
+			if station1 == station2 {
+				continue
+			}
+			distance, err := getDistance(station1, station2)
+			assert.NoError(t, err)
+			assert.NotZero(t, distance)
+		}
+	}
+}
