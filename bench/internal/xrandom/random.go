@@ -8,10 +8,8 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
+	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
-
-// FIXME: チューニングポイントに関わる値について、公平性を保てるように結果的には同じものを舐めるようにしたい
-// 固定のものを用意し、起動時にshuffle、それでアクセスする？（ただ、これだと散らばりが悪いと最初になかなかスコアが上がらないチームとそうでないのが出たりする）
 
 func GetRandomStations() string {
 	idx := rand.Intn(len(stations))
@@ -55,7 +53,7 @@ func GetTokaiRandomSection() (string, string) {
 	return stations1[0], stations2[0]
 }
 
-func GetRandomUser() (*User, error) {
+func GetRandomUser() (*isutrain.User, error) {
 	emailRandomStr, err := util.SecureRandomStr(10)
 	if err != nil {
 		return nil, bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします")
@@ -64,7 +62,7 @@ func GetRandomUser() (*User, error) {
 	if err != nil {
 		return nil, bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします")
 	}
-	return &User{
+	return &isutrain.User{
 		Email:    fmt.Sprintf("%s@example.com", emailRandomStr),
 		Password: passwdRandomStr,
 	}, nil

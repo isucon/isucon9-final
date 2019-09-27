@@ -70,8 +70,6 @@ func pretestStaticFiles(ctx context.Context, client *isutrain.Client, assets []*
 func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paymentClient *payment.Client) {
 	// FIXME: 最初から登録されて入る、２つくらいのユーザで試す
 
-	// FIXME: ランダムなユーザ情報を使う
-
 	if err := client.Signup(ctx, "hoge@example.com", "hoge", nil); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
@@ -82,7 +80,6 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	// 特にパラメータいらないし、得られる結果の駅名一覧もベンチマーカーでconstで持っているので、実質叩くだけ
 	_, err := client.ListStations(ctx, nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)

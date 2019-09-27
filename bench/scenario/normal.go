@@ -65,12 +65,16 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	reservation, err := client.Reserve(ctx,
+	reserveReq, reservation, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum), validSeats,
 		departure, arrival, useAt,
 		carNum, 1, 1, "isle", nil)
 	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if err := assertReserve(ctx, client, user, reserveReq, reservation); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
@@ -161,13 +165,17 @@ func NormalCancelScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	reservation, err := client.Reserve(ctx,
+	reserveReq, reservation, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		validSeats, departure, arrival, useAt,
 		carNum, 1, 1, "isle", nil,
 	)
 	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if err := assertReserve(ctx, client, user, reserveReq, reservation); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
@@ -200,6 +208,10 @@ func NormalCancelScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
+	if err := assertCancelReservation(ctx, client, reservation.ReservationID); err != nil {
+		return err
+	}
+
 	if err := client.Logout(ctx, nil); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -223,7 +235,19 @@ func NormalVagueSearchScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	reserveResp, err := client.Reserve(ctx,
+	user, err := xrandom.GetRandomUser()
+	if err != nil {
+		return err
+	}
+	if err = client.Signup(ctx, user.Email, user.Password, nil); err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if err := client.Login(ctx, user.Email, user.Password, nil); err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	reserveReq, reservation, err := client.Reserve(ctx,
 		"最速", "1", "premium", isutrain.TrainSeats{},
 		"東京", "大阪", time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		1, 1, 1, "isle", nil)
@@ -231,7 +255,7 @@ func NormalVagueSearchScenario(ctx context.Context) error {
 		bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	if err := assertReserve(reserveResp); err != nil {
+	if err := assertReserve(ctx, client, user, reserveReq, reservation); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 

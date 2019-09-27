@@ -106,9 +106,6 @@ func isKudariOverwrap(aOrigin, aDestination string, bOrigin, bDestination string
 		return false, ErrInvalidStationName
 	}
 
-	// FIXME: 上りと下り、下りと上りは予約的に一致しない（別の列車を用いる）ので、被っていないとする
-	// それはこの呼び出し側で弾いちゃうか
-
 	if bDepartureNum < aDepartureNum && bArrivalNum <= aDepartureNum {
 		return false, nil
 	}

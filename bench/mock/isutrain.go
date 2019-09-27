@@ -311,7 +311,7 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 
 	// 複数の座席指定で予約するかもしれない
 	// なので、予約には複数の座席予約が紐づいている
-	var reservationReq *isutrain.ReservationRequest
+	var reservationReq *isutrain.ReserveRequest
 	if err := json.Unmarshal(b, &reservationReq); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
@@ -321,7 +321,7 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 	}
 
 	b, err = json.Marshal(&isutrain.ReserveResponse{
-		ReservationID: 11111111,
+		ReservationID: 1111,
 		IsOk:          true,
 	})
 	if err != nil {
@@ -365,7 +365,7 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 func (m *Mock) ListReservations(req *http.Request) ([]byte, int) {
 	<-time.After(m.ListReservationDelay)
 	b, err := json.Marshal([]*isutrain.ReservationResponse{
-		&isutrain.ReservationResponse{ReservationID: 1111, Status: string(isutrain.Pending)},
+		&isutrain.ReservationResponse{ReservationID: 1111},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest

@@ -34,9 +34,12 @@ var (
 // TODO: 未予約の予約を取得できるものがあるといい
 
 type Reservation struct {
-	ID string
+	// ユーザ情報
+	User *isutrain.User
 
-	// 検索条件周り
+	// 予約情報
+	ID int
+
 	Date                  time.Time
 	Departure, Arrival    string
 	TrainClass, TrainName string
@@ -71,6 +74,7 @@ func (r *Reservation) Amount() (int, error) {
 
 	var (
 		adultFare = fare * r.Adult
+		// 子供は半額
 		childFare = (fare * r.Child) / 2
 	)
 	return adultFare + childFare, nil
@@ -94,7 +98,7 @@ func newReservationCache() *reservationCache {
 
 // 予約可能判定
 // NOTE: この予約が可能か？を判定する必要があるので、リクエストを受け取り、複数のSeatのどれか１つでも含まれていればNGとする
-func (r *reservationCache) CanReserve(req *isutrain.ReservationRequest) (bool, error) {
+func (r *reservationCache) CanReserve(req *isutrain.ReserveRequest) (bool, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
@@ -184,12 +188,13 @@ func (r *reservationCache) CanReserve(req *isutrain.ReservationRequest) (bool, e
 	return true, nil
 }
 
-func (r *reservationCache) Add(req *isutrain.ReservationRequest, reservationID string) {
+func (r *reservationCache) Add(user *isutrain.User, req *isutrain.ReserveRequest, reservationID int) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	// TODO: webappから意図的にreservationIDを細工して変に整合性つけることができないか考える
 	r.reservations = append(r.reservations, &Reservation{
+		User:       user,
 		ID:         reservationID,
 		Date:       req.Date,
 		Departure:  req.Departure,
@@ -197,11 +202,15 @@ func (r *reservationCache) Add(req *isutrain.ReservationRequest, reservationID s
 		TrainClass: req.TrainClass,
 		TrainName:  req.TrainName,
 		CarNum:     req.CarNum,
+		SeatClass:  req.SeatClass,
 		Seats:      req.Seats,
+		Adult:      req.Adult,
+		Child:      req.Child,
+		UseAt:      req.Date,
 	})
 }
 
-func (r *reservationCache) Cancel(reservationID string) error {
+func (r *reservationCache) Cancel(reservationID int) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 

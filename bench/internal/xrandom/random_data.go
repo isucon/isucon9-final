@@ -105,8 +105,3 @@ var (
 		"最速",
 	}
 )
-
-type User struct {
-	Email    string
-	Password string
-}
