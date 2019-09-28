@@ -45,7 +45,7 @@
             <h3>{{ seat_class_name }}</h3>
 
 
-            <div v-if="reservation.seat_class != 'non-reserve'">
+            <div v-if="reservation.seat_class != 'non-reserved'">
               <p v-for="(seat, index) in reservation.seats" style="margin-top: 0; margin-bottom: 0;">
                 {{ reservation.car_number }}号車{{ seat.seat_row }}番{{ seat.seat_column }}席
               </p>
@@ -153,7 +153,7 @@ export default {
       var m = {
         premium: "プレミアム",
         reserved: "普通席",
-        "non-reserve": "自由席",
+        "non-reserved": "自由席",
         "": "",
       }
       return m[this.reservation.seat_class]
