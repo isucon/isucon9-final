@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+  webapp:
+    build: ./python
+    volumes:
+      - ./python:/opt/webapp
+    env_file:
+      - ".env"
+    environment:
+      - "PAYMENT_API"
+    links:
+      - payment
+    ports:
+      - "127.0.0.1:8000:8000"
