@@ -6,21 +6,9 @@ team612-a.isucon9.hinatan.net payment_api="https://payment-01.isucon9.hinatan.ne
 team612-b.isucon9.hinatan.net payment_api="https://payment-01.isucon9.hinatan.net" password="JKyVDjRkPPRxsYHcf4GZ"
 team612-c.isucon9.hinatan.net payment_api="https://payment-01.isucon9.hinatan.net" password="JKyVDjRkPPRxsYHcf4GZ"
 
-team614-a.isucon9.hinatan.net payment_api="https://payment-02.isucon9.hinatan.net" password="ZYg7RhnumAtQ3ADH4cst"
-team614-b.isucon9.hinatan.net payment_api="https://payment-02.isucon9.hinatan.net" password="ZYg7RhnumAtQ3ADH4cst"
-team614-c.isucon9.hinatan.net payment_api="https://payment-02.isucon9.hinatan.net" password="ZYg7RhnumAtQ3ADH4cst"
-
-team615-a.isucon9.hinatan.net payment_api="https://payment-03.isucon9.hinatan.net" password="82ZPbWkrehQXm7CNGL5r"
-team615-b.isucon9.hinatan.net payment_api="https://payment-03.isucon9.hinatan.net" password="82ZPbWkrehQXm7CNGL5r"
-team615-c.isucon9.hinatan.net payment_api="https://payment-03.isucon9.hinatan.net" password="82ZPbWkrehQXm7CNGL5r"
-
 team616-a.isucon9.hinatan.net payment_api="https://payment-04.isucon9.hinatan.net" password="sVpSrKBVsguSBVuh4kGK"
 team616-b.isucon9.hinatan.net payment_api="https://payment-04.isucon9.hinatan.net" password="sVpSrKBVsguSBVuh4kGK"
 team616-c.isucon9.hinatan.net payment_api="https://payment-04.isucon9.hinatan.net" password="sVpSrKBVsguSBVuh4kGK"
-
-team617-a.isucon9.hinatan.net payment_api="https://payment-05.isucon9.hinatan.net" password="VFxS5gEnmXAFx3MshsWi"
-team617-b.isucon9.hinatan.net payment_api="https://payment-05.isucon9.hinatan.net" password="VFxS5gEnmXAFx3MshsWi"
-team617-c.isucon9.hinatan.net payment_api="https://payment-05.isucon9.hinatan.net" password="VFxS5gEnmXAFx3MshsWi"
 
 #  team003-a.isucon9.hinatan.net
 #  team003-b.isucon9.hinatan.net
@@ -153,12 +141,12 @@ team617-c.isucon9.hinatan.net payment_api="https://payment-05.isucon9.hinatan.ne
 
 [bench]
 bench-test-01.isucon9.hinatan.net
-#bench-test-02.isucon9.hinatan.net
+# bench-test-02.isucon9.hinatan.net
 benchmark-01.isucon9.hinatan.net
-benchmark-02.isucon9.hinatan.net
-benchmark-03.isucon9.hinatan.net
+# benchmark-02.isucon9.hinatan.net
+# benchmark-03.isucon9.hinatan.net
 benchmark-04.isucon9.hinatan.net
-benchmark-05.isucon9.hinatan.net
+# benchmark-05.isucon9.hinatan.net
 # benchmark-06.isucon9.hinatan.net
 # benchmark-07.isucon9.hinatan.net
 # benchmark-08.isucon9.hinatan.net
