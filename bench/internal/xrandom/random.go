@@ -28,7 +28,7 @@ func GetRandomUseAt() time.Time {
 		sec    = util.RandRangeIntn(0, 59)
 	)
 	startTime := config.ReservationStartDate.Add(time.Duration(hour*60*60+minute*60+sec) * time.Second)
-	// startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.Local)
+	// startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.UTC)
 	days := rand.Intn(config.AvailableDays - 1)
 
 	useAt := startTime.AddDate(0, 0, days)

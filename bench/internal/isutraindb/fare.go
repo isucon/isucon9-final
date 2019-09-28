@@ -26,19 +26,19 @@ var (
 
 	seasons = []time.Time{
 		// 正月
-		time.Date(2020, 1, 01, 0, 0, 0, 0, time.Local),
-		time.Date(2020, 1, 06, 0, 0, 0, 0, time.Local),
+		time.Date(2020, 1, 01, 0, 0, 0, 0, time.UTC),
+		time.Date(2020, 1, 06, 0, 0, 0, 0, time.UTC),
 		// 春休み
-		time.Date(2020, 3, 13, 0, 0, 0, 0, time.Local),
-		time.Date(2020, 4, 01, 0, 0, 0, 0, time.Local),
+		time.Date(2020, 3, 13, 0, 0, 0, 0, time.UTC),
+		time.Date(2020, 4, 01, 0, 0, 0, 0, time.UTC),
 		// GW
-		time.Date(2020, 4, 24, 0, 0, 0, 0, time.Local),
-		time.Date(2020, 5, 11, 0, 0, 0, 0, time.Local),
+		time.Date(2020, 4, 24, 0, 0, 0, 0, time.UTC),
+		time.Date(2020, 5, 11, 0, 0, 0, 0, time.UTC),
 		// 夏休み
-		time.Date(2020, 8, 07, 0, 0, 0, 0, time.Local),
-		time.Date(2020, 8, 24, 0, 0, 0, 0, time.Local),
+		time.Date(2020, 8, 07, 0, 0, 0, 0, time.UTC),
+		time.Date(2020, 8, 24, 0, 0, 0, 0, time.UTC),
 		// 年越し
-		time.Date(2020, 12, 25, 0, 0, 0, 0, time.Local),
+		time.Date(2020, 12, 25, 0, 0, 0, 0, time.UTC),
 	}
 )
 
