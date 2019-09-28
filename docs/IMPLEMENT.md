@@ -40,8 +40,29 @@ docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}
 
 ## ベンチマークの実行
 
-T.B.D.
+### ベンチマーカーのディレクトリに移動し、バイナリをビルドする
 
+```bash
+cd bench
+make
+```
+
+### ベンチマーカーが必要とする情報を集める
+
+以下に、案内通りの起動を行なった場合の情報を記載します
+
+* 課金のアドレス
+  * http://localhost:5000
+* webappのアドレス
+  * http://localhost:8080
+* 静的ファイルの配置ディレクトリ
+  * webapp/frontend/dist
+
+### ベンチマーカーを起動する
+
+```bash
+bench/bin/bench_darwin run --payment=http://localhost:5000 --target=http://localhost:8080 --assetdir=webapp/frontend/dist
+```
 
 ## 実装時の注意点
 
