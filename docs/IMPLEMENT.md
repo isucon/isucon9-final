@@ -58,6 +58,25 @@ make
 * 静的ファイルの配置ディレクトリ
   * webapp/frontend/dist
 
+### 初期状態のwebappはあまりにも遅いので、インデックスを貼る
+
+これをしないと、ベンチマーカーが即失格判定を出してしまい、ちゃんとした検証ができません
+
+まずは、コンテナのシェルを立ち上げ、mysqlログインします
+
+```bash
+$ docker ps | grep mysql
+8a806c26927a <- これを使う  mysql:8 ... webapp_mysql_1
+$ docker exec -it 8a806c /bin/bash
+root@8a806c26927a:/# mysql -uroot -ppassword isutrain
+```
+
+以下のようにインデックスを貼ります (数分くらいで終わります)
+
+```bash
+mysql> create index train_timetable_master01 ON train_timetable_master (date, train_class, train_name, station);
+```
+
 ### ベンチマーカーを起動する
 
 ```bash
