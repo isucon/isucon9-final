@@ -26,7 +26,7 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.NormalCancelScenario(ctx)
 
-	scenario.NormalAmbigiousSearchScenario(ctx)
+	// scenario.NormalAmbigiousSearchScenario(ctx)
 
 	return nil
 }
