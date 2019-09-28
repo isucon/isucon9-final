@@ -17,7 +17,7 @@ var (
 	AvailableDays int
 
 	// 予約可能日数
-	maxAvailableDays = 159
+	maxAvailableDays = 366
 )
 
 var (

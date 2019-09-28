@@ -28,6 +28,8 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	// scenario.NormalAmbigiousSearchScenario(ctx)
 
+	// scenario.GoldenWeekScenario(ctx)
+
 	return nil
 }
 

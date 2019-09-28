@@ -46,6 +46,15 @@ func GetRandomSection() (string, string) {
 	return stations1[0], stations2[0]
 }
 
+func GetTokaiRandomSection() (string, string) {
+	stations1 := tokaiStations
+	rand.Shuffle(len(stations1), func(i, j int) { stations1[i], stations1[j] = stations1[j], stations1[i] })
+	stations2 := stations1[1:]
+	rand.Shuffle(len(stations2), func(i, j int) { stations2[i], stations2[j] = stations2[j], stations2[i] })
+
+	return stations1[0], stations2[0]
+}
+
 func GetRandomUser() (*User, error) {
 	emailRandomStr, err := util.SecureRandomStr(10)
 	if err != nil {

@@ -50,7 +50,7 @@ func NormalScenario(ctx context.Context) error {
 
 	useAt := xrandom.GetRandomUseAt()
 	departure, arrival := xrandom.GetRandomSection()
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, nil)
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -159,8 +159,13 @@ func NormalCancelScenario(ctx context.Context) error {
 		departure = xrandom.GetRandomStations()
 		arrival   = xrandom.GetRandomStations()
 	)
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, nil)
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
 	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if len(trains) == 0 {
+		err := bencherror.NewSimpleCriticalError("列車検索結果が空でした")
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 

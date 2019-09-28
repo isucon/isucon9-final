@@ -55,7 +55,7 @@ func AttackSearchScenario(ctx context.Context) error {
 						useAt    = xrandom.GetRandomUseAt()
 						from, to = xrandom.GetRandomSection()
 					)
-					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, nil)
+					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, "", nil)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 						return
@@ -102,7 +102,7 @@ func AttackSearchScenario(ctx context.Context) error {
 						useAt              = xrandom.GetRandomUseAt()
 						departure, arrival = xrandom.GetRandomSection()
 					)
-					trains, err := client.SearchTrains(ctx, useAt, departure, arrival, nil)
+					trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 					}
