@@ -109,7 +109,6 @@ export default {
   methods: {
     getReservation() {
       apiService.getReservation(this.reservation_id).then((res) => {
-        res.date = new Date(res.date)
         this.reservation = res
         console.log(res)
       })
