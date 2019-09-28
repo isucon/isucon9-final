@@ -65,11 +65,10 @@ make
 まずは、コンテナのシェルを立ち上げ、mysqlログインします
 
 ```bash
-$ docker ps | grep mysql
-8a806c26927a <- これを使う  mysql:8 ... webapp_mysql_1
-$ docker exec -it 8a806c /bin/bash
-root@8a806c26927a:/# mysql -uroot -ppassword isutrain
+$ docker exec -it webapp_mysql_1 mysql -uroot -ppassword isutrain
 ```
+
+パスワードを聞かれます。 `isutrain` がパスワードです。
 
 以下のようにインデックスを貼ります (数分くらいで終わります)
 
