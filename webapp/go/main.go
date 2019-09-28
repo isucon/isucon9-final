@@ -1839,14 +1839,9 @@ func makeReservationResponse(reservation Reservation) (ReservationResponse, erro
 
 	// 1つの予約内で車両番号は全席同じ
 	reservationResponse.CarNumber = reservationResponse.Seats[0].CarNumber
-	for i, v := range reservationResponse.Seats {
-		v.CarNumber = 0
-		v.ReservationId = 0
-		reservationResponse.Seats[i] = v
-	}
 
 	if reservationResponse.Seats[0].CarNumber == 0 {
-		reservationResponse.SeatClass = "non-reserve"
+		reservationResponse.SeatClass = "non-reserved"
 	} else {
 		// 座席種別を取得
 		seat := Seat{}
@@ -1865,6 +1860,12 @@ func makeReservationResponse(reservation Reservation) (ReservationResponse, erro
 		reservationResponse.SeatClass = seat.SeatClass
 	}
 
+	for i, v := range reservationResponse.Seats {
+		// omit
+		v.ReservationId = 0
+		v.CarNumber = 0
+		reservationResponse.Seats[i] = v
+	}
 	return reservationResponse, nil
 }
 
