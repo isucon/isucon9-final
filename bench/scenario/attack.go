@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	// "go.uber.org/zap"
+
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
@@ -184,6 +186,101 @@ func AttackListReservationsScenario(ctx context.Context) error {
 // 予約済みの条件で予約を試みる
 // 一応、予約キャンセルするのを虎視眈々と狙っている利用者からのリクエスト、という設定
 func AttackReserveForReserved(ctx context.Context) error {
+	// lgr := zap.S()
+
+	// ISUTRAIN APIのクライアントを作成
+	client, err := isutrain.NewClient()
+	if err != nil {
+		// 実行中のエラーは `bencherror.BenchmarkErrs.AddError(err)` に投げる
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	// デバッグの場合はモックに差し替える
+	// NOTE: httpmockというライブラリが、http.Transporterを差し替えてエンドポイントをマウントする都合上、この処理が必要です
+	//       この処理がないと、テスト実行時に存在しない宛先にリクエストを送り、失敗します
+	if config.Debug {
+		client.ReplaceMockTransport()
+	}
+
+	user, err := xrandom.GetRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = client.Signup(ctx, user.Email, user.Password, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = client.Login(ctx, user.Email, user.Password, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	_, err = client.ListStations(ctx, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	useAt := xrandom.GetRandomUseAt()
+	departure, arrival := xrandom.GetRandomSection()
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "遅いやつ", nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if len(trains) == 0 {
+		err := bencherror.NewSimpleCriticalError("列車検索結果が空でした")
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	trainIdx := rand.Intn(len(trains))
+	train := trains[trainIdx]
+	carNum := 9
+	seatResp, err := client.ListTrainSeats(ctx,
+		useAt,
+		train.Class, train.Name, carNum, departure, arrival, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	validSeats, err := assertListTrainSeats(seatResp)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	wg := new(sync.WaitGroup)
+	m := new(sync.Mutex)
+
+	successCount := 0
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			_, err := client.Reserve(ctx,
+				train.Class, train.Name,
+				xrandom.GetSeatClass(train.Class, carNum), validSeats,
+				departure, arrival, useAt,
+				carNum, 1, 1, "", nil)
+			if err == nil {
+				m.Lock()
+				successCount += 1
+				m.Unlock()
+			}
+		}()
+	}
+
+	wg.Wait()
+
+	if successCount == 0 {
+		err := bencherror.NewSimpleApplicationError("予約できませんでした")
+		return bencherror.BenchmarkErrs.AddError(err)
+	} else if successCount > 1 {
+		err := bencherror.NewSimpleCriticalError("二重発券されました")
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
 	return nil
 }
 
