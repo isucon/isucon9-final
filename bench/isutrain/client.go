@@ -306,7 +306,6 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 
 	failureCtx := failure.Context{
 		"use_at":      util.FormatISO8601(useAt),
-		"train_class": "",
 		"from":        from,
 		"to":          to,
 	}

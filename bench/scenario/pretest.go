@@ -98,7 +98,17 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	// * 空席情報 (プレミアムにできる？プレミアムかつ喫煙にできる？そもそも予約できる？予約できてかつ喫煙できる？未予約？)
 	// * 空席情報それぞれの料金
 	// を得られる
-	_, err = client.SearchTrains(ctx, time.Now().AddDate(1, 0, 0), "東京", "大阪", nil)
+	var (
+		useAt = time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC)
+		departure, arrival = "東京", "大阪"
+		trainClass = "最速"
+		trainName = "49"
+		carNum = 4
+		seatClass = "premium"
+		adult, child = 1, 1
+		seatType = "isle"
+	)
+	_, err = client.SearchTrains(ctx, useAt, departure, arrival, nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
@@ -106,8 +116,8 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 
 	// FIXME: 日付、列車クラス、名前、車両番号、乗車駅降車駅を指定
 	seatsResp, err := client.ListTrainSeats(ctx,
-		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		"最速", "1", 8, "東京", "大阪", nil)
+		useAt,
+		trainClass, trainName, carNum, departure, arrival, nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
@@ -119,9 +129,9 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	reservation, err := client.Reserve(ctx, "最速", "1", "premium", validSeats, "東京", "大阪",
-		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		1, 1, 1, "isle", nil)
+	reservation, err := client.Reserve(ctx, trainClass, trainName, seatClass, validSeats, departure, arrival,
+		useAt,
+		carNum, adult, child, seatType, nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
