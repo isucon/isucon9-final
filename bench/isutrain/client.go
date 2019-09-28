@@ -299,15 +299,15 @@ func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Stati
 }
 
 // SearchTrains は 列車検索APIです
-func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to string, opts *ClientOption) (Trains, error) {
+func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, train_class string, opts *ClientOption) (Trains, error) {
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.SearchTrains)
 	u.Path = filepath.Join(u.Path, endpointPath)
 
 	failureCtx := failure.Context{
-		"use_at":      util.FormatISO8601(useAt),
-		"from":        from,
-		"to":          to,
+		"use_at": util.FormatISO8601(useAt),
+		"from":   from,
+		"to":     to,
 	}
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
@@ -317,7 +317,7 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to str
 
 	query := req.URL.Query()
 	query.Set("use_at", util.FormatISO8601(useAt))
-	query.Set("train_class", "") // FIXME: 列車種別
+	query.Set("train_class", train_class)
 	query.Set("from", from)
 	query.Set("to", to)
 	req.URL.RawQuery = query.Encode()

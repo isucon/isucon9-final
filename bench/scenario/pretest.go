@@ -99,16 +99,16 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	// * 空席情報それぞれの料金
 	// を得られる
 	var (
-		useAt = time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC)
+		useAt              = time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC)
 		departure, arrival = "東京", "大阪"
-		trainClass = "最速"
-		trainName = "49"
-		carNum = 4
-		seatClass = "premium"
-		adult, child = 1, 1
-		seatType = "isle"
+		trainClass         = "最速"
+		trainName          = "49"
+		carNum             = 4
+		seatClass          = "premium"
+		adult, child       = 1, 1
+		seatType           = "isle"
 	)
-	_, err = client.SearchTrains(ctx, useAt, departure, arrival, nil)
+	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
