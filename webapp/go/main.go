@@ -380,23 +380,21 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 		return 0, err
 	}
 
-	var selectedFare Fare
+	if len(fareList) == 0 {
+		return 0, fmt.Errorf("fare_master does not exists")
+	}
+
+	selectedFare := fareList[0]
 
 	for _, fare := range fareList {
-		if err != nil {
-			return 0, err
+		if fare.StartDate.Before(date) {
+			fmt.Println(fare.StartDate, fare.FareMultiplier)
+			selectedFare = fare
 		}
-
-		// TODO: start_dateをちゃんと見る必要がある
-		fmt.Println(fare.StartDate, fare.FareMultiplier)
-		selectedFare = fare
 	}
 
 	fmt.Println("%%%%%%%%%%%%%%%%%%%")
 
-	// TODO: 端数の扱い考える
-	// TODO: start_dateをちゃんと見る必要がある
-	// TODO: 距離見てる...？
 	return int(float64(distFare) * selectedFare.FareMultiplier), nil
 }
 
