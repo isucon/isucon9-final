@@ -4,6 +4,11 @@ import MySQLdb.cursors
 
 app = flask.Flask(__name__)
 
+
+AvailableDays = 10
+SessionName   = "session_isutrain"
+
+
 def dbh():
     if not hasattr(flask.g, 'db'):
         flask.g.db = MySQLdb.connect(
@@ -25,7 +30,6 @@ def get_settings():
     })
 
 
-
 @app.route("/initialize", methods=["POST"])
 def post_initialize():
 
@@ -37,6 +41,7 @@ def post_initialize():
 
     return flask.jsonify({
         "language": "python" # 実装言語を返す
+        "available_days": AvailableDays,
     })
 
 if __name__ == "__main__":
