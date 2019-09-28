@@ -19,6 +19,30 @@ ${EDITOR} webapp/${LANGUAGE}/Dockerfile
 
 また、ソースコードは実行時にVolumeでマウントするようにし、イメージにはソースコードを含めないでください。
 
+## 起動と動作確認
+
+docker-composeでコンテナを起動すると、webapp、MySQL、Nginx、外部決済サービスが起動します。
+
+```bash
+export LANGUAGE=go
+docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yml build
+docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yml up
+```
+
+コードの変更時にwebappが自動で再起動しない場合には以下のコマンドでwebappコンテナだけ再起動することができます。
+
+```bash
+export LANGUAGE=go
+docker-compose -f webapp/docker-compose.yml -f webapp/docker-compose.${LANGUAGE}.yml restart webapp
+```
+
+起動すると、 http://localhost:8080 でフロントエンドとwebapp両方にアクセスできます。
+
+## ベンチマークの実行
+
+T.B.D.
+
+
 ## 実装時の注意点
 
 ### 環境変数の利用
@@ -39,6 +63,10 @@ ${EDITOR} webapp/${LANGUAGE}/Dockerfile
   * MySQLサーバへの接続パスワード
 * PAYMENT_API
   * 決済代行サービスURL
+
+
+PAYMENT_APIは環境変数が入っていない場合、webappからのリクエストは http://payment:5000 へ投げ、　`/settings` で応答するコンテンツは `http://localhost:5000` を返してください。
+
 
 
 ### データベースのスキーム
