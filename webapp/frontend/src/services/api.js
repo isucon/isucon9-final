@@ -117,6 +117,10 @@ class ApiService {
       return await this.httpService.get('/api/user/reservations/' + reservationId)
     }
 
+    async cancelReservation(id) {
+      return await this.httpService.post('/api/user/reservations/' + id + "/cancel")
+    }
+
     async tokenizeCard (data) {
       var data = {
         card_information:data,

@@ -69,9 +69,9 @@ export default {
   },
   components: {},
   computed: {
-    year() { return this.reservation.date.getYear() + 1900},
-    month() { return this.reservation.date.getMonth() + 1 },
-    day() { return this.reservation.date.getDate() },
+    year() { return new Date(this.reservation.date).getYear() + 1900},
+    month() { return new Date(this.reservation.date).getMonth() + 1 },
+    day() { return new Date(this.reservation.date).getDate() },
     expiry_date() { return this.expiry_date_month + "/" + this.expiry_date_year },
     arrival_time() {
       return new Date("2020-01-01 " + this.reservation.arrival_time)
