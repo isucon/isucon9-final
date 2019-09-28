@@ -448,6 +448,9 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 	fromName := r.URL.Query().Get("from")
 	toName := r.URL.Query().Get("to")
 
+	adult, _ := strconv.Atoi(r.URL.Query().Get("adult"))
+	child, _ := strconv.Atoi(r.URL.Query().Get("child"))
+
 	var fromStation, toStation Station
 	query := "SELECT * FROM station_master WHERE name=?"
 
@@ -657,16 +660,21 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
+			premiumFare = premiumFare*adult + premiumFare/2*child
+
 			reservedFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "reserved")
 			if err != nil {
 				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
+			reservedFare = reservedFare*adult + reservedFare/2*child
+
 			nonReservedFare, err := fareCalc(date, fromStation.ID, toStation.ID, train.TrainClass, "non-reserved")
 			if err != nil {
 				errorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
+			nonReservedFare = nonReservedFare*adult + nonReservedFare/2*child
 
 			fareInformation := map[string]int{
 				"premium":        premiumFare,
