@@ -68,8 +68,6 @@ make
 $ docker exec -it webapp_mysql_1 mysql -uroot -ppassword isutrain
 ```
 
-パスワードを聞かれます。 `isutrain` がパスワードです。
-
 以下のようにインデックスを貼ります (数分くらいで終わります)
 
 ```bash
