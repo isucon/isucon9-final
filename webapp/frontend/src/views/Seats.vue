@@ -231,6 +231,7 @@ export default {
         child: this.child,
         seat_class: this.seat_class,
         seats: this.selectedSeats,
+        column: "",
       }
 
       apiService.reserve(condition).then((res) => {

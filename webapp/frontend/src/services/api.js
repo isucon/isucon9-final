@@ -94,7 +94,7 @@ class ApiService {
         arrival: condition.to_station,
         child: condition.child,
         adult: condition.adult,
-        type: "",
+        column: condition.column,
         seats: condition.seats,
       }
 

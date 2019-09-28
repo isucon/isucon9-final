@@ -141,7 +141,7 @@ export default {
       to_station: "",
       adult: null,
       child: null,
-      position: "指定しない",
+      position: "",
       selectedItem: null,
       seat_class: "",
       is_smoking_seat: false,
@@ -236,7 +236,7 @@ export default {
         child: this.child,
         seat_class: this.seat_class,
         is_smoking_seat: this.is_smoking_seat,
-        column: "",
+        column: this.position,
         seats: [],
       }
 
