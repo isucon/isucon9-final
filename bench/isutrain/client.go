@@ -391,7 +391,7 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 	}
 
 	// NotFound、あるいはBadRequestの場合、座席を得ることはできない
-	if opts.autoAssert && (resp.StatusCode == http.StatusNotFound || resp.StatusCode == http.StatusBadRequest) {
+	if opts.autoAssert && (resp.StatusCode != http.StatusNotFound && resp.StatusCode != http.StatusBadRequest) {
 		validSeats, err := assertListTrainSeats(listTrainSeatsResp, opts.trainSeatsCount)
 		if err != nil {
 			return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: 座席検索の結果、座席が空になっています", endpointPath))
@@ -479,15 +479,19 @@ func (c *Client) Reserve(
 	}
 	defer resp.Body.Close()
 
-	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-		lgr.Warnf("予約リクエストのレスポンスステータス不正: %+v", err)
-		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
-	}
-
 	var reservation *ReservationResponse
 	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
 		lgr.Warnf("予約リクエストのUnmarshal失敗: %+v", err)
 		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: JSONのUnmarshalに失敗しました", endpointPath), failureCtx)
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		ReservationCache.Add(c.loginUser, reserveReq, reservation.ReservationID)
+	}
+
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		lgr.Warnf("予約リクエストのレスポンスステータス不正: %+v", err)
+		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
 	if opts.autoAssert {
@@ -500,8 +504,6 @@ func (c *Client) Reserve(
 	if SeatAvailability(seatClass) != SaNonReserved {
 		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
 	}
-
-	ReservationCache.Add(c.loginUser, reserveReq, reservation.ReservationID)
 
 	return reserveReq, reservation, nil
 }
@@ -655,6 +657,11 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID int, opt .
 	}
 
 	endpoint.IncDynamicPathCounter(endpoint.CancelReservation)
+
+	if err := ReservationCache.Cancel(reservationID); err != nil {
+		// FIXME: こういうベンチマーカーの異常は、利用者向けには一般的なメッセージで運営に連絡して欲しいと書き、運営向けにSlackに通知する
+		return bencherror.NewCriticalError(err, "ベンチマーカーでキャッシュ不具合が発生しました. 運営に御確認お願い致します")
+	}
 
 	return nil
 }
