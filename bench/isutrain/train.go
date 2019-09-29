@@ -7,9 +7,9 @@ type TrainSeat struct {
 	ReservationID int `json:"reservation_id,omitempty"`
 	CarNumber     int `json:"car_number,omitempty"`
 	// Row は席位置の列です(ex. １列)
-	Row int `json:"seat_row"`
+	Row int `json:"row"`
 	// Column は席位置の行です (ex. A行)
-	Column string `json:"seat_column"`
+	Column string `json:"column"`
 	// IsSmokingSeat 喫煙所が近くにあるかどうかのフラグです
 	IsSmokingSeat bool `json:"is_smoking_seat,omitempty"`
 	// IsOccupied は 予約済みであるか否かを示します

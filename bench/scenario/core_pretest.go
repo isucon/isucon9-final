@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -101,10 +102,10 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		departure, arrival = "東京", "大阪"
 		trainClass         = "最速"
 		trainName          = "49"
-		carNum             = 4
+		carNum             = 8
 		seatClass          = "premium"
 		adult, child       = 1, 1
-		seatType           = "isle"
+		seatType           = ""
 	)
 	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
 	if err != nil {
