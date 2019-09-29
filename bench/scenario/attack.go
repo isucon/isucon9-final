@@ -6,6 +6,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"net/http"
 
 	// "go.uber.org/zap"
 
@@ -241,6 +242,16 @@ func AttackReserveForReserved(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
+	// １回目の予約
+	_, _, err = client.Reserve(ctx,
+		train.Class, train.Name,
+		isutraindb.GetSeatClass(train.Class, carNum), validSeats,
+		departure, arrival, useAt,
+		carNum, 1, 1, "")
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
 	wg := new(sync.WaitGroup)
 
 	var successCount uint64
@@ -253,7 +264,7 @@ func AttackReserveForReserved(ctx context.Context) error {
 				train.Class, train.Name,
 				isutraindb.GetSeatClass(train.Class, carNum), validSeats,
 				departure, arrival, useAt,
-				carNum, 1, 1, "")
+				carNum, 1, 1, "", isutrain.StatusCodeOpt(http.StatusBadRequest))
 			if err != nil {
 				return
 			}
@@ -263,14 +274,6 @@ func AttackReserveForReserved(ctx context.Context) error {
 	}
 
 	wg.Wait()
-
-	if successCount == 0 {
-		err := bencherror.NewSimpleApplicationError("予約できませんでした")
-		return bencherror.BenchmarkErrs.AddError(err)
-	} else if successCount > 1 {
-		err := bencherror.NewSimpleCriticalError("二重発券されました")
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
 
 	return nil
 }

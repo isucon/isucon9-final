@@ -64,6 +64,7 @@ func (r *ReservationCacheEntry) Fare() (int, error) {
 
 	lgr := zap.S()
 	lgr.Infow("運賃取得情報",
+		"reservation_id", r.ID,
 		"departure", r.Departure,
 		"arrival", r.Arrival,
 		"train_class", r.TrainClass,

@@ -56,7 +56,7 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 					continue
 				}
 				if rawData.PaymentInfo.Amount != int64(amount) {
-					lgr.Warnf("not same amount %d != %d", rawData.PaymentInfo.Amount, amount)
+					lgr.Warnf("reservation_id (payment=%d, cache=%d): not same amount %d != %d", rawData.PaymentInfo.ReservationID, reservationID, rawData.PaymentInfo.Amount, amount)
 					return ErrInvalidReservationForPaymentAPI
 				}
 				return nil
@@ -68,7 +68,7 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 	})
 
 	if err := eg.Wait(); err != nil {
-		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(err, "予約情報と決済情報で不整合を検出しました"))
+		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(err, err.Error()))
 	}
 
 	return nil

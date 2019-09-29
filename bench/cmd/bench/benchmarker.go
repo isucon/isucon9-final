@@ -29,7 +29,8 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.AttackReserveForOtherReservation(ctx)
 
-	scenario.AttackReserveForReserved(ctx)
+	// FIXME: webappの課金情報がおかしくなる
+	// scenario.AttackReserveForReserved(ctx)
 
 	scenario.AbnormalReserveWrongSection(ctx)
 
@@ -39,6 +40,7 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
 
+	// FIXME: webappの課金情報がおかしくなる
 	// scenario.NormalVagueSearchScenario(ctx)
 
 	if config.AvailableDays > 200 { // FIXME: 値が適当
