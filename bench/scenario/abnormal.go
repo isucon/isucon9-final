@@ -145,10 +145,9 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 		isutraindb.GetSeatClass(train.Class, carNum),
 		validSeats, departure, arrival, useAt,
 		carNum, 1, 1, "",
-		isutrain.StatusCodeOpt(http.StatusBadRequest))
+		isutrain.StatusCodeOpt(http.StatusNotFound))
 	if err == nil {
-		err = bencherror.NewSimpleCriticalError("予約できない座席が予約できました")
-		return bencherror.BenchmarkErrs.AddError(err)
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "予約できない座席が予約できました"))
 	}
 
 	return nil

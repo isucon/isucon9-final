@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/scenario"
 	"go.uber.org/zap"
 )
@@ -24,32 +25,27 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.NormalScenario(ctx)
 
-	// DEBUG:
-	// scenario.NormalCancelScenario(ctx)
+	scenario.NormalCancelScenario(ctx)
 
-	// DEBUG:
-	// scenario.AttackReserveForOtherReservation(ctx)
+	scenario.AttackReserveForOtherReservation(ctx)
 
+	// FIXME: webappの課金情報がおかしくなる
 	// scenario.AttackReserveForReserved(ctx)
 
-	// DEBUG:
-	// scenario.AbnormalReserveWrongSection(ctx)
+	scenario.AbnormalReserveWrongSection(ctx)
 
-	// DEBUG:
-	// scenario.AbnormalReserveWrongSeat(ctx)
+	scenario.AbnormalReserveWrongSeat(ctx)
 
-	// DEBUG:
-	// scenario.NormalManyAmbigiousSearchScenario(ctx, 5) // 負荷レベルに合わせて大きくする
+	scenario.NormalManyAmbigiousSearchScenario(ctx, 5) // 負荷レベルに合わせて大きくする
 
-	// DEBUG:
-	// scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
+	scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
 
+	// FIXME: webappの課金情報がおかしくなる
 	// scenario.NormalVagueSearchScenario(ctx)
 
-	// DEBUG:
-	// if config.AvailableDays > 200 { // FIXME: 値が適当
-	// 	scenario.GoldenWeekScenario(ctx)
-	// }
+	if config.AvailableDays > 200 { // FIXME: 値が適当
+		scenario.GoldenWeekScenario(ctx)
+	}
 
 	return nil
 }

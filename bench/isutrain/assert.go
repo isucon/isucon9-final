@@ -2,6 +2,7 @@ package isutrain
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"golang.org/x/sync/errgroup"
@@ -80,11 +81,10 @@ func assertCancelReservation(ctx context.Context, client *Client, reservationID 
 		}
 	}
 
-	// FIXME: キャンセルされた予約が見えてしまう問題の解決
-	// _, err = client.ShowReservation(ctx, reservationID, StatusCodeOpt(http.StatusNotFound))
-	// if err != nil {
-	// 	return bencherror.NewSimpleApplicationError("キャンセルされた予約が、予約詳細で取得可能です: %d", reservationID)
-	// }
+	_, err = client.ShowReservation(ctx, reservationID, StatusCodeOpt(http.StatusNotFound))
+	if err != nil {
+		return bencherror.NewSimpleApplicationError("キャンセルされた予約が、予約詳細で取得可能です: %d", reservationID)
+	}
 
 	return nil
 }

@@ -56,10 +56,9 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 					continue
 				}
 				if rawData.PaymentInfo.Amount != int64(amount) {
-					lgr.Warnf("reservation_id (payment=%d, cache=%d): not same amount %d != %d (x %f)", rawData.PaymentInfo.ReservationID, reservationID, rawData.PaymentInfo.Amount, amount, float64(rawData.PaymentInfo.Amount)/float64(amount))
+					lgr.Warnf("reservation_id (payment=%d, cache=%d): not same amount %d != %d", rawData.PaymentInfo.ReservationID, reservationID, rawData.PaymentInfo.Amount, amount)
 					return ErrInvalidReservationForPaymentAPI
 				}
-				lgr.Warnf("reservation_id (payment=%d, cache=%d): same amount %d != %d", rawData.PaymentInfo.ReservationID, reservationID, rawData.PaymentInfo.Amount, amount)
 				return nil
 			}
 

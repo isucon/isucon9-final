@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -153,7 +152,6 @@ func (c *Client) Settings(ctx context.Context) (*SettingsResponse, error) {
 }
 
 func (c *Client) Signup(ctx context.Context, email, password string, opt ...ClientOption) error {
-	log.Printf("signup opt = %+v\n", opt)
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.Signup)
@@ -490,7 +488,6 @@ func (c *Client) Reserve(
 	}
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-		lgr.Warnf("予約リクエストのレスポンスステータス不正: %+v", err)
 		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 

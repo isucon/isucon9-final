@@ -2,6 +2,6 @@ package endpoint
 
 const (
 	// Mock
-	IsutrainMockShowReservationPath   = `=~^/api/train/reservation/(\d+)`
+	IsutrainMockShowReservationPath   = `=~^/api/user/reservations/(\d+)`
 	IsutrainMockCancelReservationPath = `=~^/reservation/(\d+)/cancel\z`
 )
