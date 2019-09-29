@@ -292,13 +292,38 @@ func NormalManyCancelScenario(ctx context.Context, counter int) error {
 	return retErr
 }
 
-// オリンピック開催期間に負荷をあげるシナリオ
-// FIXME: initializeで指定された日数に応じ、負荷レベルを変化させる
-func NormalOlympicParticipantsScenario(ctx context.Context) error {
+func NormalManyAmbigiousSearchScenario(ctx context.Context, counter int) error {
+	client, err := isutrain.NewClient()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
 
-	// NOTE: webappから見て、明らかに負荷が上がったと感じるレベルに持ってく必要がある
-	// NOTE: 指定できる最大の日数で負荷をかける際、飽和しないようにする
-	// NOTE:
+	if config.Debug {
+		client.ReplaceMockTransport()
+	}
 
-	return nil
+	useAt := xrandom.GetRandomUseAt()
+	departure, arrival := xrandom.GetRandomSection()
+
+	var retErr error
+
+	for i := 0; i < counter; i++ {
+    err = registerUserAndLogin(ctx, client)
+	  if err != nil {
+		  return bencherror.BenchmarkErrs.AddError(err)
+	  }
+
+	  _, err = client.ListStations(ctx, nil)
+	  if err != nil {
+	    return bencherror.BenchmarkErrs.AddError(err)
+	  }
+
+		_, err := createSimpleReservation(ctx, client, useAt, departure, arrival, "遅いやつ", 3, 3)
+		if err != nil {
+			bencherror.BenchmarkErrs.AddError(err)
+			retErr = err
+		}
+	}
+
+	return retErr
 }

@@ -35,7 +35,10 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.AbnormalReserveWrongSeat(ctx)
 
+	scenario.NormalManyAmbigiousSearchScenario(ctx, 5) // 負荷レベルに合わせて大きくする
+
 	scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
+
 
 	// scenario.NormalAmbigiousSearchScenario(ctx)
 
