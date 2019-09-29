@@ -49,6 +49,10 @@ func GetPath(idx EndpointIdx) string {
 	return isutrainEndpoints[idx].path
 }
 
+func GetWeight(idx EndpointIdx) int {
+	return isutrainEndpoints[idx].weight
+}
+
 func GetDynamicPath(idx EndpointIdx, args ...interface{}) string {
 	return fmt.Sprintf(isutrainDynamicEndpoints[idx].path, args...)
 }
