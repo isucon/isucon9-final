@@ -1005,32 +1005,6 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	switch req.TrainClass {
-	case "最速":
-		if !departureStation.IsStopExpress || !arrivalStation.IsStopExpress {
-			tx.Rollback()
-			errorResponse(w, http.StatusBadRequest, "最速の止まらない駅です")
-			return
-		}
-	case "中間":
-		if !departureStation.IsStopSemiExpress || !arrivalStation.IsStopSemiExpress {
-			tx.Rollback()
-			errorResponse(w, http.StatusBadRequest, "中間の止まらない駅です")
-			return
-		}
-	case "遅いやつ":
-		if !departureStation.IsStopLocal || !arrivalStation.IsStopLocal {
-			tx.Rollback()
-			errorResponse(w, http.StatusBadRequest, "遅いやつの止まらない駅です")
-			return
-		}
-	default:
-		tx.Rollback()
-		errorResponse(w, http.StatusBadRequest, "リクエストされた列車クラスが不明です")
-		log.Println(err.Error())
-		return
-	}
-
 	// リクエストされた乗車区間の駅IDを求める
 	var fromStation, toStation Station
 	query = "SELECT * FROM station_master WHERE name=?"
@@ -1061,6 +1035,32 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		tx.Rollback()
 		errorResponse(w, http.StatusInternalServerError, "降車駅データの取得に失敗しました")
+		log.Println(err.Error())
+		return
+	}
+
+	switch req.TrainClass {
+	case "最速":
+		if !fromStation.IsStopExpress || !toStation.IsStopExpress {
+			tx.Rollback()
+			errorResponse(w, http.StatusBadRequest, "最速の止まらない駅です")
+			return
+		}
+	case "中間":
+		if !fromStation.IsStopSemiExpress || !toStation.IsStopSemiExpress {
+			tx.Rollback()
+			errorResponse(w, http.StatusBadRequest, "中間の止まらない駅です")
+			return
+		}
+	case "遅いやつ":
+		if !fromStation.IsStopLocal || !toStation.IsStopLocal {
+			tx.Rollback()
+			errorResponse(w, http.StatusBadRequest, "遅いやつの止まらない駅です")
+			return
+		}
+	default:
+		tx.Rollback()
+		errorResponse(w, http.StatusBadRequest, "リクエストされた列車クラスが不明です")
 		log.Println(err.Error())
 		return
 	}

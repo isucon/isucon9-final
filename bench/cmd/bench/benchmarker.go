@@ -31,6 +31,8 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.AttackReserveForReserved(ctx)
 
+	scenario.AbnormalReserveWrongSection(ctx)
+
 	// scenario.NormalAmbigiousSearchScenario(ctx)
 
 	if config.AvailableDays > 200 { // FIXME: 値が適当
