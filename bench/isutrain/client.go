@@ -532,9 +532,9 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 		"card_token", cardToken,
 	)
 
-	b, err := json.Marshal(map[string]interface{}{
-		"reservation_id": reservationID,
-		"card_token":     cardToken,
+	b, err := json.Marshal(&CommitReservationRequest{
+		ReservationID: reservationID,
+		CardToken:     cardToken,
 	})
 	if err != nil {
 		return failure.Wrap(err, failure.Messagef("POST %s: Marshalに失敗しました", endpointPath), failureCtx)
