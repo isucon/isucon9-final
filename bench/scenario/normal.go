@@ -237,8 +237,62 @@ func NormalAmbigiousSearchScenario(ctx context.Context) error {
 	return nil
 }
 
-func NormalManyAmbigiousSearchScenario(ctx context.Context, counter int) error {
+func NormalManyCancelScenario(ctx context.Context, counter int) error {
 
+	client, err := isutrain.NewClient()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if config.Debug {
+		client.ReplaceMockTransport()
+	}
+
+	err = registerUserAndLogin(ctx, client)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	_, err = client.ListStations(ctx, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	var retErr error
+
+	cancelIds := []int{}
+
+	// たくさん予約を作る
+	for i := 0; i < counter; i++ {
+		useAt := xrandom.GetRandomUseAt()
+		departure, arrival := xrandom.GetRandomSection()
+		reservation, err := createSimpleReservation(ctx, client, useAt, departure, arrival, "遅いやつ", 3, 3)
+		if err != nil {
+			bencherror.BenchmarkErrs.AddError(err)
+			retErr = err
+			continue
+		}
+		cancelIds = append(cancelIds, reservation.ReservationID)
+	}
+
+	// 全部キャンセルする
+	for _, reservationId := range cancelIds {
+		err = client.CancelReservation(ctx, reservationId, nil)
+		if err != nil {
+			bencherror.BenchmarkErrs.AddError(err)
+			retErr = err
+		}
+	}
+
+	if err := client.Logout(ctx, nil); err != nil {
+		bencherror.BenchmarkErrs.AddError(err)
+		retErr = err
+	}
+
+	return retErr
+}
+
+func NormalManyAmbigiousSearchScenario(ctx context.Context, counter int) error {
 	client, err := isutrain.NewClient()
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
@@ -254,6 +308,16 @@ func NormalManyAmbigiousSearchScenario(ctx context.Context, counter int) error {
 	var retErr error
 
 	for i := 0; i < counter; i++ {
+    err = registerUserAndLogin(ctx, client)
+	  if err != nil {
+		  return bencherror.BenchmarkErrs.AddError(err)
+	  }
+
+	  _, err = client.ListStations(ctx, nil)
+	  if err != nil {
+	    return bencherror.BenchmarkErrs.AddError(err)
+	  }
+
 		_, err := createSimpleReservation(ctx, client, useAt, departure, arrival, "遅いやつ", 3, 3)
 		if err != nil {
 			bencherror.BenchmarkErrs.AddError(err)

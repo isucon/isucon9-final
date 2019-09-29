@@ -213,6 +213,14 @@ type ReservationResponse struct {
 	Seats         []SeatReservation `json:"seats"`
 }
 
+type CancelPaymentInformationRequest struct {
+	PaymentId string `json:"payment_id"`
+}
+
+type CancelPaymentInformationResponse struct {
+	IsOk bool `json:"is_ok"`
+}
+
 type Settings struct {
 	PaymentAPI string `json:"payment_api"`
 }
@@ -1969,6 +1977,78 @@ func userReservationCancelHandler(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, http.StatusBadRequest, "reservations naiyo")
 		return
 	}
+	if err != nil {
+		tx.Rollback()
+		errorResponse(w, http.StatusInternalServerError, "予約情報の検索に失敗しました")
+	}
+
+	switch reservation.Status {
+	case "rejected":
+		tx.Rollback()
+		errorResponse(w, http.StatusInternalServerError, "何らかの理由により予約はRejected状態です")
+		return
+	case "done":
+		// 支払いをキャンセルする
+		payInfo := CancelPaymentInformationRequest{reservation.PaymentId}
+		j, err := json.Marshal(payInfo)
+		if err != nil {
+			tx.Rollback()
+			errorResponse(w, http.StatusInternalServerError, "JSON Marshalに失敗しました")
+			log.Println(err.Error())
+			return
+		}
+
+		payment_api := os.Getenv("PAYMENT_API")
+		if payment_api == "" {
+			payment_api = "http://payment:5000"
+		}
+
+		client := &http.Client{Timeout: time.Duration(10) * time.Second}
+		req, err := http.NewRequest("DELETE", payment_api+"/payment/"+reservation.PaymentId, bytes.NewBuffer(j))
+		if err != nil {
+			tx.Rollback()
+			errorResponse(w, http.StatusInternalServerError, "HTTPリクエストの作成に失敗しました")
+			log.Println(err.Error())
+			return
+		}
+		resp, err := client.Do(req)
+		if err != nil {
+			tx.Rollback()
+			errorResponse(w, resp.StatusCode, "HTTP DELETEに失敗しました")
+			log.Println(err.Error())
+			return
+		}
+		defer resp.Body.Close()
+
+		// リクエスト失敗
+		if resp.StatusCode != http.StatusOK {
+			tx.Rollback()
+			errorResponse(w, http.StatusInternalServerError, "決済に失敗しました。支払いIDが間違っている可能性があります")
+			log.Println(resp.StatusCode)
+			return
+		}
+
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			tx.Rollback()
+			errorResponse(w, http.StatusInternalServerError, "レスポンスの読み込みに失敗しました")
+			log.Println(err.Error())
+			return
+		}
+
+		// リクエスト取り出し
+		output := CancelPaymentInformationResponse{}
+		err = json.Unmarshal(body, &output)
+		if err != nil {
+			errorResponse(w, http.StatusInternalServerError, "JSON parseに失敗しました")
+			log.Println(err.Error())
+			return
+		}
+		fmt.Println(output)
+	default:
+		// pass(requesting状態のものはpayment_id無いので叩かない)
+	}
+
 
 	query = "DELETE FROM reservations WHERE reservation_id=? AND user_id=?"
 	_, err = tx.Exec(query, itemID, user.ID)

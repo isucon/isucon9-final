@@ -42,11 +42,6 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, useAt
 		return nil, err
 	}
 
-	err = registerUserAndLogin(ctx, client)
-	if err != nil {
-		return nil, err
-	}
-
 	_, err = client.ListStations(ctx, nil)
 	if err != nil {
 		return nil, err

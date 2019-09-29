@@ -646,6 +646,12 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID int, opts 
 		"reservation_id": fmt.Sprintf("%d", reservationID),
 	}
 
+	lgr := zap.S()
+
+	lgr.Infow("予約キャンセル処理",
+		"reservation_id", reservationID,
+	)
+
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), nil)
 	if err != nil {
 		return failure.Wrap(err, failure.Messagef("POST %s: リクエストに失敗しました", endpointPath), failureCtx)

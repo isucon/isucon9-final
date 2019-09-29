@@ -129,6 +129,7 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 			s.mu.Unlock()
 
 			done <- &pb.ExecutePaymentResponse{PaymentId: guid.String(), IsOk: true}
+			return
 		}
 		log.Println("Card_Token Not Found")
 		ec <- status.Errorf(codes.NotFound, "Card_Token Not Found")
@@ -149,9 +150,11 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 		s.mu.RLock()
 		paydata, ok := s.PayInfoMap[req.PaymentId]
 		s.mu.RUnlock()
+		time.Sleep(1 * time.Second)
 		if ok {
 			paydata.IsCanceled = true
 			done <- struct{}{}
+			return
 		}
 
 		log.Println("PaymentID Not Found")
@@ -211,6 +214,7 @@ func (s *Server) GetPaymentInformation(ctx context.Context, req *pb.GetPaymentIn
 		s.mu.RUnlock()
 		if ok {
 			done <- &pb.GetPaymentInformationResponse{PaymentInformation: &id, IsOk: true}
+			return
 		}
 
 		log.Println("PaymentID Not Found")
