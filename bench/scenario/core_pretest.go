@@ -106,12 +106,12 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		departure, arrival = "東京", "大阪"
 		trainClass         = "最速"
 		trainName          = "49"
-		carNum             = 8
+		carNum             = 9
 		seatClass          = "premium"
 		adult, child       = 1, 1
 		seatType           = ""
 	)
-	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
+	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "最速", nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
