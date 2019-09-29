@@ -50,17 +50,7 @@ func reserveSingle(ctx context.Context, useAt time.Time, departure, arrival stri
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	user, err := xrandom.GetRandomUser()
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	err = client.Signup(ctx, user.Email, user.Password, nil)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	err = client.Login(ctx, user.Email, user.Password, nil)
+	err = registerUserAndLogin(ctx, client)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}

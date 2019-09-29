@@ -28,17 +28,7 @@ func NormalScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	user, err := xrandom.GetRandomUser()
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	err = client.Signup(ctx, user.Email, user.Password, nil)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	err = client.Login(ctx, user.Email, user.Password, nil)
+	err = registerUserAndLogin(ctx, client)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -134,17 +124,7 @@ func NormalCancelScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	user, err := xrandom.GetRandomUser()
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	err = client.Signup(ctx, user.Email, user.Password, nil)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	err = client.Login(ctx, user.Email, user.Password, nil)
+	err = registerUserAndLogin(ctx, client)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -245,16 +225,8 @@ func NormalAmbigiousSearchScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	user, err := xrandom.GetRandomUser()
+	err = registerUserAndLogin(ctx, client)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	if err = client.Signup(ctx, user.Email, user.Password, nil); err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	if err := client.Login(ctx, user.Email, user.Password, nil); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 

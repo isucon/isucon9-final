@@ -202,17 +202,7 @@ func AttackReserveForReserved(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	user, err := xrandom.GetRandomUser()
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	err = client.Signup(ctx, user.Email, user.Password, nil)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	err = client.Login(ctx, user.Email, user.Password, nil)
+	err = registerUserAndLogin(ctx, client)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -287,5 +277,26 @@ func AttackReserveForReserved(ctx context.Context) error {
 // 他人の予約をキャンセルしようとする
 // ちゃんと弾けなかったら失格
 func AttackReserveForOtherReservation(ctx context.Context) error {
+	// lgr := zap.S()
+
+	// ISUTRAIN APIのクライアントを作成
+	client, err := isutrain.NewClient()
+	if err != nil {
+		// 実行中のエラーは `bencherror.BenchmarkErrs.AddError(err)` に投げる
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	// デバッグの場合はモックに差し替える
+	// NOTE: httpmockというライブラリが、http.Transporterを差し替えてエンドポイントをマウントする都合上、この処理が必要です
+	//       この処理がないと、テスト実行時に存在しない宛先にリクエストを送り、失敗します
+	if config.Debug {
+		client.ReplaceMockTransport()
+	}
+
+	err = registerUserAndLogin(ctx, client)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
 	return nil
 }
