@@ -1269,6 +1269,26 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	default:
+		// 座席情報のValidate
+		seatList := Seat{}
+		for _, z := range req.Seats {
+			fmt.Println("XXXX", z)
+			query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=? AND seat_class=?"
+			err = dbx.Get(
+				&seatList, query,
+				req.TrainClass,
+				req.CarNumber,
+				z.Column,
+				z.Row,
+				req.SeatClass,
+			)
+			if err != nil {
+				tx.Rollback()
+				errorResponse(w, http.StatusNotFound, "リクエストされた座席情報は存在しません。号車・喫煙席・座席クラスなど組み合わせを見直してください")
+				log.Println(err.Error())
+				return
+			}
+		}
 		break
 	}
 
@@ -1371,26 +1391,6 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if secdup {
-			// 座席情報のValidate
-			seatList := Seat{}
-			for _, z := range req.Seats {
-				query = "SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=? AND seat_class=? AND is_smoking_seat=?"
-				err = dbx.Get(
-					&seatList, query,
-					req.TrainClass,
-					req.CarNumber,
-					z.Column,
-					z.Row,
-					req.SeatClass,
-					req.IsSmokingSeat,
-				)
-				if err != nil {
-					tx.Rollback()
-					errorResponse(w, http.StatusNotFound, "リクエストされた座席情報は存在しません。号車・喫煙席・座席クラスなど組み合わせを見直してください")
-					log.Println(err.Error())
-					return
-				}
-			}
 
 			// 区間重複の場合は更に座席の重複をチェックする
 			SeatReservations := []SeatReservation{}

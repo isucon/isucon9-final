@@ -234,7 +234,7 @@ func AttackReserveForReserved(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	validSeats, err := assertListTrainSeats(seatResp)
+	validSeats, err := assertListTrainSeats(seatResp, 2)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}

@@ -69,3 +69,16 @@ func GetRandomUser() (*User, error) {
 		Password: passwdRandomStr,
 	}, nil
 }
+
+func GetRandomCarNumber(trainClass, seatClass string) int {
+	l := []int{}
+
+	for carNum := 1; carNum <= 16; carNum++ {
+		if GetSeatClass(trainClass, carNum) == seatClass {
+			l = append(l, carNum)
+		}
+	}
+
+	idx := rand.Intn(len(l))
+	return l[idx]
+}
