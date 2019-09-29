@@ -25,7 +25,7 @@ func registerUserAndLogin(ctx context.Context, client *isutrain.Client, user *is
 	return nil
 }
 
-func createSimpleReservation(ctx context.Context, client *isutrain.Client, useAt time.Time, departure, arrival, train_class string, adult, child int) (*isutrain.ReservationResponse, error) {
+func createSimpleReservation(ctx context.Context, client *isutrain.Client, user *isutrain.User, useAt time.Time, departure, arrival, train_class string, adult, child int) (*isutrain.ReservationResponse, error) {
 	/* 予約を作成する */
 
 	// lgr := zap.S()
@@ -53,7 +53,7 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, useAt
 
 	train := trains[0]
 
-	_, reservation, err := client.Reserve(ctx,
+	reserveReq, reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		"premium", isutrain.TrainSeats{},
 		departure, arrival, useAt,
@@ -62,19 +62,21 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, useAt
 		return nil, err
 	}
 
-	// FIXME: assertReserve
+	if err := assertReserve(ctx, client, user, reserveReq, reserveResp); err != nil {
+		return nil, err
+	}
 
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
 	if err != nil {
 		return nil, err
 	}
 
-	err = client.CommitReservation(ctx, reservation.ReservationID, cardToken, nil)
+	err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return reservation, nil
+	return reserveResp, nil
 }
 
 func payForReservation(ctx context.Context, client *isutrain.Client, paymentClient *payment.Client, reservationId int) error {

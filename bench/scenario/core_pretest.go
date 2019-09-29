@@ -71,12 +71,17 @@ func pretestStaticFiles(ctx context.Context, client *isutrain.Client, assets []*
 func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paymentClient *payment.Client) {
 	// FIXME: 最初から登録されて入る、２つくらいのユーザで試す
 
-	if err := client.Signup(ctx, "hoge@example.com", "hoge", nil); err != nil {
+	user := &isutrain.User{
+		Email: "hoge@example.com",
+		Password: "hoge",
+	}
+
+	if err := client.Signup(ctx, user.Email, user.Password, nil); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
-	if err := client.Login(ctx, "hoge@example.com", "hoge", nil); err != nil {
+	if err := client.Login(ctx, user.Email, user.Password, nil); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}
@@ -127,7 +132,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	_, reservation, err := client.Reserve(ctx, trainClass, trainName, seatClass, validSeats, departure, arrival,
+	reserveReq, reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, validSeats, departure, arrival,
 		useAt,
 		carNum, adult, child, seatType, nil)
 	if err != nil {
@@ -135,7 +140,9 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	// TODO: assertReserve
+	if err := assertReserve(ctx, client, user, reserveReq, reserveResp); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+	}
 
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
 	if err != nil {
@@ -143,14 +150,18 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	if err = client.CommitReservation(ctx, reservation.ReservationID, cardToken, nil); err != nil {
+	if err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken, nil); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
-	if err := client.CancelReservation(ctx, reservation.ReservationID, nil); err != nil {
+	if err := client.CancelReservation(ctx, reserveResp.ReservationID, nil); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
+	}
+
+	if err := assertCancelReservation(ctx, client, reserveResp.ReservationID); err != nil {
+		bencherror.PreTestErrs.AddError(err)
 	}
 }
 
