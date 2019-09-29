@@ -18,7 +18,7 @@ func TestServer(t *testing.T) {
 	}
 	g := grpc.NewServer()
 
-	s, err := NewNetworkServer(nil)
+	s, err := NewNetworkServer()
 	if err != nil {
 		t.Fatalf("failed to create new server:%s", err)
 	}
@@ -162,6 +162,16 @@ func TestServer(t *testing.T) {
 		r, err := c.ExecutePayment(ctx, &pb.ExecutePaymentRequest{PaymentInformation: pay})
 		if err == nil {
 			t.Fatal("should failed")
+		}
+		t.Logf("%#v", r)
+	})
+
+	t.Run("CancelPayment with invalid parameters", func(t *testing.T) {
+		ctx := context.Background()
+		payid = "a" // insert invalid paymentid
+		r, err := c.CancelPayment(ctx, &pb.CancelPaymentRequest{PaymentId: payid})
+		if err == nil {
+			t.Fatalf("Should fail. %s\n",err)
 		}
 		t.Logf("%#v", r)
 	})
