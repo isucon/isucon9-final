@@ -1142,7 +1142,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 			for _, seat := range seatList {
 				s := SeatInformation{seat.SeatRow, seat.SeatColumn, seat.SeatClass, seat.IsSmokingSeat, false}
 				seatReservationList := []SeatReservation{}
-				query = "SELECT s.* FROM seat_reservations s, reservations r WHERE r.date=? AND r.train_class=? AND r.train_name=? AND car_number=? AND seat_row=? AND seat_column=?"
+				query = "SELECT s.* FROM seat_reservations s, reservations r WHERE r.date=? AND r.train_class=? AND r.train_name=? AND car_number=? AND seat_row=? AND seat_column=? FOR UPDATE"
 				err = dbx.Select(
 					&seatReservationList, query,
 					date.Format("2006/01/02"),
@@ -1160,7 +1160,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 				for _, seatReservation := range seatReservationList {
 					reservation := Reservation{}
-					query = "SELECT * FROM reservations WHERE reservation_id=?"
+					query = "SELECT * FROM reservations WHERE reservation_id=? FOR UPDATE"
 					err = dbx.Get(&reservation, query, seatReservation.ReservationId)
 					if err != nil {
 						panic(err)
@@ -1274,7 +1274,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 当該列車・列車名の予約一覧取得
 	reservations := []Reservation{}
-	query = "SELECT * FROM reservations WHERE date=? AND train_class=? AND train_name=?"
+	query = "SELECT * FROM reservations WHERE date=? AND train_class=? AND train_name=? FOR UPDATE"
 	err = tx.Select(
 		&reservations, query,
 		date.Format("2006/01/02"),
@@ -1394,7 +1394,7 @@ func trainReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 			// 区間重複の場合は更に座席の重複をチェックする
 			SeatReservations := []SeatReservation{}
-			query := "SELECT * FROM seat_reservations WHERE reservation_id=?"
+			query := "SELECT * FROM seat_reservations WHERE reservation_id=? FOR UPDATE"
 			err = tx.Select(
 				&SeatReservations, query,
 				reservation.ReservationId,
