@@ -47,6 +47,22 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 
 		for _, reservation := range reservations {
 			if reservation.ReservationID == resp.ReservationID {
+				// Amountのチェック
+				cache, ok := ReservationCache.Reservation(reservation.ReservationID)
+				if !ok {
+					// 認識していない予約 (Slack通知)
+					return bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
+				}
+
+				amount, err := cache.Amount()
+				if err != nil {
+					return bencherror.NewSimpleCriticalError("予約一覧画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID)
+				}
+
+				if int64(amount) != reservation.Amount {
+					return bencherror.NewSimpleCriticalError("予約一覧画面における、予約 %dの amountが一致しません: want=%d, got=%d", reservation.ReservationID, amount, reservation.Amount)
+				}
+
 				return nil
 			}
 		}
@@ -54,14 +70,31 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 		return bencherror.NewSimpleCriticalError("予約した内容を予約一覧画面で確認できませんでした")
 	})
 	// 予約確認できるか
-	// reserveGrp.Go(func() error {
-	// 	_, err := client.ShowReservation(ctx, resp.ReservationID)
-	// 	if err != nil {
-	// 		return bencherror.NewCriticalError(err, "予約した内容を予約確認画面で確認できませんでした")
-	// 	}
+	reserveGrp.Go(func() error {
+		reservation, err := client.ShowReservation(ctx, resp.ReservationID)
+		if err != nil {
+			return bencherror.NewCriticalError(err, "予約した内容を予約確認画面で確認できませんでした")
+		}
 
-	// 	return nil
-	// })
+		// Amountのチェック
+		cache, ok := ReservationCache.Reservation(reservation.ReservationID)
+		if !ok {
+			// 認識していない予約 (Slack通知)
+			return bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
+		}
+
+		amount, err := cache.Amount()
+		if err != nil {
+			return bencherror.NewSimpleCriticalError("予約確認画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID)
+		}
+
+		if int64(amount) != reservation.Amount {
+			return bencherror.NewSimpleCriticalError("予約確認画面における、予約 %dの amountが一致しません: want=%d, got=%d", reservation.ReservationID, amount, reservation.Amount)
+		}
+
+		return nil
+	})
+
 	if err := reserveGrp.Wait(); err != nil {
 		return err
 	}
