@@ -352,17 +352,21 @@ func NormalManyAmbigiousSearchScenario(ctx context.Context, counter int) error {
 	var retErr error
 
 	for i := 0; i < counter; i++ {
-    err = registerUserAndLogin(ctx, client)
-	  if err != nil {
-		  return bencherror.BenchmarkErrs.AddError(err)
-	  }
+		user, err := xrandom.GetRandomUser()
+		if err != nil {
+			return bencherror.BenchmarkErrs.AddError(err)
+		}
+		err = registerUserAndLogin(ctx, client, user)
+		if err != nil {
+			return bencherror.BenchmarkErrs.AddError(err)
+		}
 
-	  _, err = client.ListStations(ctx, nil)
-	  if err != nil {
-	    return bencherror.BenchmarkErrs.AddError(err)
-	  }
+		_, err = client.ListStations(ctx, nil)
+		if err != nil {
+			return bencherror.BenchmarkErrs.AddError(err)
+		}
 
-		_, err := createSimpleReservation(ctx, client, useAt, departure, arrival, "遅いやつ", 3, 3)
+		_, err = createSimpleReservation(ctx, client, useAt, departure, arrival, "遅いやつ", 3, 3)
 		if err != nil {
 			bencherror.BenchmarkErrs.AddError(err)
 			retErr = err
