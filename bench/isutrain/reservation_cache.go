@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -108,14 +107,29 @@ var (
 )
 
 type reservationCache struct {
-	mu           sync.RWMutex
-	reservations []*ReservationCacheEntry
+	mu sync.RWMutex
+	// reservationID -> ReservationCacheEntry
+	reservations map[int]*ReservationCacheEntry
+	// reservations []*ReservationCacheEntry
 }
 
 func newReservationCache() *reservationCache {
 	return &reservationCache{
-		reservations: []*ReservationCacheEntry{},
+		reservations: map[int]*ReservationCacheEntry{},
+		// reservations: []*ReservationCacheEntry{},
 	}
+}
+
+func (r *reservationCache) Reservation(reservationID int) (*ReservationCacheEntry, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	reservation, ok := r.reservations[reservationID]
+	if !ok {
+		return nil, false
+	}
+
+	return reservation, true
 }
 
 // 予約可能判定
@@ -215,7 +229,7 @@ func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID in
 	defer r.mu.Unlock()
 
 	// TODO: webappから意図的にreservationIDを細工して変に整合性つけることができないか考える
-	r.reservations = append(r.reservations, &ReservationCacheEntry{
+	r.reservations[reservationID] = &ReservationCacheEntry{
 		User:       user,
 		ID:         reservationID,
 		Date:       req.Date,
@@ -229,21 +243,16 @@ func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID in
 		Adult:      req.Adult,
 		Child:      req.Child,
 		UseAt:      req.Date,
-	})
+	}
 }
 
 func (r *reservationCache) Cancel(reservationID int) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	for idx, reservation := range r.reservations {
-		if reservation.ID == reservationID {
-			r.reservations = append(r.reservations[:idx], r.reservations[idx+1:]...)
-			return nil
-		}
-	}
+	delete(r.reservations, reservationID)
 
-	return bencherror.NewApplicationError(ErrCancelReservation, "予約が存在しません")
+	return nil
 }
 
 func (r *reservationCache) Range(f func(reservation *ReservationCacheEntry)) {

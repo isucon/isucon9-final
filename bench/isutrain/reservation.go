@@ -70,5 +70,6 @@ type CommitReservationRequest struct {
 }
 
 type ShowReservationResponse struct {
-	ReservationID int `json:"reservation_id"`
+	ReservationID int   `json:"reservation_id"`
+	Amount        int64 `json:"amount"`
 }
