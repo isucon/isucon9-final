@@ -261,7 +261,7 @@ func NormalVagueSearchScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	reserveReq, reservation, err := client.Reserve(ctx,
+	reserveReq, reserveResp, err := client.Reserve(ctx,
 		"最速", "1", "premium", isutrain.TrainSeats{},
 		"東京", "大阪", time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		1, 1, 1, "isle", nil)
@@ -269,7 +269,7 @@ func NormalVagueSearchScenario(ctx context.Context) error {
 		bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	if err := assertReserve(ctx, client, user, reserveReq, reservation); err != nil {
+	if err := assertReserve(ctx, client, user, reserveReq, reserveResp); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
@@ -310,7 +310,7 @@ func NormalManyCancelScenario(ctx context.Context, counter int) error {
 	for i := 0; i < counter; i++ {
 		useAt := xrandom.GetRandomUseAt()
 		departure, arrival := xrandom.GetRandomSection()
-		reservation, err := createSimpleReservation(ctx, client, useAt, departure, arrival, "遅いやつ", 3, 3)
+		reservation, err := createSimpleReservation(ctx, client, user, useAt, departure, arrival, "遅いやつ", 3, 3)
 		if err != nil {
 			bencherror.BenchmarkErrs.AddError(err)
 			retErr = err
@@ -366,7 +366,7 @@ func NormalManyAmbigiousSearchScenario(ctx context.Context, counter int) error {
 			return bencherror.BenchmarkErrs.AddError(err)
 		}
 
-		_, err = createSimpleReservation(ctx, client, useAt, departure, arrival, "遅いやつ", 3, 3)
+		_, err = createSimpleReservation(ctx, client, user, useAt, departure, arrival, "遅いやつ", 3, 3)
 		if err != nil {
 			bencherror.BenchmarkErrs.AddError(err)
 			retErr = err

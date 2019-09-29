@@ -86,7 +86,7 @@ func GoldenWeekScenario(ctx context.Context) error {
 				return
 			}
 
-			_, err = createSimpleReservation(ctx, client, GoldenWeekStartDate, departure, arrival, "最速", 1, 1)
+			_, err = createSimpleReservation(ctx, client, user, GoldenWeekStartDate, departure, arrival, "最速", 1, 1)
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(err)
 				totalErr = err

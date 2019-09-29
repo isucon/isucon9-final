@@ -4,11 +4,13 @@ import (
 	"context"
 	"math/rand"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	// "go.uber.org/zap"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/cache"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
@@ -246,24 +248,24 @@ func AttackReserveForReserved(ctx context.Context) error {
 	}
 
 	wg := new(sync.WaitGroup)
-	m := new(sync.Mutex)
 
-	successCount := 0
+	var successCount uint64
 
 	for i := 0; i < 10; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			_, _, err := client.Reserve(ctx,
+			reserveReq, reserveResp, err := client.Reserve(ctx,
 				train.Class, train.Name,
 				isutraindb.GetSeatClass(train.Class, carNum), validSeats,
 				departure, arrival, useAt,
 				carNum, 1, 1, "", nil)
-			if err == nil {
-				m.Lock()
-				successCount += 1
-				m.Unlock()
+			if err != nil {
+				return
 			}
+
+			atomic.AddUint64(&successCount, 1)
+			cache.ReservationCache.Add(user, reserveReq, reserveResp.ReservationID)
 		}()
 	}
 
@@ -317,7 +319,7 @@ func AttackReserveForOtherReservation(ctx context.Context) error {
 
 	useAt := xrandom.GetRandomUseAt()
 	departure, arrival := xrandom.GetRandomSection()
-	reservation, err := createSimpleReservation(ctx, client, useAt, departure, arrival, "遅いやつ", 1, 1)
+	reservation, err := createSimpleReservation(ctx, client, user1, useAt, departure, arrival, "遅いやつ", 1, 1)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
