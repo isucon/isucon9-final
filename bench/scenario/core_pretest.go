@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"errors"
+	"net/http"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/assets"
@@ -100,7 +101,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		departure, arrival = "東京", "大阪"
 		trainClass         = "最速"
 		trainName          = "49"
-		carNum             = 8
+		carNum             = 4
 		seatClass          = "premium"
 		adult, child       = 1, 1
 		seatType           = "isle"
@@ -126,13 +127,15 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	reservation, err := client.Reserve(ctx, trainClass, trainName, seatClass, validSeats, departure, arrival,
+	_, reservation, err := client.Reserve(ctx, trainClass, trainName, seatClass, validSeats, departure, arrival,
 		useAt,
 		carNum, adult, child, seatType, nil)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}
+
+	// TODO: assertReserve
 
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
 	if err != nil {
@@ -159,8 +162,8 @@ func pretestNormalSearch(ctx context.Context, client *isutrain.Client) {
 
 // PreTestAbnormalLogin は不正なパスワードでのログインを試みます
 func pretestAbnormalLogin(ctx context.Context, client *isutrain.Client) {
-	if err := client.Login(ctx, "username", "password", isutrain.&isutrain.ClientOption{
-		WantStatusCode: http.StatusUnauthorized,
+	if err := client.Login(ctx, "username", "password", &isutrain.ClientOption{
+		WantStatusCode: http.StatusForbidden,
 	}); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
