@@ -80,7 +80,7 @@ func GoldenWeekScenario(ctx context.Context) error {
 				return
 			}
 
-			_, err = client.ListStations(ctx, nil)
+			_, err = client.ListStations(ctx)
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(err)
 				return

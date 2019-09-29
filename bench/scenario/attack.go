@@ -10,7 +10,6 @@ import (
 	// "go.uber.org/zap"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
-	"github.com/chibiegg/isucon9-final/bench/internal/cache"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
@@ -45,7 +44,7 @@ func AttackSearchScenario(ctx context.Context) error {
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(err)
 			}
-			err = client.Login(ctx, user.Email, user.Password, nil)
+			err = client.Login(ctx, user.Email, user.Password)
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(err)
 				return
@@ -60,7 +59,7 @@ func AttackSearchScenario(ctx context.Context) error {
 						useAt    = xrandom.GetRandomUseAt()
 						from, to = xrandom.GetRandomSection()
 					)
-					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, "", nil)
+					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, "")
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 						return
@@ -92,7 +91,7 @@ func AttackSearchScenario(ctx context.Context) error {
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします"))
 			}
-			err = client.Login(ctx, user.Email, user.Password, nil)
+			err = client.Login(ctx, user.Email, user.Password)
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(err)
 				return
@@ -107,7 +106,7 @@ func AttackSearchScenario(ctx context.Context) error {
 						useAt              = xrandom.GetRandomUseAt()
 						departure, arrival = xrandom.GetRandomSection()
 					)
-					trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
+					trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "")
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 					}
@@ -119,7 +118,7 @@ func AttackSearchScenario(ctx context.Context) error {
 					train := trains[trainIdx]
 					carNum := 8
 
-					_, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival, nil)
+					_, _, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 						return
@@ -161,7 +160,7 @@ func AttackLoginScenario(ctx context.Context) error {
 						client.ReplaceMockTransport()
 					}
 
-					err = client.Login(loginCtx, "hoge", "hoge", nil)
+					err = client.Login(loginCtx, "hoge", "hoge")
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
 						return
@@ -215,14 +214,14 @@ func AttackReserveForReserved(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListStations(ctx, nil)
+	_, err = client.ListStations(ctx)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	useAt := xrandom.GetRandomUseAt()
 	departure, arrival := xrandom.GetRandomSection()
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "遅いやつ", nil)
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "遅いやつ")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -235,14 +234,9 @@ func AttackReserveForReserved(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := 9
-	seatResp, err := client.ListTrainSeats(ctx,
+	_, validSeats, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, departure, arrival, nil)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	validSeats, err := assertListTrainSeats(seatResp, 2)
+		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -255,17 +249,16 @@ func AttackReserveForReserved(ctx context.Context) error {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			reserveReq, reserveResp, err := client.Reserve(ctx,
+			_, _, err := client.Reserve(ctx,
 				train.Class, train.Name,
 				isutraindb.GetSeatClass(train.Class, carNum), validSeats,
 				departure, arrival, useAt,
-				carNum, 1, 1, "", nil)
+				carNum, 1, 1, "")
 			if err != nil {
 				return
 			}
 
 			atomic.AddUint64(&successCount, 1)
-			cache.ReservationCache.Add(user, reserveReq, reserveResp.ReservationID)
 		}()
 	}
 
@@ -324,7 +317,7 @@ func AttackReserveForOtherReservation(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	err = client.Logout(ctx, nil)
+	err = client.Logout(ctx)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -335,7 +328,7 @@ func AttackReserveForOtherReservation(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	err = client.CancelReservation(ctx, reservation.ReservationID, nil)
+	err = client.CancelReservation(ctx, reservation.ReservationID)
 	if err == nil {
 		err = bencherror.NewSimpleCriticalError("他のユーザーの予約がキャンセルできました")
 		return bencherror.BenchmarkErrs.AddError(err)

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -25,13 +26,16 @@ var (
 	ErrTrainSeatsNotFound = errors.New("列車の座席が見つかりませんでした")
 )
 
-type ClientOption struct {
-	WantStatusCode int
-}
+// type ClientOption struct {
+// 	WantStatusCode int
+// 	AutoAssert     bool
+// }
 
 type Client struct {
 	sess    *Session
 	baseURL *url.URL
+
+	loginUser *User
 }
 
 func NewClient() (*Client, error) {
@@ -148,7 +152,9 @@ func (c *Client) Settings(ctx context.Context) (*SettingsResponse, error) {
 	return settings, nil
 }
 
-func (c *Client) Signup(ctx context.Context, email, password string, opts *ClientOption) error {
+func (c *Client) Signup(ctx context.Context, email, password string, opt ...ClientOption) error {
+	log.Printf("signup opt = %+v\n", opt)
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.Signup)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -174,14 +180,8 @@ func (c *Client) Signup(ctx context.Context, email, password string, opts *Clien
 	}
 	defer resp.Body.Close()
 
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK))
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode))
-		}
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode))
 	}
 
 	endpoint.IncPathCounter(endpoint.Signup)
@@ -189,15 +189,18 @@ func (c *Client) Signup(ctx context.Context, email, password string, opts *Clien
 	return nil
 }
 
-func (c *Client) Login(ctx context.Context, email, password string, opts *ClientOption) error {
+func (c *Client) Login(ctx context.Context, email, password string, opt ...ClientOption) error {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.Login)
 	u.Path = filepath.Join(u.Path, endpointPath)
 
-	b, err := json.Marshal(&User{
+	loginUser := &User{
 		Email:    email,
 		Password: password,
-	})
+	}
+
+	b, err := json.Marshal(loginUser)
 	if err != nil {
 		return failure.Wrap(err, failure.Messagef("POST %s: リクエストに失敗しました", endpointPath))
 	}
@@ -215,22 +218,19 @@ func (c *Client) Login(ctx context.Context, email, password string, opts *Client
 	}
 	defer resp.Body.Close()
 
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK))
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode))
-		}
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK))
 	}
+
+	c.loginUser = loginUser
 
 	endpoint.IncPathCounter(endpoint.Login)
 
 	return nil
 }
 
-func (c *Client) Logout(ctx context.Context, opts *ClientOption) error {
+func (c *Client) Logout(ctx context.Context, opt ...ClientOption) error {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.Logout)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -245,22 +245,16 @@ func (c *Client) Logout(ctx context.Context, opts *ClientOption) error {
 	}
 	defer resp.Body.Close()
 
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK))
-
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode))
-		}
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK))
 	}
 
 	return nil
 }
 
 // ListStations は駅一覧列挙APIです
-func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Station, error) {
+func (c *Client) ListStations(ctx context.Context, opt ...ClientOption) ([]*Station, error) {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.ListStations)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -276,14 +270,8 @@ func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Stati
 	}
 	defer resp.Body.Close()
 
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return []*Station{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK))
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return []*Station{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode))
-		}
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return []*Station{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode))
 	}
 
 	var stations []*Station
@@ -297,7 +285,8 @@ func (c *Client) ListStations(ctx context.Context, opts *ClientOption) ([]*Stati
 }
 
 // SearchTrains は 列車検索APIです
-func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, train_class string, opts *ClientOption) (Trains, error) {
+func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, train_class string, opt ...ClientOption) (Trains, error) {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.SearchTrains)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -326,15 +315,8 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, tr
 	}
 	defer resp.Body.Close()
 
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return Trains{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
-
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return Trains{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
-		}
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return Trains{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
 	var trains Trains
@@ -348,10 +330,13 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, tr
 	return trains, nil
 }
 
-func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass, trainName string, carNum int, departure, arrival string, opts *ClientOption) (*TrainSeatSearchResponse, error) {
+func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass, trainName string, carNum int, departure, arrival string, opt ...ClientOption) (*TrainSeatSearchResponse, TrainSeats, error) {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.ListTrainSeats)
 	u.Path = filepath.Join(u.Path, endpointPath)
+
+	seats := TrainSeats{}
 
 	failureCtx := failure.Context{
 		"date":        util.FormatISO8601(date),
@@ -366,7 +351,7 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		lgr.Warnf("座席列挙 リクエスト作成に失敗: %+v", err)
-		return nil, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
+		return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
 	}
 
 	query := req.URL.Query()
@@ -390,36 +375,34 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 	resp, err := c.sess.do(req)
 	if err != nil {
 		lgr.Warnf("座席列挙リクエスト失敗: %+v", err)
-		return nil, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
+		return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusNotFound || resp.StatusCode == http.StatusBadRequest {
-		// NOTE: 検索結果が見つからないことはあるので、その場合はスルーするように実装
-		return nil, failure.Wrap(err, failure.Messagef("GET %s: 検索結果が空です", endpointPath), failureCtx)
-	}
-
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
-			return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
-			return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode), failureCtx)
-		}
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
+		return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
 	var listTrainSeatsResp *TrainSeatSearchResponse
 	if err := json.NewDecoder(resp.Body).Decode(&listTrainSeatsResp); err != nil {
 		lgr.Warnf("座席列挙Unmarshal失敗: %+v", err)
-		return nil, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath), failureCtx)
+		return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath), failureCtx)
+	}
+
+	// NotFound、あるいはBadRequestの場合、座席を得ることはできない
+	if opts.autoAssert && (resp.StatusCode == http.StatusNotFound || resp.StatusCode == http.StatusBadRequest) {
+		validSeats, err := assertListTrainSeats(listTrainSeatsResp, opts.trainSeatsCount)
+		if err != nil {
+			return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: 座席検索の結果、座席が空になっています", endpointPath))
+		}
+
+		seats = validSeats
 	}
 
 	endpoint.IncPathCounter(endpoint.ListTrainSeats)
 
-	return listTrainSeatsResp, nil
+	return listTrainSeatsResp, seats, nil
 }
 
 func (c *Client) Reserve(
@@ -432,8 +415,9 @@ func (c *Client) Reserve(
 	carNum int,
 	child, adult int,
 	typ string,
-	opts *ClientOption,
+	opt ...ClientOption,
 ) (*ReserveRequest, *ReservationResponse, error) {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.Reserve)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -495,16 +479,9 @@ func (c *Client) Reserve(
 	}
 	defer resp.Body.Close()
 
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			lgr.Warnf("予約リクエストのレスポンスステータス不正: %+v", err)
-			return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			lgr.Warnf("予約リクエストのレスポンスステータス不正: %+v", err)
-			return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode), failureCtx)
-		}
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		lgr.Warnf("予約リクエストのレスポンスステータス不正: %+v", err)
+		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
 	var reservation *ReservationResponse
@@ -513,15 +490,24 @@ func (c *Client) Reserve(
 		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: JSONのUnmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
+	if opts.autoAssert {
+		if err := assertReserve(ctx, c, reserveReq, reservation); err != nil {
+			return reserveReq, nil, err
+		}
+	}
+
 	endpoint.IncPathCounter(endpoint.Reserve)
 	if SeatAvailability(seatClass) != SaNonReserved {
 		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
 	}
 
+	ReservationCache.Add(c.loginUser, reserveReq, reservation.ReservationID)
+
 	return reserveReq, reservation, nil
 }
 
-func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardToken string, opts *ClientOption) error {
+func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardToken string, opt ...ClientOption) error {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.CommitReservation)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -557,14 +543,8 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 	}
 	defer resp.Body.Close()
 
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode), failureCtx)
-		}
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
 	endpoint.IncPathCounter(endpoint.CommitReservation)
@@ -572,7 +552,8 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 	return nil
 }
 
-func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*ReservationResponse, error) {
+func (c *Client) ListReservations(ctx context.Context, opt ...ClientOption) ([]*ReservationResponse, error) {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.ListReservations)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -588,14 +569,8 @@ func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*R
 	}
 	defer resp.Body.Close()
 
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK))
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode))
-		}
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode))
 	}
 
 	var reservations []*ReservationResponse
@@ -608,7 +583,8 @@ func (c *Client) ListReservations(ctx context.Context, opts *ClientOption) ([]*R
 	return reservations, nil
 }
 
-func (c *Client) ShowReservation(ctx context.Context, reservationID int, opts *ClientOption) (*ReservationResponse, error) {
+func (c *Client) ShowReservation(ctx context.Context, reservationID int, opt ...ClientOption) (*ReservationResponse, error) {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetDynamicPath(endpoint.ShowReservation, reservationID)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -627,6 +603,10 @@ func (c *Client) ShowReservation(ctx context.Context, reservationID int, opts *C
 		return nil, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
 	}
 
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode))
+	}
+
 	var reservation *ReservationResponse
 	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
 		return nil, failure.Wrap(err, failure.Messagef("GET %s: Unmarshalに失敗しました", endpointPath), failureCtx)
@@ -637,7 +617,8 @@ func (c *Client) ShowReservation(ctx context.Context, reservationID int, opts *C
 	return reservation, nil
 }
 
-func (c *Client) CancelReservation(ctx context.Context, reservationID int, opts *ClientOption) error {
+func (c *Client) CancelReservation(ctx context.Context, reservationID int, opt ...ClientOption) error {
+	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetDynamicPath(endpoint.CancelReservation, reservationID)
 	u.Path = filepath.Join(u.Path, endpointPath)
@@ -663,13 +644,13 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID int, opts 
 	}
 	defer resp.Body.Close()
 
-	if opts == nil {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, http.StatusOK); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, http.StatusOK), failureCtx)
-		}
-	} else {
-		if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.WantStatusCode); err != nil {
-			return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.WantStatusCode), failureCtx)
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
+	}
+
+	if opts.autoAssert {
+		if err := assertCancelReservation(ctx, c, reservationID); err != nil {
+			return err
 		}
 	}
 

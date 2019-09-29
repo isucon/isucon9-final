@@ -72,21 +72,21 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	// FIXME: 最初から登録されて入る、２つくらいのユーザで試す
 
 	user := &isutrain.User{
-		Email: "hoge@example.com",
+		Email:    "hoge@example.com",
 		Password: "hoge",
 	}
 
-	if err := client.Signup(ctx, user.Email, user.Password, nil); err != nil {
+	if err := client.Signup(ctx, user.Email, user.Password); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
-	if err := client.Login(ctx, user.Email, user.Password, nil); err != nil {
+	if err := client.Login(ctx, user.Email, user.Password); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
-	_, err := client.ListStations(ctx, nil)
+	_, err := client.ListStations(ctx)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
@@ -106,42 +106,32 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		departure, arrival = "東京", "大阪"
 		trainClass         = "最速"
 		trainName          = "49"
-		carNum             = 8
+		carNum             = 9
 		seatClass          = "premium"
 		adult, child       = 1, 1
 		seatType           = ""
 	)
-	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
+	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "最速")
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
 	// FIXME: 日付、列車クラス、名前、車両番号、乗車駅降車駅を指定
-	seatsResp, err := client.ListTrainSeats(ctx,
+	_, validSeats, err := client.ListTrainSeats(ctx,
 		useAt,
-		trainClass, trainName, carNum, departure, arrival, nil)
+		trainClass, trainName, carNum, departure, arrival)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
-	validSeats, err := assertListTrainSeats(seatsResp, 2)
-	if err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	reserveReq, reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, validSeats, departure, arrival,
+	_, reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, validSeats, departure, arrival,
 		useAt,
-		carNum, adult, child, seatType, nil)
+		carNum, adult, child, seatType)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
-	}
-
-	if err := assertReserve(ctx, client, user, reserveReq, reserveResp); err != nil {
-		bencherror.PreTestErrs.AddError(err)
 	}
 
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
@@ -150,18 +140,14 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	if err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken, nil); err != nil {
+	if err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}
 
-	if err := client.CancelReservation(ctx, reserveResp.ReservationID, nil); err != nil {
+	if err := client.CancelReservation(ctx, reserveResp.ReservationID); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
-	}
-
-	if err := assertCancelReservation(ctx, client, reserveResp.ReservationID); err != nil {
-		bencherror.PreTestErrs.AddError(err)
 	}
 }
 
@@ -173,9 +159,7 @@ func pretestNormalSearch(ctx context.Context, client *isutrain.Client) {
 
 // PreTestAbnormalLogin は不正なパスワードでのログインを試みます
 func pretestAbnormalLogin(ctx context.Context, client *isutrain.Client) {
-	if err := client.Login(ctx, "username", "password", &isutrain.ClientOption{
-		WantStatusCode: http.StatusForbidden,
-	}); err != nil {
+	if err := client.Login(ctx, "username", "password", isutrain.StatusCodeOpt(http.StatusForbidden)); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}

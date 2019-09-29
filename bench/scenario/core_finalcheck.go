@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
-	"github.com/chibiegg/isucon9-final/bench/internal/cache"
+
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/payment"
 	"go.uber.org/zap"
@@ -38,7 +38,7 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 	}
 
 	eg := &errgroup.Group{}
-	cache.ReservationCache.Range(func(reservation *cache.Reservation) {
+	isutrain.ReservationCache.Range(func(reservation *isutrain.ReservationCacheEntry) {
 		var (
 			reservationID = reservation.ID
 			amount, err   = reservation.Amount()

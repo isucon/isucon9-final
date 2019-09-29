@@ -14,6 +14,7 @@ import (
 	"golang.org/x/xerrors"
 )
 
+
 var (
 	ErrRedirect = errors.New("redirectが検出されました")
 )
