@@ -51,11 +51,7 @@ func NormalScenario(ctx context.Context) error {
 
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
-	var (
-		carNumMin = 1
-		carNumMax = 16
-		carNum    = rand.Intn(carNumMax-carNumMin) + carNumMin
-	)
+	carNum := xrandom.GetRandomCarNumber(train.Class, "premium")
 	seatResp, err := client.ListTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, departure, arrival, nil)
@@ -63,7 +59,7 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	validSeats, err := assertListTrainSeats(seatResp)
+	validSeats, err := assertListTrainSeats(seatResp, 2)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -151,11 +147,7 @@ func NormalCancelScenario(ctx context.Context) error {
 
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
-	var (
-		carNumMin = 1
-		carNumMax = 16
-		carNum    = rand.Intn(carNumMax-carNumMin) + carNumMin
-	)
+	carNum := xrandom.GetRandomCarNumber(train.Class, "reserved")
 	seatResp, err := client.ListTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, departure, arrival, nil)
@@ -163,7 +155,7 @@ func NormalCancelScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	validSeats, err := assertListTrainSeats(seatResp)
+	validSeats, err := assertListTrainSeats(seatResp, 2)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}

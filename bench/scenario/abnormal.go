@@ -77,7 +77,7 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	validSeats, err := assertListTrainSeats(seatResp)
+	validSeats, err := assertListTrainSeats(seatResp, 2)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -97,8 +97,64 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 }
 
 // 列車の指定号車に存在しない席を予約しようとし、エラーになるかチェック
-func AbnormalReserveWrongSeat() {
+func AbnormalReserveWrongSeat(ctx context.Context) error {
 
+	client, err := isutrain.NewClient()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	if config.Debug {
+		client.ReplaceMockTransport()
+	}
+
+	err = registerUserAndLogin(ctx, client)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	_, err = client.ListStations(ctx, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	useAt := xrandom.GetRandomUseAt()
+	departure, arrival := xrandom.GetRandomSection()
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	trainIdx := rand.Intn(len(trains))
+	train := trains[trainIdx]
+	carNum := xrandom.GetRandomCarNumber(train.Class, "reserved")
+	seatResp, err := client.ListTrainSeats(ctx,
+		useAt,
+		train.Class, train.Name, carNum, departure, arrival, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	validSeats, err := assertListTrainSeats(seatResp, 2)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	validSeats[0].Row = 30
+	validSeats[1].Column = "G"
+
+	_, err = client.Reserve(ctx,
+		train.Class, train.Name,
+		xrandom.GetSeatClass(train.Class, carNum),
+		validSeats, departure, arrival, useAt,
+		carNum, 1, 1, "", nil,
+	)
+	if err == nil {
+		err = bencherror.NewSimpleCriticalError("予約できない座席が予約できました")
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	return nil
 }
 
 func AbnormalReserveWithCSRFTokenScenario(ctx context.Context) error {

@@ -5,7 +5,7 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
 
-func assertListTrainSeats(resp *isutrain.TrainSeatSearchResponse) (isutrain.TrainSeats, error) {
+func assertListTrainSeats(resp *isutrain.TrainSeatSearchResponse, count int) (isutrain.TrainSeats, error) {
 	validSeats := isutrain.TrainSeats{}
 
 	if resp == nil {
@@ -13,7 +13,7 @@ func assertListTrainSeats(resp *isutrain.TrainSeatSearchResponse) (isutrain.Trai
 	}
 
 	for _, seat := range resp.Seats {
-		if len(validSeats) == 2 {
+		if len(validSeats) == count {
 			break
 		}
 		if !seat.IsOccupied {
