@@ -2,11 +2,13 @@ package xrandom
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
@@ -70,11 +72,12 @@ func GetRandomCarNumber(trainClass, seatClass string) int {
 	l := []int{}
 
 	for carNum := 1; carNum <= 16; carNum++ {
-		if GetSeatClass(trainClass, carNum) == seatClass {
+		if isutraindb.GetSeatClass(trainClass, carNum) == seatClass {
 			l = append(l, carNum)
 		}
 	}
 
+	log.Println(len(l))
 	idx := rand.Intn(len(l))
 	return l[idx]
 }

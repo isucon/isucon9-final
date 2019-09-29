@@ -5,20 +5,14 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
-	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/payment"
 )
 
-func registerUserAndLogin(ctx context.Context, client *isutrain.Client) error {
+func registerUserAndLogin(ctx context.Context, client *isutrain.Client, user *isutrain.User) error {
 	/* ユーザー作成しログインする */
 
-	user, err := xrandom.GetRandomUser()
-	if err != nil {
-		return err
-	}
-
-	err = client.Signup(ctx, user.Email, user.Password, nil)
+	err := client.Signup(ctx, user.Email, user.Password, nil)
 	if err != nil {
 		return err
 	}
@@ -59,7 +53,7 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, useAt
 
 	train := trains[0]
 
-	reservation, err := client.Reserve(ctx,
+	_, reservation, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		"premium", isutrain.TrainSeats{},
 		departure, arrival, useAt,
@@ -67,6 +61,8 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, useAt
 	if err != nil {
 		return nil, err
 	}
+
+	// FIXME: assertReserve
 
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
 	if err != nil {

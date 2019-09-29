@@ -219,7 +219,7 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 	)
 	b, err := json.Marshal(isutrain.Trains{
 		&isutrain.Train{
-			Class:            "のぞみ",
+			Class:            "最速",
 			Name:             "96号",
 			Start:            "1",
 			Last:             "2",
@@ -231,7 +231,7 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 			FareInformation:  fareInformation,
 		},
 		&isutrain.Train{
-			Class:            "こだま",
+			Class:            "最速",
 			Name:             "96号",
 			Start:            "3",
 			Last:             "4",
@@ -285,7 +285,7 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 	// 適当な席を返す
 	b, err := json.Marshal(&isutrain.TrainSeatSearchResponse{
 		UseAt:      time.Now(),
-		TrainClass: "dummy",
+		TrainClass: "最速",
 		TrainName:  "dummy",
 		CarNumber:  1,
 		Seats: isutrain.TrainSeats{

@@ -7,6 +7,7 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
@@ -51,7 +52,12 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = registerUserAndLogin(ctx, client)
+	user, err := xrandom.GetRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = registerUserAndLogin(ctx, client, user)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -82,9 +88,9 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.Reserve(ctx,
+	_, _, err = client.Reserve(ctx,
 		train.Class, train.Name,
-		xrandom.GetSeatClass(train.Class, carNum),
+		isutraindb.GetSeatClass(train.Class, carNum),
 		validSeats, "山田", "夷太寺", useAt,
 		carNum, 1, 1, "", nil,
 	)
@@ -108,7 +114,12 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = registerUserAndLogin(ctx, client)
+	user, err := xrandom.GetRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = registerUserAndLogin(ctx, client, user)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -143,9 +154,9 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 	validSeats[0].Row = 30
 	validSeats[1].Column = "G"
 
-	_, err = client.Reserve(ctx,
+	_, _, err = client.Reserve(ctx,
 		train.Class, train.Name,
-		xrandom.GetSeatClass(train.Class, carNum),
+		isutraindb.GetSeatClass(train.Class, carNum),
 		validSeats, departure, arrival, useAt,
 		carNum, 1, 1, "", nil,
 	)

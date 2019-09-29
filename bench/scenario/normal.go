@@ -29,7 +29,12 @@ func NormalScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = registerUserAndLogin(ctx, client)
+	user, err := xrandom.GetRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = registerUserAndLogin(ctx, client, user)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -125,7 +130,12 @@ func NormalCancelScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = registerUserAndLogin(ctx, client)
+	user, err := xrandom.GetRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = registerUserAndLogin(ctx, client, user)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -229,14 +239,19 @@ func NormalVagueSearchScenario(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = registerUserAndLogin(ctx, client)
+	user, err := xrandom.GetRandomUser()
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	user, err := xrandom.GetRandomUser()
+	err = registerUserAndLogin(ctx, client, user)
 	if err != nil {
-		return err
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	user, err = xrandom.GetRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 	if err = client.Signup(ctx, user.Email, user.Password, nil); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
@@ -272,7 +287,12 @@ func NormalManyCancelScenario(ctx context.Context, counter int) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = registerUserAndLogin(ctx, client)
+	user, err := xrandom.GetRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = registerUserAndLogin(ctx, client, user)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
