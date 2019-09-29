@@ -1,17 +1,15 @@
-package scenario
+package isutrain
 
 import (
 	"context"
 	"net/http"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
-	"github.com/chibiegg/isucon9-final/bench/internal/cache"
-	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"golang.org/x/sync/errgroup"
 )
 
-func assertListTrainSeats(resp *isutrain.TrainSeatSearchResponse, count int) (isutrain.TrainSeats, error) {
-	validSeats := isutrain.TrainSeats{}
+func assertListTrainSeats(resp *TrainSeatSearchResponse, count int) (TrainSeats, error) {
+	validSeats := TrainSeats{}
 
 	if resp == nil {
 		return validSeats, bencherror.NewSimpleCriticalError("座席検索のレスポンスが不正です: %+v", resp)
@@ -31,7 +29,7 @@ func assertListTrainSeats(resp *isutrain.TrainSeatSearchResponse, count int) (is
 	return validSeats, nil
 }
 
-func assertReserve(ctx context.Context, client *isutrain.Client, user *isutrain.User, reserveReq *isutrain.ReserveRequest, resp *isutrain.ReservationResponse) error {
+func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveRequest, resp *ReservationResponse) error {
 	if resp == nil {
 		return bencherror.NewSimpleCriticalError("予約のレスポンスが不正です: %+v", resp)
 	}
@@ -42,7 +40,7 @@ func assertReserve(ctx context.Context, client *isutrain.Client, user *isutrain.
 	reserveGrp := &errgroup.Group{}
 	// 予約一覧に正しい情報が表示されているか
 	reserveGrp.Go(func() error {
-		reservations, err := client.ListReservations(ctx, nil)
+		reservations, err := client.ListReservations(ctx)
 		if err != nil {
 			return err
 		}
@@ -57,7 +55,7 @@ func assertReserve(ctx context.Context, client *isutrain.Client, user *isutrain.
 	})
 	// 予約確認できるか
 	// reserveGrp.Go(func() error {
-	// 	_, err := client.ShowReservation(ctx, resp.ReservationID, nil)
+	// 	_, err := client.ShowReservation(ctx, resp.ReservationID)
 	// 	if err != nil {
 	// 		return bencherror.NewCriticalError(err, "予約した内容を予約確認画面で確認できませんでした")
 	// 	}
@@ -68,13 +66,11 @@ func assertReserve(ctx context.Context, client *isutrain.Client, user *isutrain.
 		return err
 	}
 
-	cache.ReservationCache.Add(user, reserveReq, resp.ReservationID)
-
 	return nil
 }
 
-func assertCancelReservation(ctx context.Context, client *isutrain.Client, reservationID int) error {
-	reservations, err := client.ListReservations(ctx, nil)
+func assertCancelReservation(ctx context.Context, client *Client, reservationID int) error {
+	reservations, err := client.ListReservations(ctx)
 	if err != nil {
 		return err
 	}
@@ -85,12 +81,12 @@ func assertCancelReservation(ctx context.Context, client *isutrain.Client, reser
 		}
 	}
 
-	_, err = client.ShowReservation(ctx, reservationID, isutrain.StatusCodeOpt(http.StatusNotFound))
+	_, err = client.ShowReservation(ctx, reservationID, StatusCodeOpt(http.StatusNotFound))
 	if err != nil {
 		return bencherror.NewSimpleApplicationError("キャンセルされた予約が、予約詳細で取得可能です: %d", reservationID)
 	}
 
-	if err := cache.ReservationCache.Cancel(reservationID); err != nil {
+	if err := ReservationCache.Cancel(reservationID); err != nil {
 		// FIXME: こういうベンチマーカーの異常は、利用者向けには一般的なメッセージで運営に連絡して欲しいと書き、運営向けにSlackに通知する
 		return bencherror.NewCriticalError(err, "ベンチマーカーでキャッシュ不具合が発生しました. 運営に御確認お願い致します")
 	}

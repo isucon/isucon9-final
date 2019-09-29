@@ -12,12 +12,12 @@ import (
 func registerUserAndLogin(ctx context.Context, client *isutrain.Client, user *isutrain.User) error {
 	/* ユーザー作成しログインする */
 
-	err := client.Signup(ctx, user.Email, user.Password, nil)
+	err := client.Signup(ctx, user.Email, user.Password)
 	if err != nil {
 		return err
 	}
 
-	err = client.Login(ctx, user.Email, user.Password, nil)
+	err = client.Login(ctx, user.Email, user.Password)
 	if err != nil {
 		return err
 	}
@@ -36,12 +36,12 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, user 
 		return nil, err
 	}
 
-	_, err = client.ListStations(ctx, nil)
+	_, err = client.ListStations(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, train_class, nil)
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, train_class)
 	if err != nil {
 		return nil, err
 	}
@@ -53,16 +53,12 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, user 
 
 	train := trains[0]
 
-	reserveReq, reserveResp, err := client.Reserve(ctx,
+	_, reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		"premium", isutrain.TrainSeats{},
 		departure, arrival, useAt,
-		0, adult, child, "", nil)
+		0, adult, child, "")
 	if err != nil {
-		return nil, err
-	}
-
-	if err := assertReserve(ctx, client, user, reserveReq, reserveResp); err != nil {
 		return nil, err
 	}
 
@@ -71,7 +67,7 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, user 
 		return nil, err
 	}
 
-	err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken, nil)
+	err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +81,7 @@ func payForReservation(ctx context.Context, client *isutrain.Client, paymentClie
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	err = client.CommitReservation(ctx, reservationId, cardToken, nil)
+	err = client.CommitReservation(ctx, reservationId, cardToken)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}

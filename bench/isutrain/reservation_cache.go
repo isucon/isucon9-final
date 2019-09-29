@@ -1,4 +1,4 @@
-package cache
+package isutrain
 
 import (
 	"errors"
@@ -7,7 +7,6 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
-	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
@@ -33,9 +32,9 @@ var (
 
 // TODO: 未予約の予約を取得できるものがあるといい
 
-type Reservation struct {
+type ReservationCacheEntry struct {
 	// ユーザ情報
-	User *isutrain.User
+	User *User
 
 	// 予約情報
 	ID int
@@ -46,7 +45,7 @@ type Reservation struct {
 	CarNum                int
 
 	SeatClass string
-	Seats     isutrain.TrainSeats
+	Seats     TrainSeats
 
 	Adult, Child int
 
@@ -54,7 +53,7 @@ type Reservation struct {
 }
 
 // Fare は大人１人あたりの運賃を算出します
-func (r *Reservation) Fare() (int, error) {
+func (r *ReservationCacheEntry) Fare() (int, error) {
 	var (
 		distanceFare, err = isutraindb.GetDistanceFare(r.Departure, r.Arrival)
 		fareMultiplier    = isutraindb.GetFareMultiplier(r.TrainClass, r.SeatClass, r.UseAt)
@@ -80,12 +79,11 @@ func (r *Reservation) Fare() (int, error) {
 }
 
 // Amount は、大人と子供を考慮し、合計の運賃を算出します
-func (r *Reservation) Amount() (int, error) {
+func (r *ReservationCacheEntry) Amount() (int, error) {
 	fare, err := r.Fare()
 	if err != nil {
 		return -1, err
 	}
-
 
 	var (
 		adultFare = fare * r.Adult
@@ -104,30 +102,30 @@ func (r *Reservation) Amount() (int, error) {
 }
 
 var (
-	// ReservationCache は、webappの予約に関する情報が適切か検証するために用いられるキャッシュです
+	// RCache は、webappの予約に関する情報が適切か検証するために用いられるキャッシュです
 	ReservationCache = newReservationCache()
 )
 
 type reservationCache struct {
 	mu           sync.RWMutex
-	reservations []*Reservation
+	reservations []*ReservationCacheEntry
 }
 
 func newReservationCache() *reservationCache {
 	return &reservationCache{
-		reservations: []*Reservation{},
+		reservations: []*ReservationCacheEntry{},
 	}
 }
 
 // 予約可能判定
 // NOTE: この予約が可能か？を判定する必要があるので、リクエストを受け取り、複数のSeatのどれか１つでも含まれていればNGとする
-func (r *reservationCache) CanReserve(req *isutrain.ReserveRequest) (bool, error) {
+func (r *reservationCache) CanReserve(req *ReserveRequest) (bool, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
 	lgr := zap.S()
 
-	canReserveWithOverwrap := func(reservation *Reservation) (bool, error) {
+	canReserveWithOverwrap := func(reservation *ReservationCacheEntry) (bool, error) {
 		reqKudari, err := isKudari(req.Departure, req.Arrival)
 		if err != nil {
 			lgr.Warnf("予約可能判定の 下り判定でエラーが発生: %+v", err)
@@ -211,12 +209,12 @@ func (r *reservationCache) CanReserve(req *isutrain.ReserveRequest) (bool, error
 	return true, nil
 }
 
-func (r *reservationCache) Add(user *isutrain.User, req *isutrain.ReserveRequest, reservationID int) {
+func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID int) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	// TODO: webappから意図的にreservationIDを細工して変に整合性つけることができないか考える
-	r.reservations = append(r.reservations, &Reservation{
+	r.reservations = append(r.reservations, &ReservationCacheEntry{
 		User:       user,
 		ID:         reservationID,
 		Date:       req.Date,
@@ -247,7 +245,7 @@ func (r *reservationCache) Cancel(reservationID int) error {
 	return bencherror.NewApplicationError(ErrCancelReservation, "予約が存在しません")
 }
 
-func (r *reservationCache) Range(f func(reservation *Reservation)) {
+func (r *reservationCache) Range(f func(reservation *ReservationCacheEntry)) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 

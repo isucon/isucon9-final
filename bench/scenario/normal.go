@@ -39,14 +39,14 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListStations(ctx, nil)
+	_, err = client.ListStations(ctx)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	useAt := xrandom.GetRandomUseAt()
 	departure, arrival := xrandom.GetRandomSection()
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -58,28 +58,19 @@ func NormalScenario(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "premium")
-	seatResp, err := client.ListTrainSeats(ctx,
+	_, validSeats, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, departure, arrival, nil)
+		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	validSeats, err := assertListTrainSeats(seatResp, 2)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	reserveReq, reservation, err := client.Reserve(ctx,
+	_, reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum), validSeats,
 		departure, arrival, useAt,
-		carNum, 1, 1, "isle", nil)
+		carNum, 1, 1, "isle")
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	if err := assertReserve(ctx, client, user, reserveReq, reservation); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
@@ -88,26 +79,26 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	err = client.CommitReservation(ctx, reservation.ReservationID, cardToken, nil)
+	err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListReservations(ctx, nil)
+	_, err = client.ListReservations(ctx)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	reservation2, err := client.ShowReservation(ctx, reservation.ReservationID, nil)
+	reservation2, err := client.ShowReservation(ctx, reserveResp.ReservationID)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	if reservation.ReservationID != reservation2.ReservationID {
+	if reserveResp.ReservationID != reservation2.ReservationID {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	if err := client.Logout(ctx, nil); err != nil {
+	if err := client.Logout(ctx); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
@@ -140,7 +131,7 @@ func NormalCancelScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListStations(ctx, nil)
+	_, err = client.ListStations(ctx)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -149,7 +140,7 @@ func NormalCancelScenario(ctx context.Context) error {
 		useAt              = xrandom.GetRandomUseAt()
 		departure, arrival = xrandom.GetRandomSection()
 	)
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -162,19 +153,14 @@ func NormalCancelScenario(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "reserved")
-	seatResp, err := client.ListTrainSeats(ctx,
+	_, validSeats, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, departure, arrival, nil)
+		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	validSeats, err := assertListTrainSeats(seatResp, 2)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	reserveReq, reservation, err := client.Reserve(ctx,
+	_, reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		validSeats, departure, arrival, useAt,
@@ -184,44 +170,36 @@ func NormalCancelScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	if err := assertReserve(ctx, client, user, reserveReq, reservation); err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	err = client.CommitReservation(ctx, reservation.ReservationID, cardToken, nil)
+	err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListReservations(ctx, nil)
+	_, err = client.ListReservations(ctx)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	reservation2, err := client.ShowReservation(ctx, reservation.ReservationID, nil)
+	reservation2, err := client.ShowReservation(ctx, reserveResp.ReservationID)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	if reservation.ReservationID != reservation2.ReservationID {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleCriticalError("予約確認で得られる予約IDが一致していません: got=%d, want=%d", reservation2.ReservationID, reservation.ReservationID))
+	if reserveResp.ReservationID != reservation2.ReservationID {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleCriticalError("予約確認で得られる予約IDが一致していません: got=%d, want=%d", reservation2.ReservationID, reserveResp.ReservationID))
 	}
 
-	err = client.CancelReservation(ctx, reservation.ReservationID, nil)
+	err = client.CancelReservation(ctx, reserveResp.ReservationID)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	if err := assertCancelReservation(ctx, client, reservation.ReservationID); err != nil {
-		return err
-	}
-
-	if err := client.Logout(ctx, nil); err != nil {
+	if err := client.Logout(ctx); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
@@ -253,24 +231,20 @@ func NormalVagueSearchScenario(ctx context.Context) error {
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
-	if err = client.Signup(ctx, user.Email, user.Password, nil); err != nil {
+	if err = client.Signup(ctx, user.Email, user.Password); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	if err := client.Login(ctx, user.Email, user.Password, nil); err != nil {
+	if err := client.Login(ctx, user.Email, user.Password); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	reserveReq, reserveResp, err := client.Reserve(ctx,
+	_, _, err = client.Reserve(ctx,
 		"最速", "1", "premium", isutrain.TrainSeats{},
 		"東京", "大阪", time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		1, 1, 1, "isle", nil)
+		1, 1, 1, "isle")
 	if err != nil {
 		bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	if err := assertReserve(ctx, client, user, reserveReq, reserveResp); err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	return nil
@@ -297,7 +271,7 @@ func NormalManyCancelScenario(ctx context.Context, counter int) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListStations(ctx, nil)
+	_, err = client.ListStations(ctx)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -321,14 +295,14 @@ func NormalManyCancelScenario(ctx context.Context, counter int) error {
 
 	// 全部キャンセルする
 	for _, reservationId := range cancelIds {
-		err = client.CancelReservation(ctx, reservationId, nil)
+		err = client.CancelReservation(ctx, reservationId)
 		if err != nil {
 			bencherror.BenchmarkErrs.AddError(err)
 			retErr = err
 		}
 	}
 
-	if err := client.Logout(ctx, nil); err != nil {
+	if err := client.Logout(ctx); err != nil {
 		bencherror.BenchmarkErrs.AddError(err)
 		retErr = err
 	}
@@ -361,7 +335,7 @@ func NormalManyAmbigiousSearchScenario(ctx context.Context, counter int) error {
 			return bencherror.BenchmarkErrs.AddError(err)
 		}
 
-		_, err = client.ListStations(ctx, nil)
+		_, err = client.ListStations(ctx)
 		if err != nil {
 			return bencherror.BenchmarkErrs.AddError(err)
 		}

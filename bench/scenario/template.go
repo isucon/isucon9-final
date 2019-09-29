@@ -52,13 +52,13 @@ func AwesomeScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	err = client.Signup(ctx, user.Email, user.Password, nil)
+	err = client.Signup(ctx, user.Email, user.Password)
 	if err != nil {
 		// `bencherror.BenchmarkErrs.AddError(err)` も忘れずに
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	err = client.Login(ctx, user.Email, user.Password, nil)
+	err = client.Login(ctx, user.Email, user.Password)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}

@@ -38,7 +38,6 @@ func AbnormalLoginScenario(ctx context.Context) error {
 	return nil
 }
 
-
 // 指定列車の運用区間外で予約を取ろうとして、きちんと弾かれるかチェック
 func AbnormalReserveWrongSection(ctx context.Context) error {
 
@@ -61,13 +60,13 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListStations(ctx, nil)
+	_, err = client.ListStations(ctx)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	useAt := xrandom.GetRandomUseAt()
-	trains, err := client.SearchTrains(ctx, useAt, "東京", "大阪", "最速", nil)
+	trains, err := client.SearchTrains(ctx, useAt, "東京", "大阪", "最速")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -75,19 +74,14 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := 5
-	seatResp, err := client.ListTrainSeats(ctx,
+	_, validSeats, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, "東京", "大阪", nil)
+		train.Class, train.Name, carNum, "東京", "大阪")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	validSeats, err := assertListTrainSeats(seatResp, 2)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	reserveReq, reserveResp, err := client.Reserve(ctx,
+	_, _, err = client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		validSeats, "山田", "夷太寺", useAt,
@@ -95,10 +89,6 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 	)
 	if err == nil {
 		err = bencherror.NewSimpleCriticalError("予約できない区間が予約できました")
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	if err := assertReserve(ctx, client, user, reserveReq, reserveResp); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
@@ -127,14 +117,14 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListStations(ctx, nil)
+	_, err = client.ListStations(ctx)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	useAt := xrandom.GetRandomUseAt()
 	departure, arrival := xrandom.GetRandomSection()
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", nil)
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -142,14 +132,9 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "reserved")
-	seatResp, err := client.ListTrainSeats(ctx,
+	_, validSeats, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, departure, arrival, nil)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	validSeats, err := assertListTrainSeats(seatResp, 2)
+		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -157,7 +142,7 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 	validSeats[0].Row = 30
 	validSeats[1].Column = "G"
 
-	reserveReq, reserveResp, err := client.Reserve(ctx,
+	_, _, err = client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		validSeats, departure, arrival, useAt,
@@ -165,10 +150,6 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 	)
 	if err == nil {
 		err = bencherror.NewSimpleCriticalError("予約できない座席が予約できました")
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	if err := assertReserve(ctx, client, user, reserveReq, reserveResp); err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 

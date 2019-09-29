@@ -1,12 +1,10 @@
-package cache
+package isutrain
 
 import (
 	"log"
 	"testing"
 	"time"
 
-	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
-	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,19 +14,19 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 
 	gotTests := []struct {
 		reservationID int
-		req           *isutrain.ReserveRequest
+		req           *ReserveRequest
 	}{
 		{
 			reservationID: 10,
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -38,28 +36,30 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 	}
 
 	for _, gotTest := range gotTests {
-		user, err := xrandom.GetRandomUser()
-		assert.NoError(t, err)
+		user := &User{
+			Email:    "hoge@example.com",
+			Password: "hoge",
+		}
 
 		mem.Add(user, gotTest.req, gotTest.reservationID)
 	}
 
 	wantTests := []struct {
-		req        *isutrain.ReserveRequest
+		req        *ReserveRequest
 		canReserve bool
 		err        error
 	}{
 		// 日付
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(2 * time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -69,15 +69,15 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -88,15 +88,15 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		// 座席
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    9999,
 						Column: "column9999",
 					},
@@ -106,15 +106,15 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -125,15 +125,15 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		// 区間
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "東京",
 				Arrival:    "磯川",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -143,15 +143,15 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "山田",
 				Arrival:    "鳴門",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -161,15 +161,15 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "東京",
 				Arrival:    "山田",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -179,15 +179,15 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "東京",
 				Arrival:    "古岡",
 				TrainClass: "badtest1",
 				TrainName:  "badtest1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "badc0lumn1",
 					},
@@ -197,19 +197,19 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{ // failed
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "鳴門",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
-					&isutrain.TrainSeat{
+					&TrainSeat{
 						Row:    2,
 						Column: "column2",
 					},
@@ -235,19 +235,19 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 
 	gotTests := []struct {
 		reservationID int
-		req           *isutrain.ReserveRequest
+		req           *ReserveRequest
 	}{
 		{
 			reservationID: 10,
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -257,27 +257,29 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 	}
 
 	for _, gotTest := range gotTests {
-		user, err := xrandom.GetRandomUser()
-		assert.NoError(t, err)
+		user := &User{
+			Email:    "fuga@example.com",
+			Password: "fuga",
+		}
 		mem.Add(user, gotTest.req, gotTest.reservationID)
 	}
 
 	wantTests := []struct {
-		req        *isutrain.ReserveRequest
+		req        *ReserveRequest
 		canReserve bool
 		err        error
 	}{
 		// 日付
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(2 * time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -287,15 +289,15 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -306,15 +308,15 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		// 座席
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    9999,
 						Column: "column9999",
 					},
@@ -324,15 +326,15 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -343,15 +345,15 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		// 区間
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "磯川",
 				Arrival:    "東京",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -361,15 +363,15 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "鳴門",
 				Arrival:    "山田",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -379,15 +381,15 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "山田",
 				Arrival:    "東京",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
@@ -397,15 +399,15 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "東京",
 				TrainClass: "badtest1",
 				TrainName:  "badtest1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "badc0lumn1",
 					},
@@ -415,19 +417,19 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{ // failed
-			req: &isutrain.ReserveRequest{
+			req: &ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "鳴門",
 				Arrival:    "荒川",
 				TrainClass: "test1",
 				TrainName:  "test1",
 				CarNum:     1,
-				Seats: isutrain.TrainSeats{
-					&isutrain.TrainSeat{
+				Seats: TrainSeats{
+					&TrainSeat{
 						Row:    1,
 						Column: "column1",
 					},
-					&isutrain.TrainSeat{
+					&TrainSeat{
 						Row:    2,
 						Column: "column2",
 					},
