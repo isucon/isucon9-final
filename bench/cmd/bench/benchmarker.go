@@ -35,6 +35,8 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.AbnormalReserveWrongSeat(ctx)
 
+	scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
+
 	// scenario.NormalAmbigiousSearchScenario(ctx)
 
 	if config.AvailableDays > 200 { // FIXME: 値が適当
