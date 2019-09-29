@@ -364,7 +364,7 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 	}
 
 	// To
-	err = dbx.Get(&fromStation, query, destStation)
+	err = dbx.Get(&toStation, query, destStation)
 	if err == sql.ErrNoRows {
 		return 0, err
 	}
@@ -2048,7 +2048,6 @@ func userReservationCancelHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		// pass(requesting状態のものはpayment_id無いので叩かない)
 	}
-
 
 	query = "DELETE FROM reservations WHERE reservation_id=? AND user_id=?"
 	_, err = tx.Exec(query, itemID, user.ID)
