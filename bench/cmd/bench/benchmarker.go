@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/scenario"
 	"go.uber.org/zap"
 )
@@ -26,11 +27,15 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.NormalCancelScenario(ctx)
 
+	scenario.AttackReserveForOtherReservation(ctx)
+
 	scenario.AttackReserveForReserved(ctx)
 
 	// scenario.NormalAmbigiousSearchScenario(ctx)
 
-	// scenario.GoldenWeekScenario(ctx)
+	if config.AvailableDays > 200 { // FIXME: 値が適当
+		scenario.GoldenWeekScenario(ctx)
+	}
 
 	return nil
 }

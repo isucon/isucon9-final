@@ -2,12 +2,16 @@ package scenario
 
 import (
 	"context"
+	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
+	"github.com/chibiegg/isucon9-final/bench/payment"
 )
 
 func registerUserAndLogin(ctx context.Context, client *isutrain.Client) error {
+	/* ユーザー作成しログインする */
 
 	user, err := xrandom.GetRandomUser()
 	if err != nil {
@@ -25,4 +29,59 @@ func registerUserAndLogin(ctx context.Context, client *isutrain.Client) error {
 	}
 
 	return nil
+}
+
+func createSimpleReservation(ctx context.Context, client *isutrain.Client, useAt time.Time, departure, arrival, train_class string, adult, child int) (*isutrain.ReservationResponse, error) {
+	/* 予約を作成する */
+
+	// lgr := zap.S()
+
+	// 決済サービスのクライアントを作成
+	paymentClient, err := payment.NewClient()
+	if err != nil {
+		return nil, err
+	}
+
+	err = registerUserAndLogin(ctx, client)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = client.ListStations(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, train_class, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(trains) == 0 {
+		err := bencherror.NewSimpleCriticalError("列車検索結果が空でした")
+		return nil, err
+	}
+
+	train := trains[0]
+
+	reservation, err := client.Reserve(ctx,
+		train.Class, train.Name,
+		"premium", isutrain.TrainSeats{},
+		departure, arrival, useAt,
+		0, adult, child, "", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
+	if err != nil {
+		return nil, err
+	}
+
+	err = client.CommitReservation(ctx, reservation.ReservationID, cardToken, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return reservation, nil
 }
