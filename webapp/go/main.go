@@ -1959,17 +1959,22 @@ func userReservationCancelHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tx := dbx.MustBegin()
-	query := "DELETE FROM reservations WHERE reservation_id=? AND user_id=?"
-	_, err = tx.Exec(query, itemID, user.ID)
+
+	reservation := Reservation{}
+	query := "SELECT * FROM reservations WHERE reservation_id=? AND user_id=?"
+	err = tx.Get(&reservation, query, itemID, user.ID)
+	fmt.Println("CANCEL", reservation, itemID, user.ID)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		messageResponse(w, "reservations naiyo")
-		// errorResponse(w, http.Status, "authentication failed")
+		errorResponse(w, http.StatusBadRequest, "reservations naiyo")
 		return
 	}
+
+	query = "DELETE FROM reservations WHERE reservation_id=? AND user_id=?"
+	_, err = tx.Exec(query, itemID, user.ID)
 	if err != nil {
 		tx.Rollback()
-		errorResponse(w, http.StatusBadRequest, err.Error())
+		errorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -1977,13 +1982,13 @@ func userReservationCancelHandler(w http.ResponseWriter, r *http.Request) {
 	_, err = tx.Exec(query, itemID)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		messageResponse(w, "seat naiyo")
+		errorResponse(w, http.StatusInternalServerError, "seat naiyo")
 		// errorResponse(w, http.Status, "authentication failed")
 		return
 	}
 	if err != nil {
 		tx.Rollback()
-		errorResponse(w, http.StatusBadRequest, err.Error())
+		errorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 

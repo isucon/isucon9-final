@@ -298,5 +298,29 @@ func AttackReserveForOtherReservation(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
+	useAt := xrandom.GetRandomUseAt()
+	departure, arrival := xrandom.GetRandomSection()
+	reservation, err := createSimpleReservation(ctx, client, useAt, departure, arrival, "遅いやつ", 1, 1)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = client.Logout(ctx, nil)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	// 異なるユーザーでログインする
+	err = registerUserAndLogin(ctx, client)
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = client.CancelReservation(ctx, reservation.ReservationID, nil)
+	if err == nil {
+		err = bencherror.NewSimpleCriticalError("他のユーザーの予約がキャンセルできました")
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
 	return nil
 }

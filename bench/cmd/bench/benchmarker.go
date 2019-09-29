@@ -27,6 +27,8 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.NormalCancelScenario(ctx)
 
+	scenario.AttackReserveForOtherReservation(ctx)
+
 	scenario.AttackReserveForReserved(ctx)
 
 	// scenario.NormalAmbigiousSearchScenario(ctx)
