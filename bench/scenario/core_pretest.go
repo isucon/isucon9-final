@@ -159,7 +159,10 @@ func pretestNormalSearch(ctx context.Context, client *isutrain.Client) {
 
 // PreTestAbnormalLogin は不正なパスワードでのログインを試みます
 func pretestAbnormalLogin(ctx context.Context, client *isutrain.Client) {
-	if err := client.Login(ctx, "username", "password", nil); err != nil {
-
+	if err := client.Login(ctx, "username", "password", isutrain.&isutrain.ClientOption{
+		WantStatusCode: http.StatusUnauthorized,
+	}); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
 	}
 }

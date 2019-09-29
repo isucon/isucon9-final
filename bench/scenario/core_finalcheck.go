@@ -59,7 +59,6 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 					lgr.Warnf("not same amount %d != %d", rawData.PaymentInfo.Amount, amount)
 					return ErrInvalidReservationForPaymentAPI
 				}
-				lgr.Infof("same amount %d = %d", rawData.PaymentInfo.Amount, amount)
 				return nil
 			}
 
@@ -71,13 +70,6 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 	if err := eg.Wait(); err != nil {
 		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(err, "予約情報と決済情報で不整合を検出しました"))
 	}
-
-	return nil
-}
-
-func finalcheckVocantSeats(ctx context.Context, isutrainClient *isutrain.Client) error {
-	// 予約キャッシュから空席を割り出す
-	// 座席検索をし、突き合わせる
 
 	return nil
 }
