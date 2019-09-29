@@ -85,9 +85,7 @@ func assertCancelReservation(ctx context.Context, client *isutrain.Client, reser
 		}
 	}
 
-	_, err = client.ShowReservation(ctx, reservationID, &isutrain.ClientOption{
-		WantStatusCode: http.StatusNotFound,
-	})
+	_, err = client.ShowReservation(ctx, reservationID, isutrain.StatusCodeOpt(http.StatusNotFound))
 	if err != nil {
 		return bencherror.NewSimpleApplicationError("キャンセルされた予約が、予約詳細で取得可能です: %d", reservationID)
 	}

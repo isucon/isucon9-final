@@ -30,15 +30,14 @@ func AbnormalLoginScenario(ctx context.Context) error {
 		return err
 	}
 
-	err = client.Login(ctx, email, password, &isutrain.ClientOption{
-		WantStatusCode: http.StatusUnauthorized,
-	})
+	err = client.Login(ctx, email, password, isutrain.StatusCodeOpt(http.StatusUnauthorized))
 	if err != nil {
 		return err
 	}
 
 	return nil
 }
+
 
 // 指定列車の運用区間外で予約を取ろうとして、きちんと弾かれるかチェック
 func AbnormalReserveWrongSection(ctx context.Context) error {
