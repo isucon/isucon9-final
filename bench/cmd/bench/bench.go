@@ -181,7 +181,6 @@ var run = cli.Command{
 		}
 
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
-		// FIXME: 課金用のクライアントを作り、それを渡す様に変更
 		lgr.Info("===== Calculate final score =====")
 
 		scoreMsgs := []string{

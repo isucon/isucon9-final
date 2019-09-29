@@ -219,7 +219,7 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 	)
 	b, err := json.Marshal(isutrain.Trains{
 		&isutrain.Train{
-			Class:            "のぞみ",
+			Class:            "最速",
 			Name:             "96号",
 			Start:            "1",
 			Last:             "2",
@@ -231,7 +231,7 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 			FareInformation:  fareInformation,
 		},
 		&isutrain.Train{
-			Class:            "こだま",
+			Class:            "最速",
 			Name:             "96号",
 			Start:            "3",
 			Last:             "4",
@@ -285,7 +285,7 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 	// 適当な席を返す
 	b, err := json.Marshal(&isutrain.TrainSeatSearchResponse{
 		UseAt:      time.Now(),
-		TrainClass: "dummy",
+		TrainClass: "最速",
 		TrainName:  "dummy",
 		CarNumber:  1,
 		Seats: isutrain.TrainSeats{
@@ -311,7 +311,7 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 
 	// 複数の座席指定で予約するかもしれない
 	// なので、予約には複数の座席予約が紐づいている
-	var reservationReq *isutrain.ReservationRequest
+	var reservationReq *isutrain.ReserveRequest
 	if err := json.Unmarshal(b, &reservationReq); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
@@ -320,8 +320,8 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	b, err = json.Marshal(&isutrain.ReservationResponse{
-		ReservationID: 11111111,
+	b, err = json.Marshal(&isutrain.ReserveResponse{
+		ReservationID: 1111,
 		IsOk:          true,
 	})
 	if err != nil {
@@ -364,8 +364,8 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 // ListReservations はアカウントにひもづく予約履歴を返します
 func (m *Mock) ListReservations(req *http.Request) ([]byte, int) {
 	<-time.After(m.ListReservationDelay)
-	b, err := json.Marshal(isutrain.SeatReservations{
-		&isutrain.SeatReservation{ReservationID: 1111, Status: string(isutrain.Pending)},
+	b, err := json.Marshal([]*isutrain.ReservationResponse{
+		&isutrain.ReservationResponse{ReservationID: 1111},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest

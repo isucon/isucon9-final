@@ -39,8 +39,7 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
 
-
-	// scenario.NormalAmbigiousSearchScenario(ctx)
+	// scenario.NormalVagueSearchScenario(ctx)
 
 	if config.AvailableDays > 200 { // FIXME: 値が適当
 		scenario.GoldenWeekScenario(ctx)

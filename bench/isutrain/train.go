@@ -2,44 +2,21 @@ package isutrain
 
 import "time"
 
-// Train は新幹線列車です
-// type Train struct {
-// 	// Class は列車種別です
-// 	Class string `json:"class"`
-// 	// Name は列車名です
-// 	Name string `json:"name"`
-// 	// Start は始点駅IDです
-// 	Start int `json:"start"`
-// 	// EndStation は終点駅IDです
-// 	Last int `json:"last"`
-
-// 	Departure        string            `json:"departure"`
-// 	Destination      string            `json:"destination"`
-// 	DepartedAt       time.Time         `json:"departure_time"`
-// 	ArrivedAt        time.Time         `json:"arrival_time"`
-// 	SeatAvailability map[string]string `json:"seat_availability"`
-// 	FareInformation  map[string]int    `json:"seat_fare"`
-// }
-
-// Trains は列車一覧です
-// type Trains []*Train
-
 // TrainSeat は座席です
 type TrainSeat struct {
+	ReservationID int `json:"reservation_id,omitempty"`
+	CarNumber     int `json:"car_number,omitempty"`
 	// Row は席位置の列です(ex. １列)
-	Row int `json:"row"`
+	Row int `json:"seat_row"`
 	// Column は席位置の行です (ex. A行)
-	Column string `json:"column"`
-	// Class は座席種別です
-	Class string `json:"class"`
+	Column string `json:"seat_column"`
 	// IsSmokingSeat 喫煙所が近くにあるかどうかのフラグです
-	IsSmokingSeat bool `json:"is_smoking_seat"`
+	IsSmokingSeat bool `json:"is_smoking_seat,omitempty"`
 	// IsOccupied は 予約済みであるか否かを示します
-	IsOccupied bool `json:"is_occupied"`
+	IsOccupied bool `json:"is_occupied,omitempty"`
 }
 
 // TrainSeats は座席一覧です
-// TODO: 列でざっくり指定、行でざっくり指定
 type TrainSeats []*TrainSeat
 
 type SeatAvailability string
@@ -134,7 +111,6 @@ type Trains []*Train
 //     * 席は予約済みかそうでないかにかかわらず結果として追加
 //     * CarInformationを返す
 type TrainSeatSearchResponse struct {
-	// FIXME: Dateフィールドだけど、なんの日付なのか再確認
 	UseAt      time.Time
 	TrainClass string
 	TrainName  string

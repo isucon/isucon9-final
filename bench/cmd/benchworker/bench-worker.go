@@ -57,7 +57,6 @@ func joinN(messages []string, n int) string {
 }
 
 // ベンチマーカー実行ファイルを実行
-// FIXME: リトライ
 func execBench(ctx context.Context, job *Job) (*Result, error) {
 	// ターゲットサーバを取得
 	targetServer, err := getTargetServer(job)
@@ -116,7 +115,6 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		}, nil
 	}
 
-	// FIXME: result.Messagesの扱い
 	return &Result{
 		ID:       job.ID,
 		Stdout:   string(stdout.Bytes()),

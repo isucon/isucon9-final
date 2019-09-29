@@ -22,7 +22,7 @@ var (
 
 var (
 	// 予約受付開始日
-	ReservationStartDate time.Time = time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local)
+	ReservationStartDate time.Time = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 	// 予約受付終了日
 	ReservationEndDate time.Time
 )
@@ -57,8 +57,8 @@ func SetAvailReserveDays(days int) error {
 }
 
 var (
-	OlympicStartDate = time.Date(2020, 7, 24, 0, 0, 0, 0, time.Local)
-	OlympicEndDate   = time.Date(2020, 8, 9, 0, 0, 0, 0, time.Local)
+	OlympicStartDate = time.Date(2020, 7, 24, 0, 0, 0, 0, time.UTC)
+	OlympicEndDate   = time.Date(2020, 8, 9, 0, 0, 0, 0, time.UTC)
 )
 
 func IsOlympic(t time.Time) bool {

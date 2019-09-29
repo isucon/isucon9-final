@@ -68,7 +68,13 @@ func GoldenWeekScenario(ctx context.Context) error {
 				client.ReplaceMockTransport()
 			}
 
-			err = registerUserAndLogin(ctx, client)
+			user, err := xrandom.GetRandomUser()
+			if err != nil {
+				bencherror.BenchmarkErrs.AddError(err)
+				return
+			}
+
+			err = registerUserAndLogin(ctx, client, user)
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(err)
 				return

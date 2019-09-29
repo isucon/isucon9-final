@@ -1,14 +1,16 @@
-package isutrain
+package scenario
 
 import (
 	"errors"
+
+	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
 
 var (
 	ErrDuplicateSeat = errors.New("座席検索結果に重複している席が存在します")
 )
 
-func CalcNeighborSeatsBonus(seats TrainSeats) float64 {
+func CalcNeighborSeatsBonus(seats isutrain.TrainSeats) float64 {
 	// 同じ席とか間違えて返ってきてたら減点しなくちゃならない
 	var maxLen int
 

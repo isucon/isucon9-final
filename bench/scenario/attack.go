@@ -10,6 +10,7 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
@@ -202,7 +203,12 @@ func AttackReserveForReserved(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = registerUserAndLogin(ctx, client)
+	user, err := xrandom.GetRandomUser()
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
+	err = registerUserAndLogin(ctx, client, user)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -248,9 +254,9 @@ func AttackReserveForReserved(ctx context.Context) error {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			_, err := client.Reserve(ctx,
+			_, _, err := client.Reserve(ctx,
 				train.Class, train.Name,
-				xrandom.GetSeatClass(train.Class, carNum), validSeats,
+				isutraindb.GetSeatClass(train.Class, carNum), validSeats,
 				departure, arrival, useAt,
 				carNum, 1, 1, "", nil)
 			if err == nil {
@@ -293,7 +299,18 @@ func AttackReserveForOtherReservation(ctx context.Context) error {
 		client.ReplaceMockTransport()
 	}
 
-	err = registerUserAndLogin(ctx, client)
+	var (
+		user1, user1Err = xrandom.GetRandomUser()
+		user2, user2Err = xrandom.GetRandomUser()
+	)
+	if user1Err != nil {
+		return bencherror.BenchmarkErrs.AddError(user1Err)
+	}
+	if user2Err != nil {
+		return bencherror.BenchmarkErrs.AddError(user2Err)
+	}
+
+	err = registerUserAndLogin(ctx, client, user1)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -311,7 +328,7 @@ func AttackReserveForOtherReservation(ctx context.Context) error {
 	}
 
 	// 異なるユーザーでログインする
-	err = registerUserAndLogin(ctx, client)
+	err = registerUserAndLogin(ctx, client, user2)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}

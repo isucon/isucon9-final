@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/stretchr/testify/assert"
 )
@@ -14,12 +15,12 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 	mem := newReservationCache()
 
 	gotTests := []struct {
-		reservationID string
-		req           *isutrain.ReservationRequest
+		reservationID int
+		req           *isutrain.ReserveRequest
 	}{
 		{
-			reservationID: "",
-			req: &isutrain.ReservationRequest{
+			reservationID: 10,
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
@@ -37,17 +38,20 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 	}
 
 	for _, gotTest := range gotTests {
-		mem.Add(gotTest.req, gotTest.reservationID)
+		user, err := xrandom.GetRandomUser()
+		assert.NoError(t, err)
+
+		mem.Add(user, gotTest.req, gotTest.reservationID)
 	}
 
 	wantTests := []struct {
-		req        *isutrain.ReservationRequest
+		req        *isutrain.ReserveRequest
 		canReserve bool
 		err        error
 	}{
 		// 日付
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(2 * time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
@@ -65,7 +69,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
@@ -84,7 +88,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		// 座席
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
@@ -102,7 +106,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "荒川",
@@ -121,7 +125,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		// 区間
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "東京",
 				Arrival:    "磯川",
@@ -139,7 +143,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "山田",
 				Arrival:    "鳴門",
@@ -157,7 +161,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "東京",
 				Arrival:    "山田",
@@ -175,7 +179,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "東京",
 				Arrival:    "古岡",
@@ -193,7 +197,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			err:        nil,
 		},
 		{ // failed
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "鳴門",
@@ -214,7 +218,6 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 			canReserve: true,
 			err:        nil,
 		},
-		// FIXME: 逆向きのテスト追加
 	}
 
 	for idx, wantTest := range wantTests {
@@ -231,12 +234,12 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 	mem := newReservationCache()
 
 	gotTests := []struct {
-		reservationID string
-		req           *isutrain.ReservationRequest
+		reservationID int
+		req           *isutrain.ReserveRequest
 	}{
 		{
-			reservationID: "",
-			req: &isutrain.ReservationRequest{
+			reservationID: 10,
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
@@ -254,17 +257,19 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 	}
 
 	for _, gotTest := range gotTests {
-		mem.Add(gotTest.req, gotTest.reservationID)
+		user, err := xrandom.GetRandomUser()
+		assert.NoError(t, err)
+		mem.Add(user, gotTest.req, gotTest.reservationID)
 	}
 
 	wantTests := []struct {
-		req        *isutrain.ReservationRequest
+		req        *isutrain.ReserveRequest
 		canReserve bool
 		err        error
 	}{
 		// 日付
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(2 * time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
@@ -282,7 +287,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
@@ -301,7 +306,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		// 座席
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
@@ -319,7 +324,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "荒川",
 				Arrival:    "古岡",
@@ -338,7 +343,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		// 区間
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "磯川",
 				Arrival:    "東京",
@@ -356,7 +361,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "鳴門",
 				Arrival:    "山田",
@@ -374,7 +379,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "山田",
 				Arrival:    "東京",
@@ -392,7 +397,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "古岡",
 				Arrival:    "東京",
@@ -410,7 +415,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			err:        nil,
 		},
 		{ // failed
-			req: &isutrain.ReservationRequest{
+			req: &isutrain.ReserveRequest{
 				Date:       now.Add(time.Minute),
 				Departure:  "鳴門",
 				Arrival:    "荒川",
@@ -431,7 +436,6 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 			canReserve: true,
 			err:        nil,
 		},
-		// FIXME: 逆向きのテスト追加
 	}
 
 	for idx, wantTest := range wantTests {
@@ -441,8 +445,4 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		assert.Equal(t, wantTest.canReserve, canReserve, "test%d failed", idx)
 		log.Println("=============")
 	}
-}
-
-func TestReservationMem_Cancel(t *testing.T) {
-
 }
