@@ -68,6 +68,18 @@ func GoldenWeekScenario(ctx context.Context) error {
 				client.ReplaceMockTransport()
 			}
 
+			err = registerUserAndLogin(ctx, client)
+			if err != nil {
+				bencherror.BenchmarkErrs.AddError(err)
+				return
+			}
+
+			_, err = client.ListStations(ctx, nil)
+			if err != nil {
+				bencherror.BenchmarkErrs.AddError(err)
+				return
+			}
+
 			_, err = createSimpleReservation(ctx, client, GoldenWeekStartDate, departure, arrival, "最速", 1, 1)
 			if err != nil {
 				bencherror.BenchmarkErrs.AddError(err)
