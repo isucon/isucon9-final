@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -398,7 +399,15 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 		seats = validSeats
 	}
 
-	endpoint.IncPathCounter(endpoint.ListTrainSeats)
+	if len(seats) == 0 {
+		endpoint.IncPathCounter(endpoint.ListTrainSeats)
+	} else {
+		var (
+			weight     = float64(endpoint.GetWeight(endpoint.ListTrainSeats))
+			multiplier = listTrainSeatsResp.Seats.GetNeighborSeatsMultiplier()
+		)
+		endpoint.AddExtraScore(endpoint.ListTrainSeats, int64(math.Round(weight*multiplier)))
+	}
 
 	return listTrainSeatsResp, seats, nil
 }
