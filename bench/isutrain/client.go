@@ -554,6 +554,10 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 
 	endpoint.IncPathCounter(endpoint.CommitReservation)
 
+	if err := ReservationCache.Commit(reservationID); err != nil {
+		return failure.Wrap(err, failure.Messagef("POST %s: キャッシュへのCommitに失敗しました. 運営にご確認をお願いいたします"))
+	}
+
 	return nil
 }
 

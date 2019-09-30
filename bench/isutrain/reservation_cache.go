@@ -14,8 +14,8 @@ import (
 //距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
 
 var (
-	ErrCommitReservation = errors.New("予約の確定に失敗しました")
-	ErrCancelReservation = errors.New("予約のキャンセルに失敗しました")
+	ErrCommitReservation = errors.New("存在しない予約IDの予約Commitを実施しようとしました")
+	ErrCancelReservation = errors.New("存在しない予約IDの予約Cancelを実施しようとしました")
 	ErrCanNotReserve     = errors.New("予約済みの座席が指定されたため予約できません")
 )
 
@@ -109,14 +109,17 @@ var (
 type reservationCache struct {
 	mu sync.RWMutex
 	// reservationID -> ReservationCacheEntry
-	reservations map[int]*ReservationCacheEntry
+	reservations         map[int]*ReservationCacheEntry
+	commitedReservations map[int]*ReservationCacheEntry
+	canceledReservations map[int]*ReservationCacheEntry
 	// reservations []*ReservationCacheEntry
 }
 
 func newReservationCache() *reservationCache {
 	return &reservationCache{
-		reservations: map[int]*ReservationCacheEntry{},
-		// reservations: []*ReservationCacheEntry{},
+		reservations:         map[int]*ReservationCacheEntry{},
+		commitedReservations: map[int]*ReservationCacheEntry{},
+		canceledReservations: map[int]*ReservationCacheEntry{},
 	}
 }
 
@@ -246,20 +249,59 @@ func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID in
 	}
 }
 
-func (r *reservationCache) Cancel(reservationID int) error {
+func (r *reservationCache) Commit(reservationID int) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	delete(r.reservations, reservationID)
+	lgr := zap.S()
+
+	reservation, ok := r.reservations[reservationID]
+	if !ok {
+		lgr.Warnf("存在しない予約 %d のコミットが実行されました", reservationID)
+		return ErrCommitReservation
+	}
+
+	r.commitedReservations[reservationID] = reservation
 
 	return nil
 }
 
-func (r *reservationCache) Range(f func(reservation *ReservationCacheEntry)) {
+func (r *reservationCache) Cancel(reservationID int) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	lgr := zap.S()
+
+	reservation, ok := r.reservations[reservationID]
+	if !ok {
+		lgr.Warnf("存在しない予約 %d のキャンセルが実行されました", reservationID)
+		return ErrCancelReservation
+	}
+
+	r.canceledReservations[reservationID] = reservation
+
+	// Commit済みの予約が残っていたら、キャンセルで無効になるので削除
+	if _, ok := r.commitedReservations[reservationID]; ok {
+		delete(r.commitedReservations, reservationID)
+	}
+
+	return nil
+}
+
+func (r *reservationCache) RangeCommited(f func(reservation *ReservationCacheEntry)) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	for _, reservation := range r.reservations {
+	for _, reservation := range r.commitedReservations {
+		f(reservation)
+	}
+}
+
+func (r *reservationCache) RangeCanceled(f func(reservation *ReservationCacheEntry)) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	for _, reservation := range r.canceledReservations {
 		f(reservation)
 	}
 }
