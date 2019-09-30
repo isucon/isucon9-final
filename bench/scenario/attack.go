@@ -15,6 +15,7 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
+	"go.uber.org/zap"
 )
 
 // FIXME: 適当に10個生成するようにしてるけど、設定できるように
@@ -186,10 +187,13 @@ func AttackListReservationsScenario(ctx context.Context) error {
 	return nil
 }
 
-// 予約済みの条件で予約を試みる
+// TODO: 予約済みの条件で予約を試みる
 // 一応、予約キャンセルするのを虎視眈々と狙っている利用者からのリクエスト、という設定
-func AttackReserveForReserved(ctx context.Context) error {
-	// lgr := zap.S()
+
+
+// AttackReserveRaceCondition は、予約にて、一気にリクエストを送ることで競合が発生しないかチェックするシナリオ
+func AttackReserveRaceCondition(ctx context.Context) error {
+	lgr := zap.S()
 
 	// ISUTRAIN APIのクライアントを作成
 	client, err := isutrain.NewClient()
@@ -244,20 +248,8 @@ func AttackReserveForReserved(ctx context.Context) error {
 
 	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
 
-	// １回目の予約
-	_, _, err = client.Reserve(ctx,
-		train.Class, train.Name,
-		isutraindb.GetSeatClass(train.Class, carNum), availSeats,
-		departure, arrival, useAt,
-		carNum, 1, 1, "")
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
 	wg := new(sync.WaitGroup)
-
 	var successCount uint64
-
 	for i := 0; i < 10; i++ {
 		wg.Add(1)
 		go func() {
@@ -268,6 +260,7 @@ func AttackReserveForReserved(ctx context.Context) error {
 				departure, arrival, useAt,
 				carNum, 1, 1, "", isutrain.StatusCodeOpt(http.StatusBadRequest))
 			if err != nil {
+				lgr.Warnf("[AttackReserveRaceCondition] err=%s", err.Error())
 				return
 			}
 
@@ -276,6 +269,12 @@ func AttackReserveForReserved(ctx context.Context) error {
 	}
 
 	wg.Wait()
+
+	if successCount == 0 {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleApplicationError("予約できませんでした"))
+	} else if successCount > 1 {
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleCriticalError("多重発券されました"))
+	}
 
 	return nil
 }

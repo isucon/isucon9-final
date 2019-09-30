@@ -33,7 +33,7 @@ func (b *benchmarker) load(ctx context.Context) error {
 	scenario.AttackReserveForOtherReservation(ctx)
 
 	// FIXME: webappの課金情報がおかしくなる
-	// scenario.AttackReserveForReserved(ctx)
+	// scenario.AttackReserveRaceCondition(ctx)
 
 	scenario.AbnormalReserveWrongSection(ctx)
 
