@@ -15,8 +15,9 @@ return function (App $app) {
     // 予約関係
     $app->get("/api/stations", \App\Service::class . ':getStationsHandler');
     $app->get("/api/train/search", \App\Service::class . ':trainSearchHandler');
-    //	mux.HandleFunc(pat.Get("/api/train/seats"), trainSeatsHandler)
-//	mux.HandleFunc(pat.Post("/api/train/reserve"), trainReservationHandler)
+    $app->get("/api/train/seats", \App\Service::class . ':trainSeatsHandler');
+    $app->post("/api/train/reserve", \App\Service::class . ':trainReservationHandler');
+
 //	mux.HandleFunc(pat.Post("/api/train/reservation/commit"), reservationPaymentHandler)
 //
 //	// 認証関連

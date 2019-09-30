@@ -3,6 +3,7 @@
 
 namespace App;
 
+use Composer\XdebugHandler\Status;
 use DateTime;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -175,6 +176,27 @@ class Service
         $stmt->execute([$destStation]);
         $toStation = $stmt->fetch(PDO::FETCH_ASSOC);
         // TODO Error
+
+        $distFare = $this->getDistanceFare(abs($toStation['distance'] - $fromStation['distance']));
+
+        // 期間・車両・座席クラス倍率
+        $stmt = $this->dbh->prepare("SELECT * FROM `fare_master` WHERE `train_class`=? AND `seat_class`=? ORDER BY `start_date`");
+        $stmt->execute([
+            $trainClass,
+            $seatClass,
+        ]);
+        $fareList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($fareList === false) {
+            // fare_master does not exists
+        }
+
+        $selectedFare = $fareList[0];
+        foreach($fareList as $fare) {
+            if ($fare['start_date'] < $date) {
+                $selectedFare = $fare;
+            }
+        }
+        return (int) ($distFare * $selectedFare['fare_multiplier']);
     }
 
     protected function getDistanceFare(float $origToDestDistance): int
@@ -193,6 +215,14 @@ class Service
             $lastFare = $distanceFare['fare'];
         }
         return $lastFare;
+    }
+
+    private function jsonPayload(Request $request): array  {
+        $data = json_decode($request->getBody());
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \InvalidArgumentException(json_last_error_msg());
+        }
+        return $data;
     }
 
 
@@ -444,6 +474,181 @@ class Service
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
         return $response->withJson($trainSearchResponseList);
+    }
+
+    public function trainSeatsHandler(Request $request, Response $response, array $args)
+    {
+        $date = new DateTime($request->getParam("date", ""));
+        if (! $this->checkAvailableDate($date)) {
+            return $response->withJson($this->errorResponse("予約可能期間外です"), StatusCode::HTTP_NOT_FOUND);
+        }
+
+        $trainClass = $request->getParam('train_class', '');
+        $trainName = $request->getParam('train_name', '');
+        $carNumber = $request->getParam('car_number', '');
+        $fromName = $request->getParam('from', '');
+        $toName = $request->getParam('to', '');
+
+        // 対象列車の取得
+        $stmt = $this->dbh->prepare("SELECT * FROM `train_master` WHERE `date`=? AND `train_class`=? AND `train_name`=?");
+        $stmt->execute([
+            $date,
+            $trainClass,
+            $trainName
+        ]);
+        $train = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($train === false) {
+            return $response->withJson($this->errorResponse("列車が存在しません"), StatusCode::HTTP_NOT_FOUND);
+        }
+
+        $sql = "SELECT * FROM `station_master` WHERE `name`=?";
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->execute([
+            $fromName
+        ]);
+        $fromStation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($fromStation === false) {
+            return $response->withJson($this->errorResponse("fromStation: no rows"), StatusCode::HTTP_BAD_REQUEST);
+        }
+
+        $sql = "SELECT * FROM `station_master` WHERE `name`=?";
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->execute([
+            $toName,
+        ]);
+        $toStation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($toStation === false) {
+            return $response->withJson($this->errorResponse("toStation: no rows"), StatusCode::HTTP_BAD_REQUEST);
+        }
+
+        $usableTrainClassList = $this->getUsableTrainClassList($fromStation, $toStation);
+        $usable = in_array($train['train_class'], $usableTrainClassList);
+
+        if (! $usable) {
+            return $response->withJson($this->errorResponse("invalid train_class"), StatusCode::HTTP_BAD_REQUEST);
+        }
+
+        $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? ORDER BY `seat_row`, `seat_column`");
+        $stmt->execute([
+            $trainClass,
+            $carNumber,
+        ]);
+        $seatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $seatInformationList = [];
+        foreach ($seatList as $seat) {
+            $s = [
+                'row' => $seat['seat_row'],
+                'column' => $seat['seat_column'],
+                'class' => $seat['seat_class'],
+                'is_smoking_seat' => $seat['is_smoking_seat'],
+                'is_occupied' => false,
+            ];
+            $stmt = $this->dbh->prepare("SELECT s.* FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
+            $stmt->execute([
+                $date,
+                $seat['train_class'],
+                $trainName,
+                $seat['car_number'],
+                $seat['seat_row'],
+                $seat['seat_column'],
+            ]);
+            $seatReservationList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if ($seatReservationList === false) {
+                return $response->withJson($this->errorResponse("failed to fetch seat_reservations"), StatusCode::HTTP_BAD_REQUEST);
+            }
+            foreach ($seatReservationList as $seatReservation) {
+                $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id`=?");
+                $stmt->execute([$seatReservation['reservation_id']]);
+                $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($reservation) {
+                    return $response->withJson($this->errorResponse("failed to fetch seat_reservations"), StatusCode::HTTP_BAD_REQUEST);
+                }
+
+                $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+                $stmt->execute([$reservation['departure']]);
+                $departureStation = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($departureStation === false) {
+                    return $response->withJson($this->errorResponse("failed to fetch departure"), StatusCode::HTTP_BAD_REQUEST);
+                }
+
+                $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+                $stmt->execute([$reservation['arrival']]);
+                $arrivalStation = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($departureStation === false) {
+                    return $response->withJson($this->errorResponse("failed to fetch arrivalStation"), StatusCode::HTTP_BAD_REQUEST);
+                }
+
+                if ($train['is_nobori']) {
+                    if (($toStation['id'] < $arrivalStation['id']) && $fromStation['id'] <= $arrivalStation['id']) {
+                        // pass
+                    } elseif (($toStation['id'] >= $departureStation['id']) && $fromStation['id'] > $departureStation['id']) {
+                        // pass
+                    } else {
+                        $s['is_occupied'] = true;
+                    }
+                } else {
+                    if (($fromStation['id'] < $departureStation['id']) && $toStation['id'] <= $departureStation['id']) {
+                        // pass
+                    } elseif (($fromStation['id'] >= $arrivalStation['id']) && $toStation['id'] > $arrivalStation['id']) {
+                        // pass
+                    } else {
+                        $s['is_occupied'] = true;
+                    }
+                }
+            }
+            $seatInformationList[] = $s;
+        }
+
+        // 各号車の情報
+        $simpleCarInformationList = [];
+        $i = 1;
+        while (true) {
+            $stmt = $this->dbh->query("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? ORDER BY `seat_row`, `seat_column` LIMIT 1");
+            $stmt->execute([
+                $trainClass,
+                $i,
+            ]);
+            $seat = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($seat === false) {
+                break;
+            }
+            $simpleCarInformationList[] = [
+                'car_number' => $i,
+                'seat_class' => $seat['seat_class'],
+            ];
+            $i++;
+        }
+
+        $carInformation = [
+            'date' => $date->format('Y/m/d'),
+            'train_class' => $trainClass,
+            'train_name' => $trainName,
+            'car_number' => $carNumber,
+            'seats' => $seatInformationList,
+            'cars' => $simpleCarInformationList,
+        ];
+
+        return $response->withJson($carInformation);
+    }
+
+    public function trainReservationHandler(Request $request, Response $response, array $args)
+    {
+        // request payload
+        /**
+         * 	          string        `json:"date"`
+        *     string        `json:"train_name"`
+        *    string        `json:"train_class"`
+        *     int           `json:"car_number"`
+        * bool          `json:"is_smoking_seat"`
+        *     string        `json:"seat_class"`
+        *     string        `json:"departure"`
+        *       string        `json:"arrival"`
+        *         int           `json:"child"`
+        *         int           `json:"adult"`
+        *        string        `json:"Column"`
+        *         []{int row, string column} `json:"seats"`
+         */
     }
 
     public function initialize(Request $request, Response $response, array $args)
