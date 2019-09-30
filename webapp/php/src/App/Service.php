@@ -32,6 +32,11 @@ class Service
      */
     private $settings;
 
+    /**
+     * @var \SlimSession\Helper
+     */
+    private $session;
+
     const AVAILABLE_DAYS = 10;
 
     const TRAIN_CLASS_MAP = [
@@ -46,6 +51,7 @@ class Service
         $this->logger = $container->get('logger');
         $this->dbh = $container->get('dbh');
         $this->settings = $container->get('settings');
+        $this->session = $container->get('session');
     }
 
 
@@ -191,7 +197,7 @@ class Service
         }
 
         $selectedFare = $fareList[0];
-        foreach($fareList as $fare) {
+        foreach ($fareList as $fare) {
             if ($fare['start_date'] < $date) {
                 $selectedFare = $fare;
             }
@@ -217,12 +223,32 @@ class Service
         return $lastFare;
     }
 
-    private function jsonPayload(Request $request): array  {
+    private function jsonPayload(Request $request): array
+    {
         $data = json_decode($request->getBody());
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \InvalidArgumentException(json_last_error_msg());
         }
         return $data;
+    }
+
+    private function getUser():array
+    {
+        if (! $this->session->exists('user_id')) {
+            throw new \DomainException('no session');
+        }
+
+        $user_id = $this->session->get('user_id');
+        $sth = $this->dbh->prepare('SELECT * FROM `users` WHERE `id` = ?');
+        $r = $sth->execute([$user_id]);
+        if ($r === false) {
+            throw new \PDOException($sth->errorInfo());
+        }
+        $user = $sth->fetch(PDO::FETCH_ASSOC);
+        if ($user === false) {
+            throw new \DomainException('user not found');
+        }
+        return $user;
     }
 
 
@@ -634,21 +660,499 @@ class Service
 
     public function trainReservationHandler(Request $request, Response $response, array $args)
     {
-        // request payload
         /**
-         * 	          string        `json:"date"`
-        *     string        `json:"train_name"`
-        *    string        `json:"train_class"`
-        *     int           `json:"car_number"`
-        * bool          `json:"is_smoking_seat"`
-        *     string        `json:"seat_class"`
-        *     string        `json:"departure"`
-        *       string        `json:"arrival"`
-        *         int           `json:"child"`
-        *         int           `json:"adult"`
-        *        string        `json:"Column"`
-        *         []{int row, string column} `json:"seats"`
-         */
+         * request payload
+         *
+         * string                     `json:"date"`
+         * string                     `json:"train_name"`
+         * string                     `json:"train_class"`
+         * int                        `json:"car_number"`
+         * bool                       `json:"is_smoking_seat"`
+         * string                     `json:"seat_class"`
+         * string                     `json:"departure"`
+         * string                     `json:"arrival"`
+         * int                        `json:"child"`
+         * int                        `json:"adult"`
+         * string                     `json:"Column"`
+         * []{int row, string column} `json:"seats"`
+          */
+        try {
+            $payload = $this->jsonPayload($request);
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->error($e->getMessage());
+            return $response->withJson($this->errorResponse("JSON parseに失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        // 乗車日の日付表記統一
+        $date = DateTime($payload['date']);
+        if (! $this->checkAvailableDate($date)) {
+            return $response->withJson($this->errorResponse("予約可能期間外です"), StatusCode::HTTP_NOT_FOUND);
+        }
+
+        $this->dbh->beginTransaction();
+        // 止まらない駅の予約を取ろうとしていないかチェックする
+        // 列車データを取得
+        $stmt = $this->dbh->prepare("SELECT * FROM `train_master` WHERE `date`=? AND `train_class`=? AND `train_name`=?");
+        $stmt->execute([
+            $date,
+            $payload['train_class'],
+            $payload['train_name'],
+        ]);
+        $tmas = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($tmas === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("列車データがみつかりません"), StatusCode::HTTP_NOT_FOUND);
+        }
+
+        // 列車自体の駅IDを求める
+        $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+        $stmt->execute([$tmas['start_station']]);
+        $departureStation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($departureStation === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("リクエストされた列車の始発駅データがみつかりません"), StatusCode::HTTP_NOT_FOUND);
+        }
+        $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+        $stmt->execute([$tmas['last_station']]);
+        $arrivalStation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($arrivalStation === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("リクエストされた列車の終着駅データがみつかりません"), StatusCode::HTTP_NOT_FOUND);
+        }
+
+        // リクエストされた乗車区間の駅IDを求める
+        $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+        $stmt->execute([$payload['departure']]);
+        $fromStation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($fromStation === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("乗車駅データがみつかりません"), StatusCode::HTTP_NOT_FOUND);
+        }
+
+        $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+        $stmt->execute([$payload['arrival']]);
+        $toStation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($toStation === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("降車駅データがみつかりません"), StatusCode::HTTP_NOT_FOUND);
+        }
+
+
+        switch ($payload['train_class']) {
+            case '最速':
+                if (! (bool) $fromStation['is_stop_express'] || ! (bool) $toStation['is_stop_express']) {
+                    $this->dbh->rollBack();
+                    return $response->withJson($this->errorResponse("最速の止まらない駅です"), StatusCode::HTTP_BAD_REQUEST);
+                }
+                break;
+            case '中間':
+                if (! (bool) $fromStation['is_stop_semi_express'] || ! (bool) $toStation['is_stop_semi_express']) {
+                    $this->dbh->rollBack();
+                    return $response->withJson($this->errorResponse("中間の止まらない駅です"), StatusCode::HTTP_BAD_REQUEST);
+                }
+                break;
+            case '遅いやつ':
+                if (! (bool) $fromStation['is_stop_local'] || ! (bool) $toStation['is_stop_local']) {
+                    $this->dbh->rollBack();
+                    return $response->withJson($this->errorResponse("遅いやつの止まらない駅です"), StatusCode::HTTP_BAD_REQUEST);
+                }
+                break;
+            default:
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("リクエストされた列車クラスが不明です"), StatusCode::HTTP_BAD_REQUEST);
+        }
+
+        // 運行していない区間を予約していないかチェックする
+        if ((bool) $tmas['is_nobori']) {
+            if ($fromStation['id'] > $departureStation['id'] || $toStation['id'] > $departureStation['id']) {
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("リクエストされた区間に列車が運行していない区間が含まれています"), StatusCode::HTTP_BAD_REQUEST);
+            }
+
+            if ($arrivalStation['id'] >= $fromStation['id'] || $arrivalStation['id'] > $toStation['id']) {
+                return $response->withJson($this->errorResponse("リクエストされた区間に列車が運行していない区間が含まれています"), StatusCode::HTTP_BAD_REQUEST);
+            }
+        } else {
+            if ($fromStation['id'] < $departureStation['id'] || $toStation['id'] < $departureStation['id']) {
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("リクエストされた区間に列車が運行していない区間が含まれています"), StatusCode::HTTP_BAD_REQUEST);
+            }
+
+            if ($arrivalStation['id'] <= $fromStation['id'] || $arrivalStation['id'] < $toStation['id']) {
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("リクエストされた区間に列車が運行していない区間が含まれています"), StatusCode::HTTP_BAD_REQUEST);
+            }
+        }
+
+        // あいまい座席検索 seatsが空白の時に発動する
+        switch (count($payload['seats'])) {
+            case 0:
+                if ($payload['seat_class'] === 'non-reserved') {
+                    // // non-reservedはそもそもあいまい検索もせずダミーのRow/Columnで予約を確定させる。
+                    break;
+                }
+                // 当該列車・号車中の空き座席検索
+                $stmt = $this->dbh->prepare("SELECT * FROM `train_master` WHERE `date`=? AND `train_class`=? AND `train_name`=?");
+                $stmt->execute([
+                    $date,
+                    $payload['train_class'],
+                    $payload['train_name'],
+                ]);
+                $train = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($train === false) {
+                    $this->dbh->rollBack();
+                }
+
+                $usableTrainClassList = $this->getUsableTrainClassList($fromStation, $toStation);
+                $usable = in_array($train['train_class'], $usableTrainClassList);
+                if (!$usable) {
+                    $this->dbh->rollBack();
+                    return $response->withJson($this->errorResponse("invalid train_class"), StatusCode::HTTP_BAD_REQUEST);
+                }
+
+                // 座席リクエスト情報は空に
+                for ($carnum = 1; $carnum <= 16; $carnum++) {
+                    $stmt = $this->dbh->query("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? AND `seat_class`=? AND `is_smoking_seat`=? ORDER BY `seat_row`, `seat_column`");
+                    $stmt->execute([
+                        $payload['train_class'],
+                        $carnum,
+                        $payload['seat_class'],
+                        $payload['is_smoking_seat']
+                    ]);
+                    $seatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($seatList === false) {
+                        $this->dbh->rollBack();
+                        return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
+                    }
+
+                    foreach ($seatList as $seat) {
+                        $s = [
+                            'row' => $seat['seat_row'],
+                            'column' => $seat['seat_column'],
+                            'class' => $seat['seat_class'],
+                            'is_smoking_seat' => $seat['is_smoking_seat'],
+                            'is_occupied' => false,
+                        ];
+                        $stmt = $this->dbh->prepare("SELECT s.* FROM `seat_reservations` s, `reservations` r WHERE r.`date` =? AND r.`train_class` =? AND r.`train_name` =? AND `car_number` =? AND `seat_row` =? AND `seat_column` =? FOR UPDATE");
+                        $stmt->execute([
+                            $date,
+                            $seat['train_class'],
+                            $payload['train_name'],
+                            $seat['car_number'],
+                            $seat['seat_row'],
+                            $seat['seat_class'],
+                        ]);
+                        $seatReservationList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        if ($seatReservationList === false) {
+                            $this->dbh->rollBack();
+                            return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
+                        }
+                        foreach ($seatReservationList as $seatReservation) {
+                            $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id` =? FOR UPDATE");
+                            $stmt->execute([
+                                $seatReservation['reservation_id']
+                            ]);
+                            $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+                            if ($reservation === false) {
+                                $this->dbh->rollBack();
+                                return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
+                            }
+
+                            $stmt = $this->dbh->prepare("SELECT * FROM station_master WHERE name=?");
+                            $departureStation = $stmt->execute([$reservation['departure']]);
+                            if ($departureStation === false) {
+                                $this->dbh->rollBack();
+                                return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
+                            }
+
+                            $stmt = $this->dbh->prepare("SELECT * FROM station_master WHERE name=?");
+                            $arrivalStation = $stmt->execute([$reservation['arrival']]);
+                            if ($arrivalStation === false) {
+                                $this->dbh->rollBack();
+                                return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
+                            }
+
+                            if ($train['is_nobori']) {
+                                if (($toStation['id'] < $arrivalStation['id']) && $fromStation['id'] <= $arrivalStation['id']) {
+                                    // pass
+                                } elseif (($toStation['id'] >= $departureStation['id']) && $fromStation['id'] > $departureStation['id']) {
+                                    // pass
+                                } else {
+                                    $s['is_occupied'] = true;
+                                }
+                            } else {
+                                if (($fromStation['id'] < $departureStation['id']) && $toStation['id'] <= $departureStation['id']) {
+                                    // pass
+                                } elseif (($fromStation['id'] >= $arrivalStation['id']) && $toStation['id'] > $arrivalStation['id']) {
+                                    // pass
+                                } else {
+                                    $s['is_occupied'] = true;
+                                }
+                            }
+                        }
+                        $seatInformationList[] = $s;
+                    }
+
+                    // 曖昧予約席とその他の候補席を選出
+                    $reserved = false;
+                    $vargue = true;
+                    $seatnum = ($payload['adult'] + $payload['child'] -1); // 予約する座席の合計数, 全体の人数からあいまい指定席分を引いておく
+                    // A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
+                    if ($payload['Column'] === "") {
+                        $seatnum = ($payload['adult'] + $payload['child']); // あいまい指定せず大人＋小人分の座席を取る
+                        $reserved = false; // dummy
+                        $vargue = false;   // dummy
+                    }
+
+                    // シート分だけ回して予約できる席を検索
+                    $i =0;
+                    $vagueSeat = [];
+                    $candidateSeats = [];
+                    foreach ($seatReservationList as $seat) {
+                        if (($seat['column'] == $payload['Column']) && (! (bool) $seat['is_occupied']) && (! $reserved) && ($vargue)) {
+                            $vagueSeat['row'] = $seat['row'];
+                            $vagueSeat['column'] = $seat['column'];
+                        } elseif ((! (bool) $seat['is_occupied']) && ($i < $seatnum)) {
+                            $candidateSeats[] = [
+                              'row' => $seat['row'],
+                              'column'  => $seat['column'],
+                            ];
+                            $i++;
+                        }
+                    }
+
+                    // あいまい席が見つかり、予約できそうだった
+                    if ($vargue === true && $reserved === true) {
+                        $payload['seats'][] = $vagueSeat;
+                    }
+                    //  候補席があった
+                    if ($i > 0) {
+                        foreach ($candidateSeats as $c) {
+                            $payload['seats'][] = $c;
+                        }
+                    }
+
+                    if (count($payload['seats']) < ($payload['adult'] = $payload['child'])) {
+                        // リクエストに対して席数が足りてない
+                        // 次の号車にうつしたい
+                        // fmt.Println("-----------------")
+                        // fmt.Printf("現在検索中の車両: %d号車, リクエスト座席数: %d, 予約できそうな座席数: %d, 不足数: %d\n", carnum, req.Adult+req.Child, len(req.Seats), req.Adult+req.Child-len(req.Seats))
+                        // fmt.Println("リクエストに対して座席数が不足しているため、次の車両を検索します。")
+                        if ($carnum === 16) {
+                            // fmt.Println("この新幹線にまとめて予約できる席数がなかったから検索をやめるよ")
+                            $payload['seats'] = [];
+                            break;
+                        }
+                    }
+                    // fmt.Printf("空き実績: %d号車 シート:%v 席数:%d\n", carnum, req.Seats, len(req.Seats))
+                    if (count($payload['seats']) >= ($payload['adult'] + $payload['child'])) {
+                        // fmt.Println("予約情報に追加したよ")
+                        $payload['seats'] = array_slice($payload['seats'], 0, ($payload['adult'] + $payload['child']));
+                        $payload['car_number'] = $carnum;
+                        break;
+                    }
+                }
+                if (count($payload['seats']) === 0) {
+                    $this->dbh->rollBack();
+                    return $response->withJson($this->errorResponse("あいまい座席予約ができませんでした。指定した席、もしくは1車両内に希望の席数をご用意できませんでした。"), StatusCode::HTTP_BAD_REQUEST);
+                }
+                // no break
+            default:
+                // 座席情報のValidate
+                foreach ($payload['seats'] as $z) {
+                    $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class` =? AND `car_number` =? AND `seat_column` =? AND `seat_row` =? AND `seat_class` =?");
+                    $stmt->execute([
+                        $payload['train_class'],
+                        $payload['car_number'],
+                        $z['column'],
+                        $z['row'],
+                        $payload['seat_class'],
+                    ]);
+                    $seatList = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if ($seatList === false) {
+                        $this->dbh->rollBack();
+                        return $response->withJson($this->errorResponse("リクエストされた座席情報は存在しません。号車・喫煙席・座席クラスなど組み合わせを見直してください"), StatusCode::HTTP_BAD_REQUEST);
+                    }
+                }
+                break;
+        }
+        // 当該列車・列車名の予約一覧取得
+        $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE date=? AND `train_class`=? AND `train_name`=? FOR UPDATE");
+        $stmt->execute([
+            $date,
+            $payload['train_class'],
+            $payload['train_name'],
+        ]);
+        $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($reservations === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("列車予約情報の取得に失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        foreach ($reservations as $reservation) {
+            if ($payload['seat_class'] === 'non-reserved') {
+                break;
+            }
+            // train_masterから列車情報を取得(上り・下りが分かる)
+            $stmt = $this->dbh->prepare("SELECT * FROM `train_master` WHERE `date`=? AND `train_class`=? AND `train_name`=?");
+            $stmt->execute([
+                $date,
+                $payload['train_class'],
+                $payload['train_name'],
+            ]);
+            $tmas = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($tmas === false) {
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("列車データがみつかりません"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            // 予約情報の乗車区間の駅IDを求める
+            // from
+            $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+            $stmt->execute([$reservation['departure']]);
+            $reservedFromStation = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($reservedFromStation === false) {
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("予約情報に記載された列車の乗車駅データがみつかりません"), StatusCode::HTTP_NOT_FOUND);
+            }
+
+            // to
+            $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+            $stmt->execute([$reservation['arrival']]);
+            $reservedToStation = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($reservedToStation === false) {
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("予約情報に記載された列車の降車駅データがみつかりません"), StatusCode::HTTP_NOT_FOUND);
+            }
+
+            // 予約の区間重複判定
+            $secdup = false;
+            if ((bool) $tmas['is_nobori'] === true) {
+                if (($toStation['id'] < $reservedToStation['id']) && ($fromStation['id'] <= $reservedFromStation['id'])) {
+                    // pass
+                } elseif (($toStation['id'] >= $reservedToStation['id']) && ($fromStation['id'] > $reservedFromStation['id'])) {
+                    // pass
+                } else {
+                    $secdup = true;
+                }
+            } else {
+                if (($fromStation['id'] < $reservedFromStation['id']) && $toStation['id'] <= $reservedToStation['id']) {
+                    // pass
+                } elseif (($fromStation['id'] >= $reservedToStation['id']) && ($toStation['id'] > $reservedToStation['id'])) {
+                    // pass
+                } else {
+                    $secdup = true;
+                }
+            }
+
+            if ($secdup) {
+                // 区間重複の場合は更に座席の重複をチェックする
+                $stmt = $this->dbh->prepare("SELECT * FROM `seat_reservations` WHERE `reservation_id`=? FOR UPDATE");
+                $stmt->execute([
+                    $reservation['reservation_id'],
+                ]);
+                $seatReservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                if ($seatReservations === false) {
+                    $this->dbh->rollBack();
+                    return $response->withJson($this->errorResponse("座席予約情報の取得に失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+                }
+                foreach ($seatReservations as $v) {
+                    foreach ($payload['seats'] as $seat) {
+                        if (($v['car_number'] == $payload['car_number']) && ($v['seat_row'] == $seat['row'] && ($v['seat_column'] == $seat['column']))) {
+                            $this->dbh->rollBack();
+                            return $response->withJson($this->errorResponse("リクエストに既に予約された席が含まれています"), StatusCode::HTTP_BAD_REQUEST);
+                        }
+                    }
+                }
+            }
+        }
+        // 3段階の予約前チェック終わり
+
+        // 自由席は強制的にSeats情報をダミーにする（自由席なのに席指定予約は不可）
+        if ($payload['seat_class'] === 'non-reserved') {
+            $payload['seats'] = [];
+            $payload['car_number'] = 0;
+            for ($num=0; $num < ($payload['adult'] + $payload['child']); $num++) {
+                $payload['seats'][] = [
+                    'row' => 0,
+                    'column' => "",
+                ];
+            }
+        }
+
+        // 運賃計算
+        $fare = 0;
+        switch ($payload['seat_class']) {
+            case 'premium':
+                $fare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $payload['train_class'], 'premium');
+                // TODO check err
+                break;
+            case 'reserved':
+                $fare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $payload['train_class'], 'reserved');
+                // TODO check err
+                break;
+            case 'non-reserved':
+                $fare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $payload['train_class'], 'non-reserved');
+                // TODO check err
+                break;
+            default:
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("リクエストされた座席クラスが不明です"), StatusCode::HTTP_BAD_REQUEST);
+        }
+        $sumFare = ($payload['adult'] * $fare) + (($payload['child'] * $fare)/2);
+
+        // userID取得。ログインしてないと怒られる。
+        try {
+            $user = $this->getUser();
+        } catch (\DomainException $e) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
+        }
+
+        // 予約ID発行と予約情報登録
+        $stmt = $this->dbh->prepare("INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `adult`, `child`, `amount`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $r = $stmt->execute([
+            $user['id'],
+            $date,
+            $payload['train_class'],
+            $payload['train_name'],
+            $payload['departure'],
+            $payload['arrival'],
+            "requesting",
+            "a",
+            $payload['adult'],
+            $payload['child'],
+            $sumFare,
+        ]);
+        if ($r === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("予約の保存に失敗しました"), StatusCode::HTTP_BAD_REQUEST);
+        }
+        $reservation_id = $this->dbh->lastInsertId();
+
+        //席の予約情報登録
+        //reservationsレコード1に対してseat_reservationstが1以上登録される
+        foreach ($payload['seats'] as $v) {
+            $stmt = $this->dbh->prepare("INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES (?, ?, ?, ?)");
+            $r = $stmt->execute([
+                $reservation_id,
+                $payload['car_number'],
+                $v['row'],
+                $v['column']
+            ]);
+
+            if ($r === false) {
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("座席予約の登録に失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+        $this->dbh->commit();
+
+        return $response->withJson([
+            'reservation_id' => $reservation_id,
+            'amount' => $sumFare,
+            'is_ok' => true,
+        ], StatusCode::HTTP_OK);
     }
 
     public function initialize(Request $request, Response $response, array $args)
