@@ -55,6 +55,9 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 
 		eg.Go(func() error {
 			for _, rawData := range paymentAPIResult.RawData {
+				if rawData.PaymentInfo == nil {
+					continue
+				}
 				if rawData.PaymentInfo.ReservationID != reservationID {
 					continue
 				}
@@ -81,6 +84,9 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 		)
 		eg.Go(func() error {
 			for _, rawData := range paymentAPIResult.RawData {
+				if rawData.PaymentInfo == nil {
+					continue
+				}
 				if rawData.PaymentInfo.ReservationID == reservationID && !rawData.PaymentInfo.IsCanceled {
 					lgr.Warnf("キャンセルされた予約 %d が課金情報に含まれてる", reservationID)
 					return ErrCanceledReservationExistsPaymentInformations
