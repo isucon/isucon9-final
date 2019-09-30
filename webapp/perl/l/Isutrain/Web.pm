@@ -21,9 +21,9 @@ sub dbh {
     $self->{_dbh} ||= do {
         my $host = $ENV{MYSQL_HOST} // '127.0.0.1';
         my $port = $ENV{MYSQL_PORT} // 3306;
-        my $database = $ENV{MYSQL_DBNAME} // 'isucari';
-        my $user = $ENV{MYSQL_USER} // 'isucari';
-        my $password = $ENV{MYSQL_PASS} // 'isucari';
+        my $database = $ENV{MYSQL_DBNAME} // 'isutrain';
+        my $user = $ENV{MYSQL_USER} // 'isutrain';
+        my $password = $ENV{MYSQL_PASS} // 'isutrain';
         my $dsn = "dbi:mysql:database=$database;host=$host;port=$port";
         DBIx::Sunny->connect($dsn, $user, $password, {
             mysql_enable_utf8mb4 => 1,
@@ -477,6 +477,171 @@ get '/api/train/search' => sub {
 
 
 #mux.HandleFunc(pat.Get("/api/train/seats"), trainSeatsHandler)
+get '/api/train/seats' => sub {
+    #
+    # 指定した列車の座席列挙
+    # GET /train/seats?date=2020-03-01&train_class=のぞみ&train_name=96号&car_number=2&from=大阪&to=東京
+    #
+    my ($self, $c) = @_;
+
+    my $jst_offset = 9*60;
+    my $date = eval {
+        Time::Moment->from_string($c->req->parameters->get('use_at'));
+    };
+    if ($@) {
+        return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
+    }
+    $date = $date->with_offset_same_instant($jst_offset);
+
+    if (!Isutrain::Utils::checkAvailableDate($AVAILABLE_DAYS, $date)) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, "予約可能期間外です");
+    }
+
+    my $train_class = $c->req->parameters->get('train_class') // "";
+    my $train_name = $c->req->parameters->get('train_name') // "";
+    my $car_number = $c->req->parameters->get('car_number') // "";
+    my $from_name = $c->req->parameters->get('from') // "";
+    my $to_name = $c->req->parameters->get('to') // "";
+
+    # 対象列車の取得
+    my $query = 'SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?';
+	my $train = $self->dbh->select_row($query, $date->strftime("%F"), $train_class, $train_name);
+    if (!$train) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, "列車が存在しません");
+    }
+
+    $query = 'SELECT * FROM station_master WHERE name=?';
+
+	# From
+    my $from_station = $self->dbh->select_row($query, $from_name);
+    if (!$from_name) {
+        return $self->error_with_msg($c, HTTP_BAD_REQUEST, "No From station");
+    }
+
+	# To
+    my $to_station = $self->dbh->select_row($query, $to_name);
+    if (!$to_station) {
+        return $self->error_with_msg($c, HTTP_BAD_REQUEST, "No To station");
+    }
+
+
+    my $usable_train_class_list = Isutrain::Utils::getUsableTrainClassList($from_station, $to_station);
+    my $usable = 0;
+    for my $v (@$usable_train_class_list) {
+        if ($v eq $train->{train_class}) {
+            $usable = 1;
+        }
+    }
+	if (!$usable) {
+		warn("invalid train_class");
+        return $self->error_with_msg($c, HTTP_BAD_REQUEST, "invalid train_class");
+	}
+
+
+    $query = 'SELECT * FROM seat_master WHERE train_class=? AND car_number=? ORDER BY seat_row, seat_column';
+    my $seat_list = $self->dbh->select_all($query, $train_class, $car_number);
+
+    my @seat_information_list = ();
+    for my $seat (@$seat_list) {
+        my $s = {
+            row => number $seat->{seat_row},
+            column => $seat->{seat_column},
+            class => $seat->{seat_class},
+            is_smoking_seat => bool $seat->{is_smoking_seat},
+            is_occupied => bool 0,
+        };
+
+        $query = <<'EOF';
+        SELECT s.*
+        FROM seat_reservations s, reservations r
+        WHERE
+        	r.date=? AND r.train_class=? AND r.train_name=? AND car_number=? AND seat_row=? AND seat_column=?
+EOF
+        my $seat_reservation_list = $self->dbh->select_all(
+            $query,
+            $date->strftime("%F"),
+            $seat->{train_class},
+            $train_name,
+            $seat->{car_number},
+            $seat->{seat_row},
+            $seat->{seat_column}
+        );
+
+        warn($seat_reservation_list); #XXX
+
+        for my $seat_reservation (@$seat_reservation_list) {
+            $query = 'SELECT * FROM reservations WHERE reservation_id=?';
+            my $resevation = $self->dbh->select_row($query, $seat_reservation->{reservation_id});
+            if (!$resevation) {
+                die "No reservation";
+            }
+
+            $query = 'SELECT * FROM station_master WHERE name=?';
+            my $departure_station = $self->dbh->select_row($query, $seat_reservation->{departure});
+            if (!$departure_station) {
+                die "No departure station";
+            }
+            my $arrival_station = $self->dbh->select_row($query, $seat_reservation->{arrival});
+            if (!$arrival_station) {
+                die "No arrival station";
+            }
+
+            if ($train->{is_nobori}) {
+                # 上り
+                if ($to_station->{id} < $arrival_station->{id}  && $from_station->{id} <= $arrival_station->{id}) {
+                    # pass
+                } elsif ($to_station->{id} >= $departure_station->{id} && $from_station->{id} > $departure_station->{id}) {
+                    # pass
+                } else {
+                    $s->{is_occupied} = 1;
+                }
+            }
+            else {
+                # 下り
+				if ($from_station->{id} < $departure_station->{id} && $to_station->{id} <= $departure_station->{id}) {
+					# pass
+				} elsif ($from_station->{id} >= $arrival_station->{id} && $to_station->{id} > $arrival_station->{id}) {
+					# pass
+				} else {
+                    $s->{is_occupied} = 1;
+				}
+            }
+        }
+
+        warn($s->{is_occupied});
+        push @seat_information_list, $s;
+	}
+
+	# 各号車の情報
+    my @simple_car_information_list = ();
+
+    $query = 'SELECT * FROM seat_master WHERE train_class=? AND car_number=? ORDER BY seat_row, seat_column LIMIT 1';
+    my $i = 1;
+    while (1) {
+        my $seat = $self->dbh->select_row($query, $train_class, $i);
+        if (!$seat) {
+            last;
+        }
+        push @simple_car_information_list, {
+            car_number => number $i,
+            seat_class => $seat->{seat_class}
+        };
+        $i++;
+    }
+
+    my $ci = {
+        date => $date->strftime("%F"),
+        train_class => $train_class,
+        train_name => $train_name,
+        car_number => number $car_number,
+        seats => \@seat_information_list,
+        cars => \@simple_car_information_list,
+    };
+
+    $c->render_json($ci);
+};
+
+
 #mux.HandleFunc(pat.Post("/api/train/reserve"), trainReservationHandler)
 #mux.HandleFunc(pat.Post("/api/train/reservation/commit"), reservationPaymentHandler)
 
