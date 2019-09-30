@@ -245,7 +245,7 @@ func AttackReserveForReserved(ctx context.Context) error {
 	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
 
 	// １回目の予約
-	_, _, err = client.Reserve(ctx,
+	_, err = client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 		departure, arrival, useAt,
@@ -262,7 +262,7 @@ func AttackReserveForReserved(ctx context.Context) error {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			_, _, err := client.Reserve(ctx,
+			_, err := client.Reserve(ctx,
 				train.Class, train.Name,
 				isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 				departure, arrival, useAt,
