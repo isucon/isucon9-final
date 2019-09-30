@@ -97,6 +97,11 @@ func assertCanReserve(ctx context.Context, req *ReserveRequest, resp *Reservatio
 
 	canReserve, err := ReservationCache.CanReserve(req)
 	if err != nil {
+		lgr.Warnf("予約のcanReserve判定でエラー: %s", err.Error())
+		return bencherror.NewCriticalError(err, "予約可能チェック処理でエラーが発生しました")
+	}
+
+	if !canReserve {
 		lgr.Warnw("予約できないはず",
 			"departure", req.Departure,
 			"arrival", req.Arrival,
@@ -106,10 +111,6 @@ func assertCanReserve(ctx context.Context, req *ReserveRequest, resp *Reservatio
 			"car_num", req.CarNum,
 			"seats", req.Seats,
 		)
-		return bencherror.NewCriticalError(err, "予約可能チェック処理でエラーが発生しました")
-	}
-
-	if !canReserve {
 		return bencherror.NewSimpleCriticalError("予約できないはずの条件で予約が成功しました")
 	}
 
