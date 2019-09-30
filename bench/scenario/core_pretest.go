@@ -120,7 +120,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	// FIXME: 日付、列車クラス、名前、車両番号、乗車駅降車駅を指定
 	_, validSeats, err := client.ListTrainSeats(ctx,
 		useAt,
-		trainClass, trainName, carNum, departure, arrival)
+		trainClass, trainName, carNum, departure, arrival, 2)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return

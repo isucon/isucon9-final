@@ -3,16 +3,14 @@ package isutrain
 type ClientOption func(o *ClientOptions)
 
 type ClientOptions struct {
-	wantStatusCode  int
-	autoAssert      bool
-	trainSeatsCount int
+	wantStatusCode int
+	autoAssert     bool
 }
 
 func newClientOptions(statusCode int, opts ...ClientOption) *ClientOptions {
 	o := &ClientOptions{
-		wantStatusCode:  statusCode,
-		autoAssert:      true,
-		trainSeatsCount: 2,
+		wantStatusCode: statusCode,
+		autoAssert:     true,
 	}
 	if len(opts) == 0 {
 		return o
@@ -39,8 +37,3 @@ func DisableAssertOpt() ClientOption {
 	}
 }
 
-func TrainSeatsCountOpt(count int) ClientOption {
-	return func(o *ClientOptions) {
-		o.trainSeatsCount = count
-	}
-}

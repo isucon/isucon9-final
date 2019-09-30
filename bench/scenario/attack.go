@@ -3,10 +3,10 @@ package scenario
 import (
 	"context"
 	"math/rand"
+	"net/http"
 	"sync"
 	"sync/atomic"
 	"time"
-	"net/http"
 
 	// "go.uber.org/zap"
 
@@ -119,7 +119,7 @@ func AttackSearchScenario(ctx context.Context) error {
 					train := trains[trainIdx]
 					carNum := 8
 
-					_, _, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival)
+					_, _, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival, 2)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 						return
@@ -237,7 +237,7 @@ func AttackReserveForReserved(ctx context.Context) error {
 	carNum := 9
 	_, validSeats, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, departure, arrival)
+		train.Class, train.Name, carNum, departure, arrival, 2)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
