@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"go.uber.org/zap"
+
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/scenario"
@@ -19,7 +21,11 @@ type benchmarker struct {
 }
 
 func newBenchmarker() *benchmarker {
-	return &benchmarker{sem: semaphore.NewWeighted(int64(config.AvailableDays * config.WorkloadMultiplier))}
+	lgr := zap.S()
+
+	weight := int64(config.AvailableDays * config.WorkloadMultiplier)
+	lgr.Infof("負荷レベル Lv:%d", weight)
+	return &benchmarker{sem: semaphore.NewWeighted(weight)}
 }
 
 // ベンチ負荷の１単位. これの回転数を上げていく
@@ -32,8 +38,7 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.AttackReserveForOtherReservation(ctx)
 
-	// FIXME: webappの課金情報がおかしくなる
-	// scenario.AttackReserveForReserved(ctx)
+	scenario.AttackReserveRaceCondition(ctx)
 
 	scenario.AbnormalReserveWrongSection(ctx)
 
@@ -43,8 +48,7 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
 
-	// FIXME: webappの課金情報がおかしくなる
-	// scenario.NormalVagueSearchScenario(ctx)
+	scenario.NormalVagueSearchScenario(ctx)
 
 	if config.AvailableDays > 200 { // FIXME: 値が適当
 		scenario.GoldenWeekScenario(ctx)
