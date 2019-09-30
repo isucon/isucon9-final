@@ -119,7 +119,7 @@ func AttackSearchScenario(ctx context.Context) error {
 					train := trains[trainIdx]
 					carNum := 8
 
-					_, _, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival, 2)
+					_, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 						return
@@ -235,17 +235,19 @@ func AttackReserveForReserved(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := 9
-	_, validSeats, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, departure, arrival, 2)
+		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
+	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+
 	// １回目の予約
 	_, _, err = client.Reserve(ctx,
 		train.Class, train.Name,
-		isutraindb.GetSeatClass(train.Class, carNum), validSeats,
+		isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 		departure, arrival, useAt,
 		carNum, 1, 1, "")
 	if err != nil {
@@ -262,7 +264,7 @@ func AttackReserveForReserved(ctx context.Context) error {
 			defer wg.Done()
 			_, _, err := client.Reserve(ctx,
 				train.Class, train.Name,
-				isutraindb.GetSeatClass(train.Class, carNum), validSeats,
+				isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 				departure, arrival, useAt,
 				carNum, 1, 1, "", isutrain.StatusCodeOpt(http.StatusBadRequest))
 			if err != nil {

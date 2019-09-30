@@ -75,17 +75,19 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := 5
-	_, validSeats, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, "東京", "大阪", 2)
+		train.Class, train.Name, carNum, "東京", "大阪")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
+	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+
 	_, _, err = client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
-		validSeats, "山田", "夷太寺", useAt,
+		availSeats, "山田", "夷太寺", useAt,
 		carNum, 1, 1, "",
 		isutrain.StatusCodeOpt(http.StatusBadRequest))
 
@@ -129,21 +131,23 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "reserved")
-	_, validSeats, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, departure, arrival, 2)
+		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
+	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+
 	// FIXME: seatが空になるケースがあるので、上の座席列挙で固定の条件で検索をかける必要がある
-	validSeats[0].Row = 30
-	validSeats[1].Column = "G"
+	availSeats[0].Row = 30
+	availSeats[1].Column = "G"
 
 	_, _, err = client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
-		validSeats, departure, arrival, useAt,
+		availSeats, departure, arrival, useAt,
 		carNum, 1, 1, "",
 		isutrain.StatusCodeOpt(http.StatusNotFound))
 	if err == nil {

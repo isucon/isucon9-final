@@ -8,25 +8,14 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func assertListTrainSeats(resp *TrainSeatSearchResponse, count int) (TrainSeats, error) {
-	validSeats := TrainSeats{}
-
+func assertListTrainSeats(resp *TrainSeatSearchResponse) error {
 	if resp == nil {
-		return validSeats, bencherror.NewSimpleCriticalError("座席検索のレスポンスが不正です: %+v", resp)
+		return bencherror.NewSimpleCriticalError("座席検索のレスポンスが不正です: %+v", resp)
 	}
 
 	// TODO: 席が重複して返されたら減点
 
-	for _, seat := range resp.Seats {
-		if len(validSeats) == count {
-			break
-		}
-		if !seat.IsOccupied {
-			validSeats = append(validSeats, seat)
-		}
-	}
-
-	return validSeats, nil
+	return nil
 }
 
 func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveRequest, resp *ReservationResponse) error {
