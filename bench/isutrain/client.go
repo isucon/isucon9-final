@@ -329,7 +329,7 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, tr
 	return trains, nil
 }
 
-func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass, trainName string, carNum int, departure, arrival string, opt ...ClientOption) (*TrainSeatSearchResponse, TrainSeats, error) {
+func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass, trainName string, carNum int, departure, arrival string, trainSeatsCount int, opt ...ClientOption) (*TrainSeatSearchResponse, TrainSeats, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.ListTrainSeats)
@@ -391,7 +391,7 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 
 	// NotFound、あるいはBadRequestの場合、座席を得ることはできない
 	if opts.autoAssert && (resp.StatusCode != http.StatusNotFound && resp.StatusCode != http.StatusBadRequest) {
-		validSeats, err := assertListTrainSeats(listTrainSeatsResp, opts.trainSeatsCount)
+		validSeats, err := assertListTrainSeats(listTrainSeatsResp, trainSeatsCount)
 		if err != nil {
 			return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: 座席検索の結果、座席が空になっています", endpointPath))
 		}
