@@ -128,7 +128,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 
 	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
 
-	_, reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, availSeats, departure, arrival,
+	reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, availSeats, departure, arrival,
 		useAt,
 		carNum, adult, child, seatType)
 	if err != nil {

@@ -67,7 +67,7 @@ func NormalScenario(ctx context.Context) error {
 
 	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
 
-	_, reserveResp, err := client.Reserve(ctx,
+	reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 		departure, arrival, useAt,
@@ -164,7 +164,7 @@ func NormalCancelScenario(ctx context.Context) error {
 
 	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
 
-	_, reserveResp, err := client.Reserve(ctx,
+	reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		availSeats, departure, arrival, useAt,
@@ -243,7 +243,7 @@ func NormalVagueSearchScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, _, err = client.Reserve(ctx,
+	_, err = client.Reserve(ctx,
 		"最速", "1", "premium", isutrain.TrainSeats{},
 		"東京", "大阪", time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		1, 1, 1, "isle")

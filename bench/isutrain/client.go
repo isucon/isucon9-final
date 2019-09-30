@@ -410,7 +410,7 @@ func (c *Client) Reserve(
 	child, adult int,
 	typ string,
 	opt ...ClientOption,
-) (*ReserveRequest, *ReservationResponse, error) {
+) (*ReservationResponse, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.Reserve)
@@ -447,7 +447,7 @@ func (c *Client) Reserve(
 
 	b, err := json.Marshal(reserveReq)
 	if err != nil {
-		return reserveReq, nil, err
+		return nil, err
 	}
 
 	lgr.Infof("予約クエリ: %s", string(b))
@@ -455,7 +455,7 @@ func (c *Client) Reserve(
 	req, err := c.sess.newRequest(ctx, http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
 		lgr.Warnf("予約リクエスト失敗: %+v", err)
-		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: リクエストに失敗しました", endpointPath), failureCtx)
+		return nil, failure.Wrap(err, failure.Messagef("POST %s: リクエストに失敗しました", endpointPath), failureCtx)
 	}
 
 	// FIXME: csrfトークン検証
@@ -469,14 +469,14 @@ func (c *Client) Reserve(
 	resp, err := c.sess.do(req)
 	if err != nil {
 		lgr.Warnf("予約リクエスト失敗: %+v", err)
-		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: リクエストに失敗しました", endpointPath), failureCtx)
+		return nil, failure.Wrap(err, failure.Messagef("POST %s: リクエストに失敗しました", endpointPath), failureCtx)
 	}
 	defer resp.Body.Close()
 
 	var reservation *ReservationResponse
 	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
 		lgr.Warnf("予約リクエストのUnmarshal失敗: %+v", err)
-		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: JSONのUnmarshalに失敗しました", endpointPath), failureCtx)
+		return nil, failure.Wrap(err, failure.Messagef("POST %s: JSONのUnmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -484,12 +484,12 @@ func (c *Client) Reserve(
 	}
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-		return reserveReq, nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
+		return nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
 	if opts.autoAssert {
 		if err := assertReserve(ctx, c, reserveReq, reservation); err != nil {
-			return reserveReq, nil, err
+			return nil, err
 		}
 	}
 
@@ -508,7 +508,7 @@ func (c *Client) Reserve(
 		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
 	}
 
-	return reserveReq, reservation, nil
+	return reservation, nil
 }
 
 func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardToken string, opt ...ClientOption) error {
