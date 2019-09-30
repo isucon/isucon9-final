@@ -480,6 +480,9 @@ func (c *Client) Reserve(
 	}
 
 	if resp.StatusCode == http.StatusOK {
+		if err := assertCanReserve(ctx, reserveReq, reservation); err != nil {
+			return nil, err
+		}
 		ReservationCache.Add(c.loginUser, reserveReq, reservation.ReservationID)
 	}
 

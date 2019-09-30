@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -86,6 +87,30 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 
 	if err := reserveGrp.Wait(); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func assertCanReserve(ctx context.Context, req *ReserveRequest, resp *ReservationResponse) error {
+	lgr := zap.S()
+
+	canReserve, err := ReservationCache.CanReserve(req)
+	if err != nil {
+		lgr.Warnw("予約できないはず",
+			"departure", req.Departure,
+			"arrival", req.Arrival,
+			"date", req.Date,
+			"train_class", req.TrainClass,
+			"train_name", req.TrainName,
+			"car_num", req.CarNum,
+			"seats", req.Seats,
+		)
+		return bencherror.NewCriticalError(err, "予約可能チェック処理でエラーが発生しました")
+	}
+
+	if !canReserve {
+		return bencherror.NewSimpleCriticalError("予約できないはずの条件で予約が成功しました")
 	}
 
 	return nil
