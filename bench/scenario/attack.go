@@ -7,14 +7,13 @@ import (
 	"sync/atomic"
 	"time"
 
-	// "go.uber.org/zap"
+	"go.uber.org/zap"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
-	"go.uber.org/zap"
 )
 
 // FIXME: 適当に10個生成するようにしてるけど、設定できるように
@@ -258,10 +257,9 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 				departure, arrival, useAt,
 				carNum, 1, 1, "")
 			if err != nil {
-				lgr.Warnf("[AttackReserveRaceCondition] err=%s", err.Error())
+				// 1件をのぞいエラーになるはず
 				return
 			}
-
 			atomic.AddUint64(&successCount, 1)
 		}()
 	}
@@ -271,6 +269,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 	if successCount == 0 {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleApplicationError("予約できませんでした"))
 	} else if successCount > 1 {
+		lgr.Info("多重発券されました")
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleCriticalError("多重発券されました"))
 	}
 

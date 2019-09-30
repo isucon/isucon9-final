@@ -26,22 +26,22 @@ func newBenchmarker() *benchmarker {
 func (b *benchmarker) load(ctx context.Context) error {
 	defer b.sem.Release(1)
 
-	scenario.NormalScenario(ctx)
+	// scenario.NormalScenario(ctx)
 
-	scenario.NormalCancelScenario(ctx)
+	// scenario.NormalCancelScenario(ctx)
 
-	scenario.AttackReserveForOtherReservation(ctx)
+	// scenario.AttackReserveForOtherReservation(ctx)
 
 	// FIXME: webappの課金情報がおかしくなる
-	// scenario.AttackReserveRaceCondition(ctx)
+	scenario.AttackReserveRaceCondition(ctx)
 
-	scenario.AbnormalReserveWrongSection(ctx)
+	// scenario.AbnormalReserveWrongSection(ctx)
 
-	scenario.AbnormalReserveWrongSeat(ctx)
+	// scenario.AbnormalReserveWrongSeat(ctx)
 
-	scenario.NormalManyAmbigiousSearchScenario(ctx, 5) // 負荷レベルに合わせて大きくする
+	// scenario.NormalManyAmbigiousSearchScenario(ctx, 5) // 負荷レベルに合わせて大きくする
 
-	scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
+	// scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
 
 	// FIXME: webappの課金情報がおかしくなる
 	// scenario.NormalVagueSearchScenario(ctx)

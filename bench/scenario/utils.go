@@ -96,7 +96,7 @@ func filterTrainSeats(resp *isutrain.TrainSeatSearchResponse, count int) isutrai
 			break
 		}
 		if !seat.IsOccupied {
-			availSeats = append(availSeats)
+			availSeats = append(availSeats, seat)
 		}
 	}
 
