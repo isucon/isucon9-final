@@ -3,7 +3,6 @@ package scenario
 import (
 	"context"
 	"math/rand"
-	"net/http"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -190,7 +189,6 @@ func AttackListReservationsScenario(ctx context.Context) error {
 // TODO: 予約済みの条件で予約を試みる
 // 一応、予約キャンセルするのを虎視眈々と狙っている利用者からのリクエスト、という設定
 
-
 // AttackReserveRaceCondition は、予約にて、一気にリクエストを送ることで競合が発生しないかチェックするシナリオ
 func AttackReserveRaceCondition(ctx context.Context) error {
 	lgr := zap.S()
@@ -258,7 +256,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 				train.Class, train.Name,
 				isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 				departure, arrival, useAt,
-				carNum, 1, 1, "", isutrain.StatusCodeOpt(http.StatusBadRequest))
+				carNum, 1, 1, "")
 			if err != nil {
 				lgr.Warnf("[AttackReserveRaceCondition] err=%s", err.Error())
 				return
