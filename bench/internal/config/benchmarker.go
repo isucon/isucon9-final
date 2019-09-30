@@ -10,6 +10,10 @@ const (
 )
 
 const (
+	WorkloadMultiplier = 1
+)
+
+const (
 	AttackSearchTrainTimeout    = 20 * time.Second
 	AttackListTrainSeatsTimeout = 20 * time.Second
 )

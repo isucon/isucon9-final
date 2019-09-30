@@ -162,7 +162,7 @@ var run = cli.Command{
 		benchCtx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		defer cancel()
 
-		benchmarker := new(benchmarker)
+		benchmarker := newBenchmarker()
 		if err := benchmarker.run(benchCtx); err != nil {
 			lgr.Warnf("ベンチマークにてエラーが発生しました: %+v", err)
 		}
