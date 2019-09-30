@@ -77,6 +77,10 @@ func TestServer(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		if !r.PaymentInformation.IsCanceled {
+			t.Fatal("should failed") // キャンセルされていないとここで落ちる
+		}
+		t.Logf("Canceled: %#v", r.PaymentInformation.IsCanceled)
 		t.Logf("%#v", r)
 	})
 
@@ -103,7 +107,24 @@ func TestServer(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		if r.Deleted != 3 {
+			t.Fatalf("Failed. Expected:3 but %d\n", r.Deleted)
+		}
 		t.Logf("%#v", r)
+	})
+
+	t.Run("Check BulkCancelPayment", func(t *testing.T) {
+		ctx := context.Background()
+		for i := 0; i < 3; i++ {
+			r, err := c.GetPaymentInformation(ctx, &pb.GetPaymentInformationRequest{PaymentId: payidlist[i]})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !r.PaymentInformation.IsCanceled {
+				t.Fatal("should failed") // キャンセルされていないとここで落ちる
+			}
+			t.Logf("Canceled: %#v", r.PaymentInformation.IsCanceled)
+		}
 	})
 
 	t.Run("RegistCard with invalid parameters", func(t *testing.T) {
@@ -171,7 +192,7 @@ func TestServer(t *testing.T) {
 		payid = "a" // insert invalid paymentid
 		r, err := c.CancelPayment(ctx, &pb.CancelPaymentRequest{PaymentId: payid})
 		if err == nil {
-			t.Fatalf("Should fail. %s\n",err)
+			t.Fatalf("Should fail. %s\n", err)
 		}
 		t.Logf("%#v", r)
 	})

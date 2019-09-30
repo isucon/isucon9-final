@@ -7,12 +7,13 @@ import (
 	"sync"
 	"time"
 
+	pb "payment/pb"
+
 	"github.com/golang/protobuf/ptypes"
-	"github.com/nu7hatch/gouuid"
+	uuid "github.com/nu7hatch/gouuid"
 	"github.com/rs/xid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	pb "payment/pb"
 )
 
 var rawDataPool = sync.Pool{
@@ -119,11 +120,11 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 
 			s.mu.Lock()
 			s.PayInfoMap[guid.String()] = pb.PaymentInformation{
-				CardToken:  req.PaymentInformation.CardToken,
+				CardToken:     req.PaymentInformation.CardToken,
 				ReservationId: req.PaymentInformation.ReservationId,
-				Datetime:   date,
-				Amount:     req.PaymentInformation.Amount,
-				IsCanceled: false,
+				Datetime:      date,
+				Amount:        req.PaymentInformation.Amount,
+				IsCanceled:    false,
 			}
 			s.mu.Unlock()
 
@@ -151,7 +152,10 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 		s.mu.RUnlock()
 		time.Sleep(1 * time.Second)
 		if ok {
+			s.mu.Lock()
 			paydata.IsCanceled = true
+			s.PayInfoMap[req.PaymentId] = paydata
+			s.mu.Unlock()
 			done <- struct{}{}
 			return
 		}
@@ -183,6 +187,7 @@ func (s *Server) BulkCancelPayment(ctx context.Context, req *pb.BulkCancelPaymen
 			paydata, ok := s.PayInfoMap[v]
 			if ok {
 				paydata.IsCanceled = true
+				s.PayInfoMap[v] = paydata
 			} else {
 				i--
 			}
