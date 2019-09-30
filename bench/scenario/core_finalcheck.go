@@ -13,10 +13,11 @@ import (
 )
 
 var (
-	ErrListReservation                 = errors.New("予約一覧の取得に失敗しました")
-	ErrInvalidReservationForPaymentAPI = errors.New("課金APIと予約の整合性が取れていません")
-	ErrInvalidReservationForBenchCache = errors.New("予約における計算結果が")
-	ErrNoReservationPayments           = errors.New("予約に紐づく課金情報がありません")
+	ErrListReservation                              = errors.New("予約一覧の取得に失敗しました")
+	ErrInvalidReservationForPaymentAPI              = errors.New("課金APIと予約の整合性が取れていません")
+	ErrInvalidReservationForBenchCache              = errors.New("予約における計算結果が")
+	ErrNoReservationPayments                        = errors.New("予約に紐づく課金情報がありません")
+	ErrCanceledReservationExistsPaymentInformations = errors.New("キャンセルされた予約が課金情報に含まれています")
 )
 
 // FinalCheck は、課金サービスとwebappとで決済情報を突き合わせ、売上を計上します
@@ -38,7 +39,9 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 	}
 
 	eg := &errgroup.Group{}
-	isutrain.ReservationCache.Range(func(reservation *isutrain.ReservationCacheEntry) {
+
+	// commitされた予約について整合性チェック
+	isutrain.ReservationCache.RangeCommited(func(reservation *isutrain.ReservationCacheEntry) {
 		var (
 			reservationID = reservation.ID
 			amount, err   = reservation.Amount()
@@ -55,6 +58,10 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 				if rawData.PaymentInfo.ReservationID != reservationID {
 					continue
 				}
+				if rawData.PaymentInfo.IsCanceled {
+					// Commitしたものだけ見るので、Cancelされたものは無視する
+					continue
+				}
 				if rawData.PaymentInfo.Amount != int64(amount) {
 					lgr.Warnf("reservation_id (payment=%d, cache=%d): not same amount %d != %d", rawData.PaymentInfo.ReservationID, reservationID, rawData.PaymentInfo.Amount, amount)
 					return ErrInvalidReservationForPaymentAPI
@@ -64,6 +71,23 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 
 			// 予約IDが見つからない場合は不正
 			return ErrInvalidReservationForPaymentAPI
+		})
+	})
+
+	// cancelされた予約が存在しないことをチェック
+	isutrain.ReservationCache.RangeCanceled(func(reservation *isutrain.ReservationCacheEntry) {
+		var (
+			reservationID = reservation.ID
+		)
+		eg.Go(func() error {
+			for _, rawData := range paymentAPIResult.RawData {
+				if rawData.PaymentInfo.ReservationID == reservationID && !rawData.PaymentInfo.IsCanceled {
+					lgr.Warnf("キャンセルされた予約 %d が課金情報に含まれてる", reservationID)
+					return ErrCanceledReservationExistsPaymentInformations
+				}
+			}
+
+			return nil
 		})
 	})
 
