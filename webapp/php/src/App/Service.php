@@ -1155,6 +1155,105 @@ class Service
         ], StatusCode::HTTP_OK);
     }
 
+    public function reservationPaymentHandler(Request $request, Response $response, array $args)
+    {
+        /*
+            支払い及び予約確定API
+            POST /api/train/reservation/commit
+            {
+                "card_token": "161b2f8f-791b-4798-42a5-ca95339b852b",
+                "reservation_id": "1"
+            }
+
+            前段でフロントがクレカ非保持化対応用のpayment-APIを叩き、card_tokenを手に入れている必要がある
+            レスポンスは成功か否かのみ返す
+        */
+        /**
+         * payload
+         *
+         * string `json:"card_token"`
+         * int    `json:"reservation_id"`
+         */
+        $payload = $this->jsonPayload($request);
+        $this->dbh->beginTransaction();
+        // 予約IDで検索
+        $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id`=?");
+        $stmt->execute([
+            $payload['reservation_id'],
+        ]);
+        $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($reservation === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("予約情報がみつかりません"), StatusCode::HTTP_NOT_FOUND);
+        }
+
+        // 支払い前のユーザチェック。本人以外のユーザの予約を支払ったりキャンセルできてはいけない。
+        try {
+            $user = $this->getUser();
+        } catch (\DomainException $e) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
+        }
+
+        if ($reservation['user_id'] !== $user['id']) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("他のユーザIDの支払いはできません"), StatusCode::HTTP_UNAUTHORIZED);
+        }
+
+        // 予約情報の支払いステータス確認
+        switch ($reservation['status']) {
+            case 'done':
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("既に支払いが完了している予約IDです"), StatusCode::HTTP_FORBIDDEN);
+                break;
+            default:
+                break;
+        }
+
+        // 決済する
+        $payInfo = [
+            'card_token' => $payload['card_token'],
+            'reservation_id' => $payload['reservation_id'],
+            'amount' => $reservation['amount'],
+        ];
+        $payment_api = Environment::get('PAYMENT_API', 'http://payment:5000');
+        $http_client = new Client();
+        try {
+            $r = $http_client->post($payment_api . '/payment', [
+                'json' => $payInfo,
+            ]);
+        } catch (RequestException $e) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("HTTP POSTに失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if ($r->getStatusCode() != StatusCode::HTTP_OK) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("決済に失敗しました。カードトークンや支払いIDが間違っている可能性があります"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        /**
+         * string `json:"payment_id"`
+         * bool   `json:"is_ok"`
+         */
+        $output = json_decode($r->getBody());
+
+        // 予約情報の更新
+        $stmt = $this->dbh->prepare("UPDATE `reservations` SET `status`=?, `payment_id`=? WHERE `reservation_id`=?");
+        $r = $stmt->execute([
+            "done",
+            $output['payment_id'],
+            $payload['reservation_id'],
+        ]);
+        if ($r === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("予約情報の更新に失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $this->dbh->commit();
+        return $response->withJson(['is_ok' => true], StatusCode::HTTP_OK);
+    }
+
     public function initialize(Request $request, Response $response, array $args)
     {
         return $response->withJson(["language" => "php"]);
