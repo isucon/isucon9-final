@@ -84,7 +84,7 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 
 	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
 
-	_, _, err = client.Reserve(ctx,
+	_, err = client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		availSeats, "山田", "夷太寺", useAt,
@@ -144,7 +144,7 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 	availSeats[0].Row = 30
 	availSeats[1].Column = "G"
 
-	_, _, err = client.Reserve(ctx,
+	_, err = client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		availSeats, departure, arrival, useAt,

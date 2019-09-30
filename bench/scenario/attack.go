@@ -251,7 +251,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			_, _, err := client.Reserve(ctx,
+			_, err := client.Reserve(ctx,
 				train.Class, train.Name,
 				isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 				departure, arrival, useAt,

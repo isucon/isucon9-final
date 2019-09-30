@@ -53,7 +53,7 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, user 
 
 	train := trains[0]
 
-	_, reserveResp, err := client.Reserve(ctx,
+	reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		"premium", isutrain.TrainSeats{},
 		departure, arrival, useAt,
