@@ -329,13 +329,11 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, tr
 	return trains, nil
 }
 
-func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass, trainName string, carNum int, departure, arrival string, trainSeatsCount int, opt ...ClientOption) (*TrainSeatSearchResponse, TrainSeats, error) {
+func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass, trainName string, carNum int, departure, arrival string, opt ...ClientOption) (*TrainSeatSearchResponse, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.ListTrainSeats)
 	u.Path = filepath.Join(u.Path, endpointPath)
-
-	seats := TrainSeats{}
 
 	failureCtx := failure.Context{
 		"date":        util.FormatISO8601(date),
@@ -350,7 +348,7 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		lgr.Warnf("座席列挙 リクエスト作成に失敗: %+v", err)
-		return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
+		return nil, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
 	}
 
 	query := req.URL.Query()
@@ -374,42 +372,31 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 	resp, err := c.sess.do(req)
 	if err != nil {
 		lgr.Warnf("座席列挙リクエスト失敗: %+v", err)
-		return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
+		return nil, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath), failureCtx)
 	}
 	defer resp.Body.Close()
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
 		lgr.Warnf("座席列挙 ステータスコードが不正: %+v", err)
-		return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
+		return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
 	var listTrainSeatsResp *TrainSeatSearchResponse
 	if err := json.NewDecoder(resp.Body).Decode(&listTrainSeatsResp); err != nil {
 		lgr.Warnf("座席列挙Unmarshal失敗: %+v", err)
-		return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath), failureCtx)
+		return nil, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
 	// NotFound、あるいはBadRequestの場合、座席を得ることはできない
 	if opts.autoAssert && (resp.StatusCode != http.StatusNotFound && resp.StatusCode != http.StatusBadRequest) {
-		validSeats, err := assertListTrainSeats(listTrainSeatsResp, trainSeatsCount)
-		if err != nil {
-			return nil, seats, failure.Wrap(err, failure.Messagef("GET %s: 座席検索の結果、座席が空になっています", endpointPath))
+		if err := assertListTrainSeats(listTrainSeatsResp); err != nil {
+			return nil, failure.Wrap(err, failure.Messagef("GET %s: 座席検索の結果、座席が空になっています", endpointPath))
 		}
-
-		seats = validSeats
 	}
 
-	if len(seats) == 0 {
-		endpoint.IncPathCounter(endpoint.ListTrainSeats)
-	} else {
-		var (
-			weight     = float64(endpoint.GetWeight(endpoint.ListTrainSeats))
-			multiplier = listTrainSeatsResp.Seats.GetNeighborSeatsMultiplier()
-		)
-		endpoint.AddExtraScore(endpoint.ListTrainSeats, int64(math.Round(weight*multiplier)))
-	}
+	endpoint.IncPathCounter(endpoint.ListTrainSeats)
 
-	return listTrainSeatsResp, seats, nil
+	return listTrainSeatsResp, nil
 }
 
 func (c *Client) Reserve(
@@ -506,7 +493,17 @@ func (c *Client) Reserve(
 		}
 	}
 
-	endpoint.IncPathCounter(endpoint.Reserve)
+	if len(reserveReq.Seats) == 0 {
+		// 曖昧予約の場合、予約できた座席で隣り合う数が多いほど加点される
+		var (
+			weight     = float64(endpoint.GetWeight(endpoint.ListTrainSeats))
+			multiplier = reservation.Seats.GetNeighborSeatsMultiplier()
+		)
+		endpoint.AddExtraScore(endpoint.Reserve, int64(math.Round(weight*multiplier)))
+	} else {
+		endpoint.IncPathCounter(endpoint.Reserve)
+	}
+
 	if SeatAvailability(seatClass) != SaNonReserved {
 		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
 	}

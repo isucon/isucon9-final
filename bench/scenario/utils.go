@@ -88,3 +88,17 @@ func payForReservation(ctx context.Context, client *isutrain.Client, paymentClie
 
 	return nil
 }
+
+func filterTrainSeats(resp *isutrain.TrainSeatSearchResponse, count int) isutrain.TrainSeats {
+	availSeats := isutrain.TrainSeats{}
+	for _, seat := range resp.Seats {
+		if len(availSeats) == count {
+			break
+		}
+		if !seat.IsOccupied {
+			availSeats = append(availSeats)
+		}
+	}
+
+	return availSeats
+}

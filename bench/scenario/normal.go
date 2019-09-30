@@ -58,16 +58,18 @@ func NormalScenario(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "premium")
-	_, validSeats, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, departure, arrival, 2)
+		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
+	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+
 	_, reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
-		isutraindb.GetSeatClass(train.Class, carNum), validSeats,
+		isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 		departure, arrival, useAt,
 		carNum, 1, 1, "isle")
 	if err != nil {
@@ -153,17 +155,19 @@ func NormalCancelScenario(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "reserved")
-	_, validSeats, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
 		useAt,
-		train.Class, train.Name, carNum, departure, arrival, 2)
+		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
+	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+
 	_, reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
-		validSeats, departure, arrival, useAt,
+		availSeats, departure, arrival, useAt,
 		carNum, 1, 1, "isle", nil,
 	)
 	if err != nil {
