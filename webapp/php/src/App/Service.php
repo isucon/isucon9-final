@@ -66,6 +66,9 @@ class Service
 
     private function errorResponse($message)
     {
+        if (is_array($message)) {
+            $message = join(" ", $message);
+        }
         return [
             'is_error' => true,
             'message' => $message,
@@ -213,7 +216,7 @@ class Service
         return (int) ($distFare * $selectedFare['fare_multiplier']);
     }
 
-    protected function getDistanceFare(float $origToDestDistance): int
+    private function getDistanceFare(float $origToDestDistance): int
     {
         $stmt = $this->dbh->prepare("SELECT `distance`,`fare` FROM `distance_fare_master` ORDER BY `distance`");
         $stmt->execute([]);
@@ -258,6 +261,97 @@ class Service
         }
         return $user;
     }
+
+    private function makeReservationResponse(array $reservation): array
+    {
+        /**
+            ReservationId int               `json:"reservation_id"`
+            Date          string            `json:"date"`
+            TrainClass    string            `json:"train_class"`
+            TrainName     string            `json:"train_name"`
+            CarNumber     int               `json:"car_number"`
+            SeatClass     string            `json:"seat_class"`
+            Amount        int               `json:"amount"`
+            Adult         int               `json:"adult"`
+            Child         int               `json:"child"`
+            Departure     string            `json:"departure"`
+            Arrival       string            `json:"arrival"`
+            DepartureTime string            `json:"departure_time"`
+            ArrivalTime   string            `json:"arrival_time"`
+            Seats         []SeatReservation `json:"seats"`
+         */
+        $rtn = [
+            'reservation_id' => $reservation['reservation_id'],
+            'date' => $reservation['date']->format('Y/m/d'),
+            'amount' => $reservation['amount'],
+            'adult' => $reservation['adult'],
+            'child' => $reservation['child'],
+            'departure' => $reservation['departure'],
+            'arrival' => $reservation['arrival'],
+            'train_class' => $reservation['train_class'],
+            'train_name' => $reservation['train_name'],
+        ];
+        $stmt = $this->dbh->prepare("SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
+        $stmt->execute([
+            $reservation['date'],
+            $reservation['train_class'],
+            $reservation['train_name'],
+            $reservation['departure'],
+        ]);
+        $departure = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($departure === false) {
+            throw new \DomainException();
+        }
+        $rtn['departure_time'] = $departure;
+
+        $stmt = $this->dbh->prepare("SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
+        $stmt->execute([
+            $reservation['date'],
+            $reservation['train_class'],
+            $reservation['train_name'],
+            $reservation['departure'],
+        ]);
+        $arrival = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($arrival === false) {
+            throw new \DomainException();
+        }
+        $rtn['arrival_time'] = $arrival;
+
+        $stmt = $this->dbh->query("SELECT * FROM `seat_reservations` WHERE `reservation_id`=?");
+        $stmt->execute([$reservation['reservation_id']]);
+        $rtn['seats'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 1つの予約内で車両番号は全席同じ
+        $rtn['car_number'] = $rtn['seats'][0]['car_number'];
+
+        if ($rtn['seats'][0]['car_number'] === 0) {
+            $rtn['seat_class'] = 'non-reserved';
+        } else {
+            $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? AND `seat_column`=? AND `seat_row`=?");
+            $stmt->execute([
+                $reservation['train_class'],
+                $rtn['car_number'],
+                $rtn['seats'][0]['seat_column'],
+                $rtn['seats'][0]['seat_row'],
+            ]);
+            $seat = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($seat === false) {
+                throw new \DomainException();
+            }
+            $rtn['seat_class'] = $seat['seat_class'];
+        }
+
+        foreach ($rtn['seats'] as $key => $v) {
+            // omit
+            $rtn['seats'][$key] = [
+                'reservation_id'=> 0,
+                'car_number' => 0,
+            ];
+        }
+
+        return $rtn;
+    }
+
 
 
     // handler
@@ -1260,6 +1354,33 @@ class Service
 
         $this->dbh->commit();
         return $response->withJson(['is_ok' => true], StatusCode::HTTP_OK);
+    }
+
+    public function userReservationsHandler(Request $request, Response $response, array $args)
+    {
+        try {
+            $user = $this->getUser();
+        } catch (\DomainException $e) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
+        }
+
+        $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `user_id`=?");
+        $stmt->execute([$user['id']]);
+        $reservationList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($reservationList === false) {
+            return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_UNAUTHORIZED);
+        }
+
+        $res = [];
+        try {
+            foreach ($reservationList as $r) {
+                $res[] = $this->makeReservationResponse($r);
+            }
+        } catch (\DomainException $e) {
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
+        }
+        return $response->withJson($res, StatusCode::HTTP_OK);
     }
 
     public function getAuthHandler(Request $request, Response $response, array $args)

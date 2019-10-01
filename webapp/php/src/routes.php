@@ -20,11 +20,12 @@ return function (App $app) {
     $app->post("/api/train/reservation/commit", \App\Service::class . ':reservationPaymentHandler');
 
     // 認証関連
-    $app->get("/api/train/reservation/commit", \App\Service::class . ':getAuthHandler');
-    $app->post("/api/train/reservation/commit", \App\Service::class . ':signUpHandler');
-    $app->post("/api/train/reservation/commit", \App\Service::class . ':loginHandler');
-    $app->post("/api/train/reservation/commit", \App\Service::class . ':logoutHandler');
-    //	mux.HandleFunc(pat.Get("/api/user/reservations"), userReservationsHandler)
-//	mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationResponseHandler)
+    $app->get("/api/auth", \App\Service::class . ':getAuthHandler');
+    $app->post("/api/auth/signup", \App\Service::class . ':signUpHandler');
+    $app->post("/api/auth/login", \App\Service::class . ':loginHandler');
+    $app->post("/api/auth/logout", \App\Service::class . ':logoutHandler');
+    $app->get("/api/user/reservations", \App\Service::class . ':userReservationsHandler');
+
+    //	mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationResponseHandler)
 //	mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), userReservationCancelHandler)
 };
