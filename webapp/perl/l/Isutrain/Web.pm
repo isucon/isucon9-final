@@ -18,7 +18,6 @@ use Isutrain::Utils;
 use Log::Minimal;
 use Time::Moment;
 
-local $Log::Minimal::AUTODUMP = 1;
 
 our $AVAILABLE_DAYS  = 10;
 our $DEFAULT_PAYMENT_API  = "http://localhost:5000";
@@ -135,7 +134,7 @@ sub getDistanceFare {
     my $last_fare = 0;
 
     for my $distance_fare (@$distance_fare_list) {
-        warnf("%s %s %s", $orig_to_dest_distance, $distance_fare->{distance}, $distance_fare->{fare});
+        # warnf("%s %s %s", $orig_to_dest_distance, $distance_fare->{distance}, $distance_fare->{fare});
         if ($last_distance < $orig_to_dest_distance && $orig_to_dest_distance < $distance_fare->{distance}) {
             last;
         }
@@ -149,7 +148,16 @@ filter 'allow_json_request' => sub {
     my $app = shift;
     return sub {
         my ($self, $c) = @_;
-        $c->env->{'kossy.request.parse_json_body'} = 1;
+        my $p = decode_json($c->req->content);
+        my @params;
+        if (ref $p eq 'HASH') {
+            while (my ($k, $v) = each %$p) {
+                push @params, $k, $v;
+            }
+        }
+        my $hmv = Hash::MultiValue->new(@params);
+        $c->env->{'kossy.request.body'} = $hmv;
+        $c->env->{'plack.request.body'} = $hmv;
         $app->($self, $c);
     };
 };
@@ -233,8 +241,8 @@ get '/api/train/search' => sub {
     my $from_name =$c->req->parameters->get('from') // "";
     my $to_name =$c->req->parameters->get('to') // "";
 
-    my $adult = number $c->req->parameters->get('adult');
-    my $child = number $c->req->parameters->get('child');
+    my $adult = number $c->req->parameters->get('adult') // 0;
+    my $child = number $c->req->parameters->get('child') // 0;
 
     my $query = 'SELECT * FROM station_master WHERE name=?';
     # From
@@ -319,7 +327,7 @@ get '/api/train/search' => sub {
                     last;
                 } else {
                     # 出発駅より先に終点が見つかったとき
-                    warn("なんかおかしい");
+                    warnf("なんかおかしい");
                     last;
                 }
             }
@@ -514,7 +522,7 @@ get '/api/train/seats' => sub {
 
     my $jst_offset = 9*60;
     my $date = eval {
-        Time::Moment->from_string($c->req->parameters->get('use_at'));
+        Time::Moment->from_string($c->req->parameters->get('date'));
     };
     if ($@) {
         return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
@@ -741,6 +749,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
         $train_name,
     );
     if (!$tmas) {
+        warn("no train");
         return $self->error_with_msg($c, HTTP_NOT_FOUND, "列車データがみつかりません");
     }
 
@@ -749,12 +758,14 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
     # Departure
     my $departure_station = $dbh->select_row($query, $tmas->{start_station});
     if (!$departure_station) {
+        warn("no departure station");
         return $self->error_with_msg($c, HTTP_NOT_FOUND, "リクエストされた列車の始発駅データがみつかりません");
     }
 
 	# Arrive
     my $arrival_station = $dbh->select_row($query, $tmas->{last_station});
     if (!$arrival_station) {
+        warn("no arrival station");
         return $self->error_with_msg($c, HTTP_NOT_FOUND, "リクエストされた列車の終着駅データがみつかりません");
     }
 
@@ -763,13 +774,15 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
 	# From
     my $from_station = $dbh->select_row($query, $departure);
     if (!$from_station) {
+        warn("no From station");
         return $self->error_with_msg($c, HTTP_NOT_FOUND,
             sprintf("乗車駅データがみつかりません %s", $departure)
         );
     }
 	# To
     my $to_station = $dbh->select_row($query, $arrival);
-    if (!$from_station) {
+    if (!$to_station) {
+        warn("no To station");
         return $self->error_with_msg($c, HTTP_NOT_FOUND,
             sprintf("降車駅データがみつかりません %s", $arrival)
         );
@@ -814,6 +827,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
     # あいまい座席検索
     # seatsが空白の時に発動する
     #
+
     if (@$seats == 0) {
         if ($seat_class eq "non-reserved") {
             # non-reservedはそもそもあいまい検索もせずダミーのRow/Columnで予約を確定させる。
@@ -952,17 +966,17 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
                 # リクエストに対して席数が足りてない
                 # 次の号車にうつしたい
                 warn("-----------------");
-                warn(sprintf(
+                warnf(
                     "現在検索中の車両: %d号車, リクエスト座席数: %d, 予約できそうな座席数: %d, 不足数: %d",
                     $carnum,
                     $req_adult+$req_child,
                     scalar @$seats,
                     $req_adult+$req_child-scalar(@$seats)
-                ));
-                warn("リクエストに対して座席数が不足しているため、次の車両を検索します。");
+                );
+                warnf("リクエストに対して座席数が不足しているため、次の車両を検索します。");
                 $seats = [];
                 if ($carnum == 16) {
-                    warn("この新幹線にまとめて予約できる席数がなかったから検索をやめるよ");
+                    warnf("この新幹線にまとめて予約できる席数がなかったから検索をやめるよ");
                     $seats = [];
                     last;
                 }
@@ -976,20 +990,21 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
             );
             if (scalar @$seats >= $req_adult+$req_child) {
                 warn("予約情報に追加したよ");
-                while(@$seats != $req_adult+$req_child) { pop @$seats }
+                while(@$seats > $req_adult+$req_child) { pop @$seats }
                 $car_number = $carnum;
                 last;
             }
         }
 
         if (@$seats == 0) {
+            warnf("could not reserve aimai seat");
             return $self->error_with_msg($c, HTTP_NOT_FOUND, "あいまい座席予約ができませんでした。指定した席、もしくは1車両内に希望の席数をご用意できませんでした。");
         }
     }
     else {
 		# 座席情報のValidate
         for my $z (@$seats) {
-            warn("XXXX %s", $z);
+            warnf("XXXX %s", $z);
             my $query = 'SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=? AND seat_class=?';
             my $seat_list = $dbh->select_row(
                 $query,
@@ -1188,6 +1203,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
         amount => number $sum_fare,
         is_ok => JSON::true,
     };
+
     $c->render_json($res);
 };
 
@@ -1237,9 +1253,11 @@ post '/api/train/reservation/commit' => [qw/allow_json_request/] => sub {
 
     # 決済する
     my $pay_info = {
-        card_token => $card_token,
-        reservation_id => number $reservation_id,
-        amount => number $reservation->{amount}
+        payment_information => {
+            card_token => $card_token,
+            reservation_id => number $reservation_id,
+            amount => number $reservation->{amount}
+        }
     };
     my $json = JSON::encode_json($pay_info);
 
@@ -1593,9 +1611,6 @@ post '/api/user/reservations/{item_id:\d+}/cancel' => sub {
     $dbh->query($query, $item_id, $user->{id});
 
     $query = 'DELETE FROM seat_reservations WHERE reservation_id=?';
-    $dbh->query($query, $item_id);
-
-	$query = "DELETE FROM seat_reservations WHERE reservation_id=?";
     my $rows = $dbh->query($query, $item_id);
     if ($rows == 0) {
         return $self->error_with_msg($c, HTTP_INTERNAL_SERVER_ERROR, 'seat naiyo');

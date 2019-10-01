@@ -2,6 +2,7 @@ package Isutrain::Utils;
 
 use strict;
 use warnings;
+use utf8;
 use Time::Moment;
 
 our %TRAIN_CLASS_MAP = (
@@ -73,7 +74,7 @@ sub getAvailableSeats {
 
     my %available_seat_map = ();
     for my $seat (@$seat_list) {
-        my $key = sprintf("%d_%d_%d", $seat->{car_number}, $seat->{seat_row}, $seat->{seat_column});
+        my $key = sprintf("%d_%d_%s", $seat->{car_number}, $seat->{seat_row}, $seat->{seat_column});
         $available_seat_map{$key} = $seat;
     }
 
@@ -109,7 +110,7 @@ EOF
 
     for my $seat_reservation (@$seat_reservation_list) {
         my $key = sprintf(
-            "%d_%d_%d",
+            "%d_%d_%s",
             $seat_reservation->{car_number},
             $seat_reservation->{seat_row},
             $seat_reservation->{seat_column},
