@@ -220,9 +220,11 @@ var run = cli.Command{
 
 		// 最終結果をstdoutへ書き出す
 		resultBytes, err := json.Marshal(&BenchResult{
-			Pass:     true,
-			Score:    score,
-			Messages: append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), scoreMsgs...),
+			Pass:          true,
+			Score:         score,
+			Messages:      append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), scoreMsgs...),
+			AvailableDays: config.AvailableDays,
+			Language:      config.Language,
 		})
 		if err != nil {
 			lgr.Warn("ベンチマーク結果のMarshalに失敗しました: %+v", err)

@@ -115,6 +115,7 @@ func (c *Client) Initialize(ctx context.Context) {
 		bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約可能日数は正の整数値でなければなりません: got=%d", endpointPath, initializeResp.AvailableDays))
 	}
 
+	config.Language = initializeResp.Language
 	if err := config.SetAvailReserveDays(initializeResp.AvailableDays); err != nil {
 		bencherror.InitializeErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約可能日数の設定に失敗しました", endpointPath))
 		return

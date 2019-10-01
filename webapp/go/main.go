@@ -226,7 +226,8 @@ type Settings struct {
 }
 
 type InitializeResponse struct {
-	AvailableDays int `json:"available_days"`
+	AvailableDays int    `json:"available_days"`
+	Language      string `json:"language"`
 }
 
 type AuthResponse struct {
@@ -2086,6 +2087,7 @@ func initializeHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp := InitializeResponse{
 		availableDays,
+		"golang",
 	}
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	json.NewEncoder(w).Encode(resp)
