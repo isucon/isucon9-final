@@ -15,6 +15,8 @@ use Digest::SHA;
 use Crypt::OpenSSL::Random;
 use LWP::UserAgent;
 use Isutrain::Utils;
+use Log::Minimal;
+use Time::Moment;
 
 our $AVAILABLE_DAYS  = 10;
 our $DEFAULT_PAYMENT_API  = "http://localhost:5000";
@@ -112,11 +114,11 @@ sub fareCalc {
         $start .= "+09:00";
         my $start_date = Time::Moment->from_string($start);
         if ($start_date < $date) {
-            warn($fare->{start_date}, $fare->{fare_multiplier}); #XXX
+            warnf("%s %s", $fare->{start_date}, $fare->{fare_multiplier});
             $selected_fare = $fare;
         }
     }
-    warn('%%%%%%%%%%%%%%%%%%%'); #XXX
+    warn('%%%%%%%%%%%%%%%%%%%');
     return int(
         $dist_fare * $selected_fare->{fare_multiplier}
     );
@@ -127,7 +129,7 @@ sub getDistanceFare {
     my $query = 'SELECT distance,fare FROM distance_fare_master ORDER BY distance';
     my $distance_fare_list = $self->dbh->select_all($query);
 
-    my $last_distance = 0.0; #XXX
+    my $last_distance = 0.0;
     my $last_fare = 0;
 
     for my $distance_fare (@$distance_fare_list) {
@@ -281,8 +283,8 @@ get '/api/train/search' => sub {
     my $tranin_list = $self->dbh->select_all($in_query, @in_args);
     my $stations = $self->dbh->select_all($query);
 
-    warn("From ", $from_station); #XXX
-    warn("To ", $to_station); #XXX
+    warnf("From %s", $from_station);
+    warnf("To %s", $to_station);
 
     my @train_search_response_list;
 
@@ -591,7 +593,7 @@ EOF
             $seat->{seat_column}
         );
 
-        warn($seat_reservation_list); #XXX
+        warnf($seat_reservation_list);
 
         for my $seat_reservation (@$seat_reservation_list) {
             $query = 'SELECT * FROM reservations WHERE reservation_id=?';
@@ -964,12 +966,12 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
                 }
             }
 
-            warn(sprintf(
-                "空き実績: %d号車 シート:%v 席数:%d",
+            warnf(
+                "空き実績: %d号車 シート:%s 席数:%d",
                 $carnum,
-                $seats, #XXX
+                $seats,
                 scalar @$seats
-            ));
+            );
             if (scalar @$seats >= $req_adult+$req_child) {
                 warn("予約情報に追加したよ");
                 while(@$seats != $req_adult+$req_child) { pop @$seats }
@@ -985,7 +987,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
     else {
 		# 座席情報のValidate
         for my $z (@$seats) {
-            warn("XXXX", $z); #XXX
+            warn("XXXX %s", $z);
             my $query = 'SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=? AND seat_class=?';
             my $seat_list = $dbh->select_row(
                 $query,
@@ -1069,7 +1071,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
                     if ($v->{car_number} == $car_number &&
                         $v->{seat_row}  == $seat->{row} &&
                         $v->{seat_column} eq $seat->{column}) {
-                            warn("Duplicated ", $reservation); #XXX
+                            warnf("Duplicated %s", $reservation);
                             return $self->error_with_msg($c, HTTP_BAD_REQUEST, "リクエストに既に予約された席が含まれています");
                     }
                 }
@@ -1100,7 +1102,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
             )
         };
         if ($@) {
-            warn("fareCalc ", $@); #XXX
+            warn("fareCalc ", $@);
             return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
         }
     }
@@ -1112,7 +1114,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
             )
         };
         if ($@) {
-            warn("fareCalc ", $@); #XXX
+            warn("fareCalc ", $@);
             return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
         }
     }
@@ -1124,7 +1126,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
             )
         };
         if ($@) {
-            warn("fareCalc ", $@); #XXX
+            warn("fareCalc ", $@);
             return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
         }
     }
@@ -1522,5 +1524,86 @@ get '/api/user/reservations/{item_id:\d+}' => sub {
 };
 
 #mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), userReservationCancelHandler)
+post '/api/user/reservations/{item_id:\d+}/cancel' => sub {
+    my ($self, $c) = @_;
+
+    #  userID取得
+    my $user = $self->getUser($c);
+    if (!$user) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, 'user not found');
+    }
+
+    my $item_id = $c->args->{item_id};
+
+    my $dbh = $self->dbh;
+    my $txn = $dbh->txn_scope();
+
+    my $query = 'SELECT * FROM reservations WHERE reservation_id=? AND user_id=?';
+    my $reservation = $dbh->select_row($query, $item_id, $user->{id});
+    warnf("CANCEL %s %s %s", $reservation, $item_id, $user->{id});
+    if (!$reservation) {
+        return $self->error_with_msg($c, HTTP_BAD_REQUEST, "reservations naiyo");
+    }
+
+    if ($reservation->{status} eq "rejected") {
+        return $self->error_with_msg($c, HTTP_INTERNAL_SERVER_ERROR, "何らかの理由により予約はRejected状態です");
+    }
+    elsif ($reservation->{status} eq "done") {
+        # 支払いをキャンセルする
+        my $pay_info = {
+            payment_id => $reservation->{payment_id}
+        };
+        my $json = JSON::encode_json($pay_info);
+
+        my $payment_api = $ENV{PAYMENT_API} // "http://payment:5000";
+
+        my $req = HTTP::Request->new(DELETE => $payment_api . "/payment/".$reservation->{payment_id});
+        $req->header("Content-Type", "application/json");
+        $req->content($json);
+
+        my $ua  = LWP::UserAgent->new(
+            agent => "isucon9-final-webapp",
+        );
+        my $res = $ua->request($req);
+
+        # リクエスト失敗
+        if ($res->code != 200) {
+            warn($res->status_line);
+            return $self->error_with_msg($c, HTTP_INTERNAL_SERVER_ERROR, "決済に失敗しました。支払いIDが間違っている可能性があります");
+        }
+
+        my $output = eval {
+            JSON::decode_json($res->content);
+        };
+        if ($@) {
+            warn $@;
+            return $self->error_with_msg($c, HTTP_INTERNAL_SERVER_ERROR, 'JSON parseに失敗しました');
+        }
+
+        warnf($output);
+
+    }
+    else {
+        # pass(requesting状態のものはpayment_id無いので叩かない)
+    }
+
+    $query = 'DELETE FROM reservations WHERE reservation_id=? AND user_id=?';
+    $dbh->query($query, $item_id, $user->{id});
+
+    $query = 'DELETE FROM seat_reservations WHERE reservation_id=?';
+    $dbh->query($query, $item_id);
+
+	$query = "DELETE FROM seat_reservations WHERE reservation_id=?";
+    my $rows = $dbh->query($query, $item_id);
+    if ($rows == 0) {
+        return $self->error_with_msg($c, HTTP_INTERNAL_SERVER_ERROR, 'seat naiyo');
+    }
+
+    $txn->commit();
+    $c->render_json({
+        is_error => JSON::false,
+        message => "cancell complete"
+    });
+};
 
 1;
