@@ -23,6 +23,62 @@ def dbh():
         )
     return flask.g.db
 
+
+@app.route("/api/stations", methods=["GET"])
+def get_stations():
+    pass
+
+
+@app.route("/api/train/search", methods=["GET"])
+def get_train_serch():
+    pass
+
+
+@app.route("/api/train/seats", methods=["GET"])
+def get_train_seats():
+    pass
+
+
+@app.route("/api/train/reserve", methods=["POST"])
+def post_reserve():
+    pass
+
+@app.route("/api/train/reservation/commit", methods=["POST"])
+def post_commit():
+    pass
+
+
+@app.route("/api/auth", methods=["GET"])
+def get_auth():
+    pass
+
+@app.route("/api/auth/signup", methods=["POST"])
+def post_signup():
+    pass
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def post_login():
+    pass
+
+@app.route("/api/auth/logout", methods=["POST"])
+def post_logout():
+    pass
+
+@app.route("/api/user/reservations", methods=["GET"])
+def get_user_reservations():
+    pass
+
+@app.route("/api/user/reservations/:item_id", methods=["GET"])
+def get_user_reservation_detail():
+    pass
+
+
+@app.route("/api/user/reservations/:item_id/cancel", methods=["POST"])
+def post_user_reservation_cancel():
+    pass
+
+
 @app.route("/api/settings", methods=["GET"])
 def get_settings():
     return flask.jsonify({
@@ -40,7 +96,7 @@ def post_initialize():
         c.execute("TRUNCATE users")
 
     return flask.jsonify({
-        "language": "python" # 実装言語を返す
+        "language": "python", # 実装言語を返す
         "available_days": AvailableDays,
     })
 
