@@ -3,13 +3,11 @@
 
 namespace App;
 
-use Composer\XdebugHandler\Status;
 use DateTime;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use PDO;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\UploadedFileInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -28,29 +26,25 @@ class Service
     private $dbh;
 
     /**
-     * @var array
-     */
-    private $settings;
-
-    /**
      * @var \SlimSession\Helper
      */
     private $session;
 
-    const AVAILABLE_DAYS = 10;
+    private const AVAILABLE_DAYS = 10;
 
-    const TRAIN_CLASS_MAP = [
+    private const TRAIN_CLASS_MAP = [
         'express' => '最速',
         'semi_express' => '中間',
         'local' => '遅いやつ',
         ];
+
+    private const DATE_SQL_FORMAT = 'Y-m-d';
 
     // constructor receives container instance
     public function __construct(ContainerInterface $container)
     {
         $this->logger = $container->get('logger');
         $this->dbh = $container->get('dbh');
-        $this->settings = $container->get('settings');
         $this->session = $container->get('session');
     }
 
@@ -78,7 +72,7 @@ class Service
     private function checkAvailableDate(DateTime $date): bool
     {
         $base = new DateTime('2020-01-01 00:00:00');
-        $interval = new DateInterval(sprintf('P%dD', self::AVAILABLE_DAYS));
+        $interval = new \DateInterval(sprintf('P%dD', self::AVAILABLE_DAYS));
         $base->add($interval);
         return $base > $date;
     }
@@ -90,30 +84,28 @@ class Service
             $usable[$k] = $v;
         }
 
-        // TODO check valid ops
-        if (! $fromStation['is_stop_express']) {
+        if (! (bool) $fromStation['is_stop_express']) {
             unset($usable['express']);
         }
 
-        if (! $fromStation['is_stop_semi_express']) {
+        if (! (bool) $fromStation['is_stop_semi_express']) {
             unset($usable['semi_express']);
         }
 
-        if (! $fromStation['is_stop_local']) {
+        if (! (bool) $fromStation['is_stop_local']) {
             unset($usable['local']);
         }
 
 
-        // TODO check valid ops
-        if (! $toStation['is_stop_express']) {
+        if (! (bool) $toStation['is_stop_express']) {
             unset($usable['express']);
         }
 
-        if (! $toStation['is_stop_semi_express']) {
+        if (! (bool) $toStation['is_stop_semi_express']) {
             unset($usable['semi_express']);
         }
 
-        if (! $toStation['is_stop_local']) {
+        if (! (bool) $toStation['is_stop_local']) {
             unset($usable['local']);
         }
 
@@ -131,8 +123,7 @@ class Service
         ]);
         $seatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if ($seatList === false) {
-            // TODO Error
-            return [];
+            throw new \PDOException("not found");
         }
         $availableSeatMap = [];
         foreach ($seatList as $k => $seat) {
@@ -149,7 +140,7 @@ class Service
             "s.car_number=sr.car_number AND " .
             "s.seat_column=sr.seat_column AND " .
             "s.seat_row=sr.seat_row AND " .
-            "std.name=r.departure AND" .
+            "std.name=r.departure AND " .
             "sta.name=r.arrival ";
         if ($train['is_nobori']) {
             $query .= "AND ((sta.id < ? AND ? <= std.id) OR (sta.id < ? AND ? <= std.id) OR (? < sta.id AND std.id < ?))";
@@ -167,8 +158,7 @@ class Service
         ]);
         $seatReservationList = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if ($seatReservationList === false) {
-            // TODO Error
-            return [];
+            throw new \PDOException("not found");
         }
 
         foreach ($seatReservationList as $seatReservation) {
@@ -183,16 +173,20 @@ class Service
     {
         // 料金計算メモ
         // 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
-        $sql = "SELECT * FROM station_master WHERE id=?";
+        $sql = "SELECT * FROM `station_master` WHERE id=?";
         $stmt = $this->dbh->prepare($sql);
         $stmt->execute([$depStation]);
         $fromStation = $stmt->fetch(PDO::FETCH_ASSOC);
-        // TODO Error
+        if ($fromStation === false) {
+            throw new \PDOException('not found');
+        }
 
         $stmt = $this->dbh->prepare($sql);
         $stmt->execute([$destStation]);
         $toStation = $stmt->fetch(PDO::FETCH_ASSOC);
-        // TODO Error
+        if ($toStation === false) {
+            throw new \PDOException('not found');
+        }
 
         $distFare = $this->getDistanceFare(abs($toStation['distance'] - $fromStation['distance']));
 
@@ -204,12 +198,13 @@ class Service
         ]);
         $fareList = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if ($fareList === false) {
-            // fare_master does not exists
+            throw new \PDOException('not found');
         }
 
         $selectedFare = $fareList[0];
         foreach ($fareList as $fare) {
-            if ($fare['start_date'] < $date) {
+            $dt = new \DateTime($fare['start_date']);
+            if ($dt < $date) {
                 $selectedFare = $fare;
             }
         }
@@ -225,7 +220,7 @@ class Service
         $lastDistance = 0.0;
         $lastFare = 0;
         foreach ($distanceFareList as $distanceFare) {
-            if (($lastDistance < $origToDestDistance) && ($origToDestDistance < $distanceFare[''])) {
+            if (($lastDistance < $origToDestDistance) && ($origToDestDistance < $distanceFare['distance'])) {
                 break;
             }
             $lastDistance = $distanceFare['distance'];
@@ -236,7 +231,7 @@ class Service
 
     private function jsonPayload(Request $request): array
     {
-        $data = json_decode($request->getBody());
+        $data = json_decode($request->getBody(), true);
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \InvalidArgumentException(json_last_error_msg());
         }
@@ -251,10 +246,7 @@ class Service
 
         $user_id = $this->session->get('user_id');
         $sth = $this->dbh->prepare('SELECT * FROM `users` WHERE `id` = ?');
-        $r = $sth->execute([$user_id]);
-        if ($r === false) {
-            throw new \PDOException($sth->errorInfo());
-        }
+        $sth->execute([$user_id]);
         $user = $sth->fetch(PDO::FETCH_ASSOC);
         if ($user === false) {
             throw new \DomainException('user not found');
@@ -282,7 +274,7 @@ class Service
          */
         $rtn = [
             'reservation_id' => $reservation['reservation_id'],
-            'date' => $reservation['date']->format('Y/m/d'),
+            'date' => (new \DateTime($reservation['date']))->format('Y/m/d'),
             'amount' => $reservation['amount'],
             'adult' => $reservation['adult'],
             'child' => $reservation['child'],
@@ -293,7 +285,7 @@ class Service
         ];
         $stmt = $this->dbh->prepare("SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
         $stmt->execute([
-            $reservation['date'],
+            (new \DateTime($reservation['date']))->format(self::DATET_SQL_FORMAT),
             $reservation['train_class'],
             $reservation['train_name'],
             $reservation['departure'],
@@ -306,7 +298,7 @@ class Service
 
         $stmt = $this->dbh->prepare("SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
         $stmt->execute([
-            $reservation['date'],
+            (new \DateTime($reservation['date']))->format(self::DATE_SQL_FORMAT),
             $reservation['train_class'],
             $reservation['train_name'],
             $reservation['departure'],
@@ -358,7 +350,7 @@ class Service
 
     public function getStationsHandler(Request $request, Response $response, array $args)
     {
-        $sth = $this->dbh->prepare('SELECT * FROM `station_master` BY `id`');
+        $sth = $this->dbh->prepare('SELECT * FROM `station_master` ORDER BY `id`');
         $sth->execute();
         $data = $sth->fetchAll(PDO::FETCH_ASSOC);
         if ($data === false) {
@@ -375,24 +367,23 @@ class Service
 
     public function trainSearchHandler(Request $request, Response $response, array  $args)
     {
-        $date = $request->getParam('use_at');
         try {
-            $dt = new DateTime($date);
+            $date = new DateTime($request->getParam("use_at", ""));
         } catch (\Exception $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
         }
-        if (! $this->checkAvailableDate($dt)) {
+        if (! $this->checkAvailableDate($date)) {
             return $response->withJson($this->errorResponse("予約可能期間外です"), StatusCode::HTTP_NOT_FOUND);
         }
 
         $trainClass = $request->getParam('train_class', '');
         $fromName = $request->getParam('from', '');
         $toName = $request->getParam('to', '');
-        $adult = $request->getParam('adult', '');
-        $child = $request->getParam('child', '');
+        $adult = $request->getParam('adult', 0);
+        $child = $request->getParam('child', 0);
 
         try {
-            $sql = "SELECT * FROM station_master WHERE name=?";
+            $sql = "SELECT * FROM `station_master` WHERE `name`=?";
             $sth = $this->dbh->prepare($sql);
             $sth->execute([$fromName]);
             $fromStation = $sth->fetch(PDO::FETCH_ASSOC);
@@ -412,39 +403,40 @@ class Service
             }
 
             $usableTrainClassList = $this->getUsableTrainClassList($fromStation, $toStation);
-
+            $in = str_repeat('?,', count($usableTrainClassList) -1) .  '?';
             if ($trainClass === '') {
-                $in = str_repeat('?,', count($usableTrainClassList) -1) .  '?';
-                $sql = "SELECT * FROM `train_master` WHERE date=? AND `train_class` IN (${in}) AND `is_nobori`=?";
-                $args = array_merge([
-                    [$date],
+                $sql = "SELECT * FROM `train_master` WHERE `date`=? AND `train_class` IN (${in}) AND `is_nobori`=?";
+                $args = array_merge(
+                    [$date->format(self::DATE_SQL_FORMAT)],
                     $usableTrainClassList,
-                    [$isNobori],
-                ]);
+                    [$isNobori]
+                );
             } else {
-                $in = str_repeat('?,', count($usableTrainClassList) -1) .  '?';
-                $sql = "SELECT * FROM `train_master` WHERE date=? AND `train_class` IN (${in}) AND `is_nobori`=? AND `train_class`=?";
-                $args = array_merge([
-                    [$date],
+                $sql = "SELECT * FROM `train_master` WHERE `date`=? AND `train_class` IN (${in}) AND `is_nobori`=? AND `train_class`=?";
+                $args = array_merge(
+                    [$date->format(self::DATE_SQL_FORMAT)],
                     $usableTrainClassList,
                     [$isNobori],
-                    [$trainClass],
-                ]);
+                    [$trainClass]
+                );
             }
             $sth = $this->dbh->prepare($sql);
             $sth->execute($args);
             $trainList = $sth->fetchAll(PDO::FETCH_ASSOC);
-            if ($trainClass === false) {
+            if ($trainList === false) {
                 return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
             }
 
-            $sql = "SELECT * FROM station_master ORDER BY distance";
+            $sql = "SELECT * FROM `station_master` ORDER BY `distance`";
             if ($isNobori) {
                 // if nobori reverse the order
                 $sql = $sql . " DESC";
             }
 
-            $stations = $this->dbh->exec($sql);
+            $stmt = $this->dbh->prepare($sql);
+            $stmt->execute([]);
+            $stations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
             if ($stations === false) {
                 return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
             }
@@ -499,37 +491,43 @@ class Service
                     // 所要時間
                     $sql = "SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?";
                     $stmt = $this->dbh->prepare($sql);
-                    $departure = $stmt->execute([
-                        $date,
-                        $trainClass,
-                        $train['name'],
+                    $stmt->execute([
+                        $date->format(self::DATE_SQL_FORMAT),
+                        $train['train_class'],
+                        $train['train_name'],
                         $fromStation['name']
                     ]);
+                    $departure = $stmt->fetch(PDO::FETCH_ASSOC);
                     if ($departure === false) {
+                        $this->logger->error($this->dbh->errorCode(), $this->dbh->errorInfo());
                         return $response->withJson($this->errorResponse(['failed to query']), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
                     }
-                    // TODO check unneed
-                    $departureDate = DateTime($departure);
+                    $departureDate = new \DateTime($date->format('Y-m-d ') . $departure['departure']);
                     if ($date > $departureDate) {
                         // 乗りたい時刻より出発時刻が前なので除外
                         continue;
                     }
 
-                    $sth = $this->dbh->prepare("SELECT `arrival` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
-                    $arrival = $sth->execute([
-                        $date,
-                        $trainClass,
-                        $train['name'],
+                    $stmt = $this->dbh->prepare("SELECT `arrival` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
+                    $stmt->execute([
+                        $date->format(self::DATE_SQL_FORMAT),
+                        $train['train_class'],
+                        $train['train_name'],
                         $toStation['name']
                     ]);
+                    $arrival = $stmt->fetch(PDO::FETCH_ASSOC);
                     if ($arrival === false) {
                         return $response->withJson($this->errorResponse(['failed to query']), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
                     }
 
-                    $premium_avail_seats = $this->getAvailableSeats($train, $fromStation, $toStation, 'premium', false);
-                    $premium_smoke_avail_seats = $this->getAvailableSeats($train, $fromStation, $toStation, 'premium', true);
-                    $reserved_avail_seats = $this->getAvailableSeats($train, $fromStation, $toStation, 'reserved', false);
-                    $reserved_smoke_avail_seats = $this->getAvailableSeats($train, $fromStation, $toStation, 'reserved', true);
+                    try {
+                        $premium_avail_seats = $this->getAvailableSeats($train, $fromStation, $toStation, 'premium', false);
+                        $premium_smoke_avail_seats = $this->getAvailableSeats($train, $fromStation, $toStation, 'premium', true);
+                        $reserved_avail_seats = $this->getAvailableSeats($train, $fromStation, $toStation, 'reserved', false);
+                        $reserved_smoke_avail_seats = $this->getAvailableSeats($train, $fromStation, $toStation, 'reserved', true);
+                    } catch (\PDOException $e) {
+                        return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
+                    }
 
                     $premium_avail = $premium_smoke_avail = $reserved_avail = $reserved_smoke_avail = "○";
                     if (count($premium_avail_seats) == 0) {
@@ -550,9 +548,9 @@ class Service
                         $reserved_avail = "△";
                     }
 
-                    if (count($reserved_smoke_avail) == 0) {
+                    if (count($reserved_smoke_avail_seats) == 0) {
                         $reserved_smoke_avail = "×";
-                    } elseif (count($reserved_smoke_avail) < 10) {
+                    } elseif (count($reserved_smoke_avail_seats) < 10) {
                         $reserved_smoke_avail = "△";
                     }
 
@@ -565,19 +563,19 @@ class Service
                     ];
 
                     // 料金計算
-                    $premiumFare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $trainClass, "premium");
+                    $premiumFare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $train['train_class'], "premium");
                     $premiumFare = ($premiumFare*$adult) + (($premiumFare/2)*$child) ;
-                    $reservedFare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $trainClass, "reserved");
+                    $reservedFare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $train['train_class'], "reserved");
                     $reservedFare = ($reservedFare * $adult) + (($reservedFare/2)*$child);
-                    $nonReservedFare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $trainClass, "non-reserved");
+                    $nonReservedFare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $train['train_class'], "non-reserved");
                     $nonReservedFare = ($nonReservedFare * $adult) + (($nonReservedFare/2) *$child);
 
                     $fareInformation = [
-                        "premium" => int($premiumFare),
-                        "premium_smoke" => int($premiumFare),
-                        "reserved" => int($reservedFare),
-                        "reserved_smoke" => int($reservedFare),
-                        "non_reserved" => int($nonReservedFare),
+                        "premium" => (int) $premiumFare,
+                        "premium_smoke" => (int) $premiumFare,
+                        "reserved" => (int) $reservedFare,
+                        "reserved_smoke" => (int) $reservedFare,
+                        "non_reserved" => (int) $nonReservedFare,
                     ];
 
                     $trainSearchResponseList[] = [
@@ -599,6 +597,7 @@ class Service
                 }
             }
         } catch (\PDOException $e) {
+            $this->logger->error($e->getMessage(), [$e]);
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
         return $response->withJson($trainSearchResponseList);
@@ -606,7 +605,11 @@ class Service
 
     public function trainSeatsHandler(Request $request, Response $response, array $args)
     {
-        $date = new DateTime($request->getParam("date", ""));
+        try {
+            $date = new DateTime($request->getParam("use_at", ""));
+        } catch (\Exception $e) {
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
+        }
         if (! $this->checkAvailableDate($date)) {
             return $response->withJson($this->errorResponse("予約可能期間外です"), StatusCode::HTTP_NOT_FOUND);
         }
@@ -620,7 +623,7 @@ class Service
         // 対象列車の取得
         $stmt = $this->dbh->prepare("SELECT * FROM `train_master` WHERE `date`=? AND `train_class`=? AND `train_name`=?");
         $stmt->execute([
-            $date,
+            $date->format(self::DATE_SQL_FORMAT),
             $trainClass,
             $trainName
         ]);
@@ -672,9 +675,9 @@ class Service
                 'is_smoking_seat' => $seat['is_smoking_seat'],
                 'is_occupied' => false,
             ];
-            $stmt = $this->dbh->prepare("SELECT s.* FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
+            $stmt = $this->dbh->prepare("SELECT `s`.* FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
             $stmt->execute([
-                $date,
+                $date->format(self::DATE_SQL_FORMAT),
                 $seat['train_class'],
                 $trainName,
                 $seat['car_number'],
@@ -786,7 +789,7 @@ class Service
         }
 
         // 乗車日の日付表記統一
-        $date = DateTime($payload['date']);
+        $date = new \DateTime($payload['date']);
         if (! $this->checkAvailableDate($date)) {
             return $response->withJson($this->errorResponse("予約可能期間外です"), StatusCode::HTTP_NOT_FOUND);
         }
@@ -796,7 +799,7 @@ class Service
         // 列車データを取得
         $stmt = $this->dbh->prepare("SELECT * FROM `train_master` WHERE `date`=? AND `train_class`=? AND `train_name`=?");
         $stmt->execute([
-            $date,
+            $date->format(self::DATE_SQL_FORMAT),
             $payload['train_class'],
             $payload['train_name'],
         ]);
@@ -896,7 +899,7 @@ class Service
                 // 当該列車・号車中の空き座席検索
                 $stmt = $this->dbh->prepare("SELECT * FROM `train_master` WHERE `date`=? AND `train_class`=? AND `train_name`=?");
                 $stmt->execute([
-                    $date,
+                    $date->format(self::DATE_SQL_FORMAT),
                     $payload['train_class'],
                     $payload['train_name'],
                 ]);
@@ -937,7 +940,7 @@ class Service
                         ];
                         $stmt = $this->dbh->prepare("SELECT s.* FROM `seat_reservations` s, `reservations` r WHERE r.`date` =? AND r.`train_class` =? AND r.`train_name` =? AND `car_number` =? AND `seat_row` =? AND `seat_column` =? FOR UPDATE");
                         $stmt->execute([
-                            $date,
+                            $date->format(self::DATE_SQL_FORMAT),
                             $seat['train_class'],
                             $payload['train_name'],
                             $seat['car_number'],
@@ -960,14 +963,14 @@ class Service
                                 return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
                             }
 
-                            $stmt = $this->dbh->prepare("SELECT * FROM station_master WHERE name=?");
+                            $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
                             $departureStation = $stmt->execute([$reservation['departure']]);
                             if ($departureStation === false) {
                                 $this->dbh->rollBack();
                                 return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
                             }
 
-                            $stmt = $this->dbh->prepare("SELECT * FROM station_master WHERE name=?");
+                            $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
                             $arrivalStation = $stmt->execute([$reservation['arrival']]);
                             if ($arrivalStation === false) {
                                 $this->dbh->rollBack();
@@ -1098,7 +1101,7 @@ class Service
             // train_masterから列車情報を取得(上り・下りが分かる)
             $stmt = $this->dbh->prepare("SELECT * FROM `train_master` WHERE `date`=? AND `train_class`=? AND `train_name`=?");
             $stmt->execute([
-                $date,
+                $date->format(self::DATE_SQL_FORMAT),
                 $payload['train_class'],
                 $payload['train_name'],
             ]);
@@ -1183,50 +1186,53 @@ class Service
         }
 
         // 運賃計算
-        $fare = 0;
-        switch ($payload['seat_class']) {
-            case 'premium':
-                $fare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $payload['train_class'], 'premium');
-                // TODO check err
-                break;
-            case 'reserved':
-                $fare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $payload['train_class'], 'reserved');
-                // TODO check err
-                break;
-            case 'non-reserved':
-                $fare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $payload['train_class'], 'non-reserved');
-                // TODO check err
-                break;
-            default:
-                $this->dbh->rollBack();
-                return $response->withJson($this->errorResponse("リクエストされた座席クラスが不明です"), StatusCode::HTTP_BAD_REQUEST);
+        try {
+            switch ($payload['seat_class']) {
+                case 'premium':
+                    $fare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $payload['train_class'], 'premium');
+                    break;
+                case 'reserved':
+                    $fare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $payload['train_class'], 'reserved');
+                    break;
+                case 'non-reserved':
+                    $fare = $this->fareCalc($date, $fromStation['id'], $toStation['id'], $payload['train_class'], 'non-reserved');
+                    break;
+                default:
+                    $this->dbh->rollBack();
+                    return $response->withJson($this->errorResponse("リクエストされた座席クラスが不明です"), StatusCode::HTTP_BAD_REQUEST);
+            }
+            $sumFare = ($payload['adult'] * $fare) + (($payload['child'] * $fare) / 2);
+        } catch (\PDOException $e) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
         }
-        $sumFare = ($payload['adult'] * $fare) + (($payload['child'] * $fare)/2);
 
         // userID取得。ログインしてないと怒られる。
         try {
             $user = $this->getUser();
-        } catch (\DomainException $e) {
+        } catch (\DomainException|\PDOException $e) {
             $this->dbh->rollBack();
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
         }
 
         // 予約ID発行と予約情報登録
-        $stmt = $this->dbh->prepare("INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `adult`, `child`, `amount`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $r = $stmt->execute([
-            $user['id'],
-            $date,
-            $payload['train_class'],
-            $payload['train_name'],
-            $payload['departure'],
-            $payload['arrival'],
-            "requesting",
-            "a",
-            $payload['adult'],
-            $payload['child'],
-            $sumFare,
-        ]);
-        if ($r === false) {
+        try {
+            $stmt = $this->dbh->prepare("INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `adult`, `child`, `amount`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([
+                $user['id'],
+                $date->format(self::DATE_SQL_FORMAT),
+                $payload['train_class'],
+                $payload['train_name'],
+                $payload['departure'],
+                $payload['arrival'],
+                "requesting",
+                "a",
+                $payload['adult'],
+                $payload['child'],
+                $sumFare,
+            ]);
+        } catch (\PDOException $e) {
+            $this->logger->error($e->getMessage());
             $this->dbh->rollBack();
             return $response->withJson($this->errorResponse("予約の保存に失敗しました"), StatusCode::HTTP_BAD_REQUEST);
         }
@@ -1235,15 +1241,16 @@ class Service
         //席の予約情報登録
         //reservationsレコード1に対してseat_reservationstが1以上登録される
         foreach ($payload['seats'] as $v) {
-            $stmt = $this->dbh->prepare("INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES (?, ?, ?, ?)");
-            $r = $stmt->execute([
-                $reservation_id,
-                $payload['car_number'],
-                $v['row'],
-                $v['column']
-            ]);
-
-            if ($r === false) {
+            try {
+                $stmt = $this->dbh->prepare("INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES (?, ?, ?, ?)");
+                $stmt->execute([
+                    $reservation_id,
+                    $payload['car_number'],
+                    $v['row'],
+                    $v['column']
+                ]);
+            } catch (\PDOException $e) {
+                $this->logger->error($e->getMessage());
                 $this->dbh->rollBack();
                 return $response->withJson($this->errorResponse("座席予約の登録に失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
             }
@@ -1292,7 +1299,7 @@ class Service
         // 支払い前のユーザチェック。本人以外のユーザの予約を支払ったりキャンセルできてはいけない。
         try {
             $user = $this->getUser();
-        } catch (\DomainException $e) {
+        } catch (\DomainException|\PDOException $e) {
             $this->dbh->rollBack();
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
         }
@@ -1341,13 +1348,15 @@ class Service
         $output = json_decode($r->getBody());
 
         // 予約情報の更新
-        $stmt = $this->dbh->prepare("UPDATE `reservations` SET `status`=?, `payment_id`=? WHERE `reservation_id`=?");
-        $r = $stmt->execute([
-            "done",
-            $output['payment_id'],
-            $payload['reservation_id'],
-        ]);
-        if ($r === false) {
+        try {
+            $stmt = $this->dbh->prepare("UPDATE `reservations` SET `status`=?, `payment_id`=? WHERE `reservation_id`=?");
+            $stmt->execute([
+                "done",
+                $output['payment_id'],
+                $payload['reservation_id'],
+            ]);
+        } catch (\PDOException $e) {
+            $this->logger->error($e->getMessage());
             $this->dbh->rollBack();
             return $response->withJson($this->errorResponse("予約情報の更新に失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -1360,7 +1369,7 @@ class Service
     {
         try {
             $user = $this->getUser();
-        } catch (\DomainException $e) {
+        } catch (\DomainException|\PDOException $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
         }
 
@@ -1391,7 +1400,7 @@ class Service
 
         try {
             $user = $this->getUser();
-        } catch (\DomainException $e) {
+        } catch (\DomainException|\PDOException $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
         }
 
@@ -1422,7 +1431,7 @@ class Service
 
         try {
             $user = $this->getUser();
-        } catch (\DomainException $e) {
+        } catch (\DomainException|\PDOException $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
         }
 
@@ -1467,23 +1476,23 @@ class Service
                 break;
         }
 
-        $stmt = $this->dbh->query("DELETE FROM `reservations` WHERE `reservation_id`=? AND `user_id`=?");
-        $r = $stmt->execute([
-            $id,
-            $user['id']
-        ]);
-        if ($r === false) {
-            $this->dbh->rollBack();
-        }
+        try {
+            $stmt = $this->dbh->query("DELETE FROM `reservations` WHERE `reservation_id`=? AND `user_id`=?");
+            $stmt->execute([
+                $id,
+                $user['id']
+            ]);
 
-        $stmt = $this->dbh->prepare("DELETE FROM `seat_reservations` WHERE `reservation_id`=?");
-        $r = $stmt->execute([$id]);
-        if ($r === false) {
+            $stmt = $this->dbh->prepare("DELETE FROM `seat_reservations` WHERE `reservation_id`=?");
+            $stmt->execute([$id]);
+        } catch (\PDOException $e) {
+            $this->logger->error($e->getMessage());
             $this->dbh->rollBack();
             return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
         $this->dbh->commit();
 
+        # TYPO cancel
         return $response->withJson($this->messageResponse('cancell complete'), StatusCode::HTTP_OK);
     }
 
@@ -1491,7 +1500,7 @@ class Service
     {
         try {
             $user = $this->getUser();
-        } catch (\DomainException $e) {
+        } catch (\DomainException|\PDOException $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
         }
         return $response->withJson(['email' => $user['email']], StatusCode::HTTP_OK);
@@ -1515,12 +1524,13 @@ class Service
         $salt = random_bytes(1024);
         $superSecurePassword = hash_pbkdf2('sha256', $payload['password'], $salt, 100, 256, true);
         $stmt = $this->dbh->prepare("INSERT INTO `users` (`email`, `salt`, `super_secure_password`) VALUES (?, ?, ?)");
-        $r = $stmt->execute([
-            $payload['email'],
-            $salt,
-            $superSecurePassword,
-        ]);
-        if ($r === false) {
+        try {
+            $stmt->execute([
+                $payload['email'],
+                $salt,
+                $superSecurePassword,
+            ]);
+        } catch (\PDOException $e) {
             $this->logger->error("DB error", $this->dbh->errorInfo());
             return $response->withJson($this->errorResponse("user registration failed"), StatusCode::HTTP_BAD_REQUEST);
         }
@@ -1544,7 +1554,8 @@ class Service
         }
 
         $stmt = $this->dbh->prepare("SELECT * FROM `users` WHERE `email`=?");
-        $user = $stmt->execute([$payload['email']]);
+        $stmt->execute([$payload['email']]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user === false) {
             return $response->withJson($this->errorResponse("authentication failed"), StatusCode::HTTP_FORBIDDEN);
         }
@@ -1571,7 +1582,11 @@ class Service
 
     public function initialize(Request $request, Response $response, array $args)
     {
-        return $response->withJson(["language" => "php"]);
+        $this->dbh->exec("TRUNCATE seat_reservations");
+        $this->dbh->exec("TRUNCATE reservations");
+        $this->dbh->exec("TRUNCATE users");
+
+        return $response->withJson(["language" => "php", "available_days" => self::AVAILABLE_DAYS]);
     }
 
     public function settingsHandler(Request $request, Response $response, array $args)

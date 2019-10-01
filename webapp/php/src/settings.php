@@ -8,14 +8,10 @@ return [
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
         'determineRouteBeforeAppMiddleware' => true,
 
-        // Renderer settings
-        'renderer' => [
-            'template_path' => __DIR__ . '/../../public/',
-        ],
-
         // Monolog settings
         'logger' => [
             'name' => 'isutrain',
+            // 'path' => __DIR__ . '/../logs/app.log',
             'path' => 'php://stdout',
             'level' => \Monolog\Logger::DEBUG,
         ],
