@@ -2,7 +2,6 @@ package alert
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -95,4 +94,3 @@ func NotifyWorkerErr(jobID int, teamID int, teamName string, err error, stdout, 
 
 	return notifyErr("workerでエラー発生", err, attachments)
 }
-
