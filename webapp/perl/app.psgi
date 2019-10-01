@@ -42,6 +42,7 @@ my $root_dir = File::Basename::dirname(__FILE__);
 
 my $app = Isutrain::Web->psgi($root_dir);
 builder {
+    enable "Plack::Middleware::Log::Minimal", autodump => 1;
     enable 'ReverseProxy';
     enable 'Session::Cookie',
         session_key => 'session-isutrain',

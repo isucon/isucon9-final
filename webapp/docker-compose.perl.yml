@@ -1,11 +1,13 @@
 version: '3'
-
+volumes:
+  perl-local:
 services:
 
   webapp:
     build: ./perl
     volumes:
       - ./perl:/opt/webapp
+      - perl-local:/opt/webapp/local
     env_file:
       - ".env"
     environment:

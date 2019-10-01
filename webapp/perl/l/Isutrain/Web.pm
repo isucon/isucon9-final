@@ -18,13 +18,15 @@ use Isutrain::Utils;
 use Log::Minimal;
 use Time::Moment;
 
+local $Log::Minimal::AUTODUMP = 1;
+
 our $AVAILABLE_DAYS  = 10;
 our $DEFAULT_PAYMENT_API  = "http://localhost:5000";
 
 sub dbh {
     my $self = shift;
     $self->{_dbh} ||= do {
-        my $host = $ENV{MYSQL_HOST} // '127.0.0.1';
+        my $host = $ENV{MYSQL_HOSTNAME} // '127.0.0.1';
         my $port = $ENV{MYSQL_PORT} // 3306;
         my $database = $ENV{MYSQL_DBNAME} // 'isutrain';
         my $user = $ENV{MYSQL_USER} // 'isutrain';
@@ -94,7 +96,7 @@ sub fareCalc {
 
     warn("distance ", abs($to_station->{distance} - $from_station->{distance}));
     my $dist_fare = $self->getDistanceFare(abs($to_station->{distance} - $from_station->{distance}));
-    warn("distFare", $dist_fare);
+    warn("distFare ", $dist_fare);
 
 	# 期間・車両・座席クラス倍率
     my $fare_list = $self->dbh->select_all(
@@ -133,7 +135,7 @@ sub getDistanceFare {
     my $last_fare = 0;
 
     for my $distance_fare (@$distance_fare_list) {
-        warn($orig_to_dest_distance, $distance_fare->{distance}, $distance_fare->{fare});
+        warnf("%s %s %s", $orig_to_dest_distance, $distance_fare->{distance}, $distance_fare->{fare});
         if ($last_distance < $orig_to_dest_distance && $orig_to_dest_distance < $distance_fare->{distance}) {
             last;
         }
@@ -228,8 +230,8 @@ get '/api/train/search' => sub {
     }
 
     my $train_class =$c->req->parameters->get('train_class') // "";
-    my $from_name =$c->req->parameters->get('from_name') // "";
-    my $to_name =$c->req->parameters->get('to_name') // "";
+    my $from_name =$c->req->parameters->get('from') // "";
+    my $to_name =$c->req->parameters->get('to') // "";
 
     my $adult = number $c->req->parameters->get('adult');
     my $child = number $c->req->parameters->get('child');
@@ -273,7 +275,7 @@ get '/api/train/search' => sub {
         $usable_train_class_list,
         $is_nobori
     );
-    if ($train_class == "") {
+    if ($train_class eq "") {
         $in_query = 'SELECT * FROM train_master WHERE date=? AND train_class IN (?) AND is_nobori=?'
     } else {
         $in_query = 'SELECT * FROM train_master WHERE date=? AND train_class IN (?) AND is_nobori=? AND train_class=?';
@@ -299,7 +301,7 @@ get '/api/train/search' => sub {
             if (!$is_seeked_to_first_station) {
                 # 駅リストを列車の発駅まで読み飛ばして頭出しをする
                 # 列車の発駅以前は止まらないので無視して良い
-                if ($station->{name} == $train->{start_station}) {
+                if ($station->{name} eq $train->{start_station}) {
                     $is_seeked_to_first_station = 1;
                 } else {
                     next;
@@ -331,7 +333,7 @@ get '/api/train/search' => sub {
         if ($is_contains_origin_station && $is_contains_dest_station) {
             # 列車情報
             # 所要時間
-            my $departure = $self->dbh->select_row(
+            my $departure = $self->dbh->select_one(
                 'SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?',
                 $date->strftime("%F"),
                 $train->{train_class},
@@ -356,7 +358,7 @@ get '/api/train/search' => sub {
                 next;
             }
 
-            my $arrival = $self->dbh->select_row(
+            my $arrival = $self->dbh->select_one(
                 'SELECT arrival FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?',
                 $date->strftime("%F"),
                 $train->{train_class},

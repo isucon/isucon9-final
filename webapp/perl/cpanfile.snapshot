@@ -1797,6 +1797,16 @@ DISTRIBUTIONS
       WWW::Form::UrlEncoded 0.23
       parent 0
       perl 5.008001
+  Plack-Middleware-Log-Minimal-0.06
+    pathname: K/KA/KAZEBURO/Plack-Middleware-Log-Minimal-0.06.tar.gz
+    provides:
+      Plack::Middleware::Log::Minimal 0.06
+    requirements:
+      ExtUtils::MakeMaker 6.42
+      Log::Minimal 0.09
+      Plack::Middleware 0
+      Test::More 0
+      parent 0
   Plack-Middleware-ReverseProxy-0.16
     pathname: M/MI/MIYAGAWA/Plack-Middleware-ReverseProxy-0.16.tar.gz
     provides:

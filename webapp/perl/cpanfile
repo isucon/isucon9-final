@@ -16,3 +16,5 @@ requires 'Crypt::PBKDF2';
 requires 'Log::Minimal';
 requires 'Data::Recursive::Encode';
 requires 'Time::Moment';
+requires 'Sub::Identify';
+requires 'Plack::Middleware::Log::Minimal';
