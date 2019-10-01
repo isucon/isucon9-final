@@ -5,12 +5,14 @@ import dateutil.parser
 import logging
 
 import flask
+import pbkdf2
 import requests
 import MySQLdb.cursors
 
 JST = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
 
 app = flask.Flask(__name__)
+app.config['SECRET_KEY'] = 'isutrain'
 
 AvailableDays = 10
 SessionName   = "session_isutrain"
@@ -47,6 +49,25 @@ def dbh():
         )
     return flask.g.db
 
+
+def get_user():
+    user_id = flask.session.get("user_id")
+    if user_id is None:
+        raise HttpException(requests.codes['unauthorized'], "no session")
+    try:
+        conn = dbh()
+        with conn.cursor() as c:
+            sql = "SELECT * FROM `users` WHERE `id` = %s"
+            c.execute(sql, [user_id])
+            user = c.fetchone()
+            if user is None:
+                raise HttpException(requests.codes['unauthorized'], "user not found")
+    except MySQLdb.Error as err:
+        app.logger.exception(err)
+        http_json_error(requests.codes['internal_server_error'], "db error")
+    return user
+
+
 def filter_dict_keys(d, allowed_keys):
     ret = {}
     for k, v in d.items():
@@ -57,6 +78,9 @@ def filter_dict_keys(d, allowed_keys):
 @app.errorhandler(HttpException)
 def handle_http_exception(error):
     return error.get_response()
+
+def message_response(message):
+    return flask.jsonify({'is_error': False, 'message': message})
 
 def check_available_date(date):
     d = datetime.datetime(2020, 1, 1) + datetime.timedelta(days=AvailableDays)
@@ -543,16 +567,52 @@ def post_commit():
 
 @app.route("/api/auth", methods=["GET"])
 def get_auth():
-    pass
+    user = get_user()
+    return flask.jsonify(user)
 
 @app.route("/api/auth/signup", methods=["POST"])
 def post_signup():
-    pass
+    email = flask.request.json['email']
+    password = flask.request.json['password']
+    super_secure_password = pbkdf2.crypt(password, iterations=100)
 
+    try:
+        conn = dbh()
+        with conn.cursor() as c:
+            sql = "INSERT INTO `users` (`email`, `salt`, `super_secure_password`) VALUES (%s, %s, %s)"
+            c.execute(sql, (email, "", super_secure_password))
+
+    except MySQLdb.Error as err:
+        app.logger.exception(err)
+        raise HttpException(requests.codes['internal_server_error'], "db error")
+
+    return message_response("registration complete")
 
 @app.route("/api/auth/login", methods=["POST"])
 def post_login():
-    pass
+    email = flask.request.json['email']
+    password = flask.request.json['password']
+
+
+    try:
+        conn = dbh()
+        with conn.cursor() as c:
+            sql = "SELECT * FROM users WHERE email=%s"
+            c.execute(sql, (email,))
+            user = c.fetchone()
+            if not user:
+                raise HttpException(requests.codes['forbidden'], "authentication failed")
+
+            if pbkdf2.crypt(password, user["super_secure_password"]) != user["super_secure_password"].decode("ascii"):
+                raise HttpException(requests.codes['forbidden'], "authentication failed")
+
+            flask.session['user_id'] = user["id"]
+
+    except MySQLdb.Error as err:
+        app.logger.exception(err)
+        raise HttpException(requests.codes['internal_server_error'], "db error")
+
+    return message_response("ok")
 
 @app.route("/api/auth/logout", methods=["POST"])
 def post_logout():
