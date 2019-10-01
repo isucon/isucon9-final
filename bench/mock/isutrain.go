@@ -69,6 +69,7 @@ func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 
 	b, err := json.Marshal(&isutrain.InitializeResponse{
 		AvailableDays: 30,
+		Language:      "golang",
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
@@ -284,7 +285,7 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 
 	// 適当な席を返す
 	b, err := json.Marshal(&isutrain.TrainSeatSearchResponse{
-		UseAt:      time.Now(),
+		Date:       "2006/01/02",
 		TrainClass: "最速",
 		TrainName:  "dummy",
 		CarNumber:  1,

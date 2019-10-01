@@ -226,7 +226,8 @@ type Settings struct {
 }
 
 type InitializeResponse struct {
-	AvailableDays int `json:"available_days"`
+	AvailableDays int    `json:"available_days"`
+	Language      string `json:"language"`
 }
 
 type AuthResponse struct {
@@ -1781,7 +1782,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	session := getSession(r)
 
 	session.Values["user_id"] = user.ID
-	session.Values["csrf_token"] = secureRandomStr(20)
 	if err = session.Save(r, w); err != nil {
 		log.Print(err)
 		errorResponse(w, http.StatusInternalServerError, "session error")
@@ -1799,7 +1799,6 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	session := getSession(r)
 
 	session.Values["user_id"] = 0
-	session.Values["csrf_token"] = secureRandomStr(20)
 	if err := session.Save(r, w); err != nil {
 		log.Print(err)
 		errorResponse(w, http.StatusInternalServerError, "session error")
@@ -2086,6 +2085,7 @@ func initializeHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp := InitializeResponse{
 		availableDays,
+		"golang",
 	}
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	json.NewEncoder(w).Encode(resp)

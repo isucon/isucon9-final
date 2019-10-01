@@ -1,13 +1,8 @@
 package isutraindb
 
 import (
-	"errors"
+	"fmt"
 	"math"
-)
-
-var (
-	ErrStationNotFound = errors.New("指定された駅は見つかりませんでした")
-	ErrInvalidDistance = errors.New("距離が不正です")
 )
 
 var distanceMap = map[string]float64{
@@ -100,11 +95,11 @@ func getDistance(from, to string) (float64, error) {
 
 	fromPos, ok := distanceMap[from]
 	if !ok {
-		return -1, ErrStationNotFound
+		return -1, fmt.Errorf("%s ~ %s の距離算出に失敗. fromが不正です", from, to)
 	}
 	toPos, ok := distanceMap[to]
 	if !ok {
-		return -1, ErrStationNotFound
+		return -1, fmt.Errorf("%s ~ %s の距離算出に失敗. toが不正です", from, to)
 	}
 
 	return math.Abs(toPos - fromPos), nil
@@ -140,7 +135,7 @@ func GetDistanceFare(from, to string) (int, error) {
 	case distance > 1000:
 		return 20000, nil
 	default:
-		return -1, ErrInvalidDistance
+		return -1, fmt.Errorf("%s ~ %s 間の距離が不正です", from, to)
 	}
 }
 
@@ -240,7 +235,7 @@ var stopInfoMap = map[string]*StopInfo{
 func GetStopInfo(station string) (isStopExpress, isStopSemiExpress, isStopLocal bool, err error) {
 	stopInfo, ok := stopInfoMap[station]
 	if !ok {
-		return false, false, false, ErrStationNotFound
+		return false, false, false, fmt.Errorf("駅 %s が見つからないため、停車情報を取得できませんでした", station)
 	}
 
 	return stopInfo.IsStopExpress, stopInfo.IsStopSemiExpress, stopInfo.IsStopLocal, nil

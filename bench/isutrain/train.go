@@ -2,7 +2,6 @@ package isutrain
 
 import (
 	"math"
-	"time"
 )
 
 type TrainSeatColumn string
@@ -149,6 +148,13 @@ func (fi FareInformation) Value() int {
 	}
 }
 
+type TrainCar struct {
+	CarNumber int    `json:"car_number"`
+	SeatClass string `json:"seat_class"`
+}
+
+type TrainCars []*TrainCar
+
 // NOTE:  列車検索API  use_at=<RFC3339形式の時刻>&train_class=<>&from=<>&to=<>
 // * 流れ
 //   * 列車マスタからuse_atに合致するレコードを引っ張る
@@ -183,9 +189,9 @@ type Trains []*Train
 //     * 席は予約済みかそうでないかにかかわらず結果として追加
 //     * CarInformationを返す
 type TrainSeatSearchResponse struct {
-	UseAt      time.Time
-	TrainClass string
-	TrainName  string
-	CarNumber  int
-	Seats      TrainSeats
+	Date       string     `json:"date"`
+	TrainClass string     `json:"train_class"`
+	TrainName  string     `json:"train_name"`
+	CarNumber  int        `json:"car_number"`
+	Seats      TrainSeats `json:"seats"`
 }

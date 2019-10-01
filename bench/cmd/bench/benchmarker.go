@@ -69,10 +69,7 @@ func (b *benchmarker) run(ctx context.Context) error {
 				return ErrBenchmarkFailure
 			}
 
-			for i := 0; i < 5; i++ {
-				if err := b.sem.Acquire(ctx, 1); err != nil {
-					return ErrBenchmarkFailure
-				}
+			if isAcquired := b.sem.TryAcquire(1); isAcquired {
 				go b.load(ctx)
 			}
 		}

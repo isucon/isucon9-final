@@ -19,3 +19,5 @@ const (
 )
 
 var Debug bool
+var SlackWebhookURL string
+var Language = "unknown"

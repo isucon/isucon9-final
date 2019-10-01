@@ -15,6 +15,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/alert"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/eapache/go-resiliency/retrier"
 	"github.com/urfave/cli"
 )
@@ -61,6 +63,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	// ターゲットサーバを取得
 	targetServer, err := getTargetServer(job)
 	if err != nil {
+		alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, "", "", "ターゲットサーバの取得に失敗しました: job=%d", job.ID)
 		log.Printf("failed to get target server: %s", err.Error())
 		return nil, err
 	}
@@ -73,6 +76,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		"--payment=" + paymentBaseURI,
 		"--target=" + targetURI,
 		"--assetdir=" + assetDir,
+		"--webhookurl=" + config.SlackWebhookURL,
 	}...)
 	log.Printf("exec_path=%s", cmd.Path)
 	for _, arg := range cmd.Args {
@@ -91,9 +95,11 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	select {
 	case err := <-errCh:
 		if err != nil {
+			alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, string(stdout.Bytes()), string(stderr.Bytes()), "ベンチの実行エラーが発生 (StatusFailed)")
 			status = StatusFailed
 		}
 	case <-ctx.Done():
+		alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, string(stdout.Bytes()), string(stderr.Bytes()), "ベンチのタイムアウトエラーが発生 (StatusTimeout)")
 		status = StatusTimeout
 	}
 
@@ -103,6 +109,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	log.Printf("bench result = %s\n", string(stdout.Bytes()))
 	var result *BenchResult
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
+		alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, string(stdout.Bytes()), string(stderr.Bytes()), "ベンチ結果のUnmarshalに失敗しました")
 		log.Println(string(stdout.Bytes()))
 		return &Result{
 			ID:       job.ID,
@@ -178,6 +185,11 @@ var run = cli.Command{
 			Destination: &messageLimit,
 			EnvVar:      "BENCHWORKER_MESSAGE_LIMIT",
 		},
+		cli.StringFlag{
+			Name:        "webhookurl",
+			Destination: &config.SlackWebhookURL,
+			EnvVar:      "BENCHWORKER_SLACK_WEBHOOK_URL",
+		},
 	},
 	Action: func(cliCtx *cli.Context) error {
 		ctx := context.Background()
@@ -230,6 +242,7 @@ var run = cli.Command{
 						return report(ctx, job.ID, result)
 					})
 					if err != nil {
+						alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, result.Stdout, result.Stderr, "リトライしましたが、ポータルへの報告が失敗しました")
 						log.Printf("report failed: %s\n", err.Error())
 					}
 				}()

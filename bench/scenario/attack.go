@@ -42,7 +42,8 @@ func AttackSearchScenario(ctx context.Context) error {
 
 			user, err := xrandom.GetRandomUser()
 			if err != nil {
-				bencherror.BenchmarkErrs.AddError(err)
+				bencherror.SystemErrs.AddError(err)
+				return
 			}
 			err = client.Login(ctx, user.Email, user.Password)
 			if err != nil {
@@ -62,7 +63,6 @@ func AttackSearchScenario(ctx context.Context) error {
 					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, "")
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
-						return
 					}
 				}
 			}
@@ -89,7 +89,8 @@ func AttackSearchScenario(ctx context.Context) error {
 
 			user, err := xrandom.GetRandomUser()
 			if err != nil {
-				bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします"))
+				bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "ユーザを作成できません"))
+				return
 			}
 			err = client.Login(ctx, user.Email, user.Password)
 			if err != nil {
@@ -121,7 +122,6 @@ func AttackSearchScenario(ctx context.Context) error {
 					_, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
-						return
 					}
 				}
 			}
@@ -208,7 +208,8 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 
 	user, err := xrandom.GetRandomUser()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		bencherror.SystemErrs.AddError(err)
+		return nil
 	}
 
 	err = registerUserAndLogin(ctx, client, user)
@@ -255,7 +256,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 				train.Class, train.Name,
 				isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 				departure, arrival, useAt,
-				carNum, 1, 1, "")
+				carNum, 1, 1)
 			if err != nil {
 				// 1件をのぞいエラーになるはず
 				return
@@ -300,10 +301,12 @@ func AttackReserveForOtherReservation(ctx context.Context) error {
 		user2, user2Err = xrandom.GetRandomUser()
 	)
 	if user1Err != nil {
-		return bencherror.BenchmarkErrs.AddError(user1Err)
+		bencherror.SystemErrs.AddError(user1Err)
+		return nil
 	}
 	if user2Err != nil {
-		return bencherror.BenchmarkErrs.AddError(user2Err)
+		bencherror.SystemErrs.AddError(user2Err)
+		return nil
 	}
 
 	err = registerUserAndLogin(ctx, client, user1)
