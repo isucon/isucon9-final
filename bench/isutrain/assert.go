@@ -5,28 +5,18 @@ import (
 	"net/http"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
-func assertListTrainSeats(resp *TrainSeatSearchResponse, count int) (TrainSeats, error) {
-	validSeats := TrainSeats{}
-
+func assertListTrainSeats(resp *TrainSeatSearchResponse) error {
 	if resp == nil {
-		return validSeats, bencherror.NewSimpleCriticalError("座席検索のレスポンスが不正です: %+v", resp)
+		return bencherror.NewSimpleCriticalError("座席検索のレスポンスが不正です: %+v", resp)
 	}
 
 	// TODO: 席が重複して返されたら減点
 
-	for _, seat := range resp.Seats {
-		if len(validSeats) == count {
-			break
-		}
-		if !seat.IsOccupied {
-			validSeats = append(validSeats, seat)
-		}
-	}
-
-	return validSeats, nil
+	return nil
 }
 
 func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveRequest, resp *ReservationResponse) error {
@@ -47,6 +37,22 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 
 		for _, reservation := range reservations {
 			if reservation.ReservationID == resp.ReservationID {
+				// Amountのチェック
+				cache, ok := ReservationCache.Reservation(reservation.ReservationID)
+				if !ok {
+					// 認識していない予約 (Slack通知)
+					return bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
+				}
+
+				amount, err := cache.Amount()
+				if err != nil {
+					return bencherror.NewSimpleCriticalError("予約一覧画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID)
+				}
+
+				if int64(amount) != reservation.Amount {
+					return bencherror.NewSimpleCriticalError("予約一覧画面における、予約 %dの amountが一致しません: want=%d, got=%d", reservation.ReservationID, amount, reservation.Amount)
+				}
+
 				return nil
 			}
 		}
@@ -54,16 +60,58 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 		return bencherror.NewSimpleCriticalError("予約した内容を予約一覧画面で確認できませんでした")
 	})
 	// 予約確認できるか
-	// reserveGrp.Go(func() error {
-	// 	_, err := client.ShowReservation(ctx, resp.ReservationID)
-	// 	if err != nil {
-	// 		return bencherror.NewCriticalError(err, "予約した内容を予約確認画面で確認できませんでした")
-	// 	}
+	reserveGrp.Go(func() error {
+		reservation, err := client.ShowReservation(ctx, resp.ReservationID)
+		if err != nil {
+			return bencherror.NewCriticalError(err, "予約した内容を予約確認画面で確認できませんでした")
+		}
 
-	// 	return nil
-	// })
+		// Amountのチェック
+		cache, ok := ReservationCache.Reservation(reservation.ReservationID)
+		if !ok {
+			// 認識していない予約 (Slack通知)
+			return bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
+		}
+
+		amount, err := cache.Amount()
+		if err != nil {
+			return bencherror.NewSimpleCriticalError("予約確認画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID)
+		}
+
+		if int64(amount) != reservation.Amount {
+			return bencherror.NewSimpleCriticalError("予約確認画面における、予約 %dの amountが一致しません: want=%d, got=%d", reservation.ReservationID, amount, reservation.Amount)
+		}
+
+		return nil
+	})
+
 	if err := reserveGrp.Wait(); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func assertCanReserve(ctx context.Context, req *ReserveRequest, resp *ReservationResponse) error {
+	lgr := zap.S()
+
+	canReserve, err := ReservationCache.CanReserve(req)
+	if err != nil {
+		lgr.Warnf("予約のcanReserve判定でエラー: %s", err.Error())
+		return bencherror.NewCriticalError(err, "予約可能チェック処理でエラーが発生しました")
+	}
+
+	if !canReserve {
+		lgr.Warnw("予約できないはず",
+			"departure", req.Departure,
+			"arrival", req.Arrival,
+			"date", req.Date,
+			"train_class", req.TrainClass,
+			"train_name", req.TrainName,
+			"car_num", req.CarNum,
+			"seats", req.Seats,
+		)
+		return bencherror.NewSimpleCriticalError("予約できないはずの条件で予約が成功しました")
 	}
 
 	return nil
@@ -84,11 +132,6 @@ func assertCancelReservation(ctx context.Context, client *Client, reservationID 
 	_, err = client.ShowReservation(ctx, reservationID, StatusCodeOpt(http.StatusNotFound))
 	if err != nil {
 		return bencherror.NewSimpleApplicationError("キャンセルされた予約が、予約詳細で取得可能です: %d", reservationID)
-	}
-
-	if err := ReservationCache.Cancel(reservationID); err != nil {
-		// FIXME: こういうベンチマーカーの異常は、利用者向けには一般的なメッセージで運営に連絡して欲しいと書き、運営向けにSlackに通知する
-		return bencherror.NewCriticalError(err, "ベンチマーカーでキャッシュ不具合が発生しました. 運営に御確認お願い致します")
 	}
 
 	return nil

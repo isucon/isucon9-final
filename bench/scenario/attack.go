@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	// "go.uber.org/zap"
+	"go.uber.org/zap"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
@@ -118,7 +118,7 @@ func AttackSearchScenario(ctx context.Context) error {
 					train := trains[trainIdx]
 					carNum := 8
 
-					_, _, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival)
+					_, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 						return
@@ -185,10 +185,12 @@ func AttackListReservationsScenario(ctx context.Context) error {
 	return nil
 }
 
-// 予約済みの条件で予約を試みる
+// TODO: 予約済みの条件で予約を試みる
 // 一応、予約キャンセルするのを虎視眈々と狙っている利用者からのリクエスト、という設定
-func AttackReserveForReserved(ctx context.Context) error {
-	// lgr := zap.S()
+
+// AttackReserveRaceCondition は、予約にて、一気にリクエストを送ることで競合が発生しないかチェックするシナリオ
+func AttackReserveRaceCondition(ctx context.Context) error {
+	lgr := zap.S()
 
 	// ISUTRAIN APIのクライアントを作成
 	client, err := isutrain.NewClient()
@@ -234,30 +236,30 @@ func AttackReserveForReserved(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := 9
-	_, validSeats, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
+	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+
 	wg := new(sync.WaitGroup)
-
 	var successCount uint64
-
 	for i := 0; i < 10; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			_, _, err := client.Reserve(ctx,
+			_, err := client.Reserve(ctx,
 				train.Class, train.Name,
-				isutraindb.GetSeatClass(train.Class, carNum), validSeats,
+				isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 				departure, arrival, useAt,
 				carNum, 1, 1, "")
 			if err != nil {
+				// 1件をのぞいエラーになるはず
 				return
 			}
-
 			atomic.AddUint64(&successCount, 1)
 		}()
 	}
@@ -265,11 +267,10 @@ func AttackReserveForReserved(ctx context.Context) error {
 	wg.Wait()
 
 	if successCount == 0 {
-		err := bencherror.NewSimpleApplicationError("予約できませんでした")
-		return bencherror.BenchmarkErrs.AddError(err)
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleApplicationError("予約できませんでした"))
 	} else if successCount > 1 {
-		err := bencherror.NewSimpleCriticalError("二重発券されました")
-		return bencherror.BenchmarkErrs.AddError(err)
+		lgr.Info("多重発券されました")
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleCriticalError("多重発券されました"))
 	}
 
 	return nil

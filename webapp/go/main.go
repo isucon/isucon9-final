@@ -364,7 +364,7 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 	}
 
 	// To
-	err = dbx.Get(&fromStation, query, destStation)
+	err = dbx.Get(&toStation, query, destStation)
 	if err == sql.ErrNoRows {
 		return 0, err
 	}

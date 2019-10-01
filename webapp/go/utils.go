@@ -1,62 +1,59 @@
 package main
 
 import (
-  "fmt"
-  "time"
+	"fmt"
+	"time"
 )
 
 func checkAvailableDate(date time.Time) bool {
-  jst := time.FixedZone("Asia/Tokyo", 9*60*60)
-  t := time.Date(2020, 1, 1, 0, 0, 0, 0, jst)
-  t = t.AddDate(0, 0, availableDays)
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	t := time.Date(2020, 1, 1, 0, 0, 0, 0, jst)
+	t = t.AddDate(0, 0, availableDays)
 
-  return date.Before(t)
+	return date.Before(t)
 }
 
 func getUsableTrainClassList(fromStation Station, toStation Station) []string {
-  usable := map[string]string{}
+	usable := map[string]string{}
 
-  for key, value := range TrainClassMap {
-    usable[key] = value
-  }
+	for key, value := range TrainClassMap {
+		usable[key] = value
+	}
 
-  if !fromStation.IsStopExpress {
-    delete(usable, "express")
-  }
-  if !fromStation.IsStopSemiExpress {
-    delete(usable, "semi_express")
-  }
-  if !fromStation.IsStopLocal {
-    delete(usable, "local")
-  }
+	if !fromStation.IsStopExpress {
+		delete(usable, "express")
+	}
+	if !fromStation.IsStopSemiExpress {
+		delete(usable, "semi_express")
+	}
+	if !fromStation.IsStopLocal {
+		delete(usable, "local")
+	}
 
-  if !toStation.IsStopExpress {
-    delete(usable, "express")
-  }
-  if !toStation.IsStopSemiExpress {
-    delete(usable, "semi_express")
-  }
-  if !toStation.IsStopLocal {
-    delete(usable, "local")
-  }
+	if !toStation.IsStopExpress {
+		delete(usable, "express")
+	}
+	if !toStation.IsStopSemiExpress {
+		delete(usable, "semi_express")
+	}
+	if !toStation.IsStopLocal {
+		delete(usable, "local")
+	}
 
-  ret := []string{}
-  for _, v := range usable {
-    ret = append(ret, v)
-  }
+	ret := []string{}
+	for _, v := range usable {
+		ret = append(ret, v)
+	}
 
-  return ret
+	return ret
 }
 
-
-
 func (train Train) getAvailableSeats(fromStation Station, toStation Station, seatClass string, isSmokingSeat bool) ([]Seat, error) {
-  // 指定種別の空き座席を返す
+	// 指定種別の空き座席を返す
 
-  var err error
+	var err error
 
-
-  // 全ての座席を取得する
+	// 全ての座席を取得する
 	query := "SELECT * FROM seat_master WHERE train_class=? AND seat_class=? AND is_smoking_seat=?"
 
 	seatList := []Seat{}
@@ -70,8 +67,7 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 		availableSeatMap[fmt.Sprintf("%d_%d_%s", seat.CarNumber, seat.SeatRow, seat.SeatColumn)] = seat
 	}
 
-
-  // すでに取られている予約を取得する
+	// すでに取られている予約を取得する
 	query = `
 	SELECT sr.reservation_id, sr.car_number, sr.seat_row, sr.seat_column
 	FROM seat_reservations sr, reservations r, seat_master s, station_master std, station_master sta

@@ -118,7 +118,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	}
 
 	// FIXME: 日付、列車クラス、名前、車両番号、乗車駅降車駅を指定
-	_, validSeats, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
 		useAt,
 		trainClass, trainName, carNum, departure, arrival)
 	if err != nil {
@@ -126,7 +126,9 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	_, reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, validSeats, departure, arrival,
+	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+
+	reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, availSeats, departure, arrival,
 		useAt,
 		carNum, adult, child, seatType)
 	if err != nil {

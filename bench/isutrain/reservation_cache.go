@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -15,8 +14,8 @@ import (
 //距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
 
 var (
-	ErrCommitReservation = errors.New("予約の確定に失敗しました")
-	ErrCancelReservation = errors.New("予約のキャンセルに失敗しました")
+	ErrCommitReservation = errors.New("存在しない予約IDの予約Commitを実施しようとしました")
+	ErrCancelReservation = errors.New("存在しない予約IDの予約Cancelを実施しようとしました")
 	ErrCanNotReserve     = errors.New("予約済みの座席が指定されたため予約できません")
 )
 
@@ -64,6 +63,7 @@ func (r *ReservationCacheEntry) Fare() (int, error) {
 
 	lgr := zap.S()
 	lgr.Infow("運賃取得情報",
+		"reservation_id", r.ID,
 		"departure", r.Departure,
 		"arrival", r.Arrival,
 		"train_class", r.TrainClass,
@@ -107,14 +107,32 @@ var (
 )
 
 type reservationCache struct {
-	mu           sync.RWMutex
-	reservations []*ReservationCacheEntry
+	mu sync.RWMutex
+	// reservationID -> ReservationCacheEntry
+	reservations         map[int]*ReservationCacheEntry
+	commitedReservations map[int]*ReservationCacheEntry
+	canceledReservations map[int]*ReservationCacheEntry
+	// reservations []*ReservationCacheEntry
 }
 
 func newReservationCache() *reservationCache {
 	return &reservationCache{
-		reservations: []*ReservationCacheEntry{},
+		reservations:         map[int]*ReservationCacheEntry{},
+		commitedReservations: map[int]*ReservationCacheEntry{},
+		canceledReservations: map[int]*ReservationCacheEntry{},
 	}
+}
+
+func (r *reservationCache) Reservation(reservationID int) (*ReservationCacheEntry, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	reservation, ok := r.reservations[reservationID]
+	if !ok {
+		return nil, false
+	}
+
+	return reservation, true
 }
 
 // 予約可能判定
@@ -214,7 +232,7 @@ func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID in
 	defer r.mu.Unlock()
 
 	// TODO: webappから意図的にreservationIDを細工して変に整合性つけることができないか考える
-	r.reservations = append(r.reservations, &ReservationCacheEntry{
+	r.reservations[reservationID] = &ReservationCacheEntry{
 		User:       user,
 		ID:         reservationID,
 		Date:       req.Date,
@@ -228,28 +246,62 @@ func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID in
 		Adult:      req.Adult,
 		Child:      req.Child,
 		UseAt:      req.Date,
-	})
+	}
+}
+
+func (r *reservationCache) Commit(reservationID int) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	lgr := zap.S()
+
+	reservation, ok := r.reservations[reservationID]
+	if !ok {
+		lgr.Warnf("存在しない予約 %d のコミットが実行されました", reservationID)
+		return ErrCommitReservation
+	}
+
+	r.commitedReservations[reservationID] = reservation
+
+	return nil
 }
 
 func (r *reservationCache) Cancel(reservationID int) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	for idx, reservation := range r.reservations {
-		if reservation.ID == reservationID {
-			r.reservations = append(r.reservations[:idx], r.reservations[idx+1:]...)
-			return nil
-		}
+	lgr := zap.S()
+
+	reservation, ok := r.reservations[reservationID]
+	if !ok {
+		lgr.Warnf("存在しない予約 %d のキャンセルが実行されました", reservationID)
+		return ErrCancelReservation
 	}
 
-	return bencherror.NewApplicationError(ErrCancelReservation, "予約が存在しません")
+	r.canceledReservations[reservationID] = reservation
+
+	// Commit済みの予約が残っていたら、キャンセルで無効になるので削除
+	if _, ok := r.commitedReservations[reservationID]; ok {
+		delete(r.commitedReservations, reservationID)
+	}
+
+	return nil
 }
 
-func (r *reservationCache) Range(f func(reservation *ReservationCacheEntry)) {
+func (r *reservationCache) RangeCommited(f func(reservation *ReservationCacheEntry)) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	for _, reservation := range r.reservations {
+	for _, reservation := range r.commitedReservations {
+		f(reservation)
+	}
+}
+
+func (r *reservationCache) RangeCanceled(f func(reservation *ReservationCacheEntry)) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	for _, reservation := range r.canceledReservations {
 		f(reservation)
 	}
 }

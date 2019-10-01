@@ -53,7 +53,7 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, user 
 
 	train := trains[0]
 
-	_, reserveResp, err := client.Reserve(ctx,
+	reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
 		"premium", isutrain.TrainSeats{},
 		departure, arrival, useAt,
@@ -87,4 +87,18 @@ func payForReservation(ctx context.Context, client *isutrain.Client, paymentClie
 	}
 
 	return nil
+}
+
+func filterTrainSeats(resp *isutrain.TrainSeatSearchResponse, count int) isutrain.TrainSeats {
+	availSeats := isutrain.TrainSeats{}
+	for _, seat := range resp.Seats {
+		if len(availSeats) == count {
+			break
+		}
+		if !seat.IsOccupied {
+			availSeats = append(availSeats, seat)
+		}
+	}
+
+	return availSeats
 }

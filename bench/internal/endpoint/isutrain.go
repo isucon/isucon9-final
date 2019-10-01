@@ -42,11 +42,15 @@ const (
 
 var isutrainDynamicEndpoints = []*Endpoint{
 	&Endpoint{path: "/api/user/reservations/%d/cancel", weight: 1},
-	&Endpoint{path: "/api/train/reservation/%d", weight: 1},
+	&Endpoint{path: "/api/user/reservations/%d", weight: 1},
 }
 
 func GetPath(idx EndpointIdx) string {
 	return isutrainEndpoints[idx].path
+}
+
+func GetWeight(idx EndpointIdx) int {
+	return isutrainEndpoints[idx].weight
 }
 
 func GetDynamicPath(idx EndpointIdx, args ...interface{}) string {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
@@ -74,19 +75,22 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := 5
-	_, validSeats, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, "東京", "大阪")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, _, err = client.Reserve(ctx,
+	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+
+	_, err = client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
-		validSeats, "山田", "夷太寺", useAt,
-		carNum, 1, 1, "", nil,
-	)
+		availSeats, "山田", "夷太寺", useAt,
+		carNum, 1, 1, "",
+		isutrain.StatusCodeOpt(http.StatusBadRequest))
+
 	if err == nil {
 		err = bencherror.NewSimpleCriticalError("予約できない区間が予約できました")
 		return bencherror.BenchmarkErrs.AddError(err)
@@ -117,14 +121,9 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	_, err = client.ListStations(ctx)
-	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
-	}
-
-	useAt := xrandom.GetRandomUseAt()
-	departure, arrival := xrandom.GetRandomSection()
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "")
+	useAt := time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC)
+	departure, arrival := "東京", "大阪"
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "最速")
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -132,25 +131,27 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "reserved")
-	_, validSeats, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	validSeats[0].Row = 30
-	validSeats[1].Column = "G"
+	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
 
-	_, _, err = client.Reserve(ctx,
+	// FIXME: seatが空になるケースがあるので、上の座席列挙で固定の条件で検索をかける必要がある
+	availSeats[0].Row = 30
+	availSeats[1].Column = "G"
+
+	_, err = client.Reserve(ctx,
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
-		validSeats, departure, arrival, useAt,
-		carNum, 1, 1, "", nil,
-	)
+		availSeats, departure, arrival, useAt,
+		carNum, 1, 1, "",
+		isutrain.StatusCodeOpt(http.StatusNotFound))
 	if err == nil {
-		err = bencherror.NewSimpleCriticalError("予約できない座席が予約できました")
-		return bencherror.BenchmarkErrs.AddError(err)
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "予約できない座席が予約できました"))
 	}
 
 	return nil
