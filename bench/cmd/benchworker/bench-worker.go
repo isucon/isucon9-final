@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/alert"
 	"github.com/eapache/go-resiliency/retrier"
 	"github.com/urfave/cli"
 )
@@ -61,6 +62,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	// ターゲットサーバを取得
 	targetServer, err := getTargetServer(job)
 	if err != nil {
+		alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, "", "", "ターゲットサーバの取得に失敗しました: job=%d", job.ID)
 		log.Printf("failed to get target server: %s", err.Error())
 		return nil, err
 	}
@@ -91,9 +93,11 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	select {
 	case err := <-errCh:
 		if err != nil {
+			alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, string(stdout.Bytes()), string(stderr.Bytes()), "ベンチの実行エラーが発生 (StatusFailed)")
 			status = StatusFailed
 		}
 	case <-ctx.Done():
+		alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, string(stdout.Bytes()), string(stderr.Bytes()), "ベンチのタイムアウトエラーが発生 (StatusTimeout)")
 		status = StatusTimeout
 	}
 
@@ -230,6 +234,7 @@ var run = cli.Command{
 						return report(ctx, job.ID, result)
 					})
 					if err != nil {
+						alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, result.Stdout, result.Stderr, "リトライしましたが、ポータルへの報告が失敗しました")
 						log.Printf("report failed: %s\n", err.Error())
 					}
 				}()

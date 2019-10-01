@@ -479,21 +479,24 @@ func (c *Client) Reserve(
 		return nil, failure.Wrap(err, failure.Messagef("POST %s: JSONのUnmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	if opts.autoAssert && resp.StatusCode == http.StatusOK {
 		if err := assertCanReserve(ctx, reserveReq, reservation); err != nil {
 			return nil, err
 		}
-		ReservationCache.Add(c.loginUser, reserveReq, reservation.ReservationID)
 	}
 
-	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-		return nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
+	if resp.StatusCode == http.StatusOK {
+		ReservationCache.Add(c.loginUser, reserveReq, reservation.ReservationID)
 	}
 
 	if opts.autoAssert {
 		if err := assertReserve(ctx, c, reserveReq, reservation); err != nil {
 			return nil, err
 		}
+	}
+
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
 	if len(reserveReq.Seats) == 0 {
@@ -558,7 +561,7 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 	endpoint.IncPathCounter(endpoint.CommitReservation)
 
 	if err := ReservationCache.Commit(reservationID); err != nil {
-		return failure.Wrap(err, failure.Messagef("POST %s: キャッシュへのCommitに失敗しました. 運営にご確認をお願いいたします"))
+		return failure.Wrap(err, failure.Messagef("POST %s: キャッシュへのCommitに失敗しました. 運営にご確認をお願いいたします", endpointPath))
 	}
 
 	return nil

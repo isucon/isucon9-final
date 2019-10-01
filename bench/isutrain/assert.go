@@ -40,13 +40,14 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 				// Amountのチェック
 				cache, ok := ReservationCache.Reservation(reservation.ReservationID)
 				if !ok {
-					// 認識していない予約 (Slack通知)
-					return bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
+					err := bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
+					return err
 				}
 
 				amount, err := cache.Amount()
 				if err != nil {
-					return bencherror.NewSimpleCriticalError("予約一覧画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID)
+					err = bencherror.NewCriticalError(err, "予約一覧画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID)
+					return err
 				}
 
 				if int64(amount) != reservation.Amount {

@@ -1,6 +1,9 @@
 package isutrain
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type Station struct {
 	ID                int    `json:"id"`
@@ -108,8 +111,17 @@ func isKudariOverwrap(aOrigin, aDestination string, bOrigin, bDestination string
 		bDepartureNum, ok3 = sectionMap[bOrigin]
 		bArrivalNum, ok4   = sectionMap[bDestination]
 	)
-	if !ok1 || !ok2 || !ok3 || !ok4 {
-		return false, ErrInvalidStationName
+	if !ok1 {
+		return false, fmt.Errorf("不正な駅 %s が isKudariOverwrapのaOriginに指定されました", aOrigin)
+	}
+	if !ok2 {
+		return false, fmt.Errorf("不正な駅 %s が isKudariOverwrapのaDestinationに指定されました", aDestination)
+	}
+	if !ok3 {
+		return false, fmt.Errorf("不正な駅 %s が isKudariOverwrapのbOriginに指定されました", bOrigin)
+	}
+	if !ok4 {
+		return false, fmt.Errorf("不正な駅 %s が isKudariOverwrapのbDestinationに指定されました", bDestination)
 	}
 
 	if bDepartureNum < aDepartureNum && bArrivalNum <= aDepartureNum {
