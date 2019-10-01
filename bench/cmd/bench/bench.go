@@ -79,6 +79,11 @@ var run = cli.Command{
 			Destination: &assetDir,
 			EnvVar:      "BENCH_ASSETDIR",
 		},
+		cli.StringFlag{
+			Name:        "webhookurl",
+			Destination: &config.SlackWebhookURL,
+			EnvVar:      "BENCH_SLACK_WEBHOOK_URL",
+		},
 	},
 	Action: func(cliCtx *cli.Context) error {
 		ctx := context.Background()

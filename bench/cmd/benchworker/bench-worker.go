@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/alert"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/eapache/go-resiliency/retrier"
 	"github.com/urfave/cli"
 )
@@ -75,6 +76,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 		"--payment=" + paymentBaseURI,
 		"--target=" + targetURI,
 		"--assetdir=" + assetDir,
+		"--webhookurl=" + config.SlackWebhookURL,
 	}...)
 	log.Printf("exec_path=%s", cmd.Path)
 	for _, arg := range cmd.Args {
@@ -181,6 +183,11 @@ var run = cli.Command{
 			Value:       10,
 			Destination: &messageLimit,
 			EnvVar:      "BENCHWORKER_MESSAGE_LIMIT",
+		},
+		cli.StringFlag{
+			Name:        "webhookurl",
+			Destination: &config.SlackWebhookURL,
+			EnvVar:      "BENCHWORKER_SLACK_WEBHOOK_URL",
 		},
 	},
 	Action: func(cliCtx *cli.Context) error {
