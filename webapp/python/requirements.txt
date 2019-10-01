@@ -2,4 +2,5 @@ gunicorn
 Flask
 requests
 PyMySQL
+python-dateutil
 mysqlclient

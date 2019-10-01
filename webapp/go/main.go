@@ -653,7 +653,7 @@ func trainSearchHandler(w http.ResponseWriter, r *http.Request) {
 				reserved_smoke_avail = "△"
 			}
 
-			// TODO: 空席情報
+			// 空席情報
 			seatAvailability := map[string]string{
 				"premium":        premium_avail,
 				"premium_smoke":  premium_smoke_avail,
@@ -1823,7 +1823,7 @@ func makeReservationResponse(reservation Reservation) (ReservationResponse, erro
 	}
 	err = dbx.Get(
 		&arrival,
-		"SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?",
+		"SELECT arrival FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?",
 		reservation.Date.Format("2006/01/02"), reservation.TrainClass, reservation.TrainName, reservation.Arrival,
 	)
 	if err != nil {
