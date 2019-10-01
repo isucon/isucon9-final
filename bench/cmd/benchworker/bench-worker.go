@@ -109,6 +109,7 @@ func execBench(ctx context.Context, job *Job) (*Result, error) {
 	log.Printf("bench result = %s\n", string(stdout.Bytes()))
 	var result *BenchResult
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
+		alert.NotifyWorkerErr(job.ID, job.Team.ID, job.Team.Name, err, string(stdout.Bytes()), string(stderr.Bytes()), "ベンチ結果のUnmarshalに失敗しました")
 		log.Println(string(stdout.Bytes()))
 		return &Result{
 			ID:       job.ID,
