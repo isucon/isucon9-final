@@ -595,8 +595,8 @@ EOF
 
         for my $seat_reservation (@$seat_reservation_list) {
             $query = 'SELECT * FROM reservations WHERE reservation_id=?';
-            my $resevation = $self->dbh->select_row($query, $seat_reservation->{reservation_id});
-            if (!$resevation) {
+            my $reservation = $self->dbh->select_row($query, $seat_reservation->{reservation_id});
+            if (!$reservation) {
                 die "No reservation";
             }
 
@@ -868,17 +868,17 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
 
                 for my $seat_reservation (@$seat_reservation_list) {
                     $query = 'SELECT * FROM reservations WHERE reservation_id=? FOR UPDATE';
-                    my $resevation = $dbh->select_row($query, $seat_reservation->{reservation_id});
-                    if (!$resevation) {
+                    my $reservation = $dbh->select_row($query, $seat_reservation->{reservation_id});
+                    if (!$reservation) {
                         die "no reservations";
                     }
 
                     $query = 'SELECT * FROM station_master WHERE name=?';
-                    my $departure_station = $dbh->select_row($query, $resevation->{departure});
+                    my $departure_station = $dbh->select_row($query, $reservation->{departure});
                     if (!$departure_station) {
                         die "no departure";
                     }
-                    my $arrival_station = $dbh->select_row($query, $resevation->{arrival});
+                    my $arrival_station = $dbh->select_row($query, $reservation->{arrival});
                     if (!$arrival_station) {
                         die "no arrival";
                     }
@@ -1011,7 +1011,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
         $train_name
     );
 
-    for my $resevation (@$reservations) {
+    for my $reservation (@$reservations) {
         if ($seat_class eq "non-reserved") {
             last;
         }
@@ -1026,13 +1026,13 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
         # 予約情報の乗車区間の駅IDを求める
         $query = 'SELECT * FROM station_master WHERE name=?';
         # From
-        my $reserved_from_station = $dbh->select_row($query, $resevation->{departure});
+        my $reserved_from_station = $dbh->select_row($query, $reservation->{departure});
         if (!$reserved_from_station) {
             warn("no reserved from station");
             return $self->error_with_msg($c, HTTP_NOT_FOUND, "予約情報に記載された列車の乗車駅データがみつかりません");
         }
         # To
-        my $reserved_to_station = $dbh->select_row($query, $resevation->{arrival});
+        my $reserved_to_station = $dbh->select_row($query, $reservation->{arrival});
         if (!$reserved_to_station) {
             warn("no reserved to station");
             return $self->error_with_msg($c, HTTP_NOT_FOUND, "予約情報に記載された列車の降車駅データがみつかりません");
@@ -1063,13 +1063,13 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
         if ($secdup) {
             # 区間重複の場合は更に座席の重複をチェックする
             $query = 'SELECT * FROM seat_reservations WHERE reservation_id=? FOR UPDATE';
-            my $seat_reservations = $dbh->select_all($query, $resevation->{reservation_id});
+            my $seat_reservations = $dbh->select_all($query, $reservation->{reservation_id});
             for my $v (@$seat_reservations) {
                 for my $seat (@$seats) {
                     if ($v->{car_number} == $car_number &&
                         $v->{seat_row}  == $seat->{row} &&
                         $v->{seat_column} eq $seat->{column}) {
-                            warn("Duplicated ", $resevation); #XXX
+                            warn("Duplicated ", $reservation); #XXX
                             return $self->error_with_msg($c, HTTP_BAD_REQUEST, "リクエストに既に予約された席が含まれています");
                     }
                 }
@@ -1202,7 +1202,7 @@ post '/api/train/reservation/commit' => [qw/allow_json_request/] => sub {
 =cut
     my ($self, $c) = @_;
 
-    my $resevation_id = $c->req->parameters->get('reservation_id') // 0;
+    my $reservation_id = $c->req->parameters->get('reservation_id') // 0;
     my $card_token = $c->req->parameters->get('card_token') // "";
 
     my $dbh = $self->dbh;
@@ -1210,8 +1210,8 @@ post '/api/train/reservation/commit' => [qw/allow_json_request/] => sub {
 
     # 予約IDで検索
     my $query = 'SELECT * FROM reservations WHERE reservation_id=?';
-    my $resevation = $dbh->select_row($query, $resevation_id);
-    if (!$resevation_id) {
+    my $reservation = $dbh->select_row($query, $reservation_id);
+    if (!$reservation_id) {
         warn("no reservation");
         return $self->error_with_msg($c, HTTP_NOT_FOUND, '予約情報がみつかりません');
     }
@@ -1221,21 +1221,21 @@ post '/api/train/reservation/commit' => [qw/allow_json_request/] => sub {
     if (!$user) {
         return $self->error_with_msg($c, HTTP_NOT_FOUND, 'user not found');
     }
-    if ($resevation->{user_id} != $user->{id}) {
-        warn("not match resevation user id");
+    if ($reservation->{user_id} != $user->{id}) {
+        warn("not match reservation user id");
         return $self->error_with_msg($c, HTTP_FORBIDDEN, '他のユーザIDの支払いはできません');
     }
 
     # 予約情報の支払いステータス確認
-    if ($resevation->{status} eq "done") {
+    if ($reservation->{status} eq "done") {
         return $self->error_with_msg($c, HTTP_FORBIDDEN, '既に支払いが完了している予約IDです');
     }
 
     # 決済する
     my $pay_info = {
         card_token => $card_token,
-        reservation_id => number $resevation_id,
-        amount => number $resevation->{amount}
+        reservation_id => number $reservation_id,
+        amount => number $reservation->{amount}
     };
     my $json = JSON::encode_json($pay_info);
 
@@ -1270,7 +1270,7 @@ post '/api/train/reservation/commit' => [qw/allow_json_request/] => sub {
         $query,
         "done",
         $output->{payment_id},
-        $resevation_id
+        $reservation_id
     );
 
     $txn->commit();
@@ -1385,8 +1385,113 @@ post '/api/auth/logout' => sub {
     });
 };
 
+sub makeReservationResponse {
+    my ($self,$r) = @_;
+    my %res;
+
+    my $departure = $self->dbh->select_one(
+        'SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?',
+        $r->{date},
+        $r->{train_class},
+        $r->{train_name},
+        $r->{departure}
+    );
+    if (!$departure) {
+        die 'no departure';
+    }
+
+    my $arrival = $self->dbh->select_one(
+        'SELECT departure FROM train_timetable_master WHERE date=? AND train_class=? AND train_name=? AND station=?',
+        $r->{date},
+        $r->{train_class},
+        $r->{train_name},
+        $r->{arrival}
+    );
+    if (!$arrival) {
+        die 'no departure';
+    }
+
+    $res{reservation_id} = number $r->{reservation_id};
+    $res{date} = $r->{date};
+    $res{amount} = number $r->{amount};
+    $res{adult} = number $r->{adult};
+    $res{child} = number $r->{child};
+    $res{departure} = $r->{departure};
+    $res{arrival} = $r->{arrival};
+    $res{train_class} = $r->{train_class};
+    $res{train_name} = $r->{train_name};
+    $res{departure_time} = $departure;
+    $res{arrival_time} = $arrival;
+    $res{seats} = [];
+
+    my $query = 'SELECT * FROM seat_reservations WHERE reservation_id=?';
+    my $seats = $self->dbh->select_all($query, $r->{reservation_id});
+    for my $s (@$seats) {
+        push @{$res{seats}}, {
+            reservation_id => number $s->{reservation_id},
+            car_number => number $s->{car_number},
+            seat_row => number $s->{seat_row},
+            seat_column => $s->{seat_column},
+        };
+    }
+
+	# 1つの予約内で車両番号は全席同じ
+    $res{car_number} = $res{seats}->[0]->{car_number};
+
+	if ($res{seats}->[0]->{car_number} == 0) {
+        $res{seat_class} = "non-reserved";
+	}
+    else {
+        # 座席種別を取得
+        $query = 'SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=?';
+        my $seat = $self->dbh->select_row(
+            $query,
+            $res{train_class},
+            $res{car_number},
+            $res{seats}->[0]->{seat_column},
+            $res{seats}->[0]->{seat_row},
+        );
+        if (!$seat) {
+            die 'no seat';
+        }
+        $res{seat_class} = $seat->{seat_class};
+	}
+
+    for my $v (@{$res{seats}}) {
+        delete $v->{reservation_id};
+        delete $v->{car_number};
+    }
+	return \%res;
+}
+
 
 #mux.HandleFunc(pat.Get("/api/user/reservations"), userReservationsHandler)
+get '/api/user/reservations' => sub {
+    my ($self, $c) = @_;
+    #  userID取得
+    my $user = $self->getUser($c);
+    if (!$user) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, 'user not found');
+    }
+
+    my $query = 'SELECT * FROM reservations WHERE user_id=?';
+    my $reservation_list = $self->dbh->select_all($query, $user->{id});
+
+    my @reservation_response_list;
+    for my $r (@$reservation_list) {
+        my $res = eval {
+            $self->makeReservationResponse($r);
+        };
+        if ($@) {
+            warn($@);
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
+        }
+        push @reservation_response_list, $res;
+    }
+
+    $c->render_json(\@reservation_response_list);
+};
+
 #mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationResponseHandler)
 #mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), userReservationCancelHandler)
 
