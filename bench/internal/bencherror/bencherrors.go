@@ -98,7 +98,7 @@ func (errs *BenchErrors) AddError(err error) error {
 			errs.Msgs = append(errs.Msgs, msg+" (一時的なエラー)")
 			errs.temporaryCnt++
 		default:
-			errs.Msgs = append(errs.Msgs, "運営に連絡してください")
+			errs.Msgs = append(errs.Msgs, msg+" 運営に確認をお願いいたします")
 			errs.criticalCnt++
 		}
 	}
