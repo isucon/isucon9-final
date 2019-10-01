@@ -10,7 +10,10 @@ use JSON::Types;
 use DBIx::Sunny;
 use Plack::Session;
 use HTTP::Status qw/:constants/;
-
+use Crypt::PBKDF2;
+use Digest::SHA;
+use Crypt::OpenSSL::Random;
+use LWP::UserAgent;
 use Isutrain::Utils;
 
 our $AVAILABLE_DAYS  = 10;
@@ -37,6 +40,11 @@ sub dbh {
             },
         });
     };
+}
+
+sub secure_random_str {
+    my $length = shift || 16;
+    unpack("H*",Crypt::OpenSSL::Random::random_bytes($length))
 }
 
 sub getUser {
@@ -1273,9 +1281,110 @@ post '/api/train/reservation/commit' => [qw/allow_json_request/] => sub {
 };
 
 #mux.HandleFunc(pat.Get("/api/auth"), getAuthHandler)
+get '/api/auth' => sub {
+    my ($self, $c) = @_;
+    #  userID取得
+    my $user = $self->getUser($c);
+    if (!$user) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, 'user not found');
+    }
+
+    $c->render_json({
+        email => $user->{email}
+    });
+};
+
 #mux.HandleFunc(pat.Post("/api/auth/signup"), signUpHandler)
+post '/api/auth/signup' => [qw/allow_json_request/] => sub {
+=comment
+    ユーザー登録
+    POST /auth/signup
+=cut
+    my ($self, $c) = @_;
+
+    my $email = $c->req->parameters->get('email') // "";
+    my $password = $c->req->parameters->get('password') // "";
+
+    my $pbkdf2 = Crypt::PBKDF2->new(
+      hash_class => 'HMACSHA2',
+      iterations => 100,
+      output_len => 256,
+      hash_args => { sha_size => 256 }
+    );
+    my $salt = Crypt::OpenSSL::Random::random_bytes(1024);
+    my $super_secure_password = $pbkdf2->generate($email, $salt);
+
+    $self->dbh->query(
+        'INSERT INTO `users` (`email`, `salt`, `super_secure_password`) VALUES (?, ?, ?)',
+        $email,
+        $salt,
+        $super_secure_password
+    );
+
+    $c->render_json({
+        is_error => JSON::false,
+        message => "registration complete"
+    });
+};
+
 #mux.HandleFunc(pat.Post("/api/auth/login"), loginHandler)
+post '/api/auth/login' => [qw/allow_json_request/] => sub {
+=comment
+    ログイン
+    POST /auth/login
+=cut
+    my ($self, $c) = @_;
+
+    my $email = $c->req->parameters->get('email') // "";
+    my $password = $c->req->parameters->get('password') // "";
+
+    my $user = $self->dbh->select_row(
+        'SELECT * FROM users WHERE email=?',
+        $email
+    );
+    if (!$user) {
+        return $self->error_with_msg($c, HTTP_FORBIDDEN, 'authentication failed');
+    }
+
+    my $pbkdf2 = Crypt::PBKDF2->new(
+      hash_class => 'HMACSHA2',
+      iterations => 100,
+      output_len => 256,
+      hash_args => { sha_size => 256 }
+    );
+
+    if (!$pbkdf2->validate($user->{super_secure_password}, $password)) {
+        return $self->error_with_msg($c, HTTP_FORBIDDEN, 'authentication failed');
+    }
+
+    my $session = Plack::Session->new($c->env);
+    $session->set('user_id' => $user->{id});
+    $session->set('csrf_token' => secure_random_str(20));
+
+    $c->render_json({
+        is_error => JSON::false,
+        message => "autheticated"
+    });
+};
+
 #mux.HandleFunc(pat.Post("/api/auth/logout"), logoutHandler)
+post '/api/auth/logout' => sub {
+=comment
+    ログアウト
+    POST /auth/logout
+=cut
+    my ($self, $c) = @_;
+    my $session = Plack::Session->new($c->env);
+    $session->set('user_id' => $user->{id});
+    $session->set('csrf_token' => secure_random_str(20));
+
+    $c->render_json({
+        is_error => JSON::false,
+        message => "logged out"
+    });
+};
+
+
 #mux.HandleFunc(pat.Get("/api/user/reservations"), userReservationsHandler)
 #mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationResponseHandler)
 #mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), userReservationCancelHandler)
