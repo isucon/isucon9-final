@@ -69,6 +69,7 @@ func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 
 	b, err := json.Marshal(&isutrain.InitializeResponse{
 		AvailableDays: 30,
+		Language:      "golang",
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError

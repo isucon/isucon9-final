@@ -23,6 +23,14 @@ var (
 	assetDir string
 )
 
+type BenchResult struct {
+	Pass          bool     `json:"pass"`
+	Score         int64    `json:"score"`
+	Messages      []string `json:"messages"`
+	AvailableDays int      `json:"available_days"`
+	Language      string   `json:"language"`
+}
+
 // UniqueMsgs は重複除去したメッセージ配列を返します
 func uniqueMsgs(msgs []string) (uniqMsgs []string) {
 	dedup := map[string]struct{}{}
@@ -39,10 +47,12 @@ func uniqueMsgs(msgs []string) (uniqMsgs []string) {
 func dumpFailedResult(messages []string) {
 	lgr := zap.S()
 
-	b, err := json.Marshal(map[string]interface{}{
-		"pass":     false,
-		"score":    0,
-		"messages": messages,
+	b, err := json.Marshal(&BenchResult{
+		Pass:          false,
+		Score:         0,
+		Messages:      messages,
+		AvailableDays: config.AvailableDays,
+		Language:      config.Language,
 	})
 	if err != nil {
 		lgr.Warnf("FAILEDな結果を書き出す際にエラーが発生. messagesが失われました: messages=%+v err=%+v", messages, err)
@@ -209,10 +219,12 @@ var run = cli.Command{
 		scoreMsgs = append(scoreMsgs, fmt.Sprintf("ペナルティ: %d", bencherror.BenchmarkErrs.Penalty()))
 
 		// 最終結果をstdoutへ書き出す
-		resultBytes, err := json.Marshal(map[string]interface{}{
-			"pass":     true,
-			"score":    score,
-			"messages": append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), scoreMsgs...),
+		resultBytes, err := json.Marshal(&BenchResult{
+			Pass:          true,
+			Score:         score,
+			Messages:      append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), scoreMsgs...),
+			AvailableDays: config.AvailableDays,
+			Language:      config.Language,
 		})
 		if err != nil {
 			lgr.Warn("ベンチマーク結果のMarshalに失敗しました: %+v", err)
