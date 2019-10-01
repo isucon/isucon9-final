@@ -1,4 +1,4 @@
-require "sinatra"
-require "./app.rb"
+require 'sinatra'
+require './app.rb'
 
-run App
+run Isutrain::App
