@@ -60,7 +60,7 @@ def handle_http_exception(error):
 
 def check_available_date(date):
     d = datetime.datetime(2020, 1, 1) + datetime.timedelta(days=AvailableDays)
-    if d.date() <= date.date():
+    if d.date() <= date:
         return False
     return True
 
@@ -207,7 +207,7 @@ def get_train_search():
     adult = int(flask.request.args.get('adult'))
     child = int(flask.request.args.get('child'))
 
-    if not check_available_date(use_at):
+    if not check_available_date(use_at.date()):
         raise HttpException(requests.codes['not_found'], "予約可能期間外です")
 
     trainSearchResponseList = []
@@ -396,8 +396,141 @@ def get_train_search():
 
 @app.route("/api/train/seats", methods=["GET"])
 def get_train_seats():
-    pass
+    date = dateutil.parser.parse(flask.request.args.get('date')).astimezone(JST).date()
 
+    train_class = flask.request.args.get('train_class')
+    train_name = flask.request.args.get('train_name')
+    from_name = flask.request.args.get('from')
+    to_name = flask.request.args.get('to')
+
+    car_number = int(flask.request.args.get('car_number'))
+
+    if not check_available_date(date):
+        raise HttpException(requests.codes['not_found'], "予約可能期間外です")
+
+
+    seat_information_list = []
+    car_list = []
+
+    try:
+        conn = dbh()
+        with conn.cursor() as c:
+            sql = "SELECT * FROM train_master WHERE date=%s AND train_class=%s AND train_name=%s"
+            c.execute(sql, (str(date), train_class, train_name))
+            train = c.fetchone()
+            if not train:
+                raise HttpException(requests.codes['not_found'], "列車が存在しません")
+
+
+            sql = "SELECT * FROM station_master WHERE name=%s"
+            c.execute(sql, (from_name, ))
+            from_station = c.fetchone()
+            if not from_station:
+                raise HttpException(requests.codes['bad_request'], "fromStation: no rows")
+
+
+            c.execute(sql, (to_name, ))
+            to_station = c.fetchone()
+            if not to_station:
+                raise HttpException(requests.codes['bad_request'], "toStation: no rows")
+
+            usable_train_class_list = get_usable_train_class_list(from_station, to_station)
+
+            if train["train_class"] not in usable_train_class_list:
+                raise HttpException(requests.codes['bad_request'], "invalid train_class")
+
+            sql = "SELECT * FROM seat_master WHERE train_class=%s AND car_number=%s ORDER BY seat_row, seat_column"
+            c.execute(sql, (train_class, car_number))
+
+            seat_list = c.fetchall()
+
+            for seat in seat_list:
+                seat = {
+                    "row": seat["seat_row"],
+                    "column": seat["seat_column"],
+                    "class": seat["seat_class"],
+                    "is_smoking_seat": True if seat["is_smoking_seat"] else False,
+                    "is_occupied": False,
+                }
+
+                sql = """
+                SELECT s.*
+                FROM seat_reservations s, reservations r
+                WHERE
+                    r.date=%s AND r.train_class=%s AND r.train_name=%s AND car_number=%s AND seat_row=%s AND seat_column=%s
+                """
+
+                c.execute(
+                    sql,
+                    (
+                        str(date),
+                        train_class,
+                        train_name,
+                        car_number,
+                        seat["row"],
+                        seat["column"],
+                    )
+                )
+
+                seat_roweservation_list = c.fetchall()
+                for seat_roweservation in seat_roweservation_list:
+                    sql = "SELECT * FROM reservations WHERE reservation_id=%s"
+                    c.execute(sql, (seat_reservation["reservation_id"],))
+                    reservation = c.fetchone()
+
+                    sql  = "SELECT * FROM station_master WHERE name=%s"
+                    c.execute(sql, (reservation["departure"],))
+                    departure_station = c.fetchone()
+                    c.execute(sql, (reservation["arrival"],))
+                    arrival_station = c.fetchone()
+
+                    if train["is_nobori"]:
+                        if to_station["id"] < arrival_station["id"] and from_station["id"] <= arrival_station["id"]:
+                            pass
+                        elif to_station["id"] >= departure_station["id"] and from_station["id"] > departure_station["id"]:
+                            pass
+                        else:
+                            seat["is_occupied"] = True
+                    else:
+                        if from_station["id"] < departure_station["id"] and to_station["id"] <= departure_station["id"]:
+                            pass
+                        elif from_station["id"] >= arrival_station["id"] and to_station["id"] > arrival_station["id"]:
+                            pass
+                        else:
+                            seat["is_occupied"] = True
+
+                seat_information_list.append(seat)
+
+
+            # 各号車の情報
+            i = 1
+            while True:
+                sql = "SELECT * FROM seat_master WHERE train_class=%s AND car_number=%s ORDER BY seat_row, seat_column LIMIT 1"
+                c.execute(sql, (train_class, i))
+                seat = c.fetchone()
+                if not seat:
+                    break
+
+                car_list.append({
+                    "car_number": i,
+                    "seat_class": seat["seat_class"],
+                })
+
+                i+=1
+
+    except MySQLdb.Error as err:
+        app.logger.exception(err)
+        raise HttpException(requests.codes['internal_server_error'], "db error")
+
+
+    return flask.jsonify({
+        "date": str(date),
+        "train_class": train_class,
+        "train_name": train_name,
+        "car_number": car_number,
+        "seats": seat_information_list,
+        "cars":car_list
+    })
 
 @app.route("/api/train/reserve", methods=["POST"])
 def post_reserve():
