@@ -1,0 +1,18 @@
+version: '3'
+volumes:
+  perl-local:
+services:
+
+  webapp:
+    build: ./perl
+    volumes:
+      - ./perl:/opt/webapp
+      - perl-local:/opt/webapp/local
+    env_file:
+      - ".env"
+    environment:
+      - "PAYMENT_API"
+    links:
+      - payment
+    ports:
+      - "127.0.0.1:8000:8000"
