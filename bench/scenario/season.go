@@ -70,7 +70,7 @@ func GoldenWeekScenario(ctx context.Context) error {
 
 			user, err := xrandom.GetRandomUser()
 			if err != nil {
-				bencherror.BenchmarkErrs.AddError(err)
+				bencherror.SystemErrs.AddError(err)
 				return
 			}
 

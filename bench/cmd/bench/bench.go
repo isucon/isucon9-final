@@ -79,6 +79,11 @@ var run = cli.Command{
 			Destination: &assetDir,
 			EnvVar:      "BENCH_ASSETDIR",
 		},
+		cli.StringFlag{
+			Name:        "webhookurl",
+			Destination: &config.SlackWebhookURL,
+			EnvVar:      "BENCH_SLACK_WEBHOOK_URL",
+		},
 	},
 	Action: func(cliCtx *cli.Context) error {
 		ctx := context.Background()
@@ -178,6 +183,13 @@ var run = cli.Command{
 			msgs := append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), bencherror.FinalCheckErrs.Msgs...)
 			dumpFailedResult(msgs)
 			return nil
+		}
+
+		lgr.Info("===== System errors =====")
+		if bencherror.SystemErrs.IsError() {
+			for _, errMsg := range bencherror.SystemErrs.InternalMsgs {
+				lgr.Warn(errMsg)
+			}
 		}
 
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)

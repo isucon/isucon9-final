@@ -13,6 +13,15 @@ $ make
 $ make test
 ```
 
+## ベンチワーカーの実行に必要な環境変数
+BENCHWORKER_PORTAL_URL=https://example.com
+BENCHWORKER_PAYMENT_URL=http://127.0.0.1:5000
+BENCHWORKER_ASSETDIR=/home/admin/isucon/assets
+BENCHWORKER_BENCHMARKER_BINPATH=/home/admin/isucon/bin/bench
+BENCHWORKER_RETRY_LIMIT=12
+BENCHWORKER_RETRY_INTERVAL=5
+BENCHWORKER_SLACK_WEBHOOK_URL=https://slack...
+
 ## シナリオ開発者向け
 ### シナリオ作成の流れ
 
@@ -46,7 +55,8 @@ $ make test
 * エラーを追加したい
     * bencherrorパッケージを用います
     * エラーを追加することは、「ユーザにそのエラーメッセージを見せる」、「ペナルティとして計上する」ことを意味します
-    * エラーは全部で４種類ありますが、シナリオで用いるエラーは２種類しかありません
+    * エラーは全部で５種類ありますが、シナリオで用いるエラーは３種類しかありません
+        * システムエラー ... ベンチマーカーが原因で発生するエラーについて、運営が確認するためのエラー
         * アプリケーションエラー ... webappの挙動が正しくない場合やサービスとして安定していない場合のエラー. 重みと掛け合わせてペナルティ算出されます
         * クリティカルエラー ... このエラーが発生したと判断された場合、即失格となります. ベンチマークは止まりますし、スコアは０になります
     * 書き方は以下のようなものがあります

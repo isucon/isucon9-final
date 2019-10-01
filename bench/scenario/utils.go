@@ -57,7 +57,7 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, user 
 		train.Class, train.Name,
 		"premium", isutrain.TrainSeats{},
 		departure, arrival, useAt,
-		0, adult, child, "")
+		0, adult, child)
 	if err != nil {
 		return nil, err
 	}

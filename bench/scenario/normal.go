@@ -31,7 +31,8 @@ func NormalScenario(ctx context.Context) error {
 
 	user, err := xrandom.GetRandomUser()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		bencherror.SystemErrs.AddError(err)
+		return nil
 	}
 
 	err = registerUserAndLogin(ctx, client, user)
@@ -71,7 +72,7 @@ func NormalScenario(ctx context.Context) error {
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 		departure, arrival, useAt,
-		carNum, 1, 1, "isle")
+		carNum, 1, 1)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -125,7 +126,8 @@ func NormalCancelScenario(ctx context.Context) error {
 
 	user, err := xrandom.GetRandomUser()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		bencherror.SystemErrs.AddError(err)
+		return nil
 	}
 
 	err = registerUserAndLogin(ctx, client, user)
@@ -168,7 +170,7 @@ func NormalCancelScenario(ctx context.Context) error {
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		availSeats, departure, arrival, useAt,
-		carNum, 1, 1, "isle", nil,
+		carNum, 1, 1,
 	)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
@@ -246,7 +248,7 @@ func NormalVagueSearchScenario(ctx context.Context) error {
 	_, err = client.Reserve(ctx,
 		"最速", "1", "premium", isutrain.TrainSeats{},
 		"東京", "大阪", time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		1, 1, 1, "isle")
+		1, 1, 1)
 	if err != nil {
 		bencherror.BenchmarkErrs.AddError(err)
 	}

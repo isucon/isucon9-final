@@ -31,10 +31,10 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 	//
 	paymentAPIResult, err := paymentClient.Result(ctx)
 	if err != nil {
-		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(err, "決済結果を取得できませんでした. 運営に確認をお願いいたします"))
+		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(err, "課金APIから決済結果を取得できませんでした"))
 	}
 
-	if len(paymentAPIResult.RawData) == 0 {
+	if isutrain.ReservationCache.Len() != 0 && len(paymentAPIResult.RawData) == 0 {
 		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(ErrInvalidReservationForPaymentAPI, "課金APIとの整合性チェックに失敗"))
 	}
 

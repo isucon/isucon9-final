@@ -41,12 +41,12 @@ type Client struct {
 func NewClient() (*Client, error) {
 	sess, err := NewSession()
 	if err != nil {
-		return nil, bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします")
+		return nil, bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
 	}
 
 	u, err := url.Parse(config.TargetBaseURL)
 	if err != nil {
-		return nil, bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします")
+		return nil, bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
 	}
 
 	return &Client{
@@ -58,12 +58,12 @@ func NewClient() (*Client, error) {
 func NewClientForInitialize() (*Client, error) {
 	sess, err := newSessionForInitialize()
 	if err != nil {
-		return nil, bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします")
+		return nil, bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
 	}
 
 	u, err := url.Parse(config.TargetBaseURL)
 	if err != nil {
-		return nil, bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします")
+		return nil, bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
 	}
 
 	return &Client{
@@ -408,7 +408,6 @@ func (c *Client) Reserve(
 	useAt time.Time,
 	carNum int,
 	child, adult int,
-	typ string,
 	opt ...ClientOption,
 ) (*ReservationResponse, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
@@ -427,7 +426,6 @@ func (c *Client) Reserve(
 		"car_num":     fmt.Sprintf("%d", carNum),
 		"child":       fmt.Sprintf("%d", child),
 		"adult":       fmt.Sprintf("%d", adult),
-		"type":        typ,
 	}
 	lgr := zap.S()
 
@@ -442,7 +440,6 @@ func (c *Client) Reserve(
 		CarNum:     carNum,
 		Child:      child,
 		Adult:      adult,
-		Type:       typ,
 	}
 
 	b, err := json.Marshal(reserveReq)
@@ -457,12 +454,6 @@ func (c *Client) Reserve(
 		lgr.Warnf("予約リクエスト失敗: %+v", err)
 		return nil, failure.Wrap(err, failure.Messagef("POST %s: リクエストに失敗しました", endpointPath), failureCtx)
 	}
-
-	// FIXME: csrfトークン検証
-	// _, err = req.Cookie("csrf_token")
-	// if err != nil {
-	// 	return nil, failure.Wrap(err, failure.Messagef("POST %s: CSRFトークンが不正です", endpointPath), failureCtx)
-	// }
 
 	req.Header.Set("Content-Type", "application/json")
 
@@ -479,21 +470,24 @@ func (c *Client) Reserve(
 		return nil, failure.Wrap(err, failure.Messagef("POST %s: JSONのUnmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	if opts.autoAssert && resp.StatusCode == http.StatusOK {
 		if err := assertCanReserve(ctx, reserveReq, reservation); err != nil {
 			return nil, err
 		}
-		ReservationCache.Add(c.loginUser, reserveReq, reservation.ReservationID)
 	}
 
-	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-		return nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
+	if resp.StatusCode == http.StatusOK {
+		ReservationCache.Add(c.loginUser, reserveReq, reservation.ReservationID)
 	}
 
 	if opts.autoAssert {
 		if err := assertReserve(ctx, c, reserveReq, reservation); err != nil {
 			return nil, err
 		}
+	}
+
+	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
+		return nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
 	if len(reserveReq.Seats) == 0 {
@@ -558,7 +552,7 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 	endpoint.IncPathCounter(endpoint.CommitReservation)
 
 	if err := ReservationCache.Commit(reservationID); err != nil {
-		return failure.Wrap(err, failure.Messagef("POST %s: キャッシュへのCommitに失敗しました. 運営にご確認をお願いいたします"))
+		bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 存在しない予約へのCommitを行おうとしました", endpointPath))
 	}
 
 	return nil
@@ -670,7 +664,7 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID int, opt .
 
 	if err := ReservationCache.Cancel(reservationID); err != nil {
 		// FIXME: こういうベンチマーカーの異常は、利用者向けには一般的なメッセージで運営に連絡して欲しいと書き、運営向けにSlackに通知する
-		return bencherror.NewCriticalError(err, "ベンチマーカーでキャッシュ不具合が発生しました. 運営に御確認お願い致します")
+		bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "存在しない予約のCancelを実施しようとしました"))
 	}
 
 	return nil
