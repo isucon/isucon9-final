@@ -1483,7 +1483,7 @@ get '/api/user/reservations' => sub {
             $self->makeReservationResponse($r);
         };
         if ($@) {
-            warn($@);
+            warn("makeReservationResponse() ", $@);
             return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
         }
         push @reservation_response_list, $res;
@@ -1493,6 +1493,34 @@ get '/api/user/reservations' => sub {
 };
 
 #mux.HandleFunc(pat.Get("/api/user/reservations/:item_id"), userReservationResponseHandler)
+get '/api/user/reservations/{item_id:\d+}' => sub {
+    my ($self, $c) = @_;
+
+    #  userID取得
+    my $user = $self->getUser($c);
+    if (!$user) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, 'user not found');
+    }
+
+    my $item_id = $c->args->{item_id};
+
+    my $query = 'SELECT * FROM reservations WHERE reservation_id=? AND user_id=?';
+    my $reservation = $self->dbh->select_row($query, $item_id, $user->{id});
+    if (!$reservation) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, "Reservation not found");
+    }
+
+    my $res = eval {
+        $self->makeReservationResponse($reservation);
+    };
+    if ($@) {
+        warn("makeReservationResponse() ", $@);
+        return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
+    }
+
+    $c->render_json($res);
+};
+
 #mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), userReservationCancelHandler)
 
 1;
