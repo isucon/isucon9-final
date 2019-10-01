@@ -1180,6 +1180,97 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
 };
 
 #mux.HandleFunc(pat.Post("/api/train/reservation/commit"), reservationPaymentHandler)
+post '/api/train/reservation/commit' => [qw/allow_json_request/] => sub {
+=comment
+    支払い及び予約確定API
+    POST /api/train/reservation/commit
+    {
+        "card_token": "161b2f8f-791b-4798-42a5-ca95339b852b",
+        "reservation_id": "1"
+    }
+
+    前段でフロントがクレカ非保持化対応用のpayment-APIを叩き、card_tokenを手に入れている必要がある
+    レスポンスは成功か否かのみ返す
+=cut
+    my ($self, $c) = @_;
+
+    my $resevation_id = $c->req->parameters->get('reservation_id') // 0;
+    my $card_token = $c->req->parameters->get('card_token') // "";
+
+    my $dbh = $self->dbh;
+    my $txn = $dbh->txn_scope();
+
+    # 予約IDで検索
+    my $query = 'SELECT * FROM reservations WHERE reservation_id=?';
+    my $resevation = $dbh->select_row($query, $resevation_id);
+    if (!$resevation_id) {
+        warn("no reservation");
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, '予約情報がみつかりません');
+    }
+
+    # 支払い前のユーザチェック。本人以外のユーザの予約を支払ったりキャンセルできてはいけない。
+    my $user = $self->getUser($c);
+    if (!$user) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, 'user not found');
+    }
+    if ($resevation->{user_id} != $user->{id}) {
+        warn("not match resevation user id");
+        return $self->error_with_msg($c, HTTP_FORBIDDEN, '他のユーザIDの支払いはできません');
+    }
+
+    # 予約情報の支払いステータス確認
+    if ($resevation->{status} eq "done") {
+        return $self->error_with_msg($c, HTTP_FORBIDDEN, '既に支払いが完了している予約IDです');
+    }
+
+    # 決済する
+    my $pay_info = {
+        card_token => $card_token,
+        reservation_id => number $resevation_id,
+        amount => number $resevation->{amount}
+    };
+    my $json = JSON::encode_json($pay_info);
+
+    my $payment_api = $ENV{PAYMENT_API} // "http://payment:5000";
+
+    my $req = HTTP::Request->new(POST => $payment_api . "/payment");
+    $req->header("Content-Type", "application/json");
+    $req->content($json);
+
+    my $ua  = LWP::UserAgent->new(
+        agent => "isucon9-final-webapp",
+    );
+    my $res = $ua->request($req);
+
+    # リクエスト失敗
+    if ($res->code != 200) {
+        warn($res->status_line);
+        return $self->error_with_msg($c, HTTP_INTERNAL_SERVER_ERROR, '決済に失敗しました。カードトークンや支払いIDが間違っている可能性があります');
+    }
+
+    my $output = eval {
+        JSON::decode_json($res->content);
+    };
+    if ($@) {
+        warn $@;
+        return $self->error_with_msg($c, HTTP_INTERNAL_SERVER_ERROR, 'JSON parseに失敗しました');
+    }
+
+    # 予約情報の更新
+    $query = 'UPDATE reservations SET status=?, payment_id=? WHERE reservation_id=?';
+    $dbh->query(
+        $query,
+        "done",
+        $output->{payment_id},
+        $resevation_id
+    );
+
+    $txn->commit();
+
+    $c->render_json({
+        is_ok => JSON::true
+    });
+};
 
 #mux.HandleFunc(pat.Get("/api/auth"), getAuthHandler)
 #mux.HandleFunc(pat.Post("/api/auth/signup"), signUpHandler)
