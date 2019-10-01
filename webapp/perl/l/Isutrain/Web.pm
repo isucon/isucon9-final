@@ -1312,7 +1312,7 @@ post '/api/auth/signup' => [qw/allow_json_request/] => sub {
       hash_args => { sha_size => 256 }
     );
     my $salt = Crypt::OpenSSL::Random::random_bytes(1024);
-    my $super_secure_password = $pbkdf2->generate($email, $salt);
+    my $super_secure_password = $pbkdf2->PBKDF2($password, $salt);
 
     $self->dbh->query(
         'INSERT INTO `users` (`email`, `salt`, `super_secure_password`) VALUES (?, ?, ?)',
@@ -1353,7 +1353,8 @@ post '/api/auth/login' => [qw/allow_json_request/] => sub {
       hash_args => { sha_size => 256 }
     );
 
-    if (!$pbkdf2->validate($user->{super_secure_password}, $password)) {
+    my $hash = $pbkdf2->PBKDF2($password, $user->{salt});
+    if ($hash ne $user->{super_secure_password}) {
         return $self->error_with_msg($c, HTTP_FORBIDDEN, 'authentication failed');
     }
 
@@ -1375,7 +1376,7 @@ post '/api/auth/logout' => sub {
 =cut
     my ($self, $c) = @_;
     my $session = Plack::Session->new($c->env);
-    $session->set('user_id' => $user->{id});
+    $session->set('user_id' => 0);
     $session->set('csrf_token' => secure_random_str(20));
 
     $c->render_json({

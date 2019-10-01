@@ -2049,7 +2049,6 @@ func userReservationCancelHandler(w http.ResponseWriter, r *http.Request) {
 		// pass(requesting状態のものはpayment_id無いので叩かない)
 	}
 
-
 	query = "DELETE FROM reservations WHERE reservation_id=? AND user_id=?"
 	_, err = tx.Exec(query, itemID, user.ID)
 	if err != nil {
