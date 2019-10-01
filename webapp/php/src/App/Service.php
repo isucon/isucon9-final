@@ -265,20 +265,20 @@ class Service
     private function makeReservationResponse(array $reservation): array
     {
         /**
-            ReservationId int               `json:"reservation_id"`
-            Date          string            `json:"date"`
-            TrainClass    string            `json:"train_class"`
-            TrainName     string            `json:"train_name"`
-            CarNumber     int               `json:"car_number"`
-            SeatClass     string            `json:"seat_class"`
-            Amount        int               `json:"amount"`
-            Adult         int               `json:"adult"`
-            Child         int               `json:"child"`
-            Departure     string            `json:"departure"`
-            Arrival       string            `json:"arrival"`
-            DepartureTime string            `json:"departure_time"`
-            ArrivalTime   string            `json:"arrival_time"`
-            Seats         []SeatReservation `json:"seats"`
+         * int               `json:"reservation_id"`
+         * string            `json:"date"`
+         * string            `json:"train_class"`
+         * string            `json:"train_name"`
+         * int               `json:"car_number"`
+         * string            `json:"seat_class"`
+         * int               `json:"amount"`
+         * int               `json:"adult"`
+         * int               `json:"child"`
+         * string            `json:"departure"`
+         * string            `json:"arrival"`
+         * string            `json:"departure_time"`
+         * string            `json:"arrival_time"`
+         * []SeatReservation `json:"seats"`
          */
         $rtn = [
             'reservation_id' => $reservation['reservation_id'],
@@ -1381,6 +1381,35 @@ class Service
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
         }
         return $response->withJson($res, StatusCode::HTTP_OK);
+    }
+
+    public function userReservationResponseHandler(Request $request, Response $response, array $args)
+    {
+        $id = $args['id'] ?? 0;
+
+        try {
+            $user = $this->getUser();
+        } catch (\DomainException $e) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
+        }
+
+        $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id`=? AND `user_id`=?");
+        $stmt->execute([
+            $id,
+            $user['id']
+        ]);
+        $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($reservation === false) {
+            return $response->withJson($this->errorResponse("Reservation not found"), StatusCode::HTTP_NOT_FOUND);
+        }
+        try {
+            $reservationResponse = $this->makeReservationResponse($reservation);
+        } catch (\DomainException $e) {
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
+        }
+
+        return $response->withJson($reservationResponse, StatusCode::HTTP_OK);
     }
 
     public function getAuthHandler(Request $request, Response $response, array $args)
