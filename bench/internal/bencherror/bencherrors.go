@@ -90,7 +90,6 @@ func (errs *BenchErrors) AddError(err error) error {
 			errs.criticalCnt++
 		case errApplication:
 			errs.Msgs = append(errs.Msgs, msg)
-			errs.criticalCnt++
 			errs.applicationCnt++
 		case errTimeout:
 			errs.Msgs = append(errs.Msgs, msg+" (タイムアウトしました)")
