@@ -26,6 +26,5 @@ return function (App $app) {
     $app->post("/api/auth/logout", \App\Service::class . ':logoutHandler');
     $app->get("/api/user/reservations", \App\Service::class . ':userReservationsHandler');
     $app->get("/api/user/reservations/{id:\d+}", \App\Service::class . ':userReservationResponseHandler');
-
-    //	mux.HandleFunc(pat.Post("/api/user/reservations/:item_id/cancel"), userReservationCancelHandler)
+    $app->post("/api/user/reservations/{id:\d+}/cancel", \App\Service::class . ':userReservationCancelHandler');
 };

@@ -1361,7 +1361,6 @@ class Service
         try {
             $user = $this->getUser();
         } catch (\DomainException $e) {
-            $this->dbh->rollBack();
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
         }
 
@@ -1386,11 +1385,13 @@ class Service
     public function userReservationResponseHandler(Request $request, Response $response, array $args)
     {
         $id = $args['id'] ?? 0;
+        if ($id === 0) {
+            return $response->withJson($this->errorResponse("incorrect item id"), StatusCode::HTTP_BAD_REQUEST);
+        }
 
         try {
             $user = $this->getUser();
         } catch (\DomainException $e) {
-            $this->dbh->rollBack();
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
         }
 
@@ -1412,12 +1413,85 @@ class Service
         return $response->withJson($reservationResponse, StatusCode::HTTP_OK);
     }
 
+    public function userReservationCancelHandler(Request $request, Response $response, array $args)
+    {
+        $id = $args['id'] ?? 0;
+        if ($id === 0) {
+            return $response->withJson($this->errorResponse("incorrect item id"), StatusCode::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $user = $this->getUser();
+        } catch (\DomainException $e) {
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
+        }
+
+        $this->dbh->beginTransaction();
+        $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id`=? AND `user_id`=?");
+        $stmt->execute([
+            $id,
+            $user['id'],
+        ]);
+        $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($reservation === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse("reservations naiyo"), StatusCode::HTTP_BAD_REQUEST);
+        }
+
+        switch ($reservation['status']) {
+            case 'rejected':
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("何らかの理由により予約はRejected状態です"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+                break;
+            case 'done':
+                // 支払いをキャンセルする
+                $payInfo = ['payment_id' => $reservation['payment_id']];
+                $payment_api = Environment::get('PAYMENT_API', 'http://payment:5000');
+                $http_client = new Client();
+                try {
+                    $r = $http_client->delete($payment_api . sprintf("/payment/%s", $reservation['payment_id']), [
+                        'json' => $payInfo,
+                        'timeout' => 10,
+                    ]);
+                } catch (RequestException $e) {
+                    return $response->withJson($this->errorResponse("HTTP DELETEに失敗しました"), StatusCode::HTTP_BAD_REQUEST);
+                }
+                if ($r->getStatusCode() != StatusCode::HTTP_OK) {
+                    $this->dbh->rollBack();
+                    return $response->withJson($this->errorResponse("決済に失敗しました。支払いIDが間違っている可能性があります"), StatusCode::HTTP_BAD_REQUEST);
+                }
+                $output = json_decode($r->getBody());
+                break;
+            default:
+                // pass(requesting状態のものはpayment_id無いので叩かない)
+                break;
+        }
+
+        $stmt = $this->dbh->query("DELETE FROM `reservations` WHERE `reservation_id`=? AND `user_id`=?");
+        $r = $stmt->execute([
+            $id,
+            $user['id']
+        ]);
+        if ($r === false) {
+            $this->dbh->rollBack();
+        }
+
+        $stmt = $this->dbh->prepare("DELETE FROM `seat_reservations` WHERE `reservation_id`=?");
+        $r = $stmt->execute([$id]);
+        if ($r === false) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+        }
+        $this->dbh->commit();
+
+        return $response->withJson($this->messageResponse('cancell complete'), StatusCode::HTTP_OK);
+    }
+
     public function getAuthHandler(Request $request, Response $response, array $args)
     {
         try {
             $user = $this->getUser();
         } catch (\DomainException $e) {
-            $this->dbh->rollBack();
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
         }
         return $response->withJson(['email' => $user['email']], StatusCode::HTTP_OK);
