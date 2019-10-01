@@ -39,12 +39,20 @@ sub dbh {
     };
 }
 
+sub getUser {
+    my ($self, $c) = @_;
+    my $session = Plack::Session->new($c->env);
+    my $user_id = $session->get('user_id');
+    return unless $user_id;
+    return $self->dbh->select_row('SELECT * FROM users WHERE id = ?', $user_id);
+}
+
 sub error_with_msg {
     my ($self, $c, $status, $msg) = @_;
     $c->res->code($status);
     $c->res->content_type('application/json;charset=utf-8');
     $c->res->body(JSON::encode_json({
-        is_error => bool 1,
+        is_error => JSON::true,
         message => $msg,
     }));
     $c->res;
@@ -125,6 +133,14 @@ sub getDistanceFare {
 	return $last_fare;
 }
 
+filter 'allow_json_request' => sub {
+    my $app = shift;
+    return sub {
+        my ($self, $c) = @_;
+        $c->env->{'kossy.request.parse_json_body'} = 1;
+        $app->($self, $c);
+    };
+};
 
 #mux.HandleFunc(pat.Post("/initialize"), initializeHandler)
 post '/initialize' => sub {
@@ -548,7 +564,7 @@ get '/api/train/seats' => sub {
             column => $seat->{seat_column},
             class => $seat->{seat_class},
             is_smoking_seat => bool $seat->{is_smoking_seat},
-            is_occupied => bool 0,
+            is_occupied => JSON::false,
         };
 
         $query = <<'EOF';
@@ -641,8 +657,528 @@ EOF
     $c->render_json($ci);
 };
 
-
 #mux.HandleFunc(pat.Post("/api/train/reserve"), trainReservationHandler)
+post '/api/train/reserve' => [qw/allow_json_request/] => sub {
+=comment
+        列車の席予約API　支払いはまだ
+        POST /api/train/reserve
+            {
+                "date": "2020-12-31T07:57:00+09:00",
+                "train_name": "183",
+                "train_class": "中間",
+                "car_number": 7,
+                "is_smoking_seat": false,
+                "seat_class": "reserved",
+                "departure": "東京",
+                "arrival": "名古屋",
+                "child": 2,
+                "adult": 1,
+                "column": "A",
+                "seats": [
+                    {
+                    "row": 3,
+                    "column": "B"
+                    },
+                        {
+                    "row": 4,
+                    "column": "C"
+                    }
+                ]
+        }
+        レスポンスで予約IDを返す
+        reservationResponse(w http.ResponseWriter, errCode int, id int, ok bool, message string)
+=cut
+    my ($self, $c) = @_;
+
+    # 乗車日の日付表記統一
+    my $jst_offset = 9*60;
+    my $date = eval {
+        Time::Moment->from_string($c->req->parameters->get('date'));
+    };
+    if ($@) {
+        return $self->error_with_msg($c, HTTP_INTERNAL_SERVER_ERROR, "時刻のparseに失敗しました");
+    }
+    $date = $date->with_offset_same_instant($jst_offset);
+
+    if (!Isutrain::Utils::checkAvailableDate($AVAILABLE_DAYS, $date)) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, "予約可能期間外です");
+    }
+
+    my $train_class = $c->req->parameters->get('train_class') // "";
+    my $train_name = $c->req->parameters->get('train_name') // "";
+    my $departure = $c->req->parameters->get('departure') // "";
+    my $arrival = $c->req->parameters->get('arrival') // "";
+    my $seats = $c->req->parameters->get('seats') // [];
+    my $seat_class = $c->req->parameters->get('seat_class') // "";
+    my $car_number = $c->req->parameters->get('car_number') // 0;
+    my $is_smoking_seat = $c->req->parameters->get('$is_smoking_seat') // JSON::true;
+    my $req_adult = $c->req->parameters->get('adult') // 0;
+    my $req_child = $c->req->parameters->get('child') // 0;
+    my $req_column = $c->req->parameters->get('column') // "";
+
+    my $dbh = $self->dbh;
+    my $txn = $dbh->txn_scope();
+
+    # 止まらない駅の予約を取ろうとしていないかチェックする
+	# 列車データを取得
+    my $query = 'SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?';
+    my $tmas = $dbh->select_row(
+        $query,
+        $date->strftime("%F"),
+        $train_class,
+        $train_name,
+    );
+    if (!$tmas) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, "列車データがみつかりません");
+    }
+
+	# 列車自体の駅IDを求める
+	$query = 'SELECT * FROM station_master WHERE name=?';
+    # Departure
+    my $departure_station = $dbh->select_row($query, $tmas->{start_station});
+    if (!$departure_station) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, "リクエストされた列車の始発駅データがみつかりません");
+    }
+
+	# Arrive
+    my $arrival_station = $dbh->select_row($query, $tmas->{last_station});
+    if (!$arrival_station) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, "リクエストされた列車の終着駅データがみつかりません");
+    }
+
+	# リクエストされた乗車区間の駅IDを求める
+	$query = 'SELECT * FROM station_master WHERE name=?';
+	# From
+    my $from_station = $dbh->select_row($query, $departure);
+    if (!$from_station) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND,
+            sprintf("乗車駅データがみつかりません %s", $departure)
+        );
+    }
+	# To
+    my $to_station = $dbh->select_row($query, $arrival);
+    if (!$from_station) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND,
+            sprintf("降車駅データがみつかりません %s", $arrival)
+        );
+    }
+
+    if ($train_class eq "最速") {
+        if (!$from_station->{is_stop_express} || !$to_station->{is_stop_express}) {
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, "最速の止まらない駅です");
+        }
+    } elsif ($train_class eq "中間") {
+        if (!$from_station->{is_stop_semi_express} || !$to_station->{is_stop_semi_express}) {
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, "中間の止まらない駅です");
+        }
+    } elsif ($train_class eq "遅いやつ") {
+        if (!$from_station->{is_stop_local} || !$to_station->{is_stop_local}) {
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, "遅いやつの止まらない駅です");
+        }
+    } else {
+        return $self->error_with_msg($c, HTTP_BAD_REQUEST, "リクエストされた列車クラスが不明です");
+    }
+
+    # 運行していない区間を予約していないかチェックする
+    if ($tmas->{is_nobori}) {
+        if ($from_station->{id} > $departure_station->{id} || $to_station->{id} > $departure_station->{id}) {
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, "リクエストされた区間に列車が運行していない区間が含まれています");
+        }
+        if ($arrival_station->{id} >= $from_station->{id} || $arrival_station->{id} > $to_station->{id}) {
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, "リクエストされた区間に列車が運行していない区間が含まれています");
+        }
+    }
+    else {
+        if ($from_station->{id} < $departure_station->{id} || $to_station->{id} < $departure_station->{id}) {
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, "リクエストされた区間に列車が運行していない区間が含まれています");
+
+        }
+        if ($arrival_station->{id} <= $from_station->{id} || $arrival_station->{id} < $to_station->{id}) {
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, "リクエストされた区間に列車が運行していない区間が含まれています");
+        }
+    }
+
+    #
+    # あいまい座席検索
+    # seatsが空白の時に発動する
+    #
+    if (@$seats == 0) {
+        if ($seat_class eq "non-reserved") {
+            # non-reservedはそもそもあいまい検索もせずダミーのRow/Columnで予約を確定させる。
+            last;
+        }
+        # 当該列車・号車中の空き座席検索
+        $query = 'SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?';
+        my $train = $dbh->select_row(
+            $query,
+            $date->strftime("%F"),
+            $train_class,
+            $train_name
+        );
+        if (!$train) {
+            die "No train";
+        }
+
+        my $usable_train_class_list = Isutrain::Utils::getUsableTrainClassList($from_station, $to_station);
+        my $usable = 0;
+        for my $v (@$usable_train_class_list) {
+            if ($v eq $train->{train_class}) {
+                $usable = 1;
+            }
+        }
+        if (!$usable) {
+            warn("invalid train_class");
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, "invalid train_class");
+
+        }
+
+        # 座席リクエスト情報は空に
+        $seats = [];
+        for (my $carnum = 1; $carnum <= 16; $carnum++) {
+            $query = 'SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_class=? AND is_smoking_seat=? ORDER BY seat_row, seat_column';
+            my $seat_list = $dbh->select_all($query, $train_class, $carnum, $seat_class, $is_smoking_seat);
+
+            my @seat_information_list = ();
+            for my $seat (@$seat_list) {
+                my $s = {
+                    row => number $seat->{seat_row},
+                    column => $seat->{seat_column},
+                    class => $seat->{seat_class},
+                    is_smoking_seat => bool $seat->{is_smoking_seat},
+                    is_occupied => JSON::false,
+                };
+                $query = 'SELECT s.* FROM seat_reservations s, reservations r WHERE r.date=? AND r.train_class=? AND r.train_name=? AND car_number=? AND seat_row=? AND seat_column=? FOR UPDATE';
+                my $seat_reservation_list = $dbh->select_all(
+                    $query,
+                    $date->strftime("%F"),
+                    $seat->{train_class},
+                    $train_name,
+                    $seat->{car_number},
+                    $seat->{seat_row},
+                    $seat->{seat_column}
+                );
+
+                for my $seat_reservation (@$seat_reservation_list) {
+                    $query = 'SELECT * FROM reservations WHERE reservation_id=? FOR UPDATE';
+                    my $resevation = $dbh->select_row($query, $seat_reservation->{reservation_id});
+                    if (!$resevation) {
+                        die "no reservations";
+                    }
+
+                    $query = 'SELECT * FROM station_master WHERE name=?';
+                    my $departure_station = $dbh->select_row($query, $resevation->{departure});
+                    if (!$departure_station) {
+                        die "no departure";
+                    }
+                    my $arrival_station = $dbh->select_row($query, $resevation->{arrival});
+                    if (!$arrival_station) {
+                        die "no arrival";
+                    }
+
+
+                    if ($train->{is_nobori}) {
+                        # 上り
+                        if ($to_station->{id} < $arrival_station->{id} && $from_station->{id} <= $arrival_station->{id}) {
+                            # pass
+                        } elsif ($to_station->{id} >= $departure_station->{id} && $from_station->{id} > $departure_station->{id}) {
+                            #pass
+                        } else {
+                            $s->{is_occupied} = JSON::true;
+                        }
+                    }
+                    else {
+                        # 下り
+                        if ($from_station->{id} < $departure_station->{id} && $to_station->{id} <= $departure_station->{id}) {
+                            # pass
+                        } elsif ($from_station->{id} >= $arrival_station->{id} && $to_station->{id} > $arrival_station->{id}) {
+                            # pass
+                        } else {
+                            $s->{is_occupied} = JSON::true;
+                        }
+
+                    }
+                }
+                push @seat_information_list, $s;
+            }
+
+            my $vague_seat = {};
+            my $reserved = JSON::false;
+            my $vargue = JSON::true;
+            my $seatnum = ($req_adult + $req_child - 1); # 全体の人数からあいまい指定席分を引いておく
+            if ($req_column eq "") {          # A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
+                $seatnum = ($req_adult + $req_child); # あいまい指定せず大人＋小人分の座席を取る
+                $reserved = JSON::true;                   # dummy
+                $vargue = JSON::false;                    # dummy
+            }
+            my @candidate_seats;
+            # シート分だけ回して予約できる席を検索
+            my $i = 0;
+            for my $seat (@seat_information_list) {
+                if ($seat->{column} eq $req_column && !$seat->{is_occupied} && !$reserved && $vargue) {
+                    #あいまい席があいてる
+                    $vague_seat->{row} = number $seat->{row};
+                    $vague_seat->{column} = $seat->{column};
+                    $reserved = JSON::true
+                } elsif (!$seat->{is_occupied} && $i < $seatnum) {
+                    # 単に席があいてる
+                    push @candidate_seats, {
+                        row => number $seat->{row},
+                        column => $seat->{column}
+                    };
+                    $i++;
+                }
+            }
+
+            if ($vargue && $reserved) { # あいまい席が見つかり、予約できそうだった
+                push @$seats, $vague_seat;
+            }
+            if ($i > 0) {
+                push @$seats, @candidate_seats;
+            }
+
+            if (@$seats < $req_adult + $req_child) {
+                # リクエストに対して席数が足りてない
+                # 次の号車にうつしたい
+                warn("-----------------");
+                warn(sprintf(
+                    "現在検索中の車両: %d号車, リクエスト座席数: %d, 予約できそうな座席数: %d, 不足数: %d",
+                    $carnum,
+                    $req_adult+$req_child,
+                    scalar @$seats,
+                    $req_adult+$req_child-scalar(@$seats)
+                ));
+                warn("リクエストに対して座席数が不足しているため、次の車両を検索します。");
+                $seats = [];
+                if ($carnum == 16) {
+                    warn("この新幹線にまとめて予約できる席数がなかったから検索をやめるよ");
+                    $seats = [];
+                    last;
+                }
+            }
+
+            warn(sprintf(
+                "空き実績: %d号車 シート:%v 席数:%d",
+                $carnum,
+                $seats, #XXX
+                scalar @$seats
+            ));
+            if (scalar @$seats >= $req_adult+$req_child) {
+                warn("予約情報に追加したよ");
+                while(@$seats != $req_adult+$req_child) { pop @$seats }
+                $car_number = $carnum;
+                last;
+            }
+        }
+
+        if (@$seats == 0) {
+            return $self->error_with_msg($c, HTTP_NOT_FOUND, "あいまい座席予約ができませんでした。指定した席、もしくは1車両内に希望の席数をご用意できませんでした。");
+        }
+    }
+    else {
+		# 座席情報のValidate
+        for my $z (@$seats) {
+            warn("XXXX", $z); #XXX
+            my $query = 'SELECT * FROM seat_master WHERE train_class=? AND car_number=? AND seat_column=? AND seat_row=? AND seat_class=?';
+            my $seat_list = $dbh->select_row(
+                $query,
+                $train_class,
+                $car_number,
+                $z->{column},
+                $z->{row},
+                $seat_class,
+            );
+            if (!$seat_list) {
+                warn("Not seat");
+                return $self->error_with_msg($c, HTTP_NOT_FOUND, "あいまい座席予約ができませんでした。指定した席、もしくは1車両内に希望の席数をご用意できませんでした。");
+            }
+        }
+	}
+
+    # 当該列車・列車名の予約一覧取得
+    $query = 'SELECT * FROM reservations WHERE date=? AND train_class=? AND train_name=? FOR UPDATE';
+    my $reservations = $dbh->select_all(
+        $query,
+        $date->strftime("%F"),
+        $train_class,
+        $train_name
+    );
+
+    for my $resevation (@$reservations) {
+        if ($seat_class eq "non-reserved") {
+            last;
+        }
+        # train_masterから列車情報を取得(上り・下りが分かる)
+        $query = 'SELECT * FROM train_master WHERE date=? AND train_class=? AND train_name=?';
+        my $tmas = $dbh->select_row($query, $date->strftime("%F"), $train_class, $train_name);
+        if (!$tmas) {
+            warn("no train");
+            return $self->error_with_msg($c, HTTP_NOT_FOUND, "列車データがみつかりません");
+        }
+
+        # 予約情報の乗車区間の駅IDを求める
+        $query = 'SELECT * FROM station_master WHERE name=?';
+        # From
+        my $reserved_from_station = $dbh->select_row($query, $resevation->{departure});
+        if (!$reserved_from_station) {
+            warn("no reserved from station");
+            return $self->error_with_msg($c, HTTP_NOT_FOUND, "予約情報に記載された列車の乗車駅データがみつかりません");
+        }
+        # To
+        my $reserved_to_station = $dbh->select_row($query, $resevation->{arrival});
+        if (!$reserved_to_station) {
+            warn("no reserved to station");
+            return $self->error_with_msg($c, HTTP_NOT_FOUND, "予約情報に記載された列車の降車駅データがみつかりません");
+        }
+
+        # 予約の区間重複判定
+        my $secdup = JSON::false;
+        if ($tmas->{is_nobori}) {
+            # 上り
+            if ($to_station->{id} < $reserved_to_station->{id} && $from_station->{id} <= $reserved_to_station->{id}) {
+                # pass
+            } elsif ($to_station->{id} >= $reserved_from_station->{id} && $from_station->{id} > $reserved_from_station->{id}) {
+                # pass
+            } else {
+                $secdup = JSON::true;
+            }
+        } else {
+            # 下り
+            if ($from_station->{id} < $reserved_from_station->{id} && $to_station->{id} <= $reserved_from_station->{id}) {
+                # pass
+            } elsif ($from_station->{id} >= $reserved_to_station->{id} && $to_station->{id} > $reserved_to_station->{id}) {
+                # pass
+            } else {
+                $secdup = JSON::true;
+            }
+        }
+
+        if ($secdup) {
+            # 区間重複の場合は更に座席の重複をチェックする
+            $query = 'SELECT * FROM seat_reservations WHERE reservation_id=? FOR UPDATE';
+            my $seat_reservations = $dbh->select_all($query, $resevation->{reservation_id});
+            for my $v (@$seat_reservations) {
+                for my $seat (@$seats) {
+                    if ($v->{car_number} == $car_number &&
+                        $v->{seat_row}  == $seat->{row} &&
+                        $v->{seat_column} eq $seat->{column}) {
+                            warn("Duplicated ", $resevation); #XXX
+                            return $self->error_with_msg($c, HTTP_BAD_REQUEST, "リクエストに既に予約された席が含まれています");
+                    }
+                }
+            }
+        }
+	}
+	# 3段階の予約前チェック終わり
+
+	# 自由席は強制的にSeats情報をダミーにする（自由席なのに席指定予約は不可）
+    if ($seat_class eq "non-reserved") {
+        $seats = [];
+        my $dummy_seat = {};
+        $car_number = 0;
+        for (my $num = 0; $num < $req_adult+$req_child; $num++) {
+            $dummy_seat->{row} = 0;
+            $dummy_seat->{column} = "";
+            push @$seats, $dummy_seat;
+        }
+    }
+
+    # 運賃計算
+    my $fare = 0;
+    if ($seat_class eq "premium") {
+        $fare = eval {
+            $self->fareCalc(
+                $date, $from_station->{id}, $to_station->{id},
+                $train_class, "premium"
+            )
+        };
+        if ($@) {
+            warn("fareCalc ", $@); #XXX
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
+        }
+    }
+    elsif ($seat_class eq "reserved") {
+        $fare = eval {
+            $self->fareCalc(
+                $date, $from_station->{id}, $to_station->{id},
+                $train_class, "reserved"
+            )
+        };
+        if ($@) {
+            warn("fareCalc ", $@); #XXX
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
+        }
+    }
+    elsif ($seat_class eq "non-reserved") {
+        $fare = eval {
+            $self->fareCalc(
+                $date, $from_station->{id}, $to_station->{id},
+                $train_class, "non-reserved"
+            )
+        };
+        if ($@) {
+            warn("fareCalc ", $@); #XXX
+            return $self->error_with_msg($c, HTTP_BAD_REQUEST, $@);
+        }
+    }
+    else {
+        return $self->error_with_msg($c, HTTP_BAD_REQUEST, "リクエストされた座席クラスが不明です");
+    }
+
+    my $sum_fare = ($req_adult * $fare) + ($req_child * $fare)/2;
+    warn("SUMFARE");
+
+    # userID取得。ログインしてないと怒られる。
+    my $user = $self->getUser($c);
+    if (!$user) {
+        return $self->error_with_msg($c, HTTP_NOT_FOUND, 'user not found');
+    }
+
+    # 予約ID発行と予約情報登録
+    $query = 'INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `adult`, `child`, `amount`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    $dbh->query(
+        $query,
+        $user->{id},
+        $date->strftime("%F"),
+        $train_class,
+        $train_name,
+        $departure,
+        $arrival,
+        "requesting",
+        "a",
+        $req_adult,
+        $req_child,
+        $sum_fare
+    );
+
+    my $id = $dbh->last_insert_id();
+    if (!$id) {
+        return $self->error_with_msg($c, HTTP_INTERNAL_SERVER_ERROR, '予約IDの取得に失敗しました');
+    }
+
+    # 席の予約情報登録
+    # reservationsレコード1に対してseat_reservationstが1以上登録される
+    $query = 'INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES (?, ?, ?, ?)';
+
+    for my $v (@$seats) {
+        $dbh->query(
+            $query,
+            $id,
+            $car_number,
+            $v->{row},
+            $v->{column}
+        );
+    }
+
+    $txn->commit();
+
+    my $res = {
+        reservation_id => number $id,
+        amount => number $sum_fare,
+        is_ok => JSON::true,
+    };
+    $c->render_json($res);
+};
+
 #mux.HandleFunc(pat.Post("/api/train/reservation/commit"), reservationPaymentHandler)
 
 #mux.HandleFunc(pat.Get("/api/auth"), getAuthHandler)
