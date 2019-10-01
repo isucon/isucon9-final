@@ -9,7 +9,6 @@ import (
 
 	"net/http/httptest"
 
-	"github.com/chibiegg/isucon9-final/bench/internal/config"
 	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/gorilla/sessions"
@@ -70,7 +69,7 @@ func (m *Mock) Initialize(req *http.Request) ([]byte, int) {
 
 	b, err := json.Marshal(&isutrain.InitializeResponse{
 		AvailableDays: 30,
-		Language:      config.Language,
+		Language:      "golang",
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
