@@ -123,6 +123,13 @@ func newReservationCache() *reservationCache {
 	}
 }
 
+func (r *reservationCache) Len() int {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	return len(r.reservations)
+}
+
 func (r *reservationCache) Reservation(reservationID int) (*ReservationCacheEntry, bool) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
@@ -164,8 +171,7 @@ func (r *reservationCache) CanReserve(req *ReserveRequest) (bool, error) {
 		if reqKudari {
 			overwrap, err := isKudariOverwrap(reservation.Departure, reservation.Arrival, req.Departure, req.Arrival)
 			if err != nil {
-				lgr.Warnf("予約可能判定の 区間重複判定呼び出しでエラーが発生: %+v", err)
-				return false, err
+				return false, nil
 			}
 
 			if overwrap {
@@ -175,8 +181,7 @@ func (r *reservationCache) CanReserve(req *ReserveRequest) (bool, error) {
 			// NOTE: 下りベースの判定関数を用いるため、上りの場合は乗車・降車を入れ替えて渡す
 			overwrap, err := isKudariOverwrap(reservation.Arrival, reservation.Departure, req.Arrival, req.Departure)
 			if err != nil {
-				lgr.Warnf("予約可能判定の 区間重複判定呼び出しでエラーが発生: %+v", err)
-				return false, err
+				return false, nil
 			}
 
 			if overwrap {
@@ -221,7 +226,7 @@ func (r *reservationCache) CanReserve(req *ReserveRequest) (bool, error) {
 		return false, nil
 	} else if err != nil {
 		lgr.Warnf("予約可能判定の予約チェックループにて、区間重複チェック呼び出しエラーが発生: %+v", err)
-		return false, err
+		return false, nil
 	}
 
 	return true, nil

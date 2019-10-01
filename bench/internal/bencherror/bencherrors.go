@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	SystemErrs     = NewBenchErrors()
 	InitializeErrs = NewBenchErrors()
 	PreTestErrs    = NewBenchErrors()
 	BenchmarkErrs  = NewBenchErrors()
@@ -17,7 +18,8 @@ var (
 type BenchErrors struct {
 	mu sync.RWMutex
 
-	Msgs []string
+	Msgs         []string
+	InternalMsgs []string
 
 	criticalCnt    uint64
 	applicationCnt uint64
@@ -78,6 +80,8 @@ func (errs *BenchErrors) AddError(err error) error {
 		return nil
 	}
 
+	errs.InternalMsgs = append(errs.InternalMsgs, err.Error())
+
 	// エラーに応じたメッセージを追加し、カウンタをインクリメント
 	if msg, code, ok := extractCode(err); ok {
 		switch code {
@@ -86,6 +90,7 @@ func (errs *BenchErrors) AddError(err error) error {
 			errs.criticalCnt++
 		case errApplication:
 			errs.Msgs = append(errs.Msgs, msg)
+			errs.criticalCnt++
 			errs.applicationCnt++
 		case errTimeout:
 			errs.Msgs = append(errs.Msgs, msg+" (タイムアウトしました)")

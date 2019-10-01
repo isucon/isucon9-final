@@ -2,7 +2,8 @@ package isutrain
 
 import (
 	"errors"
-	"fmt"
+
+	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 )
 
 type Station struct {
@@ -112,16 +113,16 @@ func isKudariOverwrap(aOrigin, aDestination string, bOrigin, bDestination string
 		bArrivalNum, ok4   = sectionMap[bDestination]
 	)
 	if !ok1 {
-		return false, fmt.Errorf("不正な駅 %s が isKudariOverwrapのaOriginに指定されました", aOrigin)
+		return false, bencherror.NewSimpleCriticalError("不正な駅 %s が isKudariOverwrapのaOriginに指定されました", aOrigin)
 	}
 	if !ok2 {
-		return false, fmt.Errorf("不正な駅 %s が isKudariOverwrapのaDestinationに指定されました", aDestination)
+		return false, bencherror.NewSimpleCriticalError("不正な駅 %s が isKudariOverwrapのaDestinationに指定されました", aDestination)
 	}
 	if !ok3 {
-		return false, fmt.Errorf("不正な駅 %s が isKudariOverwrapのbOriginに指定されました", bOrigin)
+		return false, bencherror.NewSimpleCriticalError("不正な駅 %s が isKudariOverwrapのbOriginに指定されました", bOrigin)
 	}
 	if !ok4 {
-		return false, fmt.Errorf("不正な駅 %s が isKudariOverwrapのbDestinationに指定されました", bDestination)
+		return false, bencherror.NewSimpleCriticalError("不正な駅 %s が isKudariOverwrapのbDestinationに指定されました", bDestination)
 	}
 
 	if bDepartureNum < aDepartureNum && bArrivalNum <= aDepartureNum {
@@ -140,8 +141,11 @@ func isKudari(origin, destination string) (bool, error) {
 		originNum, ok1      = sectionMap[origin]
 		destinationNum, ok2 = sectionMap[destination]
 	)
-	if !ok1 || !ok2 {
-		return false, ErrInvalidStationName
+	if !ok1 {
+		return false, bencherror.NewSimpleCriticalError("不正な駅 %s が isKudariのOriginに指定されました", origin)
+	}
+	if !ok2 {
+		return false, bencherror.NewSimpleCriticalError("不正な駅 %s が isKudariのDestinationに指定されました", destination)
 	}
 
 	return destinationNum > originNum, nil

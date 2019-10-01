@@ -109,7 +109,6 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		carNum             = 9
 		seatClass          = "premium"
 		adult, child       = 1, 1
-		seatType           = ""
 	)
 	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "最速")
 	if err != nil {
@@ -130,7 +129,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 
 	reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, availSeats, departure, arrival,
 		useAt,
-		carNum, adult, child, seatType)
+		carNum, child, adult)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return

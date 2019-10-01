@@ -88,7 +88,7 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		availSeats, "山田", "夷太寺", useAt,
-		carNum, 1, 1, "",
+		carNum, 1, 1,
 		isutrain.StatusCodeOpt(http.StatusBadRequest))
 
 	if err == nil {
@@ -148,7 +148,7 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 		train.Class, train.Name,
 		isutraindb.GetSeatClass(train.Class, carNum),
 		availSeats, departure, arrival, useAt,
-		carNum, 1, 1, "",
+		carNum, 1, 1,
 		isutrain.StatusCodeOpt(http.StatusNotFound))
 	if err == nil {
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "予約できない座席が予約できました"))

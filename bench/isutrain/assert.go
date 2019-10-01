@@ -40,14 +40,13 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 				// Amountのチェック
 				cache, ok := ReservationCache.Reservation(reservation.ReservationID)
 				if !ok {
-					err := bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
-					return err
+					return bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
 				}
 
 				amount, err := cache.Amount()
 				if err != nil {
-					err = bencherror.NewCriticalError(err, "予約一覧画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID)
-					return err
+					bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "予約一覧画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID))
+					return nil
 				}
 
 				if int64(amount) != reservation.Amount {
@@ -70,13 +69,13 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 		// Amountのチェック
 		cache, ok := ReservationCache.Reservation(reservation.ReservationID)
 		if !ok {
-			// 認識していない予約 (Slack通知)
 			return bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
 		}
 
 		amount, err := cache.Amount()
 		if err != nil {
-			return bencherror.NewSimpleCriticalError("予約確認画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID)
+			bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "予約一覧画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID))
+			return nil
 		}
 
 		if int64(amount) != reservation.Amount {
@@ -98,8 +97,8 @@ func assertCanReserve(ctx context.Context, req *ReserveRequest, resp *Reservatio
 
 	canReserve, err := ReservationCache.CanReserve(req)
 	if err != nil {
-		lgr.Warnf("予約のcanReserve判定でエラー: %s", err.Error())
-		return bencherror.NewCriticalError(err, "予約可能チェック処理でエラーが発生しました")
+		bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "予約のcanReserve判定でエラー"))
+		return nil
 	}
 
 	if !canReserve {

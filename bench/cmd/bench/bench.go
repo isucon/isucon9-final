@@ -180,6 +180,13 @@ var run = cli.Command{
 			return nil
 		}
 
+		lgr.Info("===== System errors =====")
+		if bencherror.SystemErrs.IsError() {
+			for _, errMsg := range bencherror.SystemErrs.InternalMsgs {
+				lgr.Warn(errMsg)
+			}
+		}
+
 		// posttest (ベンチ後の整合性チェックにより、減点カウントを行う)
 		lgr.Info("===== Calculate final score =====")
 

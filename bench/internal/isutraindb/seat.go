@@ -1,5 +1,7 @@
 package isutraindb
 
+import "github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+
 // GetSeatClass は、列車クラスと車両番号から座席クラスを解決します
 func GetSeatClass(trainClass string, carNum int) string {
 	switch {
@@ -100,6 +102,7 @@ func GetSeatClass(trainClass string, carNum int) string {
 	case trainClass == "遅いやつ" && carNum == 16:
 		return "reserved"
 	default:
+		bencherror.SystemErrs.AddError(bencherror.NewSimpleCriticalError("trainClass=%s, carNum=%d が指定され、seatClassが空で返りました", trainClass, carNum))
 		return ""
 	}
 }

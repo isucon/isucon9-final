@@ -49,7 +49,8 @@ func AwesomeScenario(ctx context.Context) error {
 	// ユーザー作成とログイン
 	user, err := xrandom.GetRandomUser() // ランダムデータ生成系は xrandom に作成するかあるものを使う
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		bencherror.SystemErrs.AddError(err)
+		return nil
 	}
 
 	err = client.Signup(ctx, user.Email, user.Password)
