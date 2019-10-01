@@ -56,6 +56,14 @@ class Service
 
 
     // utils
+    private function messageResponse($message)
+    {
+        return [
+            'is_error' => false,
+            'message' => $message,
+        ];
+    }
+
     private function errorResponse($message)
     {
         return [
@@ -1252,6 +1260,89 @@ class Service
 
         $this->dbh->commit();
         return $response->withJson(['is_ok' => true], StatusCode::HTTP_OK);
+    }
+
+    public function getAuthHandler(Request $request, Response $response, array $args)
+    {
+        try {
+            $user = $this->getUser();
+        } catch (\DomainException $e) {
+            $this->dbh->rollBack();
+            return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_UNAUTHORIZED);
+        }
+        return $response->withJson(['email' => $user['email']], StatusCode::HTTP_OK);
+    }
+
+    public function signUpHandler(Request $request, Response $response, array $args)
+    {
+        /**
+         * request payload
+         *
+         * string `json:"email"`
+         * string `json:"password"`
+         */
+        try {
+            $payload = $this->jsonPayload($request);
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->error($e->getMessage());
+            return $response->withJson($this->errorResponse("JSON parseに失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $salt = random_bytes(1024);
+        $superSecurePassword = hash_pbkdf2('sha256', $payload['password'], $salt, 100, 256, true);
+        $stmt = $this->dbh->prepare("INSERT INTO `users` (`email`, `salt`, `super_secure_password`) VALUES (?, ?, ?)");
+        $r = $stmt->execute([
+            $payload['email'],
+            $salt,
+            $superSecurePassword,
+        ]);
+        if ($r === false) {
+            $this->logger->error("DB error", $this->dbh->errorInfo());
+            return $response->withJson($this->errorResponse("user registration failed"), StatusCode::HTTP_BAD_REQUEST);
+        }
+
+        return $response->withJson($this->messageResponse("registration complete"), StatusCode::HTTP_OK);
+    }
+
+    public function loginHandler(Request $request, Response $response, array $args)
+    {
+        /**
+         * request payload
+         *
+         * string `json:"email"`
+         * string `json:"password"`
+         */
+        try {
+            $payload = $this->jsonPayload($request);
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->error($e->getMessage());
+            return $response->withJson($this->errorResponse("JSON parseに失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $stmt = $this->dbh->prepare("SELECT * FROM `users` WHERE `email`=?");
+        $user = $stmt->execute([$payload['email']]);
+        if ($user === false) {
+            return $response->withJson($this->errorResponse("authentication failed"), StatusCode::HTTP_FORBIDDEN);
+        }
+
+        $challengePassword = hash_pbkdf2('sha256', $payload['password'], $user['salt'], 100, 256, true);
+
+        if ($user['super_secure_password'] !== $challengePassword) {
+            return $response->withJson($this->errorResponse("authentication failed"), StatusCode::HTTP_FORBIDDEN);
+        }
+
+        $this->session->set('user_id', $user['id']);
+        $this->session->set('csrf_token', bin2hex(random_bytes(10)));
+
+        // TYPO authenticated
+        return $response->withJson($this->messageResponse("autheticated"), StatusCode::HTTP_OK);
+    }
+
+    public function logoutHandler(Request $request, Response $response, array $args)
+    {
+        $this->session->set('user_id', 0);
+        $this->session->set('csrf_token', bin2hex(random_bytes(10)));
+        return $response->withJson($this->messageResponse("logged out"), StatusCode::HTTP_OK);
     }
 
     public function initialize(Request $request, Response $response, array $args)
