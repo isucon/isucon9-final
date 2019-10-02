@@ -218,7 +218,7 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 			string(isutrain.SaNonReserved):   15000,
 		}
 	)
-	b, err := json.Marshal(isutrain.Trains{
+	b, err := json.Marshal(isutrain.SearchTrainsResponse{
 		&isutrain.Train{
 			Class:            "最速",
 			Name:             "96号",

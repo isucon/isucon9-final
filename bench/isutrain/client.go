@@ -285,7 +285,7 @@ func (c *Client) ListStations(ctx context.Context, opt ...ClientOption) (ListSta
 }
 
 // SearchTrains は 列車検索APIです
-func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, train_class string, opt ...ClientOption) (Trains, error) {
+func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, train_class string, opt ...ClientOption) (SearchTrainsResponse, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.SearchTrains)
@@ -299,7 +299,7 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, tr
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
-		return Trains{}, failure.Wrap(err, failure.Messagef("GET %s: 列車検索リクエストに失敗しました", endpointPath), failureCtx)
+		return SearchTrainsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: 列車検索リクエストに失敗しました", endpointPath), failureCtx)
 	}
 
 	query := req.URL.Query()
@@ -311,23 +311,23 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, tr
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return Trains{}, failure.Wrap(err, failure.Messagef("GET %s: 列車検索リクエストに失敗しました", endpointPath), failureCtx)
+		return SearchTrainsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: 列車検索リクエストに失敗しました", endpointPath), failureCtx)
 	}
 	defer resp.Body.Close()
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-		return Trains{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
+		return SearchTrainsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
-	var trains Trains
-	if err := json.NewDecoder(resp.Body).Decode(&trains); err != nil {
+	var searchTrainsResp SearchTrainsResponse
+	if err := json.NewDecoder(resp.Body).Decode(&searchTrainsResp); err != nil {
 		// FIXME: 実装
-		return Trains{}, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath), failureCtx)
+		return SearchTrainsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
 	endpoint.IncPathCounter(endpoint.SearchTrains)
 
-	return trains, nil
+	return searchTrainsResp, nil
 }
 
 func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass, trainName string, carNum int, departure, arrival string, opt ...ClientOption) (*TrainSeatSearchResponse, error) {
