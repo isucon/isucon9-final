@@ -63,5 +63,5 @@ var (
 
 func IsOlympic() bool {
 	t := ReservationStartDate.Add(time.Duration(AvailableDays*24) * time.Hour)
-	return t.After(OlympicStartDate)
+	return t.Equal(OlympicStartDate) || t.After(OlympicStartDate)
 }
