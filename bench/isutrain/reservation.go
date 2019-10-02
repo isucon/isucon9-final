@@ -63,6 +63,20 @@ type (
 	}
 )
 
+// 予約確定API
+type (
+	CommitReservationRequest struct {
+		ReservationID int    `json:"reservation_id"`
+		CardToken     string `json:"card_token"`
+	}
+)
+
+// 予約キャンセルAPI
+type (
+	CancelReservationResponse struct {
+	}
+)
+
 // ReservationStatus は予約状態です
 type ReservationStatus string
 
@@ -90,8 +104,3 @@ const (
 // 	ArrivalTime   string     `json:"arrival_time"`
 // 	Seats         TrainSeats `json:"seats"`
 // }
-
-type CommitReservationRequest struct {
-	ReservationID int    `json:"reservation_id"`
-	CardToken     string `json:"card_token"`
-}
