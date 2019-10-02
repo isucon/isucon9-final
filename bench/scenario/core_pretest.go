@@ -35,10 +35,6 @@ func Pretest(ctx context.Context, client *isutrain.Client, paymentClient *paymen
 		pretestNormalReservation(ctx, client, paymentClient)
 		return nil
 	})
-	pretestGrp.Go(func() error {
-		pretestNormalSearch(ctx, client)
-		return nil
-	})
 	// 異常系
 	pretestGrp.Go(func() error {
 		pretestAbnormalLogin(ctx, client)
@@ -152,15 +148,11 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	}
 }
 
-// PreTestNormalSearch は検索条件を細かく指定して検索します
-func pretestNormalSearch(ctx context.Context, client *isutrain.Client) {
-}
-
 // 異常系
 
 // PreTestAbnormalLogin は不正なパスワードでのログインを試みます
 func pretestAbnormalLogin(ctx context.Context, client *isutrain.Client) {
-	if err := client.Login(ctx, "username", "password", isutrain.StatusCodeOpt(http.StatusForbidden)); err != nil {
+	if err := client.Login(ctx, "FikyavwocZear@example.com", "jieldirAwsabyonsInd", isutrain.StatusCodeOpt(http.StatusForbidden)); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}

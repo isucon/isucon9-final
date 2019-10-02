@@ -150,3 +150,10 @@ func isKudari(origin, destination string) (bool, error) {
 
 	return destinationNum > originNum, nil
 }
+
+func IsValidStation(station string) bool {
+	if _, ok := sectionMap[station]; !ok {
+		return false
+	}
+	return true
+}
