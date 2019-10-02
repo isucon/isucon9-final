@@ -253,7 +253,7 @@ func (c *Client) Logout(ctx context.Context, opt ...ClientOption) error {
 }
 
 // ListStations は駅一覧列挙APIです
-func (c *Client) ListStations(ctx context.Context, opt ...ClientOption) ([]*Station, error) {
+func (c *Client) ListStations(ctx context.Context, opt ...ClientOption) (ListStationsResponse, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.ListStations)
@@ -261,27 +261,27 @@ func (c *Client) ListStations(ctx context.Context, opt ...ClientOption) ([]*Stat
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
-		return []*Station{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
+		return ListStationsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
 	}
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return []*Station{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
+		return ListStationsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
 	}
 	defer resp.Body.Close()
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-		return []*Station{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode))
+		return ListStationsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode))
 	}
 
-	var stations []*Station
-	if err := json.NewDecoder(resp.Body).Decode(&stations); err != nil {
-		return []*Station{}, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath))
+	var listStationsResp ListStationsResponse
+	if err := json.NewDecoder(resp.Body).Decode(&listStationsResp); err != nil {
+		return ListStationsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath))
 	}
 
 	endpoint.IncPathCounter(endpoint.ListStations)
 
-	return stations, nil
+	return listStationsResp, nil
 }
 
 // SearchTrains は 列車検索APIです

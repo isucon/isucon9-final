@@ -164,8 +164,8 @@ func (m *Mock) Logout(req *http.Request) (*httptest.ResponseRecorder, int) {
 
 func (m *Mock) ListStations(req *http.Request) ([]byte, int) {
 	<-time.After(m.ListStationsDelay)
-	b, err := json.Marshal([]*isutrain.Station{
-		&isutrain.Station{ID: 1, Name: "isutrain1", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: false},
+	b, err := json.Marshal(isutrain.ListStationsResponse{
+		&isutrain.Station{ID: 1, Name: "東京", Distance: 10.5, IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: false},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError

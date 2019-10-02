@@ -4,12 +4,14 @@ type ClientOption func(o *ClientOptions)
 
 type ClientOptions struct {
 	wantStatusCode int
+	wantIsOK       bool
 	autoAssert     bool
 }
 
 func newClientOptions(statusCode int, opts ...ClientOption) *ClientOptions {
 	o := &ClientOptions{
 		wantStatusCode: statusCode,
+		wantIsOK:       true,
 		autoAssert:     true,
 	}
 	if len(opts) == 0 {
@@ -31,9 +33,14 @@ func StatusCodeOpt(statusCode int) ClientOption {
 	}
 }
 
+func IsOKOpt(isOK bool) ClientOption {
+	return func(o *ClientOptions) {
+		o.wantIsOK = isOK
+	}
+}
+
 func DisableAssertOpt() ClientOption {
 	return func(o *ClientOptions) {
 		o.autoAssert = false
 	}
 }
-
