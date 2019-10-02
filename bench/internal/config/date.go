@@ -61,6 +61,7 @@ var (
 	OlympicEndDate   = time.Date(2020, 8, 9, 0, 0, 0, 0, time.UTC)
 )
 
-func IsOlympic(t time.Time) bool {
+func IsOlympic() bool {
+	t := ReservationStartDate.Add(time.Duration(AvailableDays*24) * time.Hour)
 	return t.After(OlympicStartDate)
 }
