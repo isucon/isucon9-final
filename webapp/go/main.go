@@ -395,6 +395,7 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 
 	selectedFare := fareList[0]
 
+	date = time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, jst)
 	for _, fare := range fareList {
 		if fare.StartDate.Before(date) {
 			fmt.Println(fare.StartDate, fare.FareMultiplier)
