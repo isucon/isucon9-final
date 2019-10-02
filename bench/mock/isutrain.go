@@ -359,7 +359,14 @@ func (m *Mock) CommitReservation(req *http.Request) ([]byte, int) {
 	// FIXME: ちゃんとした決済情報を追加する
 	m.paymentMock.addPaymentInformation()
 
-	return []byte(http.StatusText(http.StatusOK)), http.StatusOK
+	b, err := json.Marshal(&isutrain.CommitReservationResponse{
+		IsOK: true,
+	})
+	if err != nil {
+		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
+	}
+
+	return b, http.StatusOK
 }
 
 // CancelReservation は予約をキャンセルします
@@ -372,7 +379,14 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	return []byte(http.StatusText(http.StatusNoContent)), http.StatusNoContent
+	b, err := json.Marshal(&isutrain.CancelReservationResponse{
+		IsOK: true,
+	})
+	if err != nil {
+		return []byte(http.StatusText(http.StatusInternalServerError)), http.StatusInternalServerError
+	}
+
+	return b, http.StatusNoContent
 }
 
 // ListReservations はアカウントにひもづく予約履歴を返します

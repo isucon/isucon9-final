@@ -69,38 +69,14 @@ type (
 		ReservationID int    `json:"reservation_id"`
 		CardToken     string `json:"card_token"`
 	}
+	CommitReservationResponse struct {
+		IsOK bool `json:"is_ok"`
+	}
 )
 
 // 予約キャンセルAPI
 type (
 	CancelReservationResponse struct {
+		IsOK bool `json:"is_ok"`
 	}
 )
-
-// ReservationStatus は予約状態です
-type ReservationStatus string
-
-const (
-	// Pending は予約が確定していない状態です
-	Pending ReservationStatus = "pending"
-	// Ok は予約が確定した状態です
-	Ok ReservationStatus = "ok"
-)
-
-// ReservationResponse は
-// type ReservationResponse struct {
-// 	ReservationID int        `json:"reservation_id"`
-// 	Date          string     `json:"date"`
-// 	TrainClass    string     `json:"train_class"`
-// 	TrainName     string     `json:"train_name"`
-// 	CarNum        int        `json:"car_number"`
-// 	SeatClass     string     `json:"seat_class"`
-// 	Amount        int64      `json:"amount"`
-// 	Adult         int        `json:"adult"`
-// 	Child         int        `json:"child"`
-// 	Departure     string     `json:"departure"`
-// 	Arrival       string     `json:"arrival"`
-// 	DepartureTime string     `json:"departure_time"`
-// 	ArrivalTime   string     `json:"arrival_time"`
-// 	Seats         TrainSeats `json:"seats"`
-// }

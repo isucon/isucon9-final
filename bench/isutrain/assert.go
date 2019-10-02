@@ -9,9 +9,11 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func assertListTrainSeats(resp *SearchTrainSeatsResponse) error {
+// 座席検索
+
+func assertSearchTrainSeats(ctx context.Context, endpointPath string, resp *SearchTrainSeatsResponse) error {
 	if resp == nil {
-		return bencherror.NewSimpleCriticalError("座席検索のレスポンスが不正です: %+v", resp)
+		return bencherror.NewSimpleCriticalError("GET %s: レスポンスが不正です: %+v", endpointPath, resp)
 	}
 
 	// TODO: 席が重複して返されたら減点
@@ -19,12 +21,14 @@ func assertListTrainSeats(resp *SearchTrainSeatsResponse) error {
 	return nil
 }
 
-func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveRequest, resp *ReserveResponse) error {
+// 予約
+
+func assertReserve(ctx context.Context, endpointPath string, client *Client, reserveReq *ReserveRequest, resp *ReserveResponse) error {
 	if resp == nil {
-		return bencherror.NewSimpleCriticalError("予約のレスポンスが不正です: %+v", resp)
+		return bencherror.NewSimpleCriticalError("POST %s: レスポンスが不正です: %+v", endpointPath, resp)
 	}
 	if resp.ReservationID == 0 {
-		return bencherror.NewSimpleApplicationError("予約のレスポンスで不正な予約IDが採番されています: %d", resp.ReservationID)
+		return bencherror.NewSimpleApplicationError("POST %s: レスポンスで不正な予約IDが採番されています: %d", endpointPath, resp.ReservationID)
 	}
 
 	reserveGrp := &errgroup.Group{}
@@ -40,17 +44,17 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 				// Amountのチェック
 				cache, ok := ReservationCache.Reservation(reservation.ReservationID)
 				if !ok {
-					return bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
+					return bencherror.NewSimpleCriticalError("POST %s: benchのキャッシュにない予約情報が存在します", endpointPath)
 				}
 
 				amount, err := cache.Amount()
 				if err != nil {
-					bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "予約一覧画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID))
+					bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約 %dの amount取得に失敗しました", endpointPath, reservation.ReservationID))
 					return nil
 				}
 
 				if amount != reservation.Amount {
-					return bencherror.NewSimpleCriticalError("予約一覧画面における、予約 %dの amountが一致しません: want=%d, got=%d", reservation.ReservationID, amount, reservation.Amount)
+					return bencherror.NewSimpleCriticalError("POST %s: 予約 %dの amountが一致しません: want=%d, got=%d", endpointPath, reservation.ReservationID, amount, reservation.Amount)
 				}
 
 				return nil
@@ -63,23 +67,23 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 	reserveGrp.Go(func() error {
 		reservation, err := client.ShowReservation(ctx, resp.ReservationID)
 		if err != nil {
-			return bencherror.NewCriticalError(err, "予約した内容を予約確認画面で確認できませんでした")
+			return bencherror.NewCriticalError(err, "POST %s: 予約した内容を予約確認画面で確認できませんでした", endpointPath)
 		}
 
 		// Amountのチェック
 		cache, ok := ReservationCache.Reservation(reservation.ReservationID)
 		if !ok {
-			return bencherror.NewSimpleCriticalError("benchのキャッシュにない予約情報が存在します")
+			return bencherror.NewSimpleCriticalError("POST %s: benchのキャッシュにない予約情報が存在します", endpointPath)
 		}
 
 		amount, err := cache.Amount()
 		if err != nil {
-			bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "予約一覧画面における、予約 %dの amount取得に失敗しました", reservation.ReservationID))
+			bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約 %dの amount取得に失敗しました", endpointPath, reservation.ReservationID))
 			return nil
 		}
 
 		if amount != reservation.Amount {
-			return bencherror.NewSimpleCriticalError("予約確認画面における、予約 %dの amountが一致しません: want=%d, got=%d", reservation.ReservationID, amount, reservation.Amount)
+			return bencherror.NewSimpleCriticalError("POST %s: 予約 %dの amountが一致しません: want=%d, got=%d", endpointPath, reservation.ReservationID, amount, reservation.Amount)
 		}
 
 		return nil
@@ -92,12 +96,12 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 	return nil
 }
 
-func assertCanReserve(ctx context.Context, req *ReserveRequest, resp *ReserveResponse) error {
+func assertCanReserve(ctx context.Context, endpointPath string, req *ReserveRequest, resp *ReserveResponse) error {
 	lgr := zap.S()
 
 	canReserve, err := ReservationCache.CanReserve(req)
 	if err != nil {
-		bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "予約のcanReserve判定でエラー"))
+		bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約可能判定でエラーが発生しました", endpointPath))
 		return nil
 	}
 
@@ -111,13 +115,25 @@ func assertCanReserve(ctx context.Context, req *ReserveRequest, resp *ReserveRes
 			"car_num", req.CarNum,
 			"seats", req.Seats,
 		)
-		return bencherror.NewSimpleCriticalError("予約できないはずの条件で予約が成功しました")
+		return bencherror.NewSimpleCriticalError("POST %s: 予約できないはずの条件で予約が成功しました", endpointPath)
 	}
 
 	return nil
 }
 
-func assertCancelReservation(ctx context.Context, client *Client, reservationID int) error {
+// 予約コミット
+
+func assertCommitReservation(ctx context.Context, endpointPath string, resp *CommitReservationResponse) error {
+	if !resp.IsOK {
+		return bencherror.NewSimpleCriticalError("POST %s: is_ok がfalseです", endpointPath)
+	}
+
+	return nil
+}
+
+// 予約キャンセル
+
+func assertCancelReservation(ctx context.Context, endpointPath string, client *Client, reservationID int) error {
 	reservations, err := client.ListReservations(ctx)
 	if err != nil {
 		return err
@@ -125,13 +141,13 @@ func assertCancelReservation(ctx context.Context, client *Client, reservationID 
 
 	for _, reservation := range reservations {
 		if reservation.ReservationID == reservationID {
-			return bencherror.NewSimpleApplicationError("キャンセルされた予約が、予約一覧に列挙されています: %d", reservationID)
+			return bencherror.NewSimpleApplicationError("POST %s: キャンセルされた予約が、予約一覧に列挙されています: %d", endpointPath, reservationID)
 		}
 	}
 
 	_, err = client.ShowReservation(ctx, reservationID, StatusCodeOpt(http.StatusNotFound))
 	if err != nil {
-		return bencherror.NewSimpleApplicationError("キャンセルされた予約が、予約詳細で取得可能です: %d", reservationID)
+		return bencherror.NewSimpleApplicationError("POST %s: キャンセルされた予約が取得可能です ReservationID=%d", endpointPath, reservationID)
 	}
 
 	return nil

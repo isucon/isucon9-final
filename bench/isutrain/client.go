@@ -389,7 +389,7 @@ func (c *Client) SearchTrainSeats(ctx context.Context, date time.Time, trainClas
 
 	// NotFound、あるいはBadRequestの場合、座席を得ることはできない
 	if opts.autoAssert && (resp.StatusCode != http.StatusNotFound && resp.StatusCode != http.StatusBadRequest) {
-		if err := assertListTrainSeats(searchTrainSeatsResp); err != nil {
+		if err := assertSearchTrainSeats(ctx, endpointPath, searchTrainSeatsResp); err != nil {
 			return nil, failure.Wrap(err, failure.Messagef("GET %s: 座席検索の結果、座席が空になっています", endpointPath))
 		}
 	}
@@ -473,7 +473,7 @@ func (c *Client) Reserve(
 	}
 
 	if opts.autoAssert && resp.StatusCode == http.StatusOK {
-		if err := assertCanReserve(ctx, reserveReq, reserveResp); err != nil {
+		if err := assertCanReserve(ctx, endpointPath, reserveReq, reserveResp); err != nil {
 			return nil, err
 		}
 	}
@@ -483,7 +483,7 @@ func (c *Client) Reserve(
 	}
 
 	if opts.autoAssert {
-		if err := assertReserve(ctx, c, reserveReq, reserveResp); err != nil {
+		if err := assertReserve(ctx, endpointPath, c, reserveReq, reserveResp); err != nil {
 			return nil, err
 		}
 	}
@@ -547,6 +547,15 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 		return err
 	}
 	defer resp.Body.Close()
+
+	var commitReservationResp *CommitReservationResponse
+	if err := json.NewDecoder(resp.Body).Decode(&commitReservationResp); err != nil {
+		return failure.Wrap(err, failure.Messagef("POST %s: JSONのUnmarshalに失敗しました", endpointPath))
+	}
+
+	if err := assertCommitReservation(ctx, endpointPath, commitReservationResp); err != nil {
+		return err
+	}
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
 		return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
@@ -658,7 +667,7 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID int, opt .
 	}
 
 	if opts.autoAssert {
-		if err := assertCancelReservation(ctx, c, reservationID); err != nil {
+		if err := assertCancelReservation(ctx, endpointPath, c, reservationID); err != nil {
 			return err
 		}
 	}
