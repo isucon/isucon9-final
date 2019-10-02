@@ -241,6 +241,8 @@ func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID in
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
+	lgr := zap.S()
+
 	date, err := util.ParseISO8601(req.Date)
 	if err != nil {
 		return err
@@ -261,6 +263,20 @@ func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID in
 		Adult:      req.Adult,
 		Child:      req.Child,
 	}
+	lgr.Infow("予約キャッシュ追加",
+		"user", user,
+		"id", reservationID,
+		"date", date,
+		"departure", req.Departure,
+		"arrival", req.Arrival,
+		"trainClass", req.TrainClass,
+		"trainName", req.TrainName,
+		"carNum", req.CarNum,
+		"seatClass", req.SeatClass,
+		"seats", req.Seats,
+		"adult", req.Adult,
+		"child", req.Child,
+	)
 
 	return nil
 }

@@ -23,12 +23,28 @@ func assertSearchTrainSeats(ctx context.Context, endpointPath string, resp *Sear
 
 // 予約
 
-func assertReserve(ctx context.Context, endpointPath string, client *Client, reserveReq *ReserveRequest, resp *ReserveResponse) error {
+func assertReserve(ctx context.Context, endpointPath string, client *Client, req *ReserveRequest, resp *ReserveResponse) error {
+	lgr := zap.S()
 	if resp == nil {
 		return bencherror.NewSimpleCriticalError("POST %s: レスポンスが不正です: %+v", endpointPath, resp)
 	}
-	if resp.ReservationID == 0 {
-		return bencherror.NewSimpleApplicationError("POST %s: レスポンスで不正な予約IDが採番されています: %d", endpointPath, resp.ReservationID)
+
+	cache, ok := ReservationCache.Reservation(resp.ReservationID)
+	if !ok {
+		bencherror.SystemErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: 予約キャッシュの取得に失敗: ReservationID=%d", endpointPath, resp.ReservationID))
+		return nil
+	}
+
+	amount, err := cache.Amount()
+	if err != nil {
+		bencherror.SystemErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: 予約のamount取得に失敗: resp.IsOK=%v, resp.ReservationID=%d, resp.Amount=%d", endpointPath, resp.IsOk, resp.ReservationID, resp.Amount))
+		return nil
+	}
+
+	// レスポンスに含まれるamountは正しいか
+	if resp.Amount != amount {
+		lgr.Warnf("amountが不正になった!? reservationID=%d, want=%d, got=%d", resp.ReservationID, amount, resp.Amount)
+		return bencherror.NewSimpleApplicationError("POST %s: amountが不正です: want=%d, got=%d", endpointPath, amount, resp.Amount)
 	}
 
 	reserveGrp := &errgroup.Group{}
@@ -41,20 +57,8 @@ func assertReserve(ctx context.Context, endpointPath string, client *Client, res
 
 		for _, reservation := range reservations {
 			if reservation.ReservationID == resp.ReservationID {
-				// Amountのチェック
-				cache, ok := ReservationCache.Reservation(reservation.ReservationID)
-				if !ok {
-					return bencherror.NewSimpleCriticalError("POST %s: benchのキャッシュにない予約情報が存在します", endpointPath)
-				}
-
-				amount, err := cache.Amount()
-				if err != nil {
-					bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約 %dの amount取得に失敗しました", endpointPath, reservation.ReservationID))
-					return nil
-				}
-
 				if amount != reservation.Amount {
-					return bencherror.NewSimpleCriticalError("POST %s: 予約 %dの amountが一致しません: want=%d, got=%d", endpointPath, reservation.ReservationID, amount, reservation.Amount)
+					return bencherror.NewSimpleApplicationError("POST %s: 予約 %dの amountが不正です: want=%d, got=%d", endpointPath, reservation.ReservationID, amount, reservation.Amount)
 				}
 
 				return nil
@@ -68,18 +72,6 @@ func assertReserve(ctx context.Context, endpointPath string, client *Client, res
 		reservation, err := client.ShowReservation(ctx, resp.ReservationID)
 		if err != nil {
 			return bencherror.NewCriticalError(err, "POST %s: 予約した内容を予約確認画面で確認できませんでした", endpointPath)
-		}
-
-		// Amountのチェック
-		cache, ok := ReservationCache.Reservation(reservation.ReservationID)
-		if !ok {
-			return bencherror.NewSimpleCriticalError("POST %s: benchのキャッシュにない予約情報が存在します", endpointPath)
-		}
-
-		amount, err := cache.Amount()
-		if err != nil {
-			bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "POST %s: 予約 %dの amount取得に失敗しました", endpointPath, reservation.ReservationID))
-			return nil
 		}
 
 		if amount != reservation.Amount {
