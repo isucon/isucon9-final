@@ -481,8 +481,7 @@ func (c *Client) Reserve(
 	if resp.StatusCode == http.StatusOK {
 		ReservationCache.Add(c.loginUser, reserveReq, reserveResp.ReservationID)
 	}
-
-	if opts.autoAssert {
+	if opts.autoAssert && resp.StatusCode == http.StatusOK {
 		if err := assertReserve(ctx, endpointPath, c, reserveReq, reserveResp); err != nil {
 			return nil, err
 		}

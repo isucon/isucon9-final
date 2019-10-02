@@ -65,7 +65,7 @@ func assertReserve(ctx context.Context, endpointPath string, client *Client, req
 			}
 		}
 
-		return bencherror.NewSimpleCriticalError("予約した内容を予約一覧画面で確認できませんでした")
+		return bencherror.NewSimpleCriticalError("POST %d: 予約した内容を予約一覧画面で確認できませんでした", endpointPath)
 	})
 	// 予約確認できるか
 	reserveGrp.Go(func() error {

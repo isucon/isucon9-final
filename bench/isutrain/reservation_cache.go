@@ -53,8 +53,9 @@ type ReservationCacheEntry struct {
 // Fare は大人１人あたりの運賃を算出します
 func (r *ReservationCacheEntry) Fare() (int, error) {
 	var (
+		date              = time.Date(r.Date.Year(), r.Date.Month(), r.Date.Day(), 0, 0, 0, 0, time.UTC)
 		distanceFare, err = isutraindb.GetDistanceFare(r.Departure, r.Arrival)
-		fareMultiplier    = isutraindb.GetFareMultiplier(r.TrainClass, r.SeatClass, r.Date)
+		fareMultiplier    = isutraindb.GetFareMultiplier(r.TrainClass, r.SeatClass, date)
 	)
 	if err != nil {
 		return -1, err

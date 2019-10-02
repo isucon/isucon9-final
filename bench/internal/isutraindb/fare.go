@@ -1,7 +1,6 @@
 package isutraindb
 
 import (
-	"log"
 	"time"
 
 	"go.uber.org/zap"
@@ -50,25 +49,23 @@ func GetFareMultiplier(trainClass, seatClass string, useAt time.Time) float64 {
 	// FIXME: ok チェック
 	fareMultiplier := fareMultiplierMap[FareMultiplierQuery{TrainClass: trainClass, SeatClass: seatClass}]
 
-	log.Printf("seasonMultiplier算出: useAt=%s", useAt.String())
-
 	var seasonMultiplier float64
 	switch {
-	case useAt.Equal(seasons[0]) || (useAt.After(seasons[0]) && useAt.Before(seasons[1])):
+	case (useAt.Equal(seasons[0]) || useAt.After(seasons[0])) && useAt.Before(seasons[1]):
 		seasonMultiplier = 5.0
-	case useAt.Equal(seasons[1]) || (useAt.After(seasons[1]) && useAt.Before(seasons[2])):
+	case (useAt.Equal(seasons[1]) || useAt.After(seasons[1])) && useAt.Before(seasons[2]):
 		seasonMultiplier = 1.0
-	case useAt.Equal(seasons[2]) || (useAt.After(seasons[2]) && useAt.Before(seasons[3])):
+	case (useAt.Equal(seasons[2]) || useAt.After(seasons[2])) && useAt.Before(seasons[3]):
 		seasonMultiplier = 3.0
-	case useAt.Equal(seasons[3]) || (useAt.After(seasons[3]) && useAt.Before(seasons[4])):
+	case (useAt.Equal(seasons[3]) || useAt.After(seasons[3])) && useAt.Before(seasons[4]):
 		seasonMultiplier = 1.0
-	case useAt.Equal(seasons[4]) || (useAt.After(seasons[4]) && useAt.Before(seasons[5])):
+	case (useAt.Equal(seasons[4]) || useAt.After(seasons[4])) && useAt.Before(seasons[5]):
 		seasonMultiplier = 5.0
-	case useAt.Equal(seasons[5]) || (useAt.After(seasons[5]) && useAt.Before(seasons[6])):
+	case (useAt.Equal(seasons[5]) || useAt.After(seasons[5])) && useAt.Before(seasons[6]):
 		seasonMultiplier = 1.0
-	case useAt.Equal(seasons[6]) || (useAt.After(seasons[6]) && useAt.Before(seasons[7])):
+	case (useAt.Equal(seasons[6]) || useAt.After(seasons[6])) && useAt.Before(seasons[7]):
 		seasonMultiplier = 3.0
-	case useAt.Equal(seasons[7]) || (useAt.After(seasons[7]) && useAt.Before(seasons[8])):
+	case (useAt.Equal(seasons[7]) || useAt.After(seasons[7])) && useAt.Before(seasons[8]):
 		seasonMultiplier = 1.0
 	case useAt.Equal(seasons[8]) || useAt.After(seasons[8]):
 		seasonMultiplier = 5.0
