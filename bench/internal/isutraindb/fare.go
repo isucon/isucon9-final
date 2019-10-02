@@ -1,6 +1,7 @@
 package isutraindb
 
 import (
+	"log"
 	"time"
 
 	"go.uber.org/zap"
@@ -49,6 +50,8 @@ func GetFareMultiplier(trainClass, seatClass string, useAt time.Time) float64 {
 	// FIXME: ok チェック
 	fareMultiplier := fareMultiplierMap[FareMultiplierQuery{TrainClass: trainClass, SeatClass: seatClass}]
 
+	log.Printf("seasonMultiplier算出: useAt=%s", useAt.String())
+
 	var seasonMultiplier float64
 	switch {
 	case useAt.Equal(seasons[0]) || (useAt.After(seasons[0]) && useAt.Before(seasons[1])):
@@ -67,7 +70,7 @@ func GetFareMultiplier(trainClass, seatClass string, useAt time.Time) float64 {
 		seasonMultiplier = 3.0
 	case useAt.Equal(seasons[7]) || (useAt.After(seasons[7]) && useAt.Before(seasons[8])):
 		seasonMultiplier = 1.0
-	case useAt.Equal(seasons[8]):
+	case useAt.Equal(seasons[8]) || useAt.After(seasons[8]):
 		seasonMultiplier = 5.0
 	}
 

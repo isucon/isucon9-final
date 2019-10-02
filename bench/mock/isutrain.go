@@ -324,17 +324,18 @@ func (m *Mock) Reserve(req *http.Request) ([]byte, int) {
 
 	// 複数の座席指定で予約するかもしれない
 	// なので、予約には複数の座席予約が紐づいている
-	var reservationReq *isutrain.ReserveRequest
-	if err := json.Unmarshal(b, &reservationReq); err != nil {
+	var reserveReq *isutrain.ReserveRequest
+	if err := json.Unmarshal(b, &reserveReq); err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	if len(reservationReq.TrainClass) == 0 || len(reservationReq.TrainName) == 0 {
+	if len(reserveReq.TrainClass) == 0 || len(reserveReq.TrainName) == 0 {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
 	b, err = json.Marshal(&isutrain.ReserveResponse{
 		ReservationID: 1111,
+		Amount:        20250,
 		IsOk:          true,
 	})
 	if err != nil {
@@ -377,8 +378,30 @@ func (m *Mock) CancelReservation(req *http.Request) ([]byte, int) {
 // ListReservations はアカウントにひもづく予約履歴を返します
 func (m *Mock) ListReservations(req *http.Request) ([]byte, int) {
 	<-time.After(m.ListReservationDelay)
-	b, err := json.Marshal([]*isutrain.ReservationResponse{
-		&isutrain.ReservationResponse{ReservationID: 1111, Amount: 20250},
+	b, err := json.Marshal(isutrain.ListReservationsResponse{
+		&isutrain.Reservation{
+			ReservationID: 1111,
+			Date:          util.FormatISO8601(time.Now()),
+			TrainClass:    "遅いやつ",
+			TrainName:     "1号",
+			CarNumber:     4,
+			SeatClass:     "premium",
+			Amount:        20250,
+			Adult:         1,
+			Child:         1,
+			Departure:     "東京",
+			Arrival:       "大阪",
+			DepartureTime: util.FormatISO8601(time.Now()),
+			ArrivalTime:   util.FormatISO8601(time.Now()),
+			Seats: []*isutrain.ReservationSeat{
+				&isutrain.ReservationSeat{
+					ReservationID: 1111,
+					CarNumber:     4,
+					SeatRow:       1,
+					SeatColumn:    "A",
+				},
+			},
+		},
 	})
 	if err != nil {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
@@ -394,9 +417,28 @@ func (m *Mock) ShowReservation(req *http.Request) ([]byte, int) {
 		return []byte(http.StatusText(http.StatusBadRequest)), http.StatusBadRequest
 	}
 
-	b, err := json.Marshal(&isutrain.ShowReservationResponse{
+	b, err := json.Marshal(&isutrain.Reservation{
 		ReservationID: int(reservationID),
+		Date:          util.FormatISO8601(time.Now()),
+		TrainClass:    "遅いやつ",
+		TrainName:     "1号",
+		CarNumber:     4,
+		SeatClass:     "premium",
 		Amount:        20250,
+		Adult:         1,
+		Child:         1,
+		Departure:     "東京",
+		Arrival:       "大阪",
+		DepartureTime: util.FormatISO8601(time.Now()),
+		ArrivalTime:   util.FormatISO8601(time.Now()),
+		Seats: []*isutrain.ReservationSeat{
+			&isutrain.ReservationSeat{
+				ReservationID: int(reservationID),
+				CarNumber:     4,
+				SeatRow:       1,
+				SeatColumn:    "A",
+			},
+		},
 	})
 
 	return b, http.StatusOK

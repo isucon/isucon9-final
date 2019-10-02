@@ -19,7 +19,7 @@ func assertListTrainSeats(resp *SearchTrainSeatsResponse) error {
 	return nil
 }
 
-func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveRequest, resp *ReservationResponse) error {
+func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveRequest, resp *ReserveResponse) error {
 	if resp == nil {
 		return bencherror.NewSimpleCriticalError("予約のレスポンスが不正です: %+v", resp)
 	}
@@ -49,7 +49,7 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 					return nil
 				}
 
-				if int64(amount) != reservation.Amount {
+				if amount != reservation.Amount {
 					return bencherror.NewSimpleCriticalError("予約一覧画面における、予約 %dの amountが一致しません: want=%d, got=%d", reservation.ReservationID, amount, reservation.Amount)
 				}
 
@@ -78,7 +78,7 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 			return nil
 		}
 
-		if int64(amount) != reservation.Amount {
+		if amount != reservation.Amount {
 			return bencherror.NewSimpleCriticalError("予約確認画面における、予約 %dの amountが一致しません: want=%d, got=%d", reservation.ReservationID, amount, reservation.Amount)
 		}
 
@@ -92,7 +92,7 @@ func assertReserve(ctx context.Context, client *Client, reserveReq *ReserveReque
 	return nil
 }
 
-func assertCanReserve(ctx context.Context, req *ReserveRequest, resp *ReservationResponse) error {
+func assertCanReserve(ctx context.Context, req *ReserveRequest, resp *ReserveResponse) error {
 	lgr := zap.S()
 
 	canReserve, err := ReservationCache.CanReserve(req)

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"math"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -410,7 +409,7 @@ func (c *Client) Reserve(
 	carNum int,
 	child, adult int,
 	opt ...ClientOption,
-) (*ReservationResponse, error) {
+) (*ReserveResponse, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.Reserve)
@@ -431,16 +430,18 @@ func (c *Client) Reserve(
 	lgr := zap.S()
 
 	reserveReq := &ReserveRequest{
-		TrainClass: trainClass,
-		TrainName:  trainName,
-		SeatClass:  seatClass,
-		Seats:      seats,
-		Departure:  departure,
-		Arrival:    arrival,
-		Date:       useAt,
-		CarNum:     carNum,
-		Child:      child,
-		Adult:      adult,
+		Date:          util.FormatISO8601(useAt),
+		TrainName:     trainName,
+		TrainClass:    trainClass,
+		CarNum:        carNum,
+		IsSmokingSeat: false, // FIXME: 喫煙席を選べるように
+		SeatClass:     seatClass,
+		Departure:     departure,
+		Arrival:       arrival,
+		Child:         child,
+		Adult:         adult,
+		Column:        "", // FIXME: カラムを選べるように
+		Seats:         seats,
 	}
 
 	b, err := json.Marshal(reserveReq)
@@ -465,24 +466,24 @@ func (c *Client) Reserve(
 	}
 	defer resp.Body.Close()
 
-	var reservation *ReservationResponse
-	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
+	var reserveResp *ReserveResponse
+	if err := json.NewDecoder(resp.Body).Decode(&reserveResp); err != nil {
 		lgr.Warnf("予約リクエストのUnmarshal失敗: %+v", err)
 		return nil, failure.Wrap(err, failure.Messagef("POST %s: JSONのUnmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
 	if opts.autoAssert && resp.StatusCode == http.StatusOK {
-		if err := assertCanReserve(ctx, reserveReq, reservation); err != nil {
+		if err := assertCanReserve(ctx, reserveReq, reserveResp); err != nil {
 			return nil, err
 		}
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		ReservationCache.Add(c.loginUser, reserveReq, reservation.ReservationID)
+		ReservationCache.Add(c.loginUser, reserveReq, reserveResp.ReservationID)
 	}
 
 	if opts.autoAssert {
-		if err := assertReserve(ctx, c, reserveReq, reservation); err != nil {
+		if err := assertReserve(ctx, c, reserveReq, reserveResp); err != nil {
 			return nil, err
 		}
 	}
@@ -491,22 +492,23 @@ func (c *Client) Reserve(
 		return nil, failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
-	if len(reserveReq.Seats) == 0 {
-		// 曖昧予約の場合、予約できた座席で隣り合う数が多いほど加点される
-		var (
-			weight     = float64(endpoint.GetWeight(endpoint.ListTrainSeats))
-			multiplier = reservation.Seats.GetNeighborSeatsMultiplier()
-		)
-		endpoint.AddExtraScore(endpoint.Reserve, int64(math.Round(weight*multiplier)))
-	} else {
-		endpoint.IncPathCounter(endpoint.Reserve)
-	}
+	// FIXME: webappが座席を返してこないので、ボーナス付与は一旦保留
+	// if len(reserveReq.Seats) == 0 {
+	// 	// リクエストに席を指定しない曖昧予約の場合、予約できた座席で隣り合う数が多いほど加点される
+	// 	var (
+	// 		weight     = float64(endpoint.GetWeight(endpoint.ListTrainSeats))
+	// 		multiplier = reserveResp.Seats.GetNeighborSeatsMultiplier()
+	// 	)
+	// 	endpoint.AddExtraScore(endpoint.Reserve, int64(math.Round(weight*multiplier)))
+	// } else {
+	endpoint.IncPathCounter(endpoint.Reserve)
+	// }
 
 	if SeatAvailability(seatClass) != SaNonReserved {
 		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
 	}
 
-	return reservation, nil
+	return reserveResp, nil
 }
 
 func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardToken string, opt ...ClientOption) error {
@@ -559,7 +561,7 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 	return nil
 }
 
-func (c *Client) ListReservations(ctx context.Context, opt ...ClientOption) ([]*ReservationResponse, error) {
+func (c *Client) ListReservations(ctx context.Context, opt ...ClientOption) (ListReservationsResponse, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.ListReservations)
@@ -567,30 +569,30 @@ func (c *Client) ListReservations(ctx context.Context, opt ...ClientOption) ([]*
 
 	req, err := c.sess.newRequest(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
-		return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
+		return ListReservationsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
 	}
 
 	resp, err := c.sess.do(req)
 	if err != nil {
-		return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
+		return ListReservationsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: リクエストに失敗しました", endpointPath))
 	}
 	defer resp.Body.Close()
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
-		return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode))
+		return ListReservationsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode))
 	}
 
-	var reservations []*ReservationResponse
-	if err := json.NewDecoder(resp.Body).Decode(&reservations); err != nil {
-		return []*ReservationResponse{}, failure.Wrap(err, failure.Messagef("GET %s: 予約のMarshalに失敗しました", endpointPath))
+	var listReservationResp ListReservationsResponse
+	if err := json.NewDecoder(resp.Body).Decode(&listReservationResp); err != nil {
+		return ListReservationsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: 予約のMarshalに失敗しました", endpointPath))
 	}
 
 	endpoint.IncPathCounter(endpoint.ListReservations)
 
-	return reservations, nil
+	return listReservationResp, nil
 }
 
-func (c *Client) ShowReservation(ctx context.Context, reservationID int, opt ...ClientOption) (*ReservationResponse, error) {
+func (c *Client) ShowReservation(ctx context.Context, reservationID int, opt ...ClientOption) (ShowReservationResponse, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetDynamicPath(endpoint.ShowReservation, reservationID)
@@ -614,14 +616,14 @@ func (c *Client) ShowReservation(ctx context.Context, reservationID int, opt ...
 		return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode))
 	}
 
-	var reservation *ReservationResponse
-	if err := json.NewDecoder(resp.Body).Decode(&reservation); err != nil {
+	var showReservationResp ShowReservationResponse
+	if err := json.NewDecoder(resp.Body).Decode(&showReservationResp); err != nil {
 		return nil, failure.Wrap(err, failure.Messagef("GET %s: Unmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
 	endpoint.IncDynamicPathCounter(endpoint.ShowReservation)
 
-	return reservation, nil
+	return showReservationResp, nil
 }
 
 func (c *Client) CancelReservation(ctx context.Context, reservationID int, opt ...ClientOption) error {

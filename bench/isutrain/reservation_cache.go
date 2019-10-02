@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
+	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
@@ -47,15 +48,13 @@ type ReservationCacheEntry struct {
 	Seats     TrainSeats
 
 	Adult, Child int
-
-	UseAt time.Time
 }
 
 // Fare は大人１人あたりの運賃を算出します
 func (r *ReservationCacheEntry) Fare() (int, error) {
 	var (
 		distanceFare, err = isutraindb.GetDistanceFare(r.Departure, r.Arrival)
-		fareMultiplier    = isutraindb.GetFareMultiplier(r.TrainClass, r.SeatClass, r.UseAt)
+		fareMultiplier    = isutraindb.GetFareMultiplier(r.TrainClass, r.SeatClass, r.Date)
 	)
 	if err != nil {
 		return -1, err
@@ -68,7 +67,7 @@ func (r *ReservationCacheEntry) Fare() (int, error) {
 		"arrival", r.Arrival,
 		"train_class", r.TrainClass,
 		"seat_class", r.SeatClass,
-		"use_at", r.UseAt,
+		"use_at", r.Date,
 	)
 	lgr.Infow("運賃",
 		"distance_fare", distanceFare,
@@ -194,9 +193,15 @@ func (r *reservationCache) CanReserve(req *ReserveRequest) (bool, error) {
 
 	eg := errgroup.Group{}
 	for _, r := range r.reservations {
-		reservation := r
+		var (
+			reservation = r
+			date, err   = util.ParseISO8601(req.Date)
+		)
+		if err != nil {
+			return false, nil
+		}
 		eg.Go(func() error {
-			if !req.Date.Equal(reservation.Date) {
+			if !date.Equal(reservation.Date) {
 				return nil
 			}
 			if req.TrainClass != reservation.TrainClass || req.TrainName != reservation.TrainName {
@@ -232,15 +237,20 @@ func (r *reservationCache) CanReserve(req *ReserveRequest) (bool, error) {
 	return true, nil
 }
 
-func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID int) {
+func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID int) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
+	date, err := util.ParseISO8601(req.Date)
+	if err != nil {
+		return err
+	}
 
 	// TODO: webappから意図的にreservationIDを細工して変に整合性つけることができないか考える
 	r.reservations[reservationID] = &ReservationCacheEntry{
 		User:       user,
 		ID:         reservationID,
-		Date:       req.Date,
+		Date:       date,
 		Departure:  req.Departure,
 		Arrival:    req.Arrival,
 		TrainClass: req.TrainClass,
@@ -250,8 +260,9 @@ func (r *reservationCache) Add(user *User, req *ReserveRequest, reservationID in
 		Seats:      req.Seats,
 		Adult:      req.Adult,
 		Child:      req.Child,
-		UseAt:      req.Date,
 	}
+
+	return nil
 }
 
 func (r *reservationCache) Commit(reservationID int) error {

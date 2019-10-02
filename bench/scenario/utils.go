@@ -25,7 +25,7 @@ func registerUserAndLogin(ctx context.Context, client *isutrain.Client, user *is
 	return nil
 }
 
-func createSimpleReservation(ctx context.Context, client *isutrain.Client, user *isutrain.User, useAt time.Time, departure, arrival, train_class string, adult, child int) (*isutrain.ReservationResponse, error) {
+func createSimpleReservation(ctx context.Context, client *isutrain.Client, user *isutrain.User, useAt time.Time, departure, arrival, train_class string, adult, child int) (*isutrain.ReserveResponse, error) {
 	/* 予約を作成する */
 
 	// lgr := zap.S()
