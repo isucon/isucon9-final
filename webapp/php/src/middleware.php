@@ -8,13 +8,13 @@ return function (App $app) {
     // session
     $app->add(
         new \Slim\Middleware\Session([
-            'name' => 'session-isucari',
+            'name' => 'session_isutrain',
         ])
     );
 
     // logging
     $app->add(function (Request $request, Response $response, callable $next) {
-        $route = $request->getAttribute('route');
+        // $route = $request->getAttribute('route');
         //$this->logger->info($request->getMethod() . ' ' . $route->getPattern(), [$route->getArguments()]);
         $response = $next($request, $response);
         $this->logger->info($response->getStatusCode() . ' ' . $response->getReasonPhrase(), [(string)$response->getBody()]);

@@ -1,9 +1,7 @@
 <?php
 
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Slim\Http\StatusCode;
 
 return function (App $app) {
     $container = $app->getContainer();
@@ -29,5 +27,9 @@ return function (App $app) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         return $pdo;
+    };
+
+    $container['session'] = function ($c) {
+        return new \SlimSession\Helper();
     };
 };
