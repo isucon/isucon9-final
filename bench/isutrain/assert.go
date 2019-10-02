@@ -44,7 +44,7 @@ func assertReserve(ctx context.Context, endpointPath string, client *Client, req
 	// レスポンスに含まれるamountは正しいか
 	if resp.Amount != amount {
 		lgr.Warnf("amountが不正になった!? reservationID=%d, want=%d, got=%d", resp.ReservationID, amount, resp.Amount)
-		return bencherror.NewSimpleApplicationError("POST %s: amountが不正です: want=%d, got=%d", endpointPath, amount, resp.Amount)
+		return bencherror.NewSimpleApplicationError("POST %s: 予約 %dの amountが不正です: trainClass=%s,seatClass=%s,date=%s: want=%d, got=%d", endpointPath, resp.ReservationID, req.TrainClass, req.SeatClass, req.Date, amount, resp.Amount)
 	}
 
 	reserveGrp := &errgroup.Group{}
@@ -58,7 +58,7 @@ func assertReserve(ctx context.Context, endpointPath string, client *Client, req
 		for _, reservation := range reservations {
 			if reservation.ReservationID == resp.ReservationID {
 				if amount != reservation.Amount {
-					return bencherror.NewSimpleApplicationError("POST %s: 予約 %dの amountが不正です: want=%d, got=%d", endpointPath, reservation.ReservationID, amount, reservation.Amount)
+					return bencherror.NewSimpleApplicationError("POST %s: 予約 %dの amountが不正です: trainClass=%s,seatClass=%s,date=%s: want=%d, got=%d", endpointPath, reservation.ReservationID, req.TrainClass, req.SeatClass, req.Date, amount, reservation.Amount)
 				}
 
 				return nil
