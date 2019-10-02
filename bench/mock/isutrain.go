@@ -251,8 +251,8 @@ func (m *Mock) SearchTrains(req *http.Request) ([]byte, int) {
 	return b, http.StatusOK
 }
 
-// ListTrainSeats は列車の席一覧を返します
-func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
+// SearchTrainSeats は列車の席一覧を返します
+func (m *Mock) SearchTrainSeats(req *http.Request) ([]byte, int) {
 	<-time.After(m.ListTrainSeatsDelay)
 	q := req.URL.Query()
 	if q == nil {
@@ -284,13 +284,25 @@ func (m *Mock) ListTrainSeats(req *http.Request) ([]byte, int) {
 	date = date.In(jst)
 
 	// 適当な席を返す
-	b, err := json.Marshal(&isutrain.TrainSeatSearchResponse{
+	b, err := json.Marshal(&isutrain.SearchTrainSeatsResponse{
 		Date:       "2006/01/02",
 		TrainClass: "最速",
 		TrainName:  "dummy",
 		CarNumber:  1,
 		Seats: isutrain.TrainSeats{
-			&isutrain.TrainSeat{},
+			&isutrain.TrainSeat{
+				Row:           1,
+				Column:        "A",
+				Class:         "premium",
+				IsSmokingSeat: true,
+				IsOccupied:    false,
+			},
+		},
+		Cars: isutrain.TrainCars{
+			&isutrain.TrainCar{
+				CarNumber: 1,
+				SeatClass: "premium",
+			},
 		},
 	})
 	if err != nil {

@@ -22,62 +22,32 @@ type (
 	SearchTrainsResponse []*Train
 )
 
-type TrainCar struct {
-	CarNumber int    `json:"car_number"`
-	SeatClass string `json:"seat_class"`
-}
-
-type TrainCars []*TrainCar
-
-type TrainSeatSearchResponse struct {
-	Date       string     `json:"date"`
-	TrainClass string     `json:"train_class"`
-	TrainName  string     `json:"train_name"`
-	CarNumber  int        `json:"car_number"`
-	Seats      TrainSeats `json:"seats"`
-}
-
-type TrainSeatColumn string
-
-const (
-	ColumnA TrainSeatColumn = "A"
-	ColumnB                 = "B"
-	ColumnC                 = "C"
-	ColumnD                 = "D"
-	ColumnE                 = "E"
-)
-
-func (c TrainSeatColumn) Int() int {
-	switch c {
-	case ColumnA:
-		return 0
-	case ColumnB:
-		return 1
-	case ColumnC:
-		return 2
-	case ColumnD:
-		return 3
-	case ColumnE:
-		return 4
-	default:
-		return 100
+// /api/train/seats のレスポンス形式
+type (
+	SearchTrainSeatsResponse struct {
+		Date       string     `json:"date"`
+		TrainClass string     `json:"train_class"`
+		TrainName  string     `json:"train_name"`
+		CarNumber  int        `json:"car_number"`
+		Seats      TrainSeats `json:"seats"`
+		Cars       TrainCars  `json:"cars"`
 	}
-}
 
-func (c TrainSeatColumn) IsNeighbor(c2 TrainSeatColumn) bool {
-	return math.Abs(float64(c.Int()-c2.Int())) == 1.0
-}
+	TrainSeats []*TrainSeat
+	TrainSeat  struct {
+		Row           int    `json:"row"`
+		Column        string `json:"column"`
+		Class         string `json:"class"`
+		IsSmokingSeat bool   `json:"is_smoking_seat,omitempty"`
+		IsOccupied    bool   `json:"is_occupied,omitempty"`
+	}
 
-type TrainSeat struct {
-	ReservationID int `json:"reservation_id,omitempty"`
-	CarNumber     int `json:"car_number,omitempty"`
-	Row int `json:"row"`
-	Column string `json:"column"`
-	IsSmokingSeat bool `json:"is_smoking_seat,omitempty"`
-	IsOccupied bool `json:"is_occupied,omitempty"`
-}
-
-type TrainSeats []*TrainSeat
+	TrainCars []*TrainCar
+	TrainCar  struct {
+		CarNumber int    `json:"car_number"`
+		SeatClass string `json:"seat_class"`
+	}
+)
 
 func (seats TrainSeats) GetNeighborSeatsMultiplier() float64 {
 	m := map[int][]TrainSeatColumn{}
@@ -115,6 +85,37 @@ func (seats TrainSeats) GetNeighborSeatsMultiplier() float64 {
 	default:
 		return 1
 	}
+}
+
+type TrainSeatColumn string
+
+const (
+	ColumnA TrainSeatColumn = "A"
+	ColumnB                 = "B"
+	ColumnC                 = "C"
+	ColumnD                 = "D"
+	ColumnE                 = "E"
+)
+
+func (c TrainSeatColumn) Int() int {
+	switch c {
+	case ColumnA:
+		return 0
+	case ColumnB:
+		return 1
+	case ColumnC:
+		return 2
+	case ColumnD:
+		return 3
+	case ColumnE:
+		return 4
+	default:
+		return 100
+	}
+}
+
+func (c TrainSeatColumn) IsNeighbor(c2 TrainSeatColumn) bool {
+	return math.Abs(float64(c.Int()-c2.Int())) == 1.0
 }
 
 type SeatAvailability string

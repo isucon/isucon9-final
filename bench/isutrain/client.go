@@ -330,7 +330,7 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, tr
 	return searchTrainsResp, nil
 }
 
-func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass, trainName string, carNum int, departure, arrival string, opt ...ClientOption) (*TrainSeatSearchResponse, error) {
+func (c *Client) SearchTrainSeats(ctx context.Context, date time.Time, trainClass, trainName string, carNum int, departure, arrival string, opt ...ClientOption) (*SearchTrainSeatsResponse, error) {
 	opts := newClientOptions(http.StatusOK, opt...)
 	u := *c.baseURL
 	endpointPath := endpoint.GetPath(endpoint.ListTrainSeats)
@@ -382,22 +382,22 @@ func (c *Client) ListTrainSeats(ctx context.Context, date time.Time, trainClass,
 		return nil, failure.Wrap(err, failure.Messagef("GET %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
-	var listTrainSeatsResp *TrainSeatSearchResponse
-	if err := json.NewDecoder(resp.Body).Decode(&listTrainSeatsResp); err != nil {
+	var searchTrainSeatsResp *SearchTrainSeatsResponse
+	if err := json.NewDecoder(resp.Body).Decode(&searchTrainSeatsResp); err != nil {
 		lgr.Warnf("座席列挙Unmarshal失敗: %+v", err)
 		return nil, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
 	// NotFound、あるいはBadRequestの場合、座席を得ることはできない
 	if opts.autoAssert && (resp.StatusCode != http.StatusNotFound && resp.StatusCode != http.StatusBadRequest) {
-		if err := assertListTrainSeats(listTrainSeatsResp); err != nil {
+		if err := assertListTrainSeats(searchTrainSeatsResp); err != nil {
 			return nil, failure.Wrap(err, failure.Messagef("GET %s: 座席検索の結果、座席が空になっています", endpointPath))
 		}
 	}
 
 	endpoint.IncPathCounter(endpoint.ListTrainSeats)
 
-	return listTrainSeatsResp, nil
+	return searchTrainSeatsResp, nil
 }
 
 func (c *Client) Reserve(

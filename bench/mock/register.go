@@ -53,7 +53,7 @@ func Register() (*Mock, error) {
 		return httpmock.NewBytesResponse(status, body), nil
 	})
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.ListTrainSeats)), func(req *http.Request) (*http.Response, error) {
-		body, status := isutrainMock.ListTrainSeats(req)
+		body, status := isutrainMock.SearchTrainSeats(req)
 		return httpmock.NewBytesResponse(status, body), nil
 	})
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s%s", baseURL, endpoint.GetPath(endpoint.ListReservations)), func(req *http.Request) (*http.Response, error) {

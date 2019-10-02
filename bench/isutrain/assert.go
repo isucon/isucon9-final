@@ -9,7 +9,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func assertListTrainSeats(resp *TrainSeatSearchResponse) error {
+func assertListTrainSeats(resp *SearchTrainSeatsResponse) error {
 	if resp == nil {
 		return bencherror.NewSimpleCriticalError("座席検索のレスポンスが不正です: %+v", resp)
 	}

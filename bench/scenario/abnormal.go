@@ -75,7 +75,7 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := 5
-	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.SearchTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, "東京", "大阪")
 	if err != nil {
@@ -131,7 +131,7 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "reserved")
-	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.SearchTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {

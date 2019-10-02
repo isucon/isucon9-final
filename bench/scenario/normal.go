@@ -59,7 +59,7 @@ func NormalScenario(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "premium")
-	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.SearchTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
@@ -157,7 +157,7 @@ func NormalCancelScenario(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := xrandom.GetRandomCarNumber(train.Class, "reserved")
-	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.SearchTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {

@@ -119,7 +119,7 @@ func AttackSearchScenario(ctx context.Context) error {
 					train := trains[trainIdx]
 					carNum := 8
 
-					_, err = client.ListTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival)
+					_, err = client.SearchTrainSeats(listTrainSeatsCtx, useAt, train.Class, train.Name, carNum, train.Departure, train.Arrival)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 					}
@@ -237,7 +237,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 	trainIdx := rand.Intn(len(trains))
 	train := trains[trainIdx]
 	carNum := 9
-	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
+	listTrainSeatsResp, err := client.SearchTrainSeats(ctx,
 		useAt,
 		train.Class, train.Name, carNum, departure, arrival)
 	if err != nil {
