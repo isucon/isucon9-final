@@ -609,7 +609,7 @@ class Service
     public function trainSeatsHandler(Request $request, Response $response, array $args)
     {
         try {
-            $date = new DateTime($request->getParam("use_at", ""));
+            $date = DateTime::createFromFormat('Y-m-d\TH:i:s+', $request->getParam("date", ""));
         } catch (\Exception $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
         }
