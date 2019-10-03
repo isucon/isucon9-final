@@ -349,7 +349,6 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 	// 料金計算メモ
 	// 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
 	//
-
 	var err error
 	var fromStation, toStation Station
 
@@ -394,10 +393,9 @@ func fareCalc(date time.Time, depStation int, destStation int, trainClass, seatC
 	}
 
 	selectedFare := fareList[0]
-
-	date = time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, jst)
+	date = time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC)
 	for _, fare := range fareList {
-		if fare.StartDate.Before(date) {
+		if !date.Before(fare.StartDate) {
 			fmt.Println(fare.StartDate, fare.FareMultiplier)
 			selectedFare = fare
 		}
