@@ -324,6 +324,12 @@ func (c *Client) SearchTrains(ctx context.Context, useAt time.Time, from, to, tr
 		return SearchTrainsResponse{}, failure.Wrap(err, failure.Messagef("GET %s: レスポンスのUnmarshalに失敗しました", endpointPath), failureCtx)
 	}
 
+	if opts.autoAssert && resp.StatusCode == http.StatusOK {
+		if err := assertSearchTrains(ctx, endpointPath, searchTrainsResp); err != nil {
+			return nil, err
+		}
+	}
+
 	endpoint.IncPathCounter(endpoint.SearchTrains)
 
 	return searchTrainsResp, nil
@@ -388,9 +394,9 @@ func (c *Client) SearchTrainSeats(ctx context.Context, date time.Time, trainClas
 	}
 
 	// NotFound、あるいはBadRequestの場合、座席を得ることはできない
-	if opts.autoAssert && (resp.StatusCode != http.StatusNotFound && resp.StatusCode != http.StatusBadRequest) {
+	if opts.autoAssert && resp.StatusCode == http.StatusOK {
 		if err := assertSearchTrainSeats(ctx, endpointPath, searchTrainSeatsResp); err != nil {
-			return nil, failure.Wrap(err, failure.Messagef("GET %s: 座席検索の結果、座席が空になっています", endpointPath))
+			return nil, err
 		}
 	}
 
@@ -665,8 +671,13 @@ func (c *Client) CancelReservation(ctx context.Context, reservationID int, opt .
 		return failure.Wrap(err, failure.Messagef("POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode), failureCtx)
 	}
 
-	if opts.autoAssert {
-		if err := assertCancelReservation(ctx, endpointPath, c, reservationID); err != nil {
+	var cancelReservationResponse *CancelReservationResponse
+	if err := json.NewDecoder(resp.Body).Decode(&cancelReservationResponse); err != nil {
+		return failure.Wrap(err, failure.Messagef("POST %s: JSONのUnmarshalに失敗しました", endpointPath))
+	}
+
+	if opts.autoAssert && resp.StatusCode == http.StatusOK {
+		if err := assertCancelReservation(ctx, endpointPath, c, reservationID, cancelReservationResponse); err != nil {
 			return err
 		}
 	}

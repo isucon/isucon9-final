@@ -3,20 +3,65 @@ package isutrain
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
+// 列車検索
+
+func assertSearchTrains(ctx context.Context, endpointPath string, resp SearchTrainsResponse) error {
+	if resp == nil {
+		return bencherror.NewSimpleCriticalError("GET %s: レスポンスが空です", endpointPath)
+	}
+
+	for _, train := range resp {
+		if ok := IsValidTrainClass(train.Class); !ok {
+			return bencherror.NewSimpleCriticalError("GET %s: 列車種別が不正です: %s", endpointPath, train.Class)
+		}
+		if ok := IsValidStation(train.Start); !ok {
+			return bencherror.NewSimpleCriticalError("GET %s: 不正な駅です: %s", endpointPath, train.Start)
+		}
+		if ok := IsValidStation(train.Last); !ok {
+			return bencherror.NewSimpleCriticalError("GET %s: 不正な駅です: %s", endpointPath, train.Last)
+		}
+		if ok := IsValidStation(train.Departure); !ok {
+			return bencherror.NewSimpleCriticalError("GET %s: 不正な駅です: %s", endpointPath, train.Departure)
+		}
+		if ok := IsValidStation(train.Arrival); !ok {
+			return bencherror.NewSimpleCriticalError("GET %s: 不正な駅です: %s", endpointPath, train.Arrival)
+		}
+	}
+
+	return nil
+}
+
 // 座席検索
 
 func assertSearchTrainSeats(ctx context.Context, endpointPath string, resp *SearchTrainSeatsResponse) error {
 	if resp == nil {
-		return bencherror.NewSimpleCriticalError("GET %s: レスポンスが不正です: %+v", endpointPath, resp)
+		return bencherror.NewSimpleCriticalError("GET %s: レスポンスが空です", endpointPath)
+	}
+	if _, err := time.Parse("2006/01/02", resp.Date); err != nil {
+		return bencherror.NewSimpleCriticalError("GET %s: Dateの形式が不正です: %s", endpointPath, resp.Date)
+	}
+	if ok := IsValidTrainClass(resp.TrainClass); !ok {
+		return bencherror.NewSimpleCriticalError("GET %s: 列車種別が不正です: %s", endpointPath, resp.TrainClass)
+	}
+	if ok := IsValidCarNumber(resp.CarNumber); !ok {
+		return bencherror.NewSimpleCriticalError("GET %s: 車両番号が不正です: %d", endpointPath, resp.CarNumber)
 	}
 
-	// TODO: 席が重複して返されたら減点
+	// 席が重複して返されたら失格
+	dedup := map[TrainSeat]struct{}{}
+	for _, seat := range resp.Seats {
+		if _, ok := dedup[*seat]; ok {
+			return bencherror.NewSimpleCriticalError("GET %s: 同じ座席がレスポンスに含まれています")
+		}
+		dedup[*seat] = struct{}{}
+	}
 
 	return nil
 }
@@ -116,6 +161,9 @@ func assertCanReserve(ctx context.Context, endpointPath string, req *ReserveRequ
 // 予約コミット
 
 func assertCommitReservation(ctx context.Context, endpointPath string, resp *CommitReservationResponse) error {
+	if resp == nil {
+		return bencherror.NewSimpleCriticalError("POST %s: レスポンスが空です", endpointPath)
+	}
 	if !resp.IsOK {
 		return bencherror.NewSimpleCriticalError("POST %s: is_ok がfalseです", endpointPath)
 	}
@@ -125,7 +173,10 @@ func assertCommitReservation(ctx context.Context, endpointPath string, resp *Com
 
 // 予約キャンセル
 
-func assertCancelReservation(ctx context.Context, endpointPath string, client *Client, reservationID int) error {
+func assertCancelReservation(ctx context.Context, endpointPath string, client *Client, reservationID int, resp *CancelReservationResponse) error {
+	if resp == nil {
+		return bencherror.NewSimpleCriticalError("POST %s: レスポンスが空です", endpointPath)
+	}
 	reservations, err := client.ListReservations(ctx)
 	if err != nil {
 		return err
@@ -142,5 +193,15 @@ func assertCancelReservation(ctx context.Context, endpointPath string, client *C
 		return bencherror.NewSimpleApplicationError("POST %s: キャンセルされた予約が取得可能です ReservationID=%d", endpointPath, reservationID)
 	}
 
+	return nil
+}
+
+// 予約詳細
+func assertShowReservation(ctx context.Context, endpointPath string, resp *ShowReservationResponse) error {
+	return nil
+}
+
+// 予約一覧
+func assertListReservations(ctx context.Context, endpointPath string, resp ListReservationsResponse) error {
 	return nil
 }

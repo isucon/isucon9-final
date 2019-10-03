@@ -50,37 +50,9 @@ type ReservationCacheEntry struct {
 	Adult, Child int
 }
 
-// Fare は大人１人あたりの運賃を算出します
-func (r *ReservationCacheEntry) Fare() (int, error) {
-	var (
-		date              = time.Date(r.Date.Year(), r.Date.Month(), r.Date.Day(), 0, 0, 0, 0, time.UTC)
-		distanceFare, err = isutraindb.GetDistanceFare(r.Departure, r.Arrival)
-		fareMultiplier    = isutraindb.GetFareMultiplier(r.TrainClass, r.SeatClass, date)
-	)
-	if err != nil {
-		return -1, err
-	}
-
-	lgr := zap.S()
-	lgr.Infow("運賃取得情報",
-		"reservation_id", r.ID,
-		"departure", r.Departure,
-		"arrival", r.Arrival,
-		"train_class", r.TrainClass,
-		"seat_class", r.SeatClass,
-		"use_at", r.Date,
-	)
-	lgr.Infow("運賃",
-		"distance_fare", distanceFare,
-		"fare_multiplier", fareMultiplier,
-	)
-
-	return int(float64(distanceFare) * fareMultiplier), nil
-}
-
 // Amount は、大人と子供を考慮し、合計の運賃を算出します
 func (r *ReservationCacheEntry) Amount() (int, error) {
-	fare, err := r.Fare()
+	fare, err := isutraindb.GetFare(r.ID, r.Date, r.Departure, r.Arrival, r.TrainClass, r.SeatClass)
 	if err != nil {
 		return -1, err
 	}
@@ -112,7 +84,6 @@ type reservationCache struct {
 	reservations         map[int]*ReservationCacheEntry
 	commitedReservations map[int]*ReservationCacheEntry
 	canceledReservations map[int]*ReservationCacheEntry
-	// reservations []*ReservationCacheEntry
 }
 
 func newReservationCache() *reservationCache {

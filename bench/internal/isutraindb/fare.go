@@ -80,3 +80,31 @@ func GetFareMultiplier(trainClass, seatClass string, useAt time.Time) float64 {
 
 	return fareMultiplier * seasonMultiplier
 }
+
+
+func GetFare(reservationID int, t time.Time, departure, arrival string, trainClass, seatClass string) (int, error) {
+	var (
+		date              = time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
+		distanceFare, err = GetDistanceFare(departure, arrival)
+		fareMultiplier    = GetFareMultiplier(trainClass, seatClass, date)
+	)
+	if err != nil {
+		return -1, err
+	}
+
+	lgr := zap.S()
+	lgr.Infow("運賃取得情報",
+		"reservation_id", reservationID,
+		"departure", departure,
+		"arrival", arrival,
+		"train_class", trainClass,
+		"seat_class", seatClass,
+		"date", date,
+	)
+	lgr.Infow("運賃",
+		"distance_fare", distanceFare,
+		"fare_multiplier", fareMultiplier,
+	)
+
+	return int(float64(distanceFare) * fareMultiplier), nil
+}

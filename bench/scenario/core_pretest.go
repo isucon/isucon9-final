@@ -148,6 +148,31 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	}
 }
 
+func pretestSearchTrainsNotEmptyResult(ctx context.Context, client *isutrain.Client) {
+	// 初期状態で、いくつか試す
+	// 必ずこれは空にならないというパターンを試す
+}
+
+func pretestSearchTrainsTimeTable(ctx context.Context, client *isutrain.Client) {
+	// タイムテーブルをちゃんと返しているか試す
+}
+
+func pretestSearchTrainSeats(ctx context.Context, client *isutrain.Client) {
+
+}
+
+func pretestSeatAvailability(ctx context.Context, client *isutrain.Client) {
+
+}
+
+func pretestCheckAvailableDate(ctx context.Context, client *isutrain.Client) {
+	// https://github.com/chibiegg/isucon9-final/blob/master/webapp/go/utils.go#L8
+}
+
+func pretestListStations(ctx context.Context, client *isutrain.Client) {
+	// 固定でちゃんと返せてるか
+}
+
 // 異常系
 
 // PreTestAbnormalLogin は不正なパスワードでのログインを試みます

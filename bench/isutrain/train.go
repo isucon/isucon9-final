@@ -175,3 +175,25 @@ func (fi FareInformation) Value() int {
 		return -1
 	}
 }
+
+func IsValidTrainClass(trainClass string) bool {
+	switch trainClass {
+	case "遅いやつ", "中間", "最速":
+		return true
+	default:
+		return false
+	}
+}
+
+func IsValidSeatClass(seatClass string) bool {
+	switch seatClass {
+	case "premium", "reserved", "non-reserved":
+		return true
+	default:
+		return false
+	}
+}
+
+func IsValidCarNumber(carNum int) bool {
+	return carNum >= 1 && carNum < 17
+}
