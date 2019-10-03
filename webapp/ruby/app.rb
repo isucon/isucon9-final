@@ -6,7 +6,6 @@ require 'securerandom'
 require 'sinatra/base'
 require 'mysql2'
 require 'mysql2-cs-bind'
-require 'active_support/time'
 
 require './utils'
 
@@ -39,6 +38,7 @@ module Isutrain
           charset: 'utf8mb4',
           database_timezone: :local,
           cast_booleans: true,
+          symbolize_keys: true,
           reconnect: true,
         )
       end
@@ -48,7 +48,10 @@ module Isutrain
 
         return nil, 401, 'no session' if user_id.nil?
 
-        user = db.xquery('SELECT * FROM `users` WHERE `id` = ?', user_id).first
+        user = db.xquery(
+          'SELECT * FROM `users` WHERE `id` = ?',
+          user_id,
+        ).first
 
         return nil, 401, 'user not found' if user.nil?
 
@@ -56,18 +59,20 @@ module Isutrain
       end
 
       def get_distance_fare(orig_to_dest_distance)
-        distance_fare_list = db.xquery('SELECT `distance`, `fare` FROM `distance_fare_master` ORDER BY `distance`')
+        distance_fare_list = db.query(
+          'SELECT `distance`, `fare` FROM `distance_fare_master` ORDER BY `distance`',
+        )
 
         last_distance = 0.0
         last_fare = 0
 
         distance_fare_list.each do |distance_fare|
-          puts "#{orig_to_dest_distance} #{distance_fare['distance']} #{distance_fare['fare']}"
+          puts "#{orig_to_dest_distance} #{distance_fare[:distance]} #{distance_fare[:fare]}"
 
-          break if last_distance < orig_to_dest_distance && orig_to_dest_distance < distance_fare['distance']
+          break if last_distance < orig_to_dest_distance && orig_to_dest_distance < distance_fare[:distance]
 
-          last_distance = distance_fare['distance']
-          last_fare = distance_fare['fare']
+          last_distance = distance_fare[:distance]
+          last_fare = distance_fare[:fare]
         end
 
         last_fare
@@ -77,17 +82,23 @@ module Isutrain
         # 料金計算メモ
         # 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
 
-        from_station = db.xquery('SELECT * FROM `station_master` WHERE `id` = ?', dep_station).first
+        from_station = db.xquery(
+          'SELECT * FROM `station_master` WHERE `id` = ?',
+          dep_station,
+        ).first
 
         raise ErrorNoRows if from_station.nil?
 
-        to_station = db.xquery('SELECT * FROM `station_master` WHERE `id` = ?', dest_station).first
+        to_station = db.xquery(
+          'SELECT * FROM `station_master` WHERE `id` = ?',
+          dest_station,
+        ).first
 
         raise ErrorNoRows if to_station.nil?
 
-        puts "distance #{(to_station['distance'] - from_station['distance']).abs}"
+        puts "distance #{(to_station[:distance] - from_station[:distance]).abs}"
 
-        dist_fare = get_distance_fare((to_station['distance'] - from_station['distance']).abs)
+        dist_fare = get_distance_fare((to_station[:distance] - from_station[:distance]).abs)
         puts "distFare #{dist_fare}"
 
         # 期間・車両・座席クラス倍率
@@ -103,26 +114,26 @@ module Isutrain
 
         date = Date.new(date.year, date.month, date.day)
         fare_list.each do |fare|
-          start_date = Date.new(fare['start_date'].year, fare['start_date'].month, fare['start_date'].day)
+          start_date = Date.new(fare[:start_date].year, fare[:start_date].month, fare[:start_date].day)
 
           if start_date <= date
-            puts "#{fare['start_date']} #{fare['fare_multiplier']}"
+            puts "#{fare[:start_date]} #{fare[:fare_multiplier]}"
             selected_fare = fare
           end
         end
 
         puts '%%%%%%%%%%%%%%%%%%%'
 
-        (dist_fare * selected_fare['fare_multiplier']).floor
+        (dist_fare * selected_fare[:fare_multiplier]).floor
       end
 
       def make_reservation_response(reservation)
         departure = db.xquery(
           'SELECT `departure` FROM `train_timetable_master` WHERE `date` = ? AND `train_class` = ? AND `train_name` = ? AND `station` = ?',
-          reservation['date'].strftime('%Y/%m/%d'),
-          reservation['train_class'],
-          reservation['train_name'],
-          reservation['departure'],
+          reservation[:date].strftime('%Y/%m/%d'),
+          reservation[:train_class],
+          reservation[:train_name],
+          reservation[:departure],
           cast: false,
         ).first
 
@@ -130,33 +141,32 @@ module Isutrain
 
         arrival = db.xquery(
           'SELECT `arrival` FROM `train_timetable_master` WHERE `date` = ? AND `train_class` = ? AND `train_name` = ? AND `station` = ?',
-          reservation['date'].strftime('%Y/%m/%d'),
-          reservation['train_class'],
-          reservation['train_name'],
-          reservation['arrival'],
+          reservation[:date].strftime('%Y/%m/%d'),
+          reservation[:train_class],
+          reservation[:train_name],
+          reservation[:arrival],
           cast: false,
         ).first
 
         raise ErrorNoRows, 'arrival is not found' if arrival.nil?
 
         reservation_response = {
-          reservation_id: reservation['reservation_id'],
-          date: reservation['date'].strftime('%Y/%m/%d'),
-          amount: reservation['amount'],
-          adult: reservation['adult'],
-          child: reservation['child'],
-          departure: reservation['departure'],
-          arrival: reservation['arrival'],
-          train_class: reservation['train_class'],
-          train_name: reservation['train_name'],
-          departure_time: departure['departure'],
-          arrival_time: arrival['arrival'],
+          reservation_id: reservation[:reservation_id],
+          date: reservation[:date].strftime('%Y/%m/%d'),
+          amount: reservation[:amount],
+          adult: reservation[:adult],
+          child: reservation[:child],
+          departure: reservation[:departure],
+          arrival: reservation[:arrival],
+          train_class: reservation[:train_class],
+          train_name: reservation[:train_name],
+          departure_time: departure[:departure],
+          arrival_time: arrival[:arrival],
         }
 
         reservation_response[:seats] = db.xquery(
           'SELECT * FROM `seat_reservations` WHERE `reservation_id` = ?',
-          reservation['reservation_id'],
-          symbolize_keys: true
+          reservation[:reservation_id],
         ).to_a
 
         # 1つの予約内で車両番号は全席同じ
@@ -167,7 +177,7 @@ module Isutrain
         else
           seat = db.xquery(
             'SELECT * FROM `seat_master` WHERE `train_class` = ? AND `car_number` = ? AND `seat_column` = ? AND `seat_row` = ?',
-            reservation['train_class'],
+            reservation[:train_class],
             reservation_response[:car_number],
             reservation_response[:seats].first[:seat_column],
             reservation_response[:seats].first[:seat_row],
@@ -214,9 +224,9 @@ module Isutrain
     end
 
     post '/initialize' do
-      db.xquery('TRUNCATE seat_reservations')
-      db.xquery('TRUNCATE reservations')
-      db.xquery('TRUNCATE users')
+      db.query('TRUNCATE seat_reservations')
+      db.query('TRUNCATE reservations')
+      db.query('TRUNCATE users')
 
       content_type :json
       {
@@ -233,32 +243,40 @@ module Isutrain
     end
 
     get '/api/stations' do
-      stations = db.xquery('SELECT * FROM `station_master` ORDER BY `id`').to_a
+      stations = db.query(
+        'SELECT * FROM `station_master` ORDER BY `id`',
+      ).to_a
 
       content_type :json
       stations.to_json
     end
 
     get '/api/train/search' do
-      date = Time.iso8601(params[:use_at]).in_time_zone('Asia/Tokyo')
+      date = Time.iso8601(params[:use_at]).getlocal
 
       halt_with_error 404, '予約可能期間外です' unless check_available_date(date)
 
-      from_station = db.xquery('SELECT * FROM station_master WHERE name = ?', params[:from]).first
+      from_station = db.xquery(
+        'SELECT * FROM station_master WHERE name = ?',
+        params[:from],
+      ).first
 
       if from_station.nil?
         puts 'fromStation: no rows'
         halt_with_error 400, 'fromStation: no rows'
       end
 
-      to_station = db.xquery('SELECT * FROM station_master WHERE name = ?', params[:to]).first
+      to_station = db.xquery(
+        'SELECT * FROM station_master WHERE name = ?',
+        params[:to],
+      ).first
 
       if to_station.nil?
         puts 'toStation: no rows'
         halt_with_error 400, 'toStation: no rows'
       end
 
-      is_nobori = from_station['distance'] > to_station['distance']
+      is_nobori = from_station[:distance] > to_station[:distance]
 
       usable_train_class_list = get_usable_train_class_list(from_station, to_station)
 
@@ -271,7 +289,7 @@ module Isutrain
         )
       else
         db.xquery(
-          'SELECT * FROM `train_master` WHERE `date` = ? AND `train_class` IN (?) AND `is_nobori`= ? AND `train_class` = ?',
+          'SELECT * FROM `train_master` WHERE `date` = ? AND `train_class` IN (?) AND `is_nobori` = ? AND `train_class` = ?',
           date.strftime('%Y/%m/%d'),
           usable_train_class_list,
           is_nobori,
@@ -279,7 +297,9 @@ module Isutrain
         )
       end
 
-      stations = db.xquery("SELECT * FROM `station_master` ORDER BY `distance` #{is_nobori ? 'DESC' : 'ASC'}")
+      stations = db.xquery(
+        "SELECT * FROM `station_master` ORDER BY `distance` #{is_nobori ? 'DESC' : 'ASC'}",
+      )
 
       puts "From #{from_station}"
       puts "To #{to_station}"
@@ -296,19 +316,19 @@ module Isutrain
           unless is_seeked_to_first_station
             # 駅リストを列車の発駅まで読み飛ばして頭出しをする
             # 列車の発駅以前は止まらないので無視して良い
-            if station['name'] == train['start_station']
+            if station[:name] == train[:start_station]
               is_seeked_to_first_station = true
             else
               next
             end
           end
 
-          if station['id'] == from_station['id']
+          if station[:id] == from_station[:id]
             # 発駅を経路中に持つ編成の場合フラグを立てる
             is_contains_origin_station = true
           end
 
-          if station['id'] == to_station['id']
+          if station[:id] == to_station[:id]
             if is_contains_origin_station
               # 発駅と着駅を経路中に持つ編成の場合
               is_contains_dest_station = true
@@ -320,7 +340,7 @@ module Isutrain
             break
           end
 
-          if station['name'] == train['last_station']
+          if station[:name] == train[:last_station]
             # 駅が見つからないまま当該編成の終点に着いてしまったとき
             break
           end
@@ -334,23 +354,23 @@ module Isutrain
           departure = db.xquery(
             'SELECT `departure` FROM `train_timetable_master` WHERE `date` = ? AND `train_class` = ? AND `train_name` = ? AND `station` = ?',
             date.strftime('%Y/%m/%d'),
-            train['train_class'],
-            train['train_name'],
-            from_station['name'],
-            cast: false
+            train[:train_class],
+            train[:train_name],
+            from_station[:name],
+            cast: false,
           ).first
 
-          departure_date = Time.parse("#{date.strftime('%Y/%m/%d')} #{departure['departure']} +09:00 JST")
+          departure_date = Time.parse("#{date.strftime('%Y/%m/%d')} #{departure[:departure]} +09:00 JST")
 
           next unless date < departure_date
 
           arrival = db.xquery(
             'SELECT `arrival` FROM `train_timetable_master` WHERE date = ? AND `train_class` = ? AND `train_name` = ? AND `station` = ?',
             date.strftime('%Y/%m/%d'),
-            train['train_class'],
-            train['train_name'],
-            to_station['name'],
-            cast: false
+            train[:train_class],
+            train[:train_name],
+            to_station[:name],
+            cast: false,
           ).first
 
           premium_avail_seats = get_available_seats(train, from_station, to_station, 'premium', false)
@@ -396,13 +416,13 @@ module Isutrain
           }
 
           # 料金計算
-          premium_fare = fare_calc(date, from_station['id'], to_station['id'], train['train_class'], 'premium')
+          premium_fare = fare_calc(date, from_station[:id], to_station[:id], train[:train_class], 'premium')
           premium_fare = premium_fare * params[:adult].to_i + premium_fare / 2 * params[:child].to_i
 
-          reserved_fare = fare_calc(date, from_station['id'], to_station['id'], train['train_class'], 'reserved')
+          reserved_fare = fare_calc(date, from_station[:id], to_station[:id], train[:train_class], 'reserved')
           reserved_fare = reserved_fare * params[:adult].to_i + reserved_fare / 2 * params[:child].to_i
 
-          non_reserved_fare = fare_calc(date, from_station['id'], to_station['id'], train['train_class'], 'non-reserved')
+          non_reserved_fare = fare_calc(date, from_station[:id], to_station[:id], train[:train_class], 'non-reserved')
           non_reserved_fare = non_reserved_fare * params[:adult].to_i + non_reserved_fare / 2 * params[:child].to_i
 
           fare_information = {
@@ -414,14 +434,14 @@ module Isutrain
           }
 
           train_search_response = {
-            train_class: train['train_class'],
-            train_name: train['train_name'],
-            start: train['start_station'],
-            last: train['last_station'],
-            departure: from_station['name'],
-            arrival: to_station['name'],
-            departure_time: departure['departure'],
-            arrival_time: arrival['arrival'],
+            train_class: train[:train_class],
+            train_name: train[:train_name],
+            start: train[:start_station],
+            last: train[:last_station],
+            departure: from_station[:name],
+            arrival: to_station[:name],
+            departure_time: departure[:departure],
+            arrival_time: arrival[:arrival],
             seat_availability: seat_availability,
             seat_fare: fare_information,
           }
@@ -437,7 +457,7 @@ module Isutrain
     end
 
     get '/api/train/seats' do
-      date = Time.iso8601(params[:date]).in_time_zone('Asia/Tokyo')
+      date = Time.iso8601(params[:date]).getlocal
 
       halt_with_error 404, '予約可能期間外です' unless check_available_date(date)
 
@@ -451,7 +471,10 @@ module Isutrain
       halt_with_error 404, '列車が存在しません' if train.nil?
 
       from_name = params[:from]
-      from_station = db.xquery('SELECT * FROM `station_master` WHERE `name` = ?', from_name).first
+      from_station = db.xquery(
+        'SELECT * FROM `station_master` WHERE `name` = ?',
+        from_name,
+      ).first
 
       if from_station.nil?
         puts 'fromStation: no rows'
@@ -459,7 +482,10 @@ module Isutrain
       end
 
       to_name = params[:to]
-      to_station = db.xquery('SELECT * FROM `station_master` WHERE `name` = ?', to_name).first
+      to_station = db.xquery(
+        'SELECT * FROM `station_master` WHERE `name` = ?',
+        to_name,
+      ).first
 
       if to_station.nil?
         puts 'toStation: no rows'
@@ -467,15 +493,7 @@ module Isutrain
       end
 
       usable_train_class_list = get_usable_train_class_list(from_station, to_station)
-
-      usable = false
-      usable_train_class_list.each do |v|
-        if v == train['train_class']
-          usable = true
-        end
-      end
-
-      unless usable
+      unless usable_train_class_list.include?(train[:train_class])
         puts 'invalid train_class'
         halt_with_error 400, 'invalid train_class'
       end
@@ -490,36 +508,36 @@ module Isutrain
 
       seat_list.each do |seat|
         s = {
-          row: seat['seat_row'],
-          column: seat['seat_column'],
-          class: seat['seat_class'],
-          is_smoking_seat: seat['is_smoking_seat'],
+          row: seat[:seat_row],
+          column: seat[:seat_column],
+          class: seat[:seat_class],
+          is_smoking_seat: seat[:is_smoking_seat],
           is_occupied: false
         }
 
         query = <<__EOF
           SELECT
-            s.*
+            `s`.*
           FROM
-            seat_reservations s,
-            reservations r
+            `seat_reservations` `s`,
+            `reservations` `r`
           WHERE
-            r.date = ? AND
-            r.train_class = ? AND
-            r.train_name = ? AND
-            car_number = ? AND
-            seat_row = ? AND
-            seat_column = ?
+            `r`.`date` = ? AND
+            `r`.`train_class` = ? AND
+            `r`.`train_name` = ? AND
+            `car_number` = ? AND
+            `seat_row` = ? AND
+            `seat_column` = ?
 __EOF
 
         seat_reservation_list = db.xquery(
           query,
           date.strftime('%Y/%m/%d'),
-          seat['train_class'],
+          seat[:train_class],
           params[:train_name],
-          seat['car_number'],
-          seat['seat_row'],
-          seat['seat_column'],
+          seat[:car_number],
+          seat[:seat_row],
+          seat[:seat_column],
         )
 
         p seat_reservation_list
@@ -527,41 +545,41 @@ __EOF
         seat_reservation_list.each do |seat_reservation|
           reservation = db.xquery(
             'SELECT * FROM `reservations` WHERE `reservation_id` = ?',
-            seat_reservation['reservation_id'],
+            seat_reservation[:reservation_id],
           ).first
 
           departure_station = db.xquery(
             'SELECT * FROM `station_master` WHERE `name` = ?',
-            reservation['departure']
+            reservation[:departure],
           ).first
 
           arrival_station = db.xquery(
             'SELECT * FROM `station_master` WHERE `name` = ?',
-            reservation['arrival']
+            reservation[:arrival],
           ).first
 
-          if train['is_nobori']
+          if train[:is_nobori]
             # 上り
-            if to_station['id'] < arrival_station['id'] && from_station['id'] <= arrival_station['id']
+            if to_station[:id] < arrival_station[:id] && from_station[:id] <= arrival_station[:id]
               # pass
-            elsif to_station['id'] >= departure_station['id'] && from_station['id'] > departure_station['id']
+            elsif to_station[:id] >= departure_station[:id] && from_station[:id] > departure_station[:id]
               # pass
             else
-              s['is_occupied'] = true
+              s[:is_occupied] = true
             end
           else
             # 下り
-            if from_station['id'] < departure_station['id'] && to_station['id'] <= departure_station['id']
+            if from_station[:id] < departure_station[:id] && to_station[:id] <= departure_station[:id]
               # pass
-            elsif from_station['id'] >= arrival_station['id'] && to_station['id'] > arrival_station['id']
+            elsif from_station[:id] >= arrival_station[:id] && to_station[:id] > arrival_station[:id]
               # pass
             else
-              s['is_occupied'] = true
+              s[:is_occupied] = true
             end
           end
         end
 
-        puts s['is_occupied'] ? 'true' : 'false'
+        puts s[:is_occupied] ? 'true' : 'false'
 
         seat_information_list << s
       end
@@ -580,7 +598,7 @@ __EOF
 
         simple_car_information = {
           car_number: i,
-          seat_class: seat['seat_class'],
+          seat_class: seat[:seat_class],
         }
 
         simple_car_information_list << simple_car_information
@@ -602,7 +620,7 @@ __EOF
     end
 
     post '/api/train/reserve' do
-      date = Time.iso8601(body_params[:date]).in_time_zone('Asia/Tokyo')
+      date = Time.iso8601(body_params[:date]).getlocal
 
       halt_with_error 404, '予約可能期間外です' unless check_available_date(date)
 
@@ -632,7 +650,7 @@ __EOF
       departure_station = begin
         db.xquery(
           'SELECT * FROM `station_master` WHERE `name` = ?',
-          tmas['start_station']
+          tmas[:start_station],
         ).first
       rescue Mysql2::Error => e
         db.query('ROLLBACK')
@@ -649,7 +667,7 @@ __EOF
       arrival_station = begin
         db.xquery(
           'SELECT * FROM `station_master` WHERE `name` = ?',
-          tmas['last_station']
+          tmas[:last_station],
         ).first
       rescue Mysql2::Error => e
         db.query('ROLLBACK')
@@ -698,17 +716,17 @@ __EOF
 
       case body_params[:train_class]
       when '最速'
-        if !from_station['is_stop_express'] || !to_station['is_stop_express']
+        if !from_station[:is_stop_express] || !to_station[:is_stop_express]
           db.query('ROLLBACK')
           halt_with_error 400, '最速の止まらない駅です'
         end
       when '中間'
-        if !from_station['is_stop_semi_express'] || !to_station['is_stop_semi_express']
+        if !from_station[:is_stop_semi_express] || !to_station[:is_stop_semi_express]
           db.query('ROLLBACK')
           halt_with_error 400, '中間の止まらない駅です'
         end
       when '遅いやつ'
-        if !from_station['is_stop_local'] || !to_station['is_stop_local']
+        if !from_station[:is_stop_local] || !to_station[:is_stop_local]
           db.query('ROLLBACK')
           halt_with_error 400, '遅いやつの止まらない駅です'
         end
@@ -718,23 +736,23 @@ __EOF
       end
 
       # 運行していない区間を予約していないかチェックする
-      if tmas['is_nobori']
-        if from_station['id'] > departure_station['id'] || to_station['id'] > departure_station['id']
+      if tmas[:is_nobori]
+        if from_station[:id] > departure_station[:id] || to_station[:id] > departure_station[:id]
           db.query('ROLLBACK')
           halt_with_error 400, 'リクエストされた区間に列車が運行していない区間が含まれています'
         end
 
-        if arrival_station['id'] >= from_station['id'] || arrival_station['id'] > to_station['id']
+        if arrival_station[:id] >= from_station[:id] || arrival_station[:id] > to_station[:id]
           db.query('ROLLBACK')
           halt_with_error 400, 'リクエストされた区間に列車が運行していない区間が含まれています'
         end
       else
-        if from_station['id'] < departure_station['id'] || to_station['id'] < departure_station['id']
+        if from_station[:id] < departure_station[:id] || to_station[:id] < departure_station[:id]
           db.query('ROLLBACK')
           halt_with_error 400, 'リクエストされた区間に列車が運行していない区間が含まれています'
         end
 
-        if arrival_station['id'] <= from_station['id'] || arrival_station['id'] < to_station['id']
+        if arrival_station[:id] <= from_station[:id] || arrival_station[:id] < to_station[:id]
           db.query('ROLLBACK')
           halt_with_error 400, 'リクエストされた区間に列車が運行していない区間が含まれています'
         end
@@ -763,7 +781,7 @@ __EOF
           end
 
           usable_train_class_list = get_usable_train_class_list(from_station, to_station)
-          unless usable_train_class_list.include?(train['train_class'])
+          unless usable_train_class_list.include?(train[:train_class])
             err = 'invalid train_class'
             puts err
             db.query('ROLLBACK')
@@ -789,10 +807,10 @@ __EOF
             seat_information_list = []
             seat_list.each do |seat|
               s = {
-                row: seat['seat_row'],
-                column: seat['seat_column'],
-                class: seat['seat_class'],
-                is_smoking_seat: seat['is_smoking_seat'],
+                row: seat[:seat_row],
+                column: seat[:seat_column],
+                class: seat[:seat_class],
+                is_smoking_seat: seat[:is_smoking_seat],
                 is_occupied: false,
               }
 
@@ -816,7 +834,7 @@ __EOF
                 reservation = begin
                   db.xquery(
                     'SELECT * FROM `reservations` WHERE `reservation_id` = ? FOR UPDATE',
-                    seat_reservation['reservation_id'],
+                    seat_reservation[:reservation_id],
                   ).first
                 rescue Mysql2::Error => e
                   db.query('ROLLBACK')
@@ -829,7 +847,7 @@ __EOF
                 departure_station = begin
                   db.xquery(
                     'SELECT * FROM `station_master` WHERE `name` = ?',
-                    reservation['departure']
+                    reservation[:departure],
                   )
                 rescue Mysql2::Error => e
                   db.query('ROLLBACK')
@@ -842,7 +860,7 @@ __EOF
                 arrival_station = begin
                   db.xquery(
                     'SELECT * FROM `station_master` WHERE `name` = ?',
-                    reservation['arrival']
+                    reservation[:arrival],
                   )
                 rescue Mysql2::Error => e
                   db.query('ROLLBACK')
@@ -854,18 +872,18 @@ __EOF
 
                 if train[:is_nobori]
                   # 上り
-                  if to_station['id'] < arrival_station['id'] && from_station['id'] <= arrival_station['id']
+                  if to_station[:id] < arrival_station[:id] && from_station[:id] <= arrival_station[:id]
                     # pass
-                  elsif to_station['id'] >= departure_station['id'] && from_station['id'] > departure_station['id']
+                  elsif to_station[:id] >= departure_station[:id] && from_station[:id] > departure_station[:id]
                     # pass
                   else
                     s[:is_occupied] = true
                   end
                 else
                   # 下り
-                  if from_station['id'] < departure_station['id'] && to_station['id'] <= departure_station['id']
+                  if from_station[:id] < departure_station[:id] && to_station[:id] <= departure_station[:id]
                     # pass
-                  elsif from_station['id'] >= arrival_station['id'] && to_station['id'] > arrival_station['id']
+                  elsif from_station[:id] >= arrival_station[:id] && to_station[:id] > arrival_station[:id]
                     # pass
                   else
                     s[:is_occupied] = true
@@ -1010,7 +1028,7 @@ __EOF
         reserved_from_station = begin
           db.xquery(
             'SELECT * FROM `station_master` WHERE `name` = ?',
-            reservation['departure'],
+            reservation[:departure],
           ).first
         rescue Mysql2::Error => e
           puts e.message
@@ -1027,7 +1045,7 @@ __EOF
         reserved_to_station = begin
           db.xquery(
             'SELECT * FROM `station_master` WHERE `name` = ?',
-            reservation['arrival'],
+            reservation[:arrival],
           ).first
         rescue Mysql2::Error => e
           puts e.message
@@ -1042,20 +1060,20 @@ __EOF
 
         # 予約の区間重複判定
         secdup = false
-        if tmas['is_nobori']
+        if tmas[:is_nobori]
           # 上り
-          if to_station['id'] < reserved_to_station['id'] && from_station['id'] <= reserved_to_station['id']
+          if to_station[:id] < reserved_to_station[:id] && from_station[:id] <= reserved_to_station[:id]
             # pass
-          elsif to_station['id'] >= reserved_from_station['id'] && from_station > reserved_from_station['id']
+          elsif to_station[:id] >= reserved_from_station[:id] && from_station > reserved_from_station[:id]
             # pass
           else
             secdup = true
           end
         else
           # 下り
-          if from_station['id'] < reserved_from_station['id'] && to_station['id'] <= reserved_from_station['id']
+          if from_station[:id] < reserved_from_station[:id] && to_station[:id] <= reserved_from_station[:id]
             # pass
-          elsif from_station['id'] >= reserved_to_station['id'] && to_station['id'] > reserved_to_station['id']
+          elsif from_station[:id] >= reserved_to_station[:id] && to_station[:id] > reserved_to_station[:id]
             # pass
           else
             secdup = true
@@ -1067,7 +1085,7 @@ __EOF
           seat_reservations = begin
             db.xquery(
               'SELECT * FROM `seat_reservations` WHERE `reservation_id` = ? FOR UPDATE',
-              reservation['reservation_id'],
+              reservation[:reservation_id],
             )
           rescue Mysql2::Error => e
             puts e.message
@@ -1077,7 +1095,7 @@ __EOF
 
           seat_reservations.each do |v|
             body_params[:seats].each do |seat|
-              if v['car_number'] == seat[:car_number] && v['seat_row'] == seat[:row] && v['seat_column'] == seat[:column]
+              if v[:car_number] == seat[:car_number] && v[:seat_row] == seat[:row] && v[:seat_column] == seat[:column]
                 db.query('ROLLBACK')
                 puts "Duplicated #{reservation}"
                 halt_with_error 400, 'リクエストに既に予約された席が含まれています'
@@ -1105,12 +1123,8 @@ __EOF
       # 運賃計算
       fare = begin
         case body_params[:seat_class]
-        when 'premium'
-          fare_calc(date, from_station['id'], to_station['id'], body_params[:train_class], 'premium')
-        when 'reserved'
-          fare_calc(date, from_station['id'], to_station['id'], body_params[:train_class], 'reserved')
-        when 'non-reserved'
-          fare_calc(date, from_station['id'], to_station['id'], body_params[:train_class], 'non-reserved')
+        when 'premium', 'reserved', 'non-reserved'
+          fare_calc(date, from_station[:id], to_station[:id], body_params[:train_class], body_params[:seat_class])
         else
           raise Error, 'リクエストされた座席クラスが不明です'
         end
@@ -1136,7 +1150,7 @@ __EOF
       begin
         db.xquery(
           'INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `adult`, `child`, `amount`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          user['id'],
+          user[:id],
           date.strftime('%Y/%m/%d'),
           body_params[:train_class],
           body_params[:train_name],
@@ -1195,7 +1209,7 @@ __EOF
       reservation = begin
         db.xquery(
           'SELECT * FROM `reservations` WHERE `reservation_id` = ?',
-          body_params[:reservation_id]
+          body_params[:reservation_id],
         ).first
       rescue Mysql2::Error => e
         db.query('ROLLBACK')
@@ -1217,13 +1231,13 @@ __EOF
         halt_with_error status, message
       end
 
-      if reservation['user_id'] != user['id']
+      if reservation[:user_id] != user[:id]
         db.query('ROLLBACK')
         halt_with_error 403, '他のユーザIDの支払いはできません'
       end
 
       # 予約情報の支払いステータス確認
-      if reservation['status'] == 'done'
+      if reservation[:status] == 'done'
         db.query('ROLLBACK')
         halt_with_error 403, '既に支払いが完了している予約IDです'
       end
@@ -1232,7 +1246,7 @@ __EOF
       pay_info = {
         card_token: body_params[:card_token],
         reservation_id: body_params[:reservation_id],
-        amount: reservation['amount'],
+        amount: reservation[:amount],
       }
 
       payment_api = ENV['PAYMENT_API'] || 'http://payment:5000'
@@ -1297,7 +1311,7 @@ __EOF
       end
 
       content_type :json
-      { email: user['email'] }.to_json
+      { email: user[:email] }.to_json
     end
 
     post '/api/auth/signup' do
@@ -1324,21 +1338,24 @@ __EOF
     end
 
     post '/api/auth/login' do
-      user = db.xquery('SELECT * FROM `users` WHERE `email` = ?', body_params[:email]).first
+      user = db.xquery(
+        'SELECT * FROM `users` WHERE `email` = ?',
+        body_params[:email],
+      ).first
 
       halt_with_error 403, 'authentication failed' if user.nil?
 
       challenge_password = OpenSSL::PKCS5.pbkdf2_hmac(
         body_params[:password],
-        user['salt'],
+        user[:salt],
         100,
         256,
         'sha256',
       )
 
-      halt_with_error 403, 'authentication failed' if user['super_secure_password'] != challenge_password
+      halt_with_error 403, 'authentication failed' if user[:super_secure_password] != challenge_password
 
-      session[:user_id] = user['id']
+      session[:user_id] = user[:id]
 
       message_response 'autheticated'
     end
@@ -1358,7 +1375,7 @@ __EOF
 
       reservation_list = db.xquery(
         'SELECT * FROM `reservations` WHERE `user_id` = ?',
-        user['id'],
+        user[:id],
       )
 
       reservation_response_list = reservation_list.to_a.map do |r|
@@ -1384,7 +1401,7 @@ __EOF
       reservation = db.xquery(
         'SELECT * FROM `reservations` WHERE `reservation_id` = ? AND `user_id` = ?',
         item_id,
-        user['id'],
+        user[:id],
       ).first
 
       halt_with_error 404, 'Reservation not found' if reservation.nil?
@@ -1413,7 +1430,7 @@ __EOF
         db.xquery(
           'SELECT * FROM `reservations` WHERE `reservation_id` = ? AND `user_id` = ?',
           item_id,
-          user['id'],
+          user[:id],
         ).first
       rescue Mysql2::Error => e
         db.query('ROLLBACK')
@@ -1426,7 +1443,7 @@ __EOF
         halt_with_error 404, 'reservations naiyo'
       end
 
-      case reservation['status']
+      case reservation[:status]
       when 'rejected'
         db.query('ROLLBACK')
         halt_with_error 500, '何らかの理由により予約はRejected状態です'
@@ -1434,10 +1451,10 @@ __EOF
         # 支払いをキャンセルする
         payment_api = ENV['PAYMENT_API'] || 'http://payment:5000'
 
-        uri = URI.parse("#{payment_api}/payment/#{reservation['payment_id']}")
+        uri = URI.parse("#{payment_api}/payment/#{reservation[:payment_id]}")
         req = Net::HTTP::Delete.new(uri)
         req.body = {
-          payment_id: reservation['payment_id']
+          payment_id: reservation[:payment_id]
         }.to_json
         req['Content-Type'] = 'application/json'
 
@@ -1470,7 +1487,7 @@ __EOF
         db.xquery(
           'DELETE FROM `reservations` WHERE `reservation_id` = ? AND `user_id` = ?',
           item_id,
-          user['id'],
+          user[:id],
         )
       rescue Mysql2::Error => e
         db.query('ROLLBACK')

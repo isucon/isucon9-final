@@ -4,7 +4,6 @@ gem 'puma'
 gem 'sinatra'
 gem 'mysql2'
 gem 'mysql2-cs-bind'
-gem 'activesupport'
 
 group :development do
   gem 'sinatra-contrib'
