@@ -360,6 +360,9 @@ class Service
         $station = [];
         foreach ($data as $elem) {
             unset($elem['distance']);
+            $elem['is_stop_express'] = (bool) $elem['is_stop_express'];
+            $elem['is_stop_semi_express'] = (bool) $elem['is_stop_semi_express'];
+            $elem['is_stop_local'] = (bool) $elem['is_stop_local'];
             $station[] = $elem;
         }
         return $response->withJson($station);
