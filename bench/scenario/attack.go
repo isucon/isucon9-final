@@ -136,6 +136,16 @@ func AttackSearchScenario(ctx context.Context) error {
 func AttackLoginScenario(ctx context.Context) error {
 	var loginGrp sync.WaitGroup
 
+	client, err := isutrain.NewClient()
+	if err != nil {
+		return err
+	}
+
+	err = client.Signup(ctx, "aluser@example.com", "aluser")
+	if err != nil {
+		return bencherror.BenchmarkErrs.AddError(err)
+	}
+
 	// 正常ログイン
 	loginCtx, cancelLogin := context.WithTimeout(ctx, 20*time.Second)
 	defer cancelLogin()
@@ -149,20 +159,14 @@ func AttackLoginScenario(ctx context.Context) error {
 				case <-loginCtx.Done():
 					return
 				default:
-					// TODO: リソースリークしないかチェック
-					client, err := isutrain.NewClient()
-					if err != nil {
-						bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "Isutrainクライアントが作成できません. 運営に確認をお願いいたします"))
-						return
-					}
 
 					if config.Debug {
 						client.ReplaceMockTransport()
 					}
 
-					err = client.Login(loginCtx, "hoge", "hoge")
+					err = client.Login(loginCtx, "aluser@example.com", "aluser")
 					if err != nil {
-						bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "ユーザログインができません"))
+						bencherror.BenchmarkErrs.AddError(err)
 						return
 					}
 
@@ -196,7 +200,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 	client, err := isutrain.NewClient()
 	if err != nil {
 		// 実行中のエラーは `bencherror.BenchmarkErrs.AddError(err)` に投げる
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	// デバッグの場合はモックに差し替える

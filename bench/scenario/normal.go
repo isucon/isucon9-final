@@ -17,12 +17,12 @@ import (
 func NormalScenario(ctx context.Context) error {
 	client, err := isutrain.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	paymentClient, err := payment.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	if config.Debug {
@@ -53,7 +53,7 @@ func NormalScenario(ctx context.Context) error {
 	}
 
 	if len(trains) == 0 {
-		return nil
+		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleApplicationError("列車検索の結果が空です"))
 	}
 
 	trainIdx := rand.Intn(len(trains))
@@ -112,12 +112,12 @@ func NormalScenario(ctx context.Context) error {
 func NormalCancelScenario(ctx context.Context) error {
 	client, err := isutrain.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	paymentClient, err := payment.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	if config.Debug {
@@ -216,7 +216,7 @@ func NormalCancelScenario(ctx context.Context) error {
 func NormalVagueSearchScenario(ctx context.Context) error {
 	client, err := isutrain.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	if config.Debug {
@@ -225,7 +225,8 @@ func NormalVagueSearchScenario(ctx context.Context) error {
 
 	user, err := xrandom.GetRandomUser()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		bencherror.SystemErrs.AddError(err)
+		return nil
 	}
 
 	err = registerUserAndLogin(ctx, client, user)
@@ -260,7 +261,7 @@ func NormalManyCancelScenario(ctx context.Context, counter int) error {
 
 	client, err := isutrain.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	if config.Debug {

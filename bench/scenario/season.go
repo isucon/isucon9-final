@@ -47,12 +47,7 @@ func SeasonGoldenWeekScenario(ctx context.Context) error {
 
 			client, err := isutrain.NewClient()
 			if err != nil {
-				bencherror.BenchmarkErrs.AddError(err)
 				return
-			}
-
-			if config.Debug {
-				client.ReplaceMockTransport()
 			}
 
 			if config.Debug {
@@ -107,8 +102,7 @@ func SeasonOlympicScenario(ctx context.Context) error {
 
 		client, err := isutrain.NewClient()
 		if err != nil {
-			bencherror.BenchmarkErrs.AddError(err)
-			return nil
+			return err
 		}
 
 		if config.Debug {
@@ -117,20 +111,17 @@ func SeasonOlympicScenario(ctx context.Context) error {
 
 		user, err := xrandom.GetRandomUser()
 		if err != nil {
-			bencherror.SystemErrs.AddError(err)
-			return nil
+			return bencherror.SystemErrs.AddError(err)
 		}
 
 		err = registerUserAndLogin(ctx, client, user)
 		if err != nil {
-			bencherror.BenchmarkErrs.AddError(err)
-			return nil
+			return bencherror.BenchmarkErrs.AddError(err)
 		}
 
 		_, err = client.ListStations(ctx)
 		if err != nil {
-			bencherror.BenchmarkErrs.AddError(err)
-			return nil
+			return bencherror.BenchmarkErrs.AddError(err)
 		}
 
 		_, err = createSimpleReservation(ctx, client, user, useAt, departure, arrival, "最速", adult, child)
