@@ -15,3 +15,4 @@ build:
 
 test:
 	go test -short -v -race -cover -p=1 $(PKG_LIST)
+	go clean -testcache $(PKG_LIST)
