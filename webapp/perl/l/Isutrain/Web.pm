@@ -665,8 +665,10 @@ EOF
         $i++;
     }
 
+    my $date_str = $date->strftime("%F");
+    $date_str =~ s/-/\//g;
     my $ci = {
-        date => $date->strftime("%F"),
+        date => $date_str,
         train_class => $train_class,
         train_name => $train_name,
         car_number => number $car_number,
@@ -731,7 +733,7 @@ post '/api/train/reserve' => [qw/allow_json_request/] => sub {
     my $seats = $c->req->parameters->get('seats') // [];
     my $seat_class = $c->req->parameters->get('seat_class') // "";
     my $car_number = $c->req->parameters->get('car_number') // 0;
-    my $is_smoking_seat = $c->req->parameters->get('$is_smoking_seat') // JSON::true;
+    my $is_smoking_seat = $c->req->parameters->get('is_smoking_seat') // JSON::false;
     my $req_adult = $c->req->parameters->get('adult') // 0;
     my $req_child = $c->req->parameters->get('child') // 0;
     my $req_column = $c->req->parameters->get('column') // "";
