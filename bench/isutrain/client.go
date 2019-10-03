@@ -515,6 +515,8 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 		return bencherror.NewApplicationError(err, "POST %s: リクエストの作成に失敗しました", endpointPath)
 	}
 
+	req.Header.Set("Content-Type", "application/json")
+
 	resp, err := c.sess.do(req)
 	if err != nil {
 		return err
