@@ -309,7 +309,7 @@ class Service
         }
         $rtn['arrival_time'] = $arrival;
 
-        $stmt = $this->dbh->query("SELECT * FROM `seat_reservations` WHERE `reservation_id`=?");
+        $stmt = $this->dbh->prepare("SELECT * FROM `seat_reservations` WHERE `reservation_id`=?");
         $stmt->execute([$reservation['reservation_id']]);
         $rtn['seats'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -675,7 +675,7 @@ class Service
                 'row' => $seat['seat_row'],
                 'column' => $seat['seat_column'],
                 'class' => $seat['seat_class'],
-                'is_smoking_seat' => $seat['is_smoking_seat'],
+                'is_smoking_seat' => (bool) $seat['is_smoking_seat'],
                 'is_occupied' => false,
             ];
             $stmt = $this->dbh->prepare("SELECT `s`.* FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
@@ -758,7 +758,7 @@ class Service
             'date' => $date->format('Y/m/d'),
             'train_class' => $trainClass,
             'train_name' => $trainName,
-            'car_number' => $carNumber,
+            'car_number' => (int) $carNumber,
             'seats' => $seatInformationList,
             'cars' => $simpleCarInformationList,
         ];
@@ -920,7 +920,7 @@ class Service
 
                 // 座席リクエスト情報は空に
                 for ($carnum = 1; $carnum <= 16; $carnum++) {
-                    $stmt = $this->dbh->query("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? AND `seat_class`=? AND `is_smoking_seat`=? ORDER BY `seat_row`, `seat_column`");
+                    $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? AND `seat_class`=? AND `is_smoking_seat`=? ORDER BY `seat_row`, `seat_column`");
                     $stmt->execute([
                         $payload['train_class'],
                         $carnum,
@@ -938,7 +938,7 @@ class Service
                             'row' => $seat['seat_row'],
                             'column' => $seat['seat_column'],
                             'class' => $seat['seat_class'],
-                            'is_smoking_seat' => $seat['is_smoking_seat'],
+                            'is_smoking_seat' => (bool) $seat['is_smoking_seat'],
                             'is_occupied' => false,
                         ];
                         $stmt = $this->dbh->prepare("SELECT s.* FROM `seat_reservations` s, `reservations` r WHERE r.`date` =? AND r.`train_class` =? AND r.`train_name` =? AND `car_number` =? AND `seat_row` =? AND `seat_column` =? FOR UPDATE");
@@ -1480,7 +1480,7 @@ class Service
         }
 
         try {
-            $stmt = $this->dbh->query("DELETE FROM `reservations` WHERE `reservation_id`=? AND `user_id`=?");
+            $stmt = $this->dbh->prepare("DELETE FROM `reservations` WHERE `reservation_id`=? AND `user_id`=?");
             $stmt->execute([
                 $id,
                 $user['id']
