@@ -1324,9 +1324,11 @@ class Service
 
         // 決済する
         $payInfo = [
+            "payment_information" => [
             'card_token' => $payload['card_token'],
             'reservation_id' => $payload['reservation_id'],
             'amount' => $reservation['amount'],
+            ]
         ];
         $payment_api = Environment::get('PAYMENT_API', 'http://payment:5000');
         $http_client = new Client();
@@ -1348,7 +1350,7 @@ class Service
          * string `json:"payment_id"`
          * bool   `json:"is_ok"`
          */
-        $output = json_decode($r->getBody());
+        $output = json_decode($r->getBody(), true);
 
         // 予約情報の更新
         try {
