@@ -371,7 +371,7 @@ class Service
     public function trainSearchHandler(Request $request, Response $response, array  $args)
     {
         try {
-            $date = new DateTime($request->getParam("use_at", ""));
+            $date = DateTime::createFromFormat('Y-m-d\TH:i:s+', $request->getParam("use_at", ""));
         } catch (\Exception $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
         }
@@ -588,8 +588,8 @@ class Service
                         "last" => $train['last_station'],
                         "departure" => $fromStation['name'],
                         "arrival" => $toStation['name'],
-                        "departure_time"=> $departure,
-                        "arrival_time" => $arrival,
+                        "departure_time"=> $departure['departure'],
+                        "arrival_time" => $arrival['arrival'],
                         "seat_availability" => $seatAvailability,
                         "seat_fare" => $fareInformation,
                     ];
