@@ -228,8 +228,8 @@ def get_train_search():
     from_name = flask.request.args.get('from')
     to_name = flask.request.args.get('to')
 
-    adult = int(flask.request.args.get('adult'))
-    child = int(flask.request.args.get('child'))
+    adult = int(flask.request.args.get('adult', '0'))
+    child = int(flask.request.args.get('child', '0'))
 
     if not check_available_date(use_at.date()):
         raise HttpException(requests.codes['not_found'], "予約可能期間外です")
@@ -558,7 +558,315 @@ def get_train_seats():
 
 @app.route("/api/train/reserve", methods=["POST"])
 def post_reserve():
-    pass
+    body = flask.request.json
+
+    date = dateutil.parser.parse(body.get('date')).astimezone(JST).date()
+
+    app.logger.warn("%s", body)
+
+    train_class = body.get('train_class')
+    train_name = body.get('train_name')
+    departure_name = body.get('departure')
+    arrival_name = body.get('arrival')
+    car_number = int(body.get('car_number'))
+    seat_class = body.get('seat_class')
+    is_smoking_seat = False
+
+    if body.get('is_smoking_seat', "").lower() in ("1", "true"):
+        is_smoking_seat = True
+
+    adult = int(body.get('adult'))
+    child = int(body.get('child'))
+
+    column = body.get('column')
+    seats =  body.get('seats', [])
+
+    if not check_available_date(date):
+        raise HttpException(requests.codes['not_found'], "予約可能期間外です")
+
+
+    seat_information_list = []
+
+
+    try:
+        conn = dbh()
+        with conn.cursor() as c:
+
+            sql = "SELECT * FROM train_master WHERE date=%s AND train_class=%s AND train_name=%s"
+            c.execute(sql, (str(date), train_class, train_name))
+            train = c.fetchone()
+            if not train:
+                raise HttpException(requests.codes['not_found'], "列車が存在しません")
+
+
+            sql = "SELECT * FROM station_master WHERE name=%s"
+            c.execute(sql, (train["start_station"], ))
+            start_station = c.fetchone()
+            if not start_station:
+                raise HttpException(requests.codes['not_found'], "リクエストされた列車の始発駅データがみつかりません")
+
+            c.execute(sql, (train["last_station"], ))
+            last_station = c.fetchone()
+            if not last_station:
+                raise HttpException(requests.codes['not_found'], "リクエストされた列車の終着駅データがみつかりません")
+
+
+            c.execute(sql, (departure_name, ))
+            from_station = c.fetchone()
+            if not from_station:
+                raise HttpException(requests.codes['not_found'], "リクエストされた乗車駅データがみつかりません")
+
+            c.execute(sql, (arrival_name, ))
+            to_station = c.fetchone()
+            if not to_station:
+                raise HttpException(requests.codes['not_found'], "リクエストされた降車駅データがみつかりません")
+
+            usable_train_class_list = get_usable_train_class_list(from_station, to_station)
+
+            if train["train_class"] not in usable_train_class_list:
+                raise HttpException(requests.codes['bad_request'], "invalid train_class")
+
+
+            # 運行していない区間を予約していないかチェックする
+            if train["is_nobori"]:
+                if from_station["id"] > start_station["id"] or to_station["id"] > start_station["id"]:
+                    raise HttpException(requests.codes['bad_request'], "リクエストされた区間に列車が運行していない区間が含まれています")
+                if last_station["id"] >= from_station["id"] or last_station["id"] > to_station["id"]:
+                    raise HttpException(requests.codes['bad_request'], "リクエストされた区間に列車が運行していない区間が含まれています")
+            else:
+                if from_station["id"] < start_station["id"] or to_station["id"] < start_station["id"]:
+                    raise HttpException(requests.codes['bad_request'], "リクエストされた区間に列車が運行していない区間が含まれています")
+                if last_station["id"] <= from_station["id"] or last_station["id"] < to_station["id"]:
+                    raise HttpException(requests.codes['bad_request'], "リクエストされた区間に列車が運行していない区間が含まれています")
+
+            # あいまい座席検索
+            # seatsが空白の時に発動する
+            if not seats and seat_class != "non-reserved": #non-reservedはそもそもあいまい検索もせずダミーのRow/Columnで予約を確定させる。
+
+                for car_number in range(1,17):
+                    sql = "SELECT * FROM seat_master WHERE train_class=%s AND car_number=%s AND seat_class=%s AND is_smoking_seat=%s ORDER BY seat_row, seat_column"
+                    c.execute(sql, (train_class, car_number, seat_class, is_smoking_seat))
+                    seat_list = c.fetchall()
+                    seats = [] # 予約対象席を空っぽに
+
+
+                    for seat in seat_list:
+                        sql = "SELECT s.* FROM seat_reservations s, reservations r WHERE r.date=%s AND r.train_class=%s AND r.train_name=%s AND car_number=%s AND seat_row=%s AND seat_column=%s FOR UPDATE"
+                        c.execute(sql, (str(date), train_class, train_name, seat["car_number"], seat["seat_row"], seat["seat_column"]))
+                        seat_reservation_list = c.fetchall()
+
+                        is_occupied = False
+
+                        for seat_reservation in seat_reservation_list:
+                            sql = "SELECT * FROM reservations WHERE reservation_id=%s FOR UPDATE"
+                            c.execute(sql, (seat_reservation["reservation_id"],))
+                            reservation = c.fetchone()
+                            if not reservation:
+                                raise HttpException(requests.codes['bad_request'], "reservationが見つかりません")
+
+                            sql = "SELECT * FROM station_master WHERE name=%s"
+                            c.execute(sql, (reservation["departure"],))
+                            departure_station = c.fetchone()
+                            c.execute(sql, (reservation["arrival"],))
+                            arrival_station = c.fetchone()
+
+                            if train["is_nobori"]:
+                                if to_station["id"] < arrival_station["id"] and from_station["id"] <= arrival_station["id"]:
+                                    pass
+                                elif to_station["id"] >= departure_station["id"] and from_station["id"] > departure_station["id"]:
+                                    pass
+                                else:
+                                    is_occupied = True
+                            else:
+                                if from_station["id"] < departure_station["id"] and to_station["id"] <= departure_station["id"]:
+                                    pass
+                                elif from_station["id"] >= arrival_station["id"] and to_station["id"] > arrival_station["id"]:
+                                    pass
+                                else:
+                                    is_occupied = True
+
+                        seat_information_list.append({
+                            "row": seat["seat_row"],
+                            "column": seat["seat_column"],
+                            "class": seat["seat_class"],
+                            "is_smoking_seat": seat["is_smoking_seat"],
+                            "is_occupied": is_occupied,
+                        })
+
+                    # 曖昧予約席とその他の候補席を選出
+                    seatnum = adult + child - 1 #予約する座席の合計数 全体の人数からあいまい指定席分を引いておく
+                    reserved = False #あいまい指定席確保済フラグ
+                    vargue = True #あいまい検索フラグ
+                    vague_seat = None #あいまい指定席保存用
+
+                    if not column: #A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
+                        seatnum = adult + child
+                        reserved = True
+                        vargue = False
+
+                    candidate_seat_list = []
+
+                    i = 0
+                    for seat in seat_information_list:
+                        if seat["column"] == column and not seat["is_occupied"] and not reserved and vargue: # あいまい席があいてる
+                            vargue_seat = {
+                                "row": seat["row"],
+                                "column": seat["column"],
+                            }
+                            reserved = True
+                        elif not seat["is_occupied"] and i < seatnum: #単に席があいてる
+                            candidate_seat_list.append({
+                                "row": seat["row"],
+                                "column": seat["column"],
+                            })
+                            i+=1
+
+                    if vargue and reserved: # あいまい席が見つかり、予約できそうだった
+                        seats.append(vague_seat)
+                    if i>0: # 候補席があった
+                        seats += candidate_seat_list
+
+                    if len(seats) < (adult + child):
+                        # リクエストに対して席数が足りてない
+                        # 次の号車にうつしたい
+                        app.logger.warn("-----------------")
+                        app.logger.warn("現在検索中の車両: %d号車, リクエスト座席数: %d, 予約できそうな座席数: %d, 不足数: %d", car_number, adult+child, len(seats), adult+child-len(seats))
+                        app.logger.warn("リクエストに対して座席数が不足しているため、次の車両を検索します。")
+                        if car_number == 16:
+                            app.logger.warn("この新幹線にまとめて予約できる席数がなかったから検索をやめるよ")
+                            raise HttpException(requests.codes['not_found'], "あいまい座席予約ができませんでした。指定した席、もしくは1車両内に希望の席数をご用意できませんでした。")
+
+                    else:
+                        app.logger.warn("空き実績: %d号車 シート:%s 席数:%d", car_number, seats, len(seats))
+                        seats = seats[:adult+child]
+                        break
+
+            else:
+                if len(seats) != (adult + child):
+                    raise HttpException(requests.codes['bad_request'], "座席数が正しくありません")
+
+
+            # 座席情報のValidate
+            for seat in seats:
+                sql = "SELECT * FROM seat_master WHERE train_class=%s AND car_number=%s AND seat_column=%s AND seat_row=%s AND seat_class=%s"
+                c.execute(sql, (train_class, car_number, seat["column"], seat["row"], seat_class))
+                if not c.fetchone():
+                    raise HttpException(requests.codes['not_found'], "リクエストされた座席情報は存在しません。号車・喫煙席・座席クラスなど組み合わせを見直してください")
+
+
+            # 当該列車・列車名の予約一覧取得
+            sql = "SELECT * FROM reservations WHERE date=%s AND train_class=%s AND train_name=%s FOR UPDATE"
+            c.execute(sql, (str(date), train_class, train_name))
+            reservations = c.fetchall()
+
+            for reservation in reservations:
+                if reservation["seat_class"] == "non-reserved":
+                    continue
+
+
+                # 予約情報の乗車区間の駅IDを求める
+                sql = "SELECT * FROM station_master WHERE name=%s"
+                c.execute(sql, reservation["departure"])
+                reservedfromStation = c.fetchone()
+                if not reservedfromStation:
+                    raise HttpException(requests.codes['internal_server_error'], "予約情報に記載された列車の乗車駅データがみつかりません")
+
+                c.execute(sql, reservation["departure"])
+                reservedfromStation = c.fetchone()
+                if not reservedfromStation:
+                    raise HttpException(requests.codes['internal_server_error'], "予約情報に記載された列車の降車駅データがみつかりません")
+
+                # 予約の区間重複判定
+                secdup = False
+                if train["is_nobori"]:
+                    # 上り
+                    if to_station["id"] < reservedtoStation["id"] and from_station["id"] <= reservedtoStation["id"]:
+                        pass
+                    elif to_station["id"] >= reservedfromStation["id"] and from_station["id"] > reservedfromStation["id"]:
+                        pass
+                    else:
+                        secdup = True
+                else:
+                    # 下り
+                    if from_station["id"] < reservedfromStation["id"] and to_station["id"] <= reservedfromStation["id"]:
+                        pass
+                    elif from_station["id"] >= reservedtoStation["id"] and to_station["id"] > reservedtoStation["id"]:
+                        pass
+                    else:
+                        secdup = True
+
+                if secdup:
+                    # 区間重複の場合は更に座席の重複をチェックする
+                    sql = "SELECT * FROM seat_reservations WHERE reservation_id=%s FOR UPDATE"
+                    c.execute(sql, (reservation["reservation_id"],))
+                    seat_reservations = c.fetchall()
+                    for v in seat_reservations:
+                        for seat in seats:
+                            if v["car_number"] == car_number and v["seat_row"] == seat["row"] and v["seat_column"] == seat["column"]:
+                                app.logger.warn("Duplicated ", reservation)
+                                raise HttpException(requests.codes['bad_request'], "リクエストに既に予約された席が含まれています")
+
+            # 3段階の予約前チェック終わり
+
+            # 自由席は強制的にSeats情報をダミーにする（自由席なのに席指定予約は不可）
+            if seat_class == "non-reserved":
+                car_number = 0
+                seats = []
+                for num in range(adult, child):
+                    seats.appaned({
+                        "raw": 0,
+                        "column": "",
+                    })
+
+            fare = calc_fare(c, date, from_station, to_station, train_class, seat_class)
+
+            sumFare = int(adult * fare) + int(child*fare/2)
+            app.logger.warn("SUMFARE %d", sumFare)
+
+            # userID取得。ログインしてないと怒られる。
+            user = get_user()
+
+
+            # 予約ID発行と予約情報登録
+            sql = "INSERT INTO `reservations` (`user_id`, `date`, `train_class`, `train_name`, `departure`, `arrival`, `status`, `payment_id`, `adult`, `child`, `amount`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            c.execute(
+                sql,
+                (
+                    user["id"],
+                    str(date),
+                    train_class,
+                    train_name,
+                    departure_name,
+                    arrival_name,
+                    "requesting",
+                    "a",
+                    adult,
+                    child,
+                    sumFare,
+                )
+            )
+            reservation_id = c.lastrowid
+
+            # 席の予約情報登録
+            # reservationsレコード1に対してseat_reservationstが1以上登録される
+            sql = "INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES (%s, %s, %s, %s)"
+            for seat in seats:
+                c.execute(sql, (reservation_id, car_number, seat["row"], seat["column"]))
+
+
+    except MySQLdb.Error as err:
+        conn.rollback()
+        app.logger.exception(err)
+        raise HttpException(requests.codes['internal_server_error'], "db error")
+    except:
+        conn.rollback()
+        raise
+
+    return flask.jsonify({
+        "reservation_id": reservation_id,
+        "amount": sumFare,
+        "is_ok": True,
+    })
 
 @app.route("/api/train/reservation/commit", methods=["POST"])
 def post_commit():
