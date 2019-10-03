@@ -738,7 +738,7 @@ class Service
         $simpleCarInformationList = [];
         $i = 1;
         while (true) {
-            $stmt = $this->dbh->query("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? ORDER BY `seat_row`, `seat_column` LIMIT 1");
+            $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? ORDER BY `seat_row`, `seat_column` LIMIT 1");
             $stmt->execute([
                 $trainClass,
                 $i,
@@ -1087,7 +1087,7 @@ class Service
         // 当該列車・列車名の予約一覧取得
         $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE date=? AND `train_class`=? AND `train_name`=? FOR UPDATE");
         $stmt->execute([
-            $date,
+            $date->format(self::DATE_SQL_FORMAT),
             $payload['train_class'],
             $payload['train_name'],
         ]);
@@ -1261,7 +1261,7 @@ class Service
         $this->dbh->commit();
 
         return $response->withJson([
-            'reservation_id' => $reservation_id,
+            'reservation_id' => (int) $reservation_id,
             'amount' => $sumFare,
             'is_ok' => true,
         ], StatusCode::HTTP_OK);
