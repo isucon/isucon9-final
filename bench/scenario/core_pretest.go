@@ -35,10 +35,6 @@ func Pretest(ctx context.Context, client *isutrain.Client, paymentClient *paymen
 		pretestNormalReservation(ctx, client, paymentClient)
 		return nil
 	})
-	pretestGrp.Go(func() error {
-		pretestNormalSearch(ctx, client)
-		return nil
-	})
 	// 異常系
 	pretestGrp.Go(func() error {
 		pretestAbnormalLogin(ctx, client)
@@ -117,7 +113,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	}
 
 	// FIXME: 日付、列車クラス、名前、車両番号、乗車駅降車駅を指定
-	listTrainSeatsResp, err := client.ListTrainSeats(ctx,
+	searchTrainSeatsResp, err := client.SearchTrainSeats(ctx,
 		useAt,
 		trainClass, trainName, carNum, departure, arrival)
 	if err != nil {
@@ -125,7 +121,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return
 	}
 
-	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+	availSeats := filterTrainSeats(searchTrainSeatsResp, 2)
 
 	reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, availSeats, departure, arrival,
 		useAt,
@@ -152,15 +148,36 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	}
 }
 
-// PreTestNormalSearch は検索条件を細かく指定して検索します
-func pretestNormalSearch(ctx context.Context, client *isutrain.Client) {
+func pretestSearchTrainsNotEmptyResult(ctx context.Context, client *isutrain.Client) {
+	// 初期状態で、いくつか試す
+	// 必ずこれは空にならないというパターンを試す
+}
+
+func pretestSearchTrainsTimeTable(ctx context.Context, client *isutrain.Client) {
+	// タイムテーブルをちゃんと返しているか試す
+}
+
+func pretestSearchTrainSeats(ctx context.Context, client *isutrain.Client) {
+
+}
+
+func pretestSeatAvailability(ctx context.Context, client *isutrain.Client) {
+
+}
+
+func pretestCheckAvailableDate(ctx context.Context, client *isutrain.Client) {
+	// https://github.com/chibiegg/isucon9-final/blob/master/webapp/go/utils.go#L8
+}
+
+func pretestListStations(ctx context.Context, client *isutrain.Client) {
+	// 固定でちゃんと返せてるか
 }
 
 // 異常系
 
 // PreTestAbnormalLogin は不正なパスワードでのログインを試みます
 func pretestAbnormalLogin(ctx context.Context, client *isutrain.Client) {
-	if err := client.Login(ctx, "username", "password", isutrain.StatusCodeOpt(http.StatusForbidden)); err != nil {
+	if err := client.Login(ctx, "FikyavwocZear@example.com", "jieldirAwsabyonsInd", isutrain.StatusCodeOpt(http.StatusForbidden)); err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
 	}

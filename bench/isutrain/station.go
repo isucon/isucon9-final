@@ -6,12 +6,16 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 )
 
+// ListStationsResponse は /api/stations のレスポンス形式です
+type ListStationsResponse []*Station
+
 type Station struct {
-	ID                int    `json:"id"`
-	Name              string `json:"name"`
-	IsStopExpress     bool   `json:"is_stop_express"`
-	IsStopSemiExpress bool   `json:"is_stop_semi_express"`
-	IsStopLocal       bool   `json:"is_stop_local"`
+	ID                int     `json:"id"`
+	Name              string  `json:"name"`
+	Distance          float64 `json:"distance"`
+	IsStopExpress     bool    `json:"is_stop_express"`
+	IsStopSemiExpress bool    `json:"is_stop_semi_express"`
+	IsStopLocal       bool    `json:"is_stop_local"`
 }
 
 var (
@@ -149,4 +153,11 @@ func isKudari(origin, destination string) (bool, error) {
 	}
 
 	return destinationNum > originNum, nil
+}
+
+func IsValidStation(station string) bool {
+	if _, ok := sectionMap[station]; !ok {
+		return false
+	}
+	return true
 }

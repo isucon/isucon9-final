@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/chibiegg/isucon9-final/bench/internal/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,7 +20,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		{
 			reservationID: 10,
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
@@ -52,7 +53,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		// 日付
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(2 * time.Minute),
+				Date:       util.FormatISO8601(now.Add(2 * time.Minute)),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
@@ -70,7 +71,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
@@ -89,7 +90,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		// 座席
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
@@ -107,7 +108,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "古岡",
 				Arrival:    "荒川",
 				TrainClass: "test1",
@@ -126,7 +127,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		// 区間
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "東京",
 				Arrival:    "磯川",
 				TrainClass: "test1",
@@ -144,7 +145,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "山田",
 				Arrival:    "鳴門",
 				TrainClass: "test1",
@@ -162,7 +163,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "東京",
 				Arrival:    "山田",
 				TrainClass: "test1",
@@ -180,7 +181,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "東京",
 				Arrival:    "古岡",
 				TrainClass: "badtest1",
@@ -198,7 +199,7 @@ func TestReservationMem_CanReserve_Kudari(t *testing.T) {
 		},
 		{ // failed
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "荒川",
 				Arrival:    "鳴門",
 				TrainClass: "test1",
@@ -240,7 +241,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		{
 			reservationID: 10,
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
@@ -272,7 +273,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		// 日付
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(2 * time.Minute),
+				Date:       util.FormatISO8601(now.Add(2 * time.Minute)),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
@@ -290,7 +291,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
@@ -309,7 +310,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		// 座席
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
@@ -327,7 +328,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "荒川",
 				Arrival:    "古岡",
 				TrainClass: "test1",
@@ -346,7 +347,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		// 区間
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "磯川",
 				Arrival:    "東京",
 				TrainClass: "test1",
@@ -364,7 +365,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "鳴門",
 				Arrival:    "山田",
 				TrainClass: "test1",
@@ -382,7 +383,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "山田",
 				Arrival:    "東京",
 				TrainClass: "test1",
@@ -400,7 +401,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		{
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "古岡",
 				Arrival:    "東京",
 				TrainClass: "badtest1",
@@ -418,7 +419,7 @@ func TestReservationMem_CanReserve_Nobori(t *testing.T) {
 		},
 		{ // failed
 			req: &ReserveRequest{
-				Date:       now.Add(time.Minute),
+				Date:       util.FormatISO8601(now.Add(time.Minute)),
 				Departure:  "鳴門",
 				Arrival:    "荒川",
 				TrainClass: "test1",
