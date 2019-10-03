@@ -285,7 +285,7 @@ class Service
         ];
         $stmt = $this->dbh->prepare("SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
         $stmt->execute([
-            (new \DateTime($reservation['date']))->format(self::DATET_SQL_FORMAT),
+            (new \DateTime($reservation['date']))->format(self::DATE_SQL_FORMAT),
             $reservation['train_class'],
             $reservation['train_name'],
             $reservation['departure'],
