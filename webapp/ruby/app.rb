@@ -76,7 +76,7 @@ module Isutrain
       def fare_calc(date, dep_station, dest_station, train_class, seat_class)
         # 料金計算メモ
         # 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
-        
+
         from_station = db.xquery('SELECT * FROM `station_master` WHERE `id` = ?', dep_station).first
 
         raise ErrorNoRows if from_station.nil?
@@ -101,8 +101,11 @@ module Isutrain
 
         selected_fare = fare_list.first
 
+        date = Date.new(date.year, date.month, date.day)
         fare_list.each do |fare|
-          if fare['start_date'] < date
+          start_date = Date.new(fare['start_date'].year, fare['start_date'].month, fare['start_date'].day)
+
+          if start_date <= date
             puts "#{fare['start_date']} #{fare['fare_multiplier']}"
             selected_fare = fare
           end
@@ -180,7 +183,7 @@ module Isutrain
           v[:reservation_id] = 0
           v[:car_number] = 0
         end
-        
+
         reservation_response
       end
 
@@ -223,7 +226,7 @@ module Isutrain
     end
 
     get '/api/settings' do
-      payment_api = ENV['PAYMENT_API'] || 'http://192.168.3.10:5000'
+      payment_api = ENV['PAYMENT_API'] || 'http://127.0.0.1:5000'
 
       content_type :json
       { payment_api: payment_api }.to_json
@@ -876,10 +879,11 @@ __EOF
             # 曖昧予約席とその他の候補席を選出
             vague_seat = {}
 
+
             reserved = false
             vargue = true
             seatnum = body_params[:adult] + body_params[:child] - 1 # 全体の人数からあいまい指定席分を引いておく
-            if body_params[:column] == ''                           # A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
+            if !body_params[:column]                                # A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
               seatnum = body_params[:adult] + body_params[:child]   # あいまい指定せず大人＋小人分の座席を取る
               reserved = true                                       # dummy
               vargue = false                                        # dummy
@@ -891,8 +895,7 @@ __EOF
             i = 0
             seat_information_list.each do |seat|
               if seat[:column] == body_params[:column] && !seat[:is_occupied] && !reserved && vargue # あいまい席があいてる
-                vague_seat[:row] = seat[:row]
-                vague_seat[:column] = seat[:column]
+                vague_seat = seat
                 reserved = true
               elsif !seat[:is_occupied] && i < seatnum # 単に席があいてる
                 candidate_seats << {
@@ -1430,18 +1433,18 @@ __EOF
       when 'done'
         # 支払いをキャンセルする
         payment_api = ENV['PAYMENT_API'] || 'http://payment:5000'
-  
+
         uri = URI.parse("#{payment_api}/payment/#{reservation['payment_id']}")
         req = Net::HTTP::Delete.new(uri)
         req.body = {
           payment_id: reservation['payment_id']
         }.to_json
         req['Content-Type'] = 'application/json'
-  
+
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = uri.scheme == 'https'
         res = http.start { http.request(req) }
-  
+
         # リクエスト失敗
         if res.code != '200'
           db.query('ROLLBACK')
