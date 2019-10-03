@@ -294,20 +294,20 @@ class Service
         if ($departure === false) {
             throw new \DomainException();
         }
-        $rtn['departure_time'] = $departure;
+        $rtn['departure_time'] = $departure['departure'];
 
-        $stmt = $this->dbh->prepare("SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
+        $stmt = $this->dbh->prepare("SELECT `arrival` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
         $stmt->execute([
             (new \DateTime($reservation['date']))->format(self::DATE_SQL_FORMAT),
             $reservation['train_class'],
             $reservation['train_name'],
-            $reservation['departure'],
+            $reservation['arrival'],
         ]);
         $arrival = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($arrival === false) {
             throw new \DomainException();
         }
-        $rtn['arrival_time'] = $arrival;
+        $rtn['arrival_time'] = $arrival['arrival'];
 
         $stmt = $this->dbh->prepare("SELECT * FROM `seat_reservations` WHERE `reservation_id`=?");
         $stmt->execute([$reservation['reservation_id']]);
