@@ -91,7 +91,7 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 		carNum, 1, 1,
 		isutrain.StatusCodeOpt(http.StatusBadRequest))
 
-	if err == nil {
+	if err != nil {
 		err = bencherror.NewSimpleCriticalError("予約できない区間が予約できました")
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
