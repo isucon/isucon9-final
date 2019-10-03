@@ -920,7 +920,58 @@ def post_reserve():
 
 @app.route("/api/train/reservation/commit", methods=["POST"])
 def post_commit():
-    pass
+    body = flask.request.json
+
+    reservation_id = body.get('reservation_id')
+    card_token = body.get('card_token')
+
+    user = get_user()
+
+    try:
+        conn = dbh()
+        with conn.cursor() as c:
+            # 予約IDで検索
+            sql = "SELECT * FROM reservations WHERE reservation_id=%s"
+            c.execute(sql, (reservation_id,))
+            reservation = c.fetchone()
+            if not reservation:
+                raise HttpException(requests.codes['not_found'], "予約情報がみつかりません")
+
+
+            if reservation["user_id"] != user["id"]:
+                raise HttpException(requests.codes['forbidden'], "他のユーザIDの支払いはできません")
+
+            if reservation["status"] == "done":
+                raise HttpException(requests.codes['forbidden'], "既に支払いが完了している予約IDです")
+
+            payment_api = os.getenv('PAYMENT_API', 'http://payment:5000')
+
+            res = requests.post(payment_api+"/payment", json={
+                "payment_information":{
+                    "card_token": card_token,
+                    "reservation_id": reservation["reservation_id"],
+                    "amount": reservation["amount"],
+                }
+            })
+
+            if res.status_code != 200:
+                raise HttpException(requests.codes['internal_server_error'], "決済に失敗しました。カードトークンや支払いIDが間違っている可能性があります")
+
+            payment_res = res.json()
+
+            # 予約情報の更新
+            sql = "UPDATE reservations SET status=%s, payment_id=%s WHERE reservation_id=%s"
+            c.execute(sql, ("done", payment_res["payment_id"], reservation["reservation_id"]))
+
+    except MySQLdb.Error as err:
+        conn.rollback()
+        app.logger.exception(err)
+        raise HttpException(requests.codes['internal_server_error'], "db error")
+    except:
+        conn.rollback()
+        raise
+
+    return flask.jsonify({"is_ok": True})
 
 
 @app.route("/api/auth", methods=["GET"])
