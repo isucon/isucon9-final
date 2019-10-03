@@ -34,8 +34,9 @@ func finalcheckPayment(ctx context.Context, paymentClient *payment.Client) error
 		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(err, "課金APIから決済結果を取得できませんでした"))
 	}
 
-	if isutrain.ReservationCache.Len() != 0 && len(paymentAPIResult.RawData) == 0 {
-		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(ErrInvalidReservationForPaymentAPI, "課金APIとの整合性チェックに失敗"))
+	if isutrain.ReservationCache.CommitedLen() != 0 && len(paymentAPIResult.RawData) == 0 {
+		lgr.Warnf("ReservationCacheと課金APIのRawDataが不一致: 予約キャッシュ件数=%d に対し、 課金APIのデータ件数が0", isutrain.ReservationCache.Len())
+		return bencherror.FinalCheckErrs.AddError(bencherror.NewCriticalError(ErrInvalidReservationForPaymentAPI, "成功した予約が存在するはずですが、課金APIには予約が記録されていませんでした"))
 	}
 
 	eg := &errgroup.Group{}

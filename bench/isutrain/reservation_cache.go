@@ -101,6 +101,13 @@ func (r *reservationCache) Len() int {
 	return len(r.reservations)
 }
 
+func (r *reservationCache) CommitedLen() int {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	return len(r.commitedReservations)
+}
+
 func (r *reservationCache) Reservation(reservationID int) (*ReservationCacheEntry, bool) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()

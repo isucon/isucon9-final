@@ -22,16 +22,17 @@ func AwesomeScenario(ctx context.Context) error {
 	lgr := zap.S()
 
 	// ISUTRAIN APIのクライアントを作成
+	// isutrain.Clientでエラーが発生したらシステムエラーに追加してくれる
 	client, err := isutrain.NewClient()
 	if err != nil {
-		// 実行中のエラーは `bencherror.BenchmarkErrs.AddError(err)` に投げる
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	// 決済サービスのクライアントを作成
+	// isutrain.Clientでエラーが発生したらシステムエラーに追加してくれる
 	paymentClient, err := payment.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	// デバッグの場合はモックに差し替える
@@ -47,6 +48,7 @@ func AwesomeScenario(ctx context.Context) error {
 	lgr.Info("[template:AwesomeScenario] これは素晴らしいシナリオです")
 
 	// ユーザー作成とログイン
+	// ベンチマーカーのランダム生成に問題があって、webappに問題はないので、ベンチマークのシステムエラーとして追加
 	user, err := xrandom.GetRandomUser() // ランダムデータ生成系は xrandom に作成するかあるものを使う
 	if err != nil {
 		bencherror.SystemErrs.AddError(err)
@@ -55,26 +57,30 @@ func AwesomeScenario(ctx context.Context) error {
 
 	err = client.Signup(ctx, user.Email, user.Password)
 	if err != nil {
-		// `bencherror.BenchmarkErrs.AddError(err)` も忘れずに
+		// 実行中のエラーは `bencherror.BenchmarkErrs.AddError(err)` に投げる
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	err = client.Login(ctx, user.Email, user.Password)
 	if err != nil {
+		// `bencherror.BenchmarkErrs.AddError(err)` も忘れずに
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
 	if err != nil {
+		// `bencherror.BenchmarkErrs.AddError(err)` も忘れずに
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	// 例) cardTokenが不正な場合に失格にしたい場合
 	if cardToken != "XXXXXXXX" {
+		// `bencherror.BenchmarkErrs.AddError(err)` も忘れずに
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewSimpleCriticalError("カードトークンが不正: %s", cardToken))
 	}
 	// 例) Client以外からエラーを得たが、これを減点要素にしたい場合
 	if num, err := DoSomething(); err != nil {
+		// `bencherror.BenchmarkErrs.AddError(err)` も忘れずに
 		return bencherror.BenchmarkErrs.AddError(bencherror.NewApplicationError(err, "エラー発生: %d", num))
 	}
 

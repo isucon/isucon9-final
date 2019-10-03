@@ -20,10 +20,12 @@ func AbnormalLoginScenario(ctx context.Context) error {
 		password, err2 = util.SecureRandomStr(10)
 	)
 	if err1 != nil {
-		return err1
+		bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err1, "ランダム文字列生成でエラーが発生しました"))
+		return nil
 	}
 	if err2 != nil {
-		return err2
+		bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err2, "ランダム文字列生成でエラーが発生しました"))
+		return nil
 	}
 
 	client, err := isutrain.NewClient()
@@ -33,7 +35,7 @@ func AbnormalLoginScenario(ctx context.Context) error {
 
 	err = client.Login(ctx, email, password, isutrain.StatusCodeOpt(http.StatusUnauthorized))
 	if err != nil {
-		return err
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	return nil
@@ -44,7 +46,7 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 
 	client, err := isutrain.NewClient()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	if config.Debug {
@@ -53,7 +55,8 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 
 	user, err := xrandom.GetRandomUser()
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		bencherror.SystemErrs.AddError(err)
+		return nil
 	}
 
 	err = registerUserAndLogin(ctx, client, user)

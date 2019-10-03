@@ -27,7 +27,7 @@ type Client struct {
 func NewClient() (*Client, error) {
 	u, err := url.Parse(config.PaymentBaseURL)
 	if err != nil {
-		return nil, err
+		return nil, bencherror.SystemErrs.AddError(bencherror.NewCriticalError(err, "課金クライアントが作成できません"))
 	}
 
 	return &Client{

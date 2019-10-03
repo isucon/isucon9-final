@@ -78,12 +78,12 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, user 
 func payForReservation(ctx context.Context, client *isutrain.Client, paymentClient *payment.Client, reservationId int) error {
 	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	err = client.CommitReservation(ctx, reservationId, cardToken)
 	if err != nil {
-		return bencherror.BenchmarkErrs.AddError(err)
+		return err
 	}
 
 	return nil
