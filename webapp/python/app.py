@@ -192,6 +192,56 @@ def calc_fare(c, date, from_station, to_station, train_class, seat_class):
     app.logger.warn("%%%%%%%%%%%%%%%%%%%")
     return int(distFare * selectedFare["fare_multiplier"])
 
+
+def make_reservation_response(c, reservation):
+    sql = "SELECT departure FROM train_timetable_master WHERE date=%s AND train_class=%s AND train_name=%s AND station=%s"
+    c.execute(sql, (
+        reservation["date"],
+        reservation["train_class"],
+        reservation["train_name"],
+        reservation["departure"]
+    ))
+    departure = c.fetchone()
+
+    sql = "SELECT arrival FROM train_timetable_master WHERE date=%s AND train_class=%s AND train_name=%s AND station=%s"
+    c.execute(sql, (
+        reservation["date"],
+        reservation["train_class"],
+        reservation["train_name"],
+        reservation["arrival"]
+    ))
+    arrival = c.fetchone()
+
+    ret = filter_dict_keys(reservation,("reservation_id", "date", "amount", "adult", "child", "departure", "arrival", "train_class", "train_name"))
+    reservation["departure_time"] = str(departure["departure"])
+    reservation["arrival_time"] = str(arrival["arrival"])
+
+    sql = "SELECT * FROM seat_reservations WHERE reservation_id=%s"
+    c.execute(sql, (reservation["reservation_id"],))
+    seat_reservation_list = c.fetchall()
+
+    # 1つの予約内で車両番号は全席同じ
+    reservation["car_number"] = seat_reservation_list[0]["car_number"]
+
+    if reservation["car_number"] == 0:
+        reservation["seat_class"] = "non-reserved"
+    else:
+        sql = "SELECT * FROM seat_master WHERE train_class=%s AND car_number=%s AND seat_column=%s AND seat_row=%s"
+        c.execute(sql, (reservation["train_class"], reservation["car_number"], seat_reservation_list[0]["seat_column"], seat_reservation_list[0]["seat_row"]))
+        seat = c.fetchone()
+        reservation["seat_class"] = seat["seat_class"]
+
+
+    reservation["seats"] = []
+    for seat in seat_reservation_list:
+        reservation["seats"].append({
+            "seat_row": seat["seat_row"],
+            "seat_column": seat["seat_column"],
+        })
+
+    return reservation
+
+
 @app.route("/api/stations", methods=["GET"])
 def get_stations():
 
@@ -760,20 +810,20 @@ def post_reserve():
             reservations = c.fetchall()
 
             for reservation in reservations:
-                if reservation["seat_class"] == "non-reserved":
+                if seat_class == "non-reserved":
                     continue
 
 
                 # 予約情報の乗車区間の駅IDを求める
                 sql = "SELECT * FROM station_master WHERE name=%s"
-                c.execute(sql, reservation["departure"])
+                c.execute(sql, (reservation["departure"],))
                 reservedfromStation = c.fetchone()
                 if not reservedfromStation:
                     raise HttpException(requests.codes['internal_server_error'], "予約情報に記載された列車の乗車駅データがみつかりません")
 
-                c.execute(sql, reservation["departure"])
-                reservedfromStation = c.fetchone()
-                if not reservedfromStation:
+                c.execute(sql, (reservation["arrival"],))
+                reservedtoStation = c.fetchone()
+                if not reservedtoStation:
                     raise HttpException(requests.codes['internal_server_error'], "予約情報に記載された列車の降車駅データがみつかりません")
 
                 # 予約の区間重複判定
@@ -932,15 +982,52 @@ def post_logout():
 
 @app.route("/api/user/reservations", methods=["GET"])
 def get_user_reservations():
-    pass
+    user = get_user()
 
-@app.route("/api/user/reservations/:item_id", methods=["GET"])
-def get_user_reservation_detail():
-    pass
+    ret = []
+    try:
+        conn = dbh()
+        with conn.cursor() as c:
+            sql = "SELECT * FROM reservations WHERE user_id=%s"
+            c.execute(sql, (user["id"],))
+            reservations = c.fetchall()
+
+            for reservation in reservations:
+                ret.append(make_reservation_response(c, reservation))
+
+    except MySQLdb.Error as err:
+        app.logger.exception(err)
+        raise HttpException(requests.codes['internal_server_error'], "db error")
+
+    return flask.jsonify(ret)
 
 
-@app.route("/api/user/reservations/:item_id/cancel", methods=["POST"])
-def post_user_reservation_cancel():
+@app.route("/api/user/reservations/<item_id>", methods=["GET"])
+def get_user_reservation_detail(item_id):
+    user = get_user()
+
+    reservation = None
+    try:
+        conn = dbh()
+        with conn.cursor() as c:
+            sql = "SELECT * FROM reservations WHERE user_id=%s AND reservation_id=%s"
+            c.execute(sql, (user["id"], item_id))
+            reservation = c.fetchone()
+            if not reservation:
+                raise HttpException(requests.codes['not_found'], "Reservation not found")
+
+            reservation = make_reservation_response(c, reservation)
+
+    except MySQLdb.Error as err:
+        app.logger.exception(err)
+        raise HttpException(requests.codes['internal_server_error'], "db error")
+
+    return flask.jsonify(reservation)
+
+
+
+@app.route("/api/user/reservations/<item_id>/cancel", methods=["POST"])
+def post_user_reservation_cancel(item_id):
     pass
 
 
