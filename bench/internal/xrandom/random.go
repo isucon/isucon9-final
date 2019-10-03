@@ -13,6 +13,12 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
 
+func GetRandomNumberOfPeople() (adult, child int) {
+	adult = util.RandRangeIntn(1, 6)
+	child = util.RandRangeIntn(1, 6)
+	return
+}
+
 func GetRandomStations() string {
 	idx := rand.Intn(len(stations))
 	return stations[idx]
@@ -23,6 +29,23 @@ func GetRandomTrainClass() string {
 	return trainClasses[idx]
 }
 
+func GetRandomUseAtByOlympicDate() time.Time {
+	var (
+		diffDuration = config.OlympicEndDate.Sub(config.OlympicStartDate)
+		diffDays     = diffDuration.Hours() / 24
+
+		randDays  = rand.Intn(int(diffDays))
+		randUseAt = config.OlympicStartDate.AddDate(0, 0, randDays)
+	)
+	var (
+		hour   = util.RandRangeIntn(6, 15)
+		minute = util.RandRangeIntn(0, 59)
+		sec    = util.RandRangeIntn(0, 59)
+	)
+
+	return randUseAt.Add(time.Duration(hour*60*60+minute*60+sec) * time.Second)
+}
+
 func GetRandomUseAt() time.Time {
 	var (
 		hour   = util.RandRangeIntn(6, 15)
@@ -30,11 +53,24 @@ func GetRandomUseAt() time.Time {
 		sec    = util.RandRangeIntn(0, 59)
 	)
 	startTime := config.ReservationStartDate.Add(time.Duration(hour*60*60+minute*60+sec) * time.Second)
-	// startTime := time.Date(2020, 1, 1, hour, minute, sec, 0, time.UTC)
 	days := rand.Intn(config.AvailableDays - 1)
 
 	useAt := startTime.AddDate(0, 0, days)
 	return useAt
+}
+
+func GetRandomSectionWithTokyo() (station1 string, station2 string) {
+	localStations := stations
+	station1 = "東京"
+
+	for i := 0; i < len(localStations); i++ {
+		if localStations[i] == station1 {
+			localStations = append(localStations[:i], localStations[i+1:]...)
+		}
+	}
+
+	randIndexes := rand.Perm(len(localStations))
+	return station1, localStations[randIndexes[0]]
 }
 
 func GetRandomSection() (station1 string, station2 string) {
