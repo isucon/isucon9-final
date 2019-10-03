@@ -568,7 +568,9 @@ def post_commit():
 @app.route("/api/auth", methods=["GET"])
 def get_auth():
     user = get_user()
-    return flask.jsonify(user)
+    return flask.jsonify({
+        "email": user["email"],
+    })
 
 @app.route("/api/auth/signup", methods=["POST"])
 def post_signup():
@@ -616,7 +618,9 @@ def post_login():
 
 @app.route("/api/auth/logout", methods=["POST"])
 def post_logout():
-    pass
+    if "user_id" in flask.session:
+        del(flask.session['user_id'])
+    return message_response("ok")
 
 @app.route("/api/user/reservations", methods=["GET"])
 def get_user_reservations():
