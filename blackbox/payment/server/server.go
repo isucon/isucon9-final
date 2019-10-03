@@ -25,20 +25,6 @@ var rawDataPool = sync.Pool{
 	},
 }
 
-func getRawData() *pb.RawData {
-	return rawDataPool.Get().(*pb.RawData)
-}
-
-func putRawData(rawData *pb.RawData) {
-	rawDataPool.Put(rawData)
-}
-
-func init() {
-	for i := 0; i < 1000000; i++ {
-		putRawData(getRawData())
-	}
-}
-
 type Server struct {
 	PayInfoMap  map[string]pb.PaymentInformation
 	CardInfoMap map[string]pb.CardInformation
@@ -263,22 +249,24 @@ func (s *Server) GetResult(ctx context.Context, req *pb.GetResultRequest) (*pb.G
 
 		raw := []*pb.RawData{}
 		s.mu.RLock()
-		for k, v := range s.PayInfoMap {
+		for _, v := range s.PayInfoMap {
 			rawData := getRawData()
 			defer putRawData(rawData)
-			rawData.PaymentInformation.CardToken = k
+
+			t := v.CardToken
+			rawData.PaymentInformation.CardToken = t
 			rawData.PaymentInformation.ReservationId = v.ReservationId
 			rawData.PaymentInformation.Datetime = v.Datetime
 			rawData.PaymentInformation.Amount = v.Amount
 			rawData.PaymentInformation.IsCanceled = v.IsCanceled
 
-			rawData.CardInformation.CardNumber = s.CardInfoMap[k].CardNumber
-			rawData.CardInformation.Cvv = s.CardInfoMap[k].Cvv
-			rawData.CardInformation.ExpiryDate = s.CardInfoMap[k].ExpiryDate
-
+			rawData.CardInformation.CardNumber = s.CardInfoMap[t].CardNumber
+			rawData.CardInformation.Cvv = s.CardInfoMap[t].Cvv
+			rawData.CardInformation.ExpiryDate = s.CardInfoMap[t].ExpiryDate
 			raw = append(raw, rawData)
 		}
 		s.mu.RUnlock()
+
 		done <- &pb.GetResultResponse{RawData: raw, IsOk: true}
 	}()
 	select {
@@ -287,4 +275,18 @@ func (s *Server) GetResult(ctx context.Context, req *pb.GetResultRequest) (*pb.G
 	case err := <-ec:
 		return &pb.GetResultResponse{IsOk: false}, err
 	}
+}
+
+func init() {
+	for i := 0; i < 1000000; i++ {
+		putRawData(getRawData())
+	}
+}
+
+func getRawData() *pb.RawData {
+	return rawDataPool.Get().(*pb.RawData)
+}
+
+func putRawData(rawData *pb.RawData) {
+	rawDataPool.Put(rawData)
 }

@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 	_ "net/http/pprof"
+	"os"
 
 	"payment/config"
 	pb "payment/pb"
 	"payment/server"
+
 	"google.golang.org/grpc"
 )
 
@@ -24,7 +25,7 @@ type PaymentService struct{}
 
 func main() {
 	fmt.Println(banner)
-	
+
 	httpPort := os.Getenv("PAYMENT_HTTP_PORT")
 	if httpPort == "" {
 		httpPort = "0.0.0.0:5000"
@@ -44,7 +45,7 @@ func main() {
 	//setup grpc server
 	lis, err := net.Listen("tcp", c.GrpcPort)
 	if err != nil {
-		log.Fatalf("listen error: \n", err)
+		log.Fatalf("listen error: %s\n", err)
 	}
 	g := grpc.NewServer()
 

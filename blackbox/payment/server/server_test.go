@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"net"
+	"strconv"
 	"testing"
 
 	pb "payment/pb"
@@ -10,6 +11,21 @@ import (
 	"google.golang.org/grpc"
 )
 
+/*
+	テスト内容
+	・カード登録(1枚)
+	・決済(1回/カードは上記のもの)
+	・キャンセル(1回/決済IDは上記のもの)
+	・キャンセルの確認(1回)
+	・決済(3回/カードは上記のもの/バルクキャンセル用)
+	・バルクキャンセル(3回)
+	・キャンセルの確認(3回)
+	・誤った内容のカード登録(4種類)
+	・誤った内容の決済(1種類)
+	・誤った内容のキャンセル(1種類)
+	・誤った内容のバルクキャンセル(1種類)
+	・ベンチマーカー用生データ取得(決済4回分のデータが出てくる)
+*/
 func TestServer(t *testing.T) {
 	//setup grpc server
 	lis, err := net.Listen("tcp", ":5001")
@@ -217,6 +233,10 @@ func TestServer(t *testing.T) {
 			t.Fatal(err)
 		}
 		t.Logf("%#v", r)
+
+		if len(r.RawData) != 4 {
+			t.Fatalf("Failed. Expected:4 but %d\n", len(r.RawData))
+		}
 	})
 
 	t.Run("Initialize", func(t *testing.T) {
@@ -228,4 +248,125 @@ func TestServer(t *testing.T) {
 		t.Logf("%#v", r)
 	})
 
+	cardlist := make([]pb.CardInformation, 3)
+	tokenlist := make([]string, 3)
+	t.Log(len(cardlist))
+	t.Run("[Ex]RegistCard for GetResult", func(t *testing.T) {
+		ctx := context.Background()
+		for i, _ := range cardlist {
+			card := pb.CardInformation{
+				CardNumber: strconv.Itoa(i + 11111111),
+				Cvv:        strconv.Itoa(i + 111),
+				ExpiryDate: "11/22",
+			}
+			cardlist[i] = card
+
+			r, err := c.RegistCard(ctx, &pb.RegistCardRequest{CardInformation: &card})
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Logf("%#v", r)
+			tokenlist[i] = r.CardToken
+		}
+		t.Logf("%#v", cardlist)
+	})
+
+	t.Logf("%#v", tokenlist)
+
+	payinfolist := make([]pb.PaymentInformation, 3)
+	payidlist2 := make([]string, 3)
+	t.Run("[Ex]ExecutePayment for GetResult", func(t *testing.T) {
+		ctx := context.Background()
+		for i, _ := range payinfolist {
+			pay := pb.PaymentInformation{
+				CardToken: tokenlist[i],
+				Amount:    int32(i + 1000),
+			}
+			payinfolist[i] = pay
+
+			r, err := c.ExecutePayment(ctx, &pb.ExecutePaymentRequest{PaymentInformation: &pay})
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Logf("%#v", r)
+			payidlist2[i] = r.PaymentId
+		}
+		t.Logf("%#v", payidlist2)
+	})
+
+	t.Run("[Ex]GetResult", func(t *testing.T) {
+		ctx := context.Background()
+		r, err := c.GetResult(ctx, &pb.GetResultRequest{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf("%#v", r)
+
+		if len(r.RawData) != 3 {
+			t.Fatalf("Failed. Expected:3 but %d\n", len(r.RawData))
+		}
+
+		life := 0
+		for i, v := range r.RawData {
+			t.Logf("----------No %d----------\n", i)
+			for life < 3 {
+				if v.PaymentInformation.CardToken == payinfolist[life].CardToken {
+					break
+				}
+				if life == 2 {
+					t.Fatalf("Failed. Wrong card_token. Expected:%v, Got:%v\n", v.PaymentInformation.CardToken, payinfolist[life].CardToken)
+				}
+				life++
+			}
+			t.Logf("[Ex] CardToken Check OK. Expected:%v, Got:%v", v.PaymentInformation.CardToken, payinfolist[life].CardToken)
+
+			life = 0
+			for life < 3 {
+				if v.PaymentInformation.Amount == payinfolist[life].Amount {
+					break
+				}
+				if life == 2 {
+					t.Fatalf("Failed. Wrong amount. Expected:%v, Got:%v\n", v.PaymentInformation.Amount, payinfolist[life].Amount)
+				}
+				life++
+			}
+			t.Logf("[Ex] Amount Check OK. Expected:%v, Got:%v", v.PaymentInformation.Amount, payinfolist[life].Amount)
+
+			life = 0
+			for life < 3 {
+				if v.CardInformation.CardNumber == cardlist[life].CardNumber {
+					break
+				}
+				if life == 2 {
+					t.Fatalf("Failed. Wrong card_number. Expected:%v, Got:%v\n", v.CardInformation.CardNumber, cardlist[life].CardNumber)
+				}
+				life++
+			}
+			t.Logf("[Ex] CardNumber OK. Expected:%v, Got:%v", v.CardInformation.CardNumber, cardlist[life].CardNumber)
+
+			life = 0
+			for life < 3 {
+				if v.CardInformation.Cvv == cardlist[life].Cvv {
+					break
+				}
+				if life == 2 {
+					t.Fatalf("Failed. Wrong cvv. Expected:%v, Got:%v\n", v.CardInformation.Cvv, cardlist[life].Cvv)
+				}
+				life++
+			}
+			t.Logf("[Ex] Cvv OK. Expected:%v, Got:%v", v.CardInformation.Cvv, cardlist[life].Cvv)
+
+			life = 0
+			for life < 3 {
+				if v.CardInformation.ExpiryDate == cardlist[life].ExpiryDate {
+					break
+				}
+				if life == 2 {
+					t.Fatalf("Failed. Wrong expiry_date. Expected:%v, Got:%v\n", v.CardInformation.ExpiryDate, cardlist[life].ExpiryDate)
+				}
+				life++
+			}
+			t.Logf("[Ex] ExpiryDate OK. Expected:%v, Got:%v", v.CardInformation.ExpiryDate, cardlist[life].ExpiryDate)
+		}
+	})
 }
