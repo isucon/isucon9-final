@@ -91,16 +91,16 @@ def check_available_date(date):
 
 def get_usable_train_class_list(from_station, to_station):
 
-    usable = TrainClassMap.values()
+    usable = list(TrainClassMap.values())
 
     for station in (from_station, to_station):
-        if not station["is_stop_express"]:
+        if not station["is_stop_express"] and TrainClassMap["express"] in usable:
             usable.remove(TrainClassMap["express"])
 
-        if not station["is_stop_semi_express"]:
+        if not station["is_stop_semi_express"] and TrainClassMap["semi_express"] in usable:
             usable.remove(TrainClassMap["semi_express"])
 
-        if not station["is_stop_local"]:
+        if not station["is_stop_local"] and TrainClassMap["local"] in usable:
             usable.remove(TrainClassMap["local"])
 
     return list(usable)
@@ -260,6 +260,9 @@ def get_stations():
                     break
 
                 station = filter_dict_keys(station, ["id", "name", "is_stop_express", "is_stop_semi_express", "is_stop_local"])
+                station["is_stop_express"] = True if station["is_stop_express"] else False
+                station["is_stop_semi_express"] = True if station["is_stop_semi_express"] else False
+                station["is_stop_local"] = True if station["is_stop_local"] else False
                 station_list.append(station)
 
     except MySQLdb.Error as err:
@@ -312,7 +315,7 @@ def get_train_search():
             sql = "SELECT * FROM station_master ORDER BY distance"
             if is_nobori:
                 # 上りだったら駅リストを逆にする
-                query += " DESC"
+                sql += " DESC"
 
             c.execute(sql)
             station_list = c.fetchall()
@@ -426,13 +429,13 @@ def get_train_search():
 
                     # 料金計算
                     premiumFare = calc_fare(c, use_at.date(), from_station, to_station, train["train_class"], "premium")
-                    premiumFare = premiumFare*adult + premiumFare/2*child
+                    premiumFare = int(premiumFare*adult) + int(premiumFare/2*child)
 
                     reservedFare = calc_fare(c, use_at.date(), from_station, to_station, train["train_class"], "reserved")
-                    reservedFare = reservedFare*adult + reservedFare/2*child
+                    reservedFare = int(reservedFare*adult) + int(reservedFare/2*child)
 
                     nonReservedFare = calc_fare(c, use_at.date(), from_station, to_station, train["train_class"], "non-reserved")
-                    nonReservedFare = nonReservedFare*adult + nonReservedFare/2*child
+                    nonReservedFare = int(nonReservedFare*adult) + int(nonReservedFare/2*child)
 
 
                     fareInformation = {
@@ -598,7 +601,7 @@ def get_train_seats():
 
 
     return flask.jsonify({
-        "date": str(date),
+        "date": str(date).replace("-", "/"),
         "train_class": train_class,
         "train_name": train_name,
         "car_number": car_number,
@@ -620,10 +623,7 @@ def post_reserve():
     arrival_name = body.get('arrival')
     car_number = int(body.get('car_number'))
     seat_class = body.get('seat_class')
-    is_smoking_seat = False
-
-    if body.get('is_smoking_seat', "").lower() in ("1", "true"):
-        is_smoking_seat = True
+    is_smoking_seat = body.get('is_smoking_seat', False)
 
     adult = int(body.get('adult'))
     child = int(body.get('child'))
@@ -920,12 +920,18 @@ def post_reserve():
 
 @app.route("/api/train/reservation/commit", methods=["POST"])
 def post_commit():
+    app.logger.warn("XXXXX1 %s", flask.request)
+    app.logger.warn("XXXXX2 %s", flask.request.form)
+    app.logger.warn("XXXXX3 %s", flask.request.json)
     body = flask.request.json
+    app.logger.warn("XXXX %s", body)
 
     reservation_id = body.get('reservation_id')
     card_token = body.get('card_token')
 
     user = get_user()
+
+    app.logger.warn("/api/train/reservation/commit")
 
     try:
         conn = dbh()
@@ -1050,8 +1056,8 @@ def get_user_reservations():
         app.logger.exception(err)
         raise HttpException(requests.codes['internal_server_error'], "db error")
 
-    return flask.jsonify(ret)
 
+    return flask.jsonify(ret)
 
 @app.route("/api/user/reservations/<item_id>", methods=["GET"])
 def get_user_reservation_detail(item_id):
@@ -1079,7 +1085,49 @@ def get_user_reservation_detail(item_id):
 
 @app.route("/api/user/reservations/<item_id>/cancel", methods=["POST"])
 def post_user_reservation_cancel(item_id):
-    pass
+    user = get_user()
+
+    reservation = None
+    try:
+        conn = dbh()
+        with conn.cursor() as c:
+            sql = "SELECT * FROM reservations WHERE user_id=%s AND reservation_id=%s"
+            c.execute(sql, (user["id"], item_id))
+            reservation = c.fetchone()
+            if not reservation:
+                raise HttpException(requests.codes['not_found'], "Reservation not found")
+
+
+            if reservation["status"] == "rejected":
+                raise HttpException(requests.codes['internal_server_error'], "何らかの理由により予約はRejected状態です")
+
+            if reservation["status"] == "done":
+
+                payment_api = os.getenv('PAYMENT_API', 'http://payment:5000')
+
+                res = requests.delete(payment_api+"/payment/" + reservation["payment_id"])
+
+                if res.status_code != 200:
+                    raise HttpException(requests.codes['internal_server_error'], "決済のキャンセルに失敗しました")
+
+            sql = "DELETE FROM reservations WHERE reservation_id=%s"
+            c.execute(sql, (reservation["reservation_id"],))
+
+            sql = "DELETE FROM seat_reservations WHERE reservation_id=%s"
+            c.execute(sql, (reservation["reservation_id"],))
+
+
+
+    except MySQLdb.Error as err:
+        conn.rollback()
+        app.logger.exception(err)
+        raise HttpException(requests.codes['internal_server_error'], "db error")
+    except:
+        conn.rollback()
+        raise
+
+    return message_response("cancel completed")
+
 
 
 @app.route("/api/settings", methods=["GET"])

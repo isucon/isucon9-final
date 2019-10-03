@@ -547,6 +547,8 @@ func (c *Client) CommitReservation(ctx context.Context, reservationID int, cardT
 		return failure.Wrap(err, failure.Messagef("POST %s: リクエストの作成に失敗しました", endpointPath), failureCtx)
 	}
 
+	req.Header.Set("Content-Type", "application/json")
+
 	resp, err := c.sess.do(req)
 	if err != nil {
 		return err

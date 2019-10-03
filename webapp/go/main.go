@@ -2021,7 +2021,7 @@ func userReservationCancelHandler(w http.ResponseWriter, r *http.Request) {
 		// リクエスト失敗
 		if resp.StatusCode != http.StatusOK {
 			tx.Rollback()
-			errorResponse(w, http.StatusInternalServerError, "決済に失敗しました。支払いIDが間違っている可能性があります")
+			errorResponse(w, http.StatusInternalServerError, "決済のキャンセルに失敗しました")
 			log.Println(resp.StatusCode)
 			return
 		}
