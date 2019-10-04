@@ -26,15 +26,12 @@
     - admin
     - isucon
 
-- name: create users
-  user: name={{ item }} shell=/bin/bash state=present group={{ item }} append=yes groups={{ item }} password="{{ password | password_hash('sha512') }}"
+- name: create admin user
+  user: name=admin shell=/bin/bash state=present group=admin append=yes groups=admin
   tags: users
-  with_items:
-    - admin
-    - isucon
 
-- name: change isucon password
-  user: name=isucon password=""
+- name: create isucon users
+  user: name=isucon shell=/bin/bash state=present group=isucon append=yes groups=isucon password="{{ password | password_hash('sha512') }}"
   tags: users
 
 - name: create .ssh directory
