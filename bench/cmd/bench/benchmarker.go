@@ -23,7 +23,7 @@ type benchmarker struct {
 func newBenchmarker() *benchmarker {
 	lgr := zap.S()
 
-	weight := int64(config.AvailableDays * config.WorkloadMultiplier)
+	weight := int64(config.ReservationEndDate.Month())
 	lgr.Infof("負荷レベル Lv:%d", weight)
 	return &benchmarker{sem: semaphore.NewWeighted(weight)}
 }
