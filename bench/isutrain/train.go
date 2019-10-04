@@ -49,6 +49,24 @@ type (
 	}
 )
 
+func (seats TrainSeats) IsSame(gotSeats TrainSeats) bool {
+	if len(seats) != len(gotSeats) {
+		return false
+	}
+
+	for i := 0; i < len(seats); i++ {
+		var (
+			seat    = seats[i]
+			gotSeat = gotSeats[i]
+		)
+		if *seat != *gotSeat {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (seats TrainSeats) GetNeighborSeatsMultiplier() float64 {
 	m := map[int][]TrainSeatColumn{}
 	for _, seat := range seats {
@@ -86,6 +104,25 @@ func (seats TrainSeats) GetNeighborSeatsMultiplier() float64 {
 		return 1
 	}
 }
+
+func (cars TrainCars) IsSame(gotCars TrainCars) bool {
+	if len(cars) != len(gotCars) {
+		return false
+	}
+
+	for i := 0; i < len(cars); i++ {
+		var (
+			car = cars[i]
+			gotCar = gotCars[i]
+		)
+		if *car != *gotCar {
+			return false
+		}
+	}
+
+	return true
+}
+
 
 type TrainSeatColumn string
 

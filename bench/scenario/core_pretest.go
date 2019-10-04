@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"reflect"
 	"time"
@@ -27,37 +28,49 @@ var (
 
 // Pretest は、ベンチマーク前のアプリケーションが正常に動作できているか検証し、できていなければFAILとします
 func Pretest(ctx context.Context, client *isutrain.Client, paymentClient *payment.Client, assets []*assets.Asset) {
-	pretestGrp, _ := errgroup.WithContext(ctx)
-
-	// 静的ファイル
-	pretestGrp.Go(func() error {
+	// 正常 - 取得系
+	getGrp := &errgroup.Group{}
+	getGrp.Go(func() error {
 		pretestStaticFiles(ctx, client, assets)
 		return nil
 	})
-	// 正常系
-	pretestGrp.Go(func() error {
-		pretestNormalReservation(ctx, client, paymentClient)
-		return nil
-	})
-	pretestGrp.Go(func() error {
+	getGrp.Go(func() error {
 		pretestListStations(ctx, client)
 		return nil
 	})
-	pretestGrp.Go(func() error {
+	getGrp.Go(func() error {
 		pretestSearchTrains(ctx, client)
 		return nil
 	})
-	pretestGrp.Go(func() error {
-		pretestCheckAvailableDate(ctx, client)
+	getGrp.Go(func() error {
+		pretestSearchTrainSeats(ctx, client)
 		return nil
 	})
+	getGrp.Wait()
+
 	// 異常系
-	pretestGrp.Go(func() error {
+	abnormalGrp := &errgroup.Group{}
+	abnormalGrp.Go(func() error {
 		pretestAbnormalLogin(ctx, client)
 		return nil
 	})
+	abnormalGrp.Go(func() error {
+		pretestAbnormalDate(ctx, client)
+		return nil
+	})
+	abnormalGrp.Go(func() error {
+		pretestAbnormalReserveNonStoppableStation(ctx, client)
+		return nil
+	})
+	abnormalGrp.Go(func() error {
+		pretestAbnormalReserveInvalidSection(ctx, client)
+		return nil
+	})
+	abnormalGrp.Wait()
 
-	pretestGrp.Wait()
+	// 正常系
+	pretestNormalReservation(ctx, client, paymentClient)
+	pretestReserveVagueSeats(ctx, client)
 }
 
 // 静的ファイルチェック
@@ -79,94 +92,10 @@ func pretestStaticFiles(ctx context.Context, client *isutrain.Client, assets []*
 
 // 正常系
 
-// preTestNormalReservation は予約までの一連の流れを検証します
-func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paymentClient *payment.Client) {
-	// FIXME: 最初から登録されて入る、２つくらいのユーザで試す
-
-	user := &isutrain.User{
-		Email:    "hoge@example.com",
-		Password: "hoge",
-	}
-
-	if err := client.Signup(ctx, user.Email, user.Password); err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	if err := client.Login(ctx, user.Email, user.Password); err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	_, err := client.ListStations(ctx)
-	if err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	// FIXME: 区間を考慮しつつ、駅名をランダムに取得する必要がある
-	// ここで
-	// * 列車クラス、名前
-	// * 列車の発駅着駅
-	// * 利用者の乗車駅降車駅
-	// * 利用者の乗車時刻 降車時刻
-	// * 空席情報 (プレミアムにできる？プレミアムかつ喫煙にできる？そもそも予約できる？予約できてかつ喫煙できる？未予約？)
-	// * 空席情報それぞれの料金
-	// を得られる
-	var (
-		useAt              = time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC)
-		departure, arrival = "東京", "大阪"
-		trainClass         = "最速"
-		trainName          = "49"
-		carNum             = 9
-		seatClass          = "premium"
-		adult, child       = 1, 1
-	)
-	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "最速", adult, child)
-	if err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	// FIXME: 日付、列車クラス、名前、車両番号、乗車駅降車駅を指定
-	searchTrainSeatsResp, err := client.SearchTrainSeats(ctx,
-		useAt,
-		trainClass, trainName, carNum, departure, arrival)
-	if err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	availSeats := filterTrainSeats(searchTrainSeatsResp, 2)
-
-	reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, availSeats, departure, arrival,
-		useAt,
-		carNum, child, adult)
-	if err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
-	if err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	if err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken); err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	if err := client.CancelReservation(ctx, reserveResp.ReservationID); err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-}
-
 // 駅一覧
 func pretestListStations(ctx context.Context, client *isutrain.Client) {
-	// 固定でちゃんと返せてるか
+	endpointPath := endpoint.GetPath(endpoint.ListStations)
+
 	client, err := isutrain.NewClient()
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
@@ -189,7 +118,7 @@ func pretestListStations(ctx context.Context, client *isutrain.Client) {
 	}
 
 	if ok := isutrain.IsValidStations(gotStations); !ok {
-		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("駅一覧が不正です"))
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: 駅一覧が不正です", endpointPath))
 		return
 	}
 }
@@ -201,13 +130,7 @@ func pretestSearchTrains(ctx context.Context, client *isutrain.Client) {
 	// 必ずこれは空にならないというパターンを試す
 	endpointPath := endpoint.GetPath(endpoint.SearchTrains)
 
-	client, err := isutrain.NewClient()
-	if err != nil {
-		bencherror.PreTestErrs.AddError(err)
-		return
-	}
-
-	err = registerUserAndLogin(ctx, client, &isutrain.User{
+	err := registerUserAndLogin(ctx, client, &isutrain.User{
 		Email:    "puser2@example.com",
 		Password: "puser2",
 	})
@@ -216,8 +139,8 @@ func pretestSearchTrains(ctx context.Context, client *isutrain.Client) {
 		return
 	}
 
-	// randIdx := rand.Intn(len(pretestSearchTrainsTests))
-	randTest := pretestSearchTrainsTests[2]
+	randIdx := rand.Intn(len(pretestSearchTrainsTests))
+	randTest := pretestSearchTrainsTests[randIdx]
 
 	resp, err := client.SearchTrains(ctx, randTest.useAt, randTest.from, randTest.to, randTest.trainClass, randTest.adult, randTest.child)
 	if err != nil {
@@ -232,7 +155,7 @@ func pretestSearchTrains(ctx context.Context, client *isutrain.Client) {
 	for _, train := range resp {
 		wantSeatAvailability, ok := randTest.wantSeatAvailability[train.Name]
 		if !ok {
-			bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: 検索条件に対し、不正な列車名がレスポンスに含まれています: got=%s", train.Name))
+			bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: 検索条件に対し、不正な列車名がレスポンスに含まれています: got=%s", endpointPath, train.Name))
 			return
 		}
 		if !reflect.DeepEqual(train.SeatAvailability, wantSeatAvailability) {
@@ -268,14 +191,194 @@ func pretestSearchTrainsEmptyTrainClass(ctx context.Context, client *isutrain.Cl
 // 座席検索
 
 func pretestSearchTrainSeats(ctx context.Context, client *isutrain.Client) {
+	endpointPath := endpoint.GetPath(endpoint.SearchTrains)
 
+	err := registerUserAndLogin(ctx, client, &isutrain.User{
+		Email:    "puser4@example.com",
+		Password: "puser4",
+	})
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	// randIdx := rand.Intn(len(pretestSearchTrainSeatsTests))
+	randTest := pretestSearchTrainSeatsTests[4]
+
+	resp, err := client.SearchTrainSeats(ctx,
+		randTest.date, randTest.trainClass, randTest.trainName,
+		randTest.carNum, randTest.departure, randTest.arrival)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	wantDate := randTest.date.Format("2006/01/02")
+	if resp.Date != wantDate {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる日付が不正です: want=%s, got=%s", endpointPath, wantDate, resp.Date))
+		return
+	}
+	if resp.TrainClass != randTest.trainClass {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる列車種別が不正です: want=%s, got=%s", endpointPath, randTest.trainClass, resp.TrainClass))
+		return
+	}
+	if resp.TrainName != randTest.trainName {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる列車名が不正です: want=%s, got=%s", endpointPath, randTest.trainName, resp.TrainName))
+		return
+	}
+	if resp.CarNumber != randTest.carNum {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる車両番号が不正です: want=%s, got=%s", endpointPath, randTest.carNum, resp.CarNumber))
+		return
+	}
+	if !randTest.wantSeats.IsSame(resp.Seats) {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる座席が不正です", endpointPath))
+		return
+	}
+	if !randTest.wantCars.IsSame(resp.Cars) {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる車両が不正です", endpointPath))
+		return
+	}
 }
 
 // 予約
 
+func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paymentClient *payment.Client) {
+	// FIXME: 最初から登録されて入る、２つくらいのユーザで試す
+
+	user := &isutrain.User{
+		Email:    "hoge@example.com",
+		Password: "hoge",
+	}
+
+	if err := client.Signup(ctx, user.Email, user.Password); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	if err := client.Login(ctx, user.Email, user.Password); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	_, err := client.ListStations(ctx)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	var (
+		useAt              = time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC)
+		departure, arrival = "東京", "大阪"
+		trainClass         = "最速"
+		trainName          = "49"
+		carNum             = 9
+		seatClass          = "premium"
+		adult, child       = 1, 1
+	)
+	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "最速", adult, child)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	// FIXME: 日付、列車クラス、名前、車両番号、乗車駅降車駅を指定
+	searchTrainSeatsResp, err := client.SearchTrainSeats(ctx,
+		useAt,
+		trainClass, trainName, carNum, departure, arrival)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	availSeats := filterTrainSeats(searchTrainSeatsResp, 2)
+
+	reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, availSeats, departure, arrival,
+		useAt,
+		carNum, child, adult)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	// 予約が、予約詳細に反映されているか
+	showReservationResp, err := client.ShowReservation(ctx, reserveResp.ReservationID)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	if reserveResp.ReservationID != showReservationResp.ReservationID {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: 予約レスポンスに含まれる予約IDと、予約詳細に含まれる予約IDが異なります: want=%d, got=%d", endpoint.GetPath(endpoint.ShowReservation), reserveResp.ReservationID, showReservationResp.ReservationID))
+		return
+	}
+
+	// 予約が、予約一覧に反映されているか
+	listReservationResp, err := client.ListReservations(ctx)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	var found bool
+	for _, reservation := range listReservationResp {
+		if reservation.ReservationID == reserveResp.ReservationID {
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: 予約一覧に、予約したはずの予約IDが含まれていません: want=%d", endpoint.GetPath(endpoint.ListReservations), reserveResp.ReservationID))
+		return
+	}
+
+	cardToken, err := paymentClient.RegistCard(ctx, "11111111", "222", "10/50")
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	if err = client.CommitReservation(ctx, reserveResp.ReservationID, cardToken); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	if err := client.CancelReservation(ctx, reserveResp.ReservationID); err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+}
+
+// https://github.com/chibiegg/isucon9-final/blob/master/webapp/go/main.go#L1102
+func pretestReserveVagueSeats(ctx context.Context, client *isutrain.Client) {
+	// 細かく見ずに、曖昧検索で結果が返ってきてそうなら通す
+
+	err := registerUserAndLogin(ctx, client, &isutrain.User{
+		Email:    "puser5@example.com",
+		Password: "puser5",
+	})
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	d := time.Date(2020, 1, 1, 6, 50, 0, 0, time.UTC)
+	// 適当に選んだ列車が走らない区間を選ぶ
+	_, err = client.Reserve(ctx, "最速", "1", "premium", isutrain.TrainSeats{}, "東京", "大阪", d, 8, 1, 1)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: 曖昧予約ができません", endpoint.GetPath(endpoint.Reserve)))
+	}
+
+	err = client.Logout(ctx)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+}
+
 // ユーティリティ
 
-func pretestCheckAvailableDate(ctx context.Context, client *isutrain.Client) {
+func pretestAbnormalDate(ctx context.Context, client *isutrain.Client) {
 	var (
 		availDate = config.ReservationStartDate.AddDate(0, 0, config.AvailableDays)
 		d         = availDate.AddDate(0, 0, 1)
@@ -310,6 +413,37 @@ func pretestCheckAvailableDate(ctx context.Context, client *isutrain.Client) {
 func pretestAbnormalLogin(ctx context.Context, client *isutrain.Client) {
 	if err := client.Login(ctx, "FikyavwocZear@example.com", "jieldirAwsabyonsInd", isutrain.StatusCodeOpt(http.StatusForbidden)); err != nil {
 		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+}
+
+// https://github.com/chibiegg/isucon9-final/blob/master/webapp/go/main.go#L960
+func pretestAbnormalReserveNonStoppableStation(ctx context.Context, client *isutrain.Client) {
+	endpointPath := endpoint.GetPath(endpoint.Reserve)
+	d := time.Date(2020, 1, 1, 6, 0, 0, 0, time.UTC)
+	// Express
+	_, err := client.Reserve(ctx, "最速", "1", "premium", isutrain.TrainSeats{}, "古岡", "大阪", d, 8, 1, 1, isutrain.StatusCodeOpt(http.StatusBadRequest))
+	if err != nil {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: 最速が止まらない駅で予約可能です", endpointPath))
+		return
+	}
+
+	// SemiExpress
+	_, err = client.Reserve(ctx, "中間", "3", "reserved", isutrain.TrainSeats{}, "東京", "絵寒町", d, 8, 1, 1, isutrain.StatusCodeOpt(http.StatusBadRequest))
+	if err != nil {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: 中間が止まらない駅で予約可能です", endpointPath))
+		return
+	}
+}
+
+// https://github.com/chibiegg/isucon9-final/blob/master/webapp/go/main.go#L1077
+func pretestAbnormalReserveInvalidSection(ctx context.Context, client *isutrain.Client) {
+	endpointPath := endpoint.GetPath(endpoint.Reserve)
+	d := time.Date(2020, 1, 1, 6, 50, 0, 0, time.UTC)
+	// 適当に選んだ列車が走らない区間を選ぶ
+	_, err := client.Reserve(ctx, "最速", "12", "premium", isutrain.TrainSeats{}, "大阪", "東京", d, 8, 1, 1, isutrain.StatusCodeOpt(http.StatusBadRequest))
+	if err != nil {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: 列車が運行してない区間の予約が可能です", endpointPath))
 		return
 	}
 }
