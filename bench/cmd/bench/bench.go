@@ -178,21 +178,23 @@ var run = cli.Command{
 		benchCtx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		defer cancel()
 
-		benchmarker := newBenchmarker()
-		if err := benchmarker.run(benchCtx); err != nil {
-			lgr.Warnf("ベンチマークにてエラーが発生しました: %+v", err)
-		}
-		if bencherror.BenchmarkErrs.IsFailure() {
-			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
-			return nil
-		}
-
+		bgCtx, bgCancel := context.WithTimeout(ctx, 3*time.Second)
 		bgtester, err := newBgTester()
 		if err != nil {
 			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
 			return nil
 		}
-		go bgtester.run(ctx)
+		go bgtester.run(bgCtx)
+
+		benchmarker := newBenchmarker()
+		if err := benchmarker.run(benchCtx); err != nil {
+			lgr.Warnf("ベンチマークにてエラーが発生しました: %+v", err)
+		}
+		bgCancel()
+		if bencherror.BenchmarkErrs.IsFailure() {
+			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
+			return nil
+		}
 
 		lgr.Info("===== Final check =====")
 		// NOTE: bulkリクエストの遅延処理考慮で、５秒待つ

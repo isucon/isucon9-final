@@ -133,19 +133,31 @@ func (t *BgTester) bgtestSeatAvailability(ctx context.Context, wantReservedSeatA
 }
 
 func (t *BgTester) run(ctx context.Context) error {
+	lgr := zap.S()
+	defer lgr.Info("bgテスターの終了")
 	if err := t.bgtestSeatAvailability(ctx, "○"); err != nil {
 		return err
 	}
 
 	for t.remainSeats > 10 {
-		t.reserve(ctx)
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+			t.reserve(ctx)
+		}
 	}
 	if err := t.bgtestSeatAvailability(ctx, "△"); err != nil {
 		return err
 	}
 
 	for t.remainSeats > 0 {
-		t.reserve(ctx)
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+			t.reserve(ctx)
+		}
 	}
 	if err := t.bgtestSeatAvailability(ctx, "×"); err != nil {
 		return err
