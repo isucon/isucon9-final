@@ -164,6 +164,8 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 func (s *Server) BulkCancelPayment(ctx context.Context, req *pb.BulkCancelPaymentRequest) (*pb.BulkCancelPaymentResponse, error) {
 	done := make(chan int32, 1)
 	ec := make(chan int32, 1)
+	s.cancelLock.Lock()
+	defer s.cancelLock.Unlock()
 	go func() {
 		s.mu.Lock()
 		if len(req.PaymentId) < 1 {
