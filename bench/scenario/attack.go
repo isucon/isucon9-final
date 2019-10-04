@@ -263,7 +263,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 				train.Class, train.Name,
 				isutraindb.GetSeatClass(train.Class, carNum), availSeats,
 				departure, arrival, useAt,
-				carNum, 1, 1)
+				carNum, 1, 1, isutrain.DisableAssertOpt())
 			if err != nil {
 				// 1件をのぞいエラーになるはず
 				return

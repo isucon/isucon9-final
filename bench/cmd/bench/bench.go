@@ -158,7 +158,7 @@ var run = cli.Command{
 		lgr.Info("===== Initialize webapp =====")
 		initClient.Initialize(ctx)
 		if bencherror.InitializeErrs.IsError() {
-			lgr.Warnf("webappへの /initialize でエラーが発生: %+v", bencherror.InitializeErrs.Msgs)
+			lgr.Warnf("webappへの /initialize でエラーが発生: %+v", bencherror.InitializeErrs.InternalMsgs)
 			dumpFailedResult(bencherror.InitializeErrs.Msgs)
 			return nil
 		}
@@ -167,7 +167,7 @@ var run = cli.Command{
 		lgr.Info("===== Pretest webapp =====")
 		scenario.Pretest(ctx, testClient, paymentClient, assets)
 		if bencherror.PreTestErrs.IsError() {
-			lgr.Warnf("webappへの pretest でエラーが発生: %+v", bencherror.PreTestErrs.Msgs)
+			lgr.Warnf("webappへの pretest でエラーが発生: %+v", bencherror.PreTestErrs.InternalMsgs)
 			dumpFailedResult(bencherror.PreTestErrs.Msgs)
 			return nil
 		}
@@ -189,7 +189,7 @@ var run = cli.Command{
 		lgr.Info("===== Final check =====")
 		scenario.FinalCheck(ctx, testClient, paymentClient)
 		if bencherror.FinalCheckErrs.IsFailure() {
-			lgr.Warnf("webappへのfinalcheckで失格判定: %+v", bencherror.FinalCheckErrs.Msgs)
+			lgr.Warnf("webappへのfinalcheckで失格判定: %+v", bencherror.FinalCheckErrs.InternalMsgs)
 			msgs := append(uniqueMsgs(bencherror.BenchmarkErrs.Msgs), bencherror.FinalCheckErrs.Msgs...)
 			dumpFailedResult(msgs)
 			return nil
