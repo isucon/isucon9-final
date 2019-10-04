@@ -704,7 +704,7 @@ class Service
                 $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id`=?");
                 $stmt->execute([$seatReservation['reservation_id']]);
                 $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($reservation) {
+                if ($reservation === false) {
                     return $response->withJson($this->errorResponse("failed to fetch seat_reservations"), StatusCode::HTTP_BAD_REQUEST);
                 }
 
