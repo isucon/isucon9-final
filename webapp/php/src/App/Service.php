@@ -934,7 +934,7 @@ class Service
                         $payload['is_smoking_seat']
                     ]);
                     $seatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    if ($seatList === false) {
+                    if ($seatList === false || count($seatList) == 0) {
                         $this->dbh->rollBack();
                         return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
                     }
