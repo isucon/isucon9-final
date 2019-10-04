@@ -26,6 +26,10 @@
   template: src=isutrain.service dest="/etc/systemd/system/isutrain-{{ item }}.service" owner=root group=root mode=0644
   with_items:
     - go
+    - ruby
+    - php
+    - python
+    - perl
   tags: challenge
   notify: systemctl daemon-reload
 

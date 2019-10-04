@@ -1,167 +1,108 @@
 [user]
-user-test-01.isucon9.hinatan.net payment_api="https://payment-test-01.isucon9.hinatan.net" password="isuconnet"
-#user-test-02.isucon9.hinatan.net payment_api="https://payment-test-02.isucon9.hinatan.net" password="isuconnet"
+user-test-2-001.isucon9.hinatan.net payment_api="https://payment-test-01.isucon9.hinatan.net" password="isuconnet"
+user-test-2-002.isucon9.hinatan.net payment_api="https://payment-test-01.isucon9.hinatan.net" password="isuconnet"
+user-test-2-003.isucon9.hinatan.net payment_api="https://payment-test-01.isucon9.hinatan.net" password="isuconnet"
 
-team612-a.isucon9.hinatan.net payment_api="https://payment-01.isucon9.hinatan.net" password="JKyVDjRkPPRxsYHcf4GZ"
-team612-b.isucon9.hinatan.net payment_api="https://payment-01.isucon9.hinatan.net" password="JKyVDjRkPPRxsYHcf4GZ"
-team612-c.isucon9.hinatan.net payment_api="https://payment-01.isucon9.hinatan.net" password="JKyVDjRkPPRxsYHcf4GZ"
-
-team616-a.isucon9.hinatan.net payment_api="https://payment-04.isucon9.hinatan.net" password="sVpSrKBVsguSBVuh4kGK"
-team616-b.isucon9.hinatan.net payment_api="https://payment-04.isucon9.hinatan.net" password="sVpSrKBVsguSBVuh4kGK"
-team616-c.isucon9.hinatan.net payment_api="https://payment-04.isucon9.hinatan.net" password="sVpSrKBVsguSBVuh4kGK"
-
-#  team003-a.isucon9.hinatan.net
-#  team003-b.isucon9.hinatan.net
-#  team003-c.isucon9.hinatan.net
-
-#  team015-a.isucon9.hinatan.net
-#  team015-b.isucon9.hinatan.net
-#  team015-c.isucon9.hinatan.net
-
-#  team041-a.isucon9.hinatan.net
-#  team041-b.isucon9.hinatan.net
-#  team041-c.isucon9.hinatan.net
-
-#  team046-a.isucon9.hinatan.net
-#  team046-b.isucon9.hinatan.net
-#  team046-c.isucon9.hinatan.net
-
-#  team059-a.isucon9.hinatan.net
-#  team059-b.isucon9.hinatan.net
-#  team059-c.isucon9.hinatan.net
-
-#  team067-a.isucon9.hinatan.net
-#  team067-b.isucon9.hinatan.net
-#  team067-c.isucon9.hinatan.net
-
-#  team073-a.isucon9.hinatan.net
-#  team073-b.isucon9.hinatan.net
-#  team073-c.isucon9.hinatan.net
-
-#  team095-a.isucon9.hinatan.net
-#  team095-b.isucon9.hinatan.net
-#  team095-c.isucon9.hinatan.net
-
-#  team103-a.isucon9.hinatan.net
-#  team103-b.isucon9.hinatan.net
-#  team103-c.isucon9.hinatan.net
-
-#  team105-a.isucon9.hinatan.net
-#  team105-b.isucon9.hinatan.net
-#  team105-c.isucon9.hinatan.net
-
-#  team130-a.isucon9.hinatan.net
-#  team130-b.isucon9.hinatan.net
-#  team130-c.isucon9.hinatan.net
-
-#  team146-a.isucon9.hinatan.net
-#  team146-b.isucon9.hinatan.net
-#  team146-c.isucon9.hinatan.net
-
-#  team159-a.isucon9.hinatan.net
-#  team159-b.isucon9.hinatan.net
-#  team159-c.isucon9.hinatan.net
-
-#  team170-a.isucon9.hinatan.net
-#  team170-b.isucon9.hinatan.net
-#  team170-c.isucon9.hinatan.net
-
-#  team203-a.isucon9.hinatan.net
-#  team203-b.isucon9.hinatan.net
-#  team203-c.isucon9.hinatan.net
-
-#  team220-a.isucon9.hinatan.net
-#  team220-b.isucon9.hinatan.net
-#  team220-c.isucon9.hinatan.net
-
-#  team265-a.isucon9.hinatan.net
-#  team265-b.isucon9.hinatan.net
-#  team265-c.isucon9.hinatan.net
-
-#  team272-a.isucon9.hinatan.net
-#  team272-b.isucon9.hinatan.net
-#  team272-c.isucon9.hinatan.net
-
-#  team324-a.isucon9.hinatan.net
-#  team324-b.isucon9.hinatan.net
-#  team324-c.isucon9.hinatan.net
-
-#  team333-a.isucon9.hinatan.net
-#  team333-b.isucon9.hinatan.net
-#  team333-c.isucon9.hinatan.net
-
-#  team351-a.isucon9.hinatan.net
-#  team351-b.isucon9.hinatan.net
-#  team351-c.isucon9.hinatan.net
-
-#  team384-a.isucon9.hinatan.net
-#  team384-b.isucon9.hinatan.net
-#  team384-c.isucon9.hinatan.net
-
-#  team389-a.isucon9.hinatan.net
-#  team389-b.isucon9.hinatan.net
-#  team389-c.isucon9.hinatan.net
-
-#  team407-a.isucon9.hinatan.net
-#  team407-b.isucon9.hinatan.net
-#  team407-c.isucon9.hinatan.net
-
-#  team420-a.isucon9.hinatan.net
-#  team420-b.isucon9.hinatan.net
-#  team420-c.isucon9.hinatan.net
-
-#  team460-a.isucon9.hinatan.net
-#  team460-b.isucon9.hinatan.net
-#  team460-c.isucon9.hinatan.net
-
-#  team462-a.isucon9.hinatan.net
-#  team462-b.isucon9.hinatan.net
-#  team462-c.isucon9.hinatan.net
-
-#  team467-a.isucon9.hinatan.net
-#  team467-b.isucon9.hinatan.net
-#  team467-c.isucon9.hinatan.net
-
-#  team478-a.isucon9.hinatan.net
-#  team478-b.isucon9.hinatan.net
-#  team478-c.isucon9.hinatan.net
-
-#  team516-a.isucon9.hinatan.net
-#  team516-b.isucon9.hinatan.net
-#  team516-c.isucon9.hinatan.net
-
-#  team574-a.isucon9.hinatan.net
-#  team574-b.isucon9.hinatan.net
-#  team574-c.isucon9.hinatan.net
-
-#  team578-a.isucon9.hinatan.net
-#  team578-b.isucon9.hinatan.net
-#  team578-c.isucon9.hinatan.net
+team003-a.isucon9.hinatan.net password="HKVUVd1i#VYqUniAnT78" payment_api="https://payment003.isucon9.hinatan.net"
+team003-b.isucon9.hinatan.net password="HKVUVd1i#VYqUniAnT78" payment_api="https://payment003.isucon9.hinatan.net"
+team003-c.isucon9.hinatan.net password="HKVUVd1i#VYqUniAnT78" payment_api="https://payment003.isucon9.hinatan.net"
+team015-a.isucon9.hinatan.net password="@vcL^ndm4O*vY!fdnoK$" payment_api="https://payment015.isucon9.hinatan.net"
+team015-b.isucon9.hinatan.net password="@vcL^ndm4O*vY!fdnoK$" payment_api="https://payment015.isucon9.hinatan.net"
+team015-c.isucon9.hinatan.net password="@vcL^ndm4O*vY!fdnoK$" payment_api="https://payment015.isucon9.hinatan.net"
+team041-a.isucon9.hinatan.net password="IF%afHCV0Um%orOSYDkO" payment_api="https://payment041.isucon9.hinatan.net"
+team041-b.isucon9.hinatan.net password="IF%afHCV0Um%orOSYDkO" payment_api="https://payment041.isucon9.hinatan.net"
+team041-c.isucon9.hinatan.net password="IF%afHCV0Um%orOSYDkO" payment_api="https://payment041.isucon9.hinatan.net"
+team046-a.isucon9.hinatan.net password="%XetbE#GC2M3ATPKU9mA" payment_api="https://payment046.isucon9.hinatan.net"
+team046-b.isucon9.hinatan.net password="%XetbE#GC2M3ATPKU9mA" payment_api="https://payment046.isucon9.hinatan.net"
+team046-c.isucon9.hinatan.net password="%XetbE#GC2M3ATPKU9mA" payment_api="https://payment046.isucon9.hinatan.net"
+team059-a.isucon9.hinatan.net password="auHxmVkxAsbmhe&Y7u@v" payment_api="https://payment059.isucon9.hinatan.net"
+team059-b.isucon9.hinatan.net password="auHxmVkxAsbmhe&Y7u@v" payment_api="https://payment059.isucon9.hinatan.net"
+team059-c.isucon9.hinatan.net password="auHxmVkxAsbmhe&Y7u@v" payment_api="https://payment059.isucon9.hinatan.net"
+team067-a.isucon9.hinatan.net password="4zv@wXhxRni#7bvK5ffv" payment_api="https://payment067.isucon9.hinatan.net"
+team067-b.isucon9.hinatan.net password="4zv@wXhxRni#7bvK5ffv" payment_api="https://payment067.isucon9.hinatan.net"
+team067-c.isucon9.hinatan.net password="4zv@wXhxRni#7bvK5ffv" payment_api="https://payment067.isucon9.hinatan.net"
+team073-a.isucon9.hinatan.net password="TJT56rV8H!$%aJtU4hJa" payment_api="https://payment073.isucon9.hinatan.net"
+team073-b.isucon9.hinatan.net password="TJT56rV8H!$%aJtU4hJa" payment_api="https://payment073.isucon9.hinatan.net"
+team073-c.isucon9.hinatan.net password="TJT56rV8H!$%aJtU4hJa" payment_api="https://payment073.isucon9.hinatan.net"
+team095-a.isucon9.hinatan.net password="8uD68hS7P5BjLv2S@mSP" payment_api="https://payment095.isucon9.hinatan.net"
+team095-b.isucon9.hinatan.net password="8uD68hS7P5BjLv2S@mSP" payment_api="https://payment095.isucon9.hinatan.net"
+team095-c.isucon9.hinatan.net password="8uD68hS7P5BjLv2S@mSP" payment_api="https://payment095.isucon9.hinatan.net"
+team103-a.isucon9.hinatan.net password="OAF97OgkQtbN^FiqTgsR" payment_api="https://payment103.isucon9.hinatan.net"
+team103-b.isucon9.hinatan.net password="OAF97OgkQtbN^FiqTgsR" payment_api="https://payment103.isucon9.hinatan.net"
+team103-c.isucon9.hinatan.net password="OAF97OgkQtbN^FiqTgsR" payment_api="https://payment103.isucon9.hinatan.net"
+team105-a.isucon9.hinatan.net password="tYXh1f94r&DpGhztEREB" payment_api="https://payment105.isucon9.hinatan.net"
+team105-b.isucon9.hinatan.net password="tYXh1f94r&DpGhztEREB" payment_api="https://payment105.isucon9.hinatan.net"
+team105-c.isucon9.hinatan.net password="tYXh1f94r&DpGhztEREB" payment_api="https://payment105.isucon9.hinatan.net"
+team130-a.isucon9.hinatan.net password="ykIzy6!u$PIj1U2gMlfu" payment_api="https://payment130.isucon9.hinatan.net"
+team130-b.isucon9.hinatan.net password="ykIzy6!u$PIj1U2gMlfu" payment_api="https://payment130.isucon9.hinatan.net"
+team130-c.isucon9.hinatan.net password="ykIzy6!u$PIj1U2gMlfu" payment_api="https://payment130.isucon9.hinatan.net"
+team146-a.isucon9.hinatan.net password="v#r4Vqm5qtFTq^r@WmDC" payment_api="https://payment146.isucon9.hinatan.net"
+team146-b.isucon9.hinatan.net password="v#r4Vqm5qtFTq^r@WmDC" payment_api="https://payment146.isucon9.hinatan.net"
+team146-c.isucon9.hinatan.net password="v#r4Vqm5qtFTq^r@WmDC" payment_api="https://payment146.isucon9.hinatan.net"
+team159-a.isucon9.hinatan.net password="hx2oizLsU$pIt4M*a3j3" payment_api="https://payment159.isucon9.hinatan.net"
+team159-b.isucon9.hinatan.net password="hx2oizLsU$pIt4M*a3j3" payment_api="https://payment159.isucon9.hinatan.net"
+team159-c.isucon9.hinatan.net password="hx2oizLsU$pIt4M*a3j3" payment_api="https://payment159.isucon9.hinatan.net"
+team170-a.isucon9.hinatan.net password="zP7NGNtYxoOaUpXi1QlW" payment_api="https://payment170.isucon9.hinatan.net"
+team170-b.isucon9.hinatan.net password="zP7NGNtYxoOaUpXi1QlW" payment_api="https://payment170.isucon9.hinatan.net"
+team170-c.isucon9.hinatan.net password="zP7NGNtYxoOaUpXi1QlW" payment_api="https://payment170.isucon9.hinatan.net"
+team203-a.isucon9.hinatan.net password="jKYTZ&$HWH!esvEtMhDn" payment_api="https://payment203.isucon9.hinatan.net"
+team203-b.isucon9.hinatan.net password="jKYTZ&$HWH!esvEtMhDn" payment_api="https://payment203.isucon9.hinatan.net"
+team203-c.isucon9.hinatan.net password="jKYTZ&$HWH!esvEtMhDn" payment_api="https://payment203.isucon9.hinatan.net"
+team220-a.isucon9.hinatan.net password="M@GMkPAcT6w*jjmCs$o#" payment_api="https://payment220.isucon9.hinatan.net"
+team220-b.isucon9.hinatan.net password="M@GMkPAcT6w*jjmCs$o#" payment_api="https://payment220.isucon9.hinatan.net"
+team220-c.isucon9.hinatan.net password="M@GMkPAcT6w*jjmCs$o#" payment_api="https://payment220.isucon9.hinatan.net"
+team265-a.isucon9.hinatan.net password="UAzToMwx2l0k$k!UW8r9" payment_api="https://payment265.isucon9.hinatan.net"
+team265-b.isucon9.hinatan.net password="UAzToMwx2l0k$k!UW8r9" payment_api="https://payment265.isucon9.hinatan.net"
+team265-c.isucon9.hinatan.net password="UAzToMwx2l0k$k!UW8r9" payment_api="https://payment265.isucon9.hinatan.net"
+team272-a.isucon9.hinatan.net password="xE16Ix$6So5R01RSsN60" payment_api="https://payment272.isucon9.hinatan.net"
+team272-b.isucon9.hinatan.net password="xE16Ix$6So5R01RSsN60" payment_api="https://payment272.isucon9.hinatan.net"
+team272-c.isucon9.hinatan.net password="xE16Ix$6So5R01RSsN60" payment_api="https://payment272.isucon9.hinatan.net"
+team324-a.isucon9.hinatan.net password="%kGECWQBD&mg8IftWm1V" payment_api="https://payment324.isucon9.hinatan.net"
+team324-b.isucon9.hinatan.net password="%kGECWQBD&mg8IftWm1V" payment_api="https://payment324.isucon9.hinatan.net"
+team324-c.isucon9.hinatan.net password="%kGECWQBD&mg8IftWm1V" payment_api="https://payment324.isucon9.hinatan.net"
+team333-a.isucon9.hinatan.net password="CAEiHvpdP6gG!@WUzbTa" payment_api="https://payment333.isucon9.hinatan.net"
+team333-b.isucon9.hinatan.net password="CAEiHvpdP6gG!@WUzbTa" payment_api="https://payment333.isucon9.hinatan.net"
+team333-c.isucon9.hinatan.net password="CAEiHvpdP6gG!@WUzbTa" payment_api="https://payment333.isucon9.hinatan.net"
+team351-a.isucon9.hinatan.net password="yB$WG#!7FaV73zAk8bkE" payment_api="https://payment351.isucon9.hinatan.net"
+team351-b.isucon9.hinatan.net password="yB$WG#!7FaV73zAk8bkE" payment_api="https://payment351.isucon9.hinatan.net"
+team351-c.isucon9.hinatan.net password="yB$WG#!7FaV73zAk8bkE" payment_api="https://payment351.isucon9.hinatan.net"
+team384-a.isucon9.hinatan.net password="%PV69VI*R0OLN5kEJaR8" payment_api="https://payment384.isucon9.hinatan.net"
+team384-b.isucon9.hinatan.net password="%PV69VI*R0OLN5kEJaR8" payment_api="https://payment384.isucon9.hinatan.net"
+team384-c.isucon9.hinatan.net password="%PV69VI*R0OLN5kEJaR8" payment_api="https://payment384.isucon9.hinatan.net"
+team389-a.isucon9.hinatan.net password="^VFV%c&jQihyNu2vkaFN" payment_api="https://payment389.isucon9.hinatan.net"
+team389-b.isucon9.hinatan.net password="^VFV%c&jQihyNu2vkaFN" payment_api="https://payment389.isucon9.hinatan.net"
+team389-c.isucon9.hinatan.net password="^VFV%c&jQihyNu2vkaFN" payment_api="https://payment389.isucon9.hinatan.net"
+team407-a.isucon9.hinatan.net password="twyWpJ$wKgt6fS3OSafJ" payment_api="https://payment407.isucon9.hinatan.net"
+team407-b.isucon9.hinatan.net password="twyWpJ$wKgt6fS3OSafJ" payment_api="https://payment407.isucon9.hinatan.net"
+team407-c.isucon9.hinatan.net password="twyWpJ$wKgt6fS3OSafJ" payment_api="https://payment407.isucon9.hinatan.net"
+team420-a.isucon9.hinatan.net password="VuF^9xNnA3hfUWyygSWk" payment_api="https://payment420.isucon9.hinatan.net"
+team420-b.isucon9.hinatan.net password="VuF^9xNnA3hfUWyygSWk" payment_api="https://payment420.isucon9.hinatan.net"
+team420-c.isucon9.hinatan.net password="VuF^9xNnA3hfUWyygSWk" payment_api="https://payment420.isucon9.hinatan.net"
+team460-a.isucon9.hinatan.net password="skKVW2wNA0wChm$8gYfu" payment_api="https://payment460.isucon9.hinatan.net"
+team460-b.isucon9.hinatan.net password="skKVW2wNA0wChm$8gYfu" payment_api="https://payment460.isucon9.hinatan.net"
+team460-c.isucon9.hinatan.net password="skKVW2wNA0wChm$8gYfu" payment_api="https://payment460.isucon9.hinatan.net"
+team462-a.isucon9.hinatan.net password="nFEa*@dJg&A&w8MHrDHX" payment_api="https://payment462.isucon9.hinatan.net"
+team462-b.isucon9.hinatan.net password="nFEa*@dJg&A&w8MHrDHX" payment_api="https://payment462.isucon9.hinatan.net"
+team462-c.isucon9.hinatan.net password="nFEa*@dJg&A&w8MHrDHX" payment_api="https://payment462.isucon9.hinatan.net"
+team467-a.isucon9.hinatan.net password="OixvsIgeMP8^*&eYiZVG" payment_api="https://payment467.isucon9.hinatan.net"
+team467-b.isucon9.hinatan.net password="OixvsIgeMP8^*&eYiZVG" payment_api="https://payment467.isucon9.hinatan.net"
+team467-c.isucon9.hinatan.net password="OixvsIgeMP8^*&eYiZVG" payment_api="https://payment467.isucon9.hinatan.net"
+team478-a.isucon9.hinatan.net password="sQ0k6S&awExrmWGp#rZP" payment_api="https://payment478.isucon9.hinatan.net"
+team478-b.isucon9.hinatan.net password="sQ0k6S&awExrmWGp#rZP" payment_api="https://payment478.isucon9.hinatan.net"
+team478-c.isucon9.hinatan.net password="sQ0k6S&awExrmWGp#rZP" payment_api="https://payment478.isucon9.hinatan.net"
+team516-a.isucon9.hinatan.net password="bABLkBjrGac!F3CdCEAk" payment_api="https://payment516.isucon9.hinatan.net"
+team516-b.isucon9.hinatan.net password="bABLkBjrGac!F3CdCEAk" payment_api="https://payment516.isucon9.hinatan.net"
+team516-c.isucon9.hinatan.net password="bABLkBjrGac!F3CdCEAk" payment_api="https://payment516.isucon9.hinatan.net"
+team574-a.isucon9.hinatan.net password="mRuY!IcxDHO4psj0QwJJ" payment_api="https://payment574.isucon9.hinatan.net"
+team574-b.isucon9.hinatan.net password="mRuY!IcxDHO4psj0QwJJ" payment_api="https://payment574.isucon9.hinatan.net"
+team574-c.isucon9.hinatan.net password="mRuY!IcxDHO4psj0QwJJ" payment_api="https://payment574.isucon9.hinatan.net"
+team578-a.isucon9.hinatan.net password="J&9Gpi9IvocL*!ZI2U%i" payment_api="https://payment578.isucon9.hinatan.net"
+team578-b.isucon9.hinatan.net password="J&9Gpi9IvocL*!ZI2U%i" payment_api="https://payment578.isucon9.hinatan.net"
+team578-c.isucon9.hinatan.net password="J&9Gpi9IvocL*!ZI2U%i" payment_api="https://payment578.isucon9.hinatan.net"
 
 
 [bench]
 bench-test-01.isucon9.hinatan.net
-# bench-test-02.isucon9.hinatan.net
-benchmark-01.isucon9.hinatan.net
-# benchmark-02.isucon9.hinatan.net
-# benchmark-03.isucon9.hinatan.net
-benchmark-04.isucon9.hinatan.net
-# benchmark-05.isucon9.hinatan.net
-# benchmark-06.isucon9.hinatan.net
-# benchmark-07.isucon9.hinatan.net
-# benchmark-08.isucon9.hinatan.net
-# benchmark-09.isucon9.hinatan.net
-# benchmark-10.isucon9.hinatan.net
-# benchmark-11.isucon9.hinatan.net
-# benchmark-12.isucon9.hinatan.net
-# benchmark-13.isucon9.hinatan.net
-# benchmark-14.isucon9.hinatan.net
-# benchmark-15.isucon9.hinatan.net
-# benchmark-16.isucon9.hinatan.net
-# benchmark-17.isucon9.hinatan.net
-# benchmark-18.isucon9.hinatan.net
-# benchmark-19.isucon9.hinatan.net
-# benchmark-20.isucon9.hinatan.net
 
 [bench:vars]
 password=BTryJjnmh9XR
