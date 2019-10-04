@@ -215,7 +215,7 @@ func pretestSearchTrainSeats(ctx context.Context, client *isutrain.Client) error
 		return bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる列車名が不正です: want=%s, got=%s", endpointPath, randTest.trainName, resp.TrainName))
 	}
 	if resp.CarNumber != randTest.carNum {
-		return bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる車両番号が不正です: want=%s, got=%s", endpointPath, randTest.carNum, resp.CarNumber))
+		return bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる車両番号が不正です: want=%d, got=%d", endpointPath, randTest.carNum, resp.CarNumber))
 	}
 	if !randTest.wantSeats.IsSame(resp.Seats) {
 		return bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: レスポンスに含まれる座席が不正です", endpointPath))
