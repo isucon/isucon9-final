@@ -103,7 +103,7 @@ func (c *Client) Initialize(ctx context.Context) {
 
 		config.Language = initializeResp.Language
 		if len(initializeResp.Language) == 0 {
-			bencherror.InitializeErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: languageが指定されていません"))
+			bencherror.InitializeErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: languageが指定されていません", endpointPath))
 			return
 		}
 

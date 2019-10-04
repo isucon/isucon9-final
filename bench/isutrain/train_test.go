@@ -7,10 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetNeighborSeatsMultiplier(t *testing.T) {
+func TestGetNeighborSeatsBonus(t *testing.T) {
 	tests := []struct {
-		seats          TrainSeats
-		wantMultiplier float64
+		seats     TrainSeats
+		wantBonus int
 	}{
 		{
 			seats: TrainSeats{
@@ -35,7 +35,7 @@ func TestGetNeighborSeatsMultiplier(t *testing.T) {
 					Column: "E",
 				},
 			},
-			wantMultiplier: 1.0,
+			wantBonus: 0,
 		},
 		{
 			seats: TrainSeats{
@@ -60,7 +60,7 @@ func TestGetNeighborSeatsMultiplier(t *testing.T) {
 					Column: "B",
 				},
 			},
-			wantMultiplier: 1.2,
+			wantBonus: 400,
 		},
 		{
 			seats: TrainSeats{
@@ -85,7 +85,7 @@ func TestGetNeighborSeatsMultiplier(t *testing.T) {
 					Column: "B",
 				},
 			},
-			wantMultiplier: 1.4,
+			wantBonus: 300,
 		},
 		{
 			seats: TrainSeats{
@@ -110,14 +110,39 @@ func TestGetNeighborSeatsMultiplier(t *testing.T) {
 					Column: "A",
 				},
 			},
-			wantMultiplier: 1.9,
+			wantBonus: 400,
+		},
+		{
+			seats: TrainSeats{
+				&TrainSeat{
+					Row:    1,
+					Column: "A",
+				},
+				&TrainSeat{
+					Row:    1,
+					Column: "B",
+				},
+				&TrainSeat{
+					Row:    2,
+					Column: "C",
+				},
+				&TrainSeat{
+					Row:    1,
+					Column: "D",
+				},
+				&TrainSeat{
+					Row:    1,
+					Column: "E",
+				},
+			},
+			wantBonus: 400,
 		},
 	}
 
 	for _, tt := range tests {
-		multiplier := tt.seats.GetNeighborSeatsMultiplier()
-		log.Printf("multiplier = %f\n", multiplier)
-		assert.Equal(t, tt.wantMultiplier, multiplier)
+		bonus := tt.seats.GetNeighborSeatsBonus()
+		log.Printf("bonus = %d\n", bonus)
+		assert.Equal(t, tt.wantBonus, bonus)
 		log.Println("=====")
 	}
 }

@@ -1,7 +1,9 @@
 package isutrain
 
 import (
+	"log"
 	"math"
+	"sort"
 )
 
 // /api/train/search のレスポンス形式
@@ -68,7 +70,7 @@ func (seats TrainSeats) IsSame(gotSeats TrainSeats) bool {
 }
 
 // 隣り合うパターンを見つけたら加算する
-func (seats TrainSeats) GetNeighborSeatsMultiplier() float64 {
+func (seats TrainSeats) GetNeighborSeatsBonus() int {
 	m := map[int][]TrainSeatColumn{}
 	for _, seat := range seats {
 		if _, ok := m[seat.Row]; !ok {
@@ -77,33 +79,49 @@ func (seats TrainSeats) GetNeighborSeatsMultiplier() float64 {
 		m[seat.Row] = append(m[seat.Row], TrainSeatColumn(seat.Column))
 	}
 
-	var max float64
-	for _, columns := range m {
-		var neighborCount int
-		if len(columns) > 1 {
-			for i := 1; i < len(columns); i++ {
-				if columns[i-1].IsNeighbor(columns[i]) {
-					neighborCount++
-				}
-			}
-		}
-		max = math.Max(max, float64(neighborCount))
+	for row := range m {
+		sort.Slice(m[row], func(i, j int) bool {
+			return m[row][i] < m[row][j]
+		})
 	}
 
-	switch int(max) + 1 {
-	case 1:
-		return 1
-	case 2:
-		return 1.2
-	case 3:
-		return 1.4
-	case 4:
-		return 1.9
-	case 5:
-		return 2.0
-	default:
-		return 1
+	var score int
+	addScore := func(count int) {
+		count++
+		switch count {
+		case 2:
+			score += 200
+		case 3:
+			score += 300
+		case 4:
+			score += 400
+		case 5:
+			score += 500
+		}
 	}
+
+	// 隣合わなくなるまでカウントを足し、加算
+	// ケツに着くまでカウントを足し、加算
+	for row, columns := range m {
+		log.Printf("[column=%d]\n", row)
+		if len(columns) > 1 {
+			var bonusCnt int
+			for i := 0; i < len(columns)-1; i++ {
+				if columns[i].IsNeighbor(columns[i+1]) {
+					bonusCnt++
+					log.Println("count")
+				} else {
+					log.Printf("add loop bonusCnt=%d\n", bonusCnt)
+					addScore(bonusCnt)
+					bonusCnt = 1
+				}
+			}
+			log.Printf("add last bonusCnt=%d\n", bonusCnt)
+			addScore(bonusCnt)
+		}
+	}
+
+	return score
 }
 
 func (cars TrainCars) IsSame(gotCars TrainCars) bool {
@@ -113,7 +131,7 @@ func (cars TrainCars) IsSame(gotCars TrainCars) bool {
 
 	for i := 0; i < len(cars); i++ {
 		var (
-			car = cars[i]
+			car    = cars[i]
 			gotCar = gotCars[i]
 		)
 		if *car != *gotCar {
@@ -123,7 +141,6 @@ func (cars TrainCars) IsSame(gotCars TrainCars) bool {
 
 	return true
 }
-
 
 type TrainSeatColumn string
 
