@@ -1204,7 +1204,6 @@ __EOF
           puts e.message
           halt_with_error 500, '座席予約の登録に失敗しました'
         end
-
       rescue => e
         puts e.message
         db.query('ROLLBACK')
@@ -1226,91 +1225,97 @@ __EOF
     post '/api/train/reservation/commit' do
       db.query('BEGIN')
 
-      # 予約IDで検索
-      reservation = begin
-        db.xquery(
-          'SELECT * FROM `reservations` WHERE `reservation_id` = ?',
-          body_params[:reservation_id],
-        ).first
-      rescue Mysql2::Error => e
-        db.query('ROLLBACK')
-        puts e.message
-        halt_with_error 500, '予約情報の取得に失敗しました'
-      end
-
-      if reservation.nil?
-        db.query('ROLLBACK')
-        halt_with_error 404, '予約情報がみつかりません'
-      end
-
-      # 支払い前のユーザチェック。本人以外のユーザの予約を支払ったりキャンセルできてはいけない。
-      user, status, message = get_user
-
-      if status != 200
-        db.query('ROLLBACK')
-        puts message
-        halt_with_error status, message
-      end
-
-      if reservation[:user_id] != user[:id]
-        db.query('ROLLBACK')
-        halt_with_error 403, '他のユーザIDの支払いはできません'
-      end
-
-      # 予約情報の支払いステータス確認
-      if reservation[:status] == 'done'
-        db.query('ROLLBACK')
-        halt_with_error 403, '既に支払いが完了している予約IDです'
-      end
-
-      # 決済する
-      pay_info = {
-        card_token: body_params[:card_token],
-        reservation_id: body_params[:reservation_id],
-        amount: reservation[:amount],
-      }
-
-      payment_api = ENV['PAYMENT_API'] || 'http://payment:5000'
-
-      uri = URI.parse("#{payment_api}/payment")
-      req = Net::HTTP::Post.new(uri)
-      req.body = {
-        payment_information: pay_info
-      }.to_json
-      req['Content-Type'] = 'application/json'
-
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = uri.scheme == 'https'
-      res = http.start { http.request(req) }
-
-      # リクエスト失敗
-      if res.code != '200'
-        db.query('ROLLBACK')
-        puts res.code
-        halt_with_error 500, '決済に失敗しました。カードトークンや支払いIDが間違っている可能性があります'
-      end
-
-      # リクエスト取り出し
-      output = begin
-        JSON.parse(res.body, symbolize_names: true)
-      rescue JSON::ParserError => e
-        db.query('ROLLBACK')
-        puts e.message
-        halt_with_error 500, 'JSON parseに失敗しました'
-      end
-
-      # 予約情報の更新
       begin
-        db.xquery(
-          'UPDATE `reservations` SET `status` = ?, `payment_id` = ? WHERE `reservation_id` = ?',
-          'done',
-          output[:payment_id],
-          body_params[:reservation_id],
-        )
-      rescue Mysql2::Error => e
-        db.query('ROLLBACK')
+        # 予約IDで検索
+        reservation = begin
+          db.xquery(
+            'SELECT * FROM `reservations` WHERE `reservation_id` = ?',
+            body_params[:reservation_id],
+          ).first
+        rescue Mysql2::Error => e
+          db.query('ROLLBACK')
+          puts e.message
+          halt_with_error 500, '予約情報の取得に失敗しました'
+        end
+
+        if reservation.nil?
+          db.query('ROLLBACK')
+          halt_with_error 404, '予約情報がみつかりません'
+        end
+
+        # 支払い前のユーザチェック。本人以外のユーザの予約を支払ったりキャンセルできてはいけない。
+        user, status, message = get_user
+
+        if status != 200
+          db.query('ROLLBACK')
+          puts message
+          halt_with_error status, message
+        end
+
+        if reservation[:user_id] != user[:id]
+          db.query('ROLLBACK')
+          halt_with_error 403, '他のユーザIDの支払いはできません'
+        end
+
+        # 予約情報の支払いステータス確認
+        if reservation[:status] == 'done'
+          db.query('ROLLBACK')
+          halt_with_error 403, '既に支払いが完了している予約IDです'
+        end
+
+        # 決済する
+        pay_info = {
+          card_token: body_params[:card_token],
+          reservation_id: body_params[:reservation_id],
+          amount: reservation[:amount],
+        }
+
+        payment_api = ENV['PAYMENT_API'] || 'http://payment:5000'
+
+        uri = URI.parse("#{payment_api}/payment")
+        req = Net::HTTP::Post.new(uri)
+        req.body = {
+          payment_information: pay_info
+        }.to_json
+        req['Content-Type'] = 'application/json'
+
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = uri.scheme == 'https'
+        res = http.start { http.request(req) }
+
+        # リクエスト失敗
+        if res.code != '200'
+          db.query('ROLLBACK')
+          puts res.code
+          halt_with_error 500, '決済に失敗しました。カードトークンや支払いIDが間違っている可能性があります'
+        end
+
+        # リクエスト取り出し
+        output = begin
+          JSON.parse(res.body, symbolize_names: true)
+        rescue JSON::ParserError => e
+          db.query('ROLLBACK')
+          puts e.message
+          halt_with_error 500, 'JSON parseに失敗しました'
+        end
+
+        # 予約情報の更新
+        begin
+          db.xquery(
+            'UPDATE `reservations` SET `status` = ?, `payment_id` = ? WHERE `reservation_id` = ?',
+            'done',
+            output[:payment_id],
+            body_params[:reservation_id],
+          )
+        rescue Mysql2::Error => e
+          db.query('ROLLBACK')
+          puts e.message
+          halt_with_error 500, '予約情報の更新に失敗しました'
+        end
+      rescue => e
         puts e.message
-        halt_with_error 500, '予約情報の更新に失敗しました'
+        db.query('ROLLBACK')
+        halt_with_error 500, e.message
       end
 
       rr = {
