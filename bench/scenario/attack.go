@@ -57,10 +57,11 @@ func AttackSearchScenario(ctx context.Context) error {
 					return
 				default:
 					var (
-						useAt    = xrandom.GetRandomUseAt()
-						from, to = xrandom.GetRandomSection()
+						useAt        = xrandom.GetRandomUseAt()
+						from, to     = xrandom.GetRandomSection()
+						adult, child = 1, 1
 					)
-					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, "")
+					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, "", adult, child)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 					}
@@ -106,8 +107,9 @@ func AttackSearchScenario(ctx context.Context) error {
 					var (
 						useAt              = xrandom.GetRandomUseAt()
 						departure, arrival = xrandom.GetRandomSection()
+						adult, child       = 1, 1
 					)
-					trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "")
+					trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", adult, child)
 					if err != nil {
 						bencherror.BenchmarkErrs.AddError(err)
 					}
@@ -228,7 +230,8 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 
 	useAt := xrandom.GetRandomUseAt()
 	departure, arrival := xrandom.GetRandomSection()
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "遅いやつ")
+	adult, child := 1, 1
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "遅いやつ", adult, child)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}

@@ -41,7 +41,7 @@ func createSimpleReservation(ctx context.Context, client *isutrain.Client, user 
 		return nil, err
 	}
 
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, train_class)
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, train_class, adult, child)
 	if err != nil {
 		return nil, err
 	}

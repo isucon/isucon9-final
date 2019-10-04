@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"go.uber.org/zap"
 )
 
 // ListStationsResponse は /api/stations のレスポンス形式です
@@ -21,6 +22,115 @@ type Station struct {
 var (
 	ErrInvalidStationName = errors.New("駅名が不正です")
 )
+
+var stations = []*Station{
+	&Station{Name: "東京", IsStopExpress: true, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "古岡", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "絵寒町", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "沙芦公園", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "形顔", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "油交", IsStopExpress: true, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "通墨山", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "初野", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "樺威学園", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "塩鮫公園", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "山田", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "表岡", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "並取", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "細野", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "住郷", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "管英", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "気川", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "桐飛", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "樫曲町", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "依酒山", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "堀切町", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "葉千", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "奥山", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "鯉秋寺", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "伍出", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "杏高公園", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "荒川", IsStopExpress: true, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "磯川", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "茶川", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "八実学園", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "梓金", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "鯉田", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "鳴門", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "曲徳町", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "彩岬山", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "根永", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "鹿近川", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "結広", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "庵金公園", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "近岡", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "威香", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "名古屋", IsStopExpress: true, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "錦太学園", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "和錦台", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "稲冬台", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "松港山", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "甘桜", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "根左海岸", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "島威寺", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "月朱野", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "芋呉川", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "木南", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "鳩平ヶ丘", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "維荻学園", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "保池", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "九野", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "桜田", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "霞苑野", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "夷太寺", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "甘野", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "遠山", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "銀正", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "末国", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "泉別川", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "京都", IsStopExpress: true, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "桜内", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "荻葛ヶ丘", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "雨墨", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "桂綾寺", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "宇治", IsStopExpress: true, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "塚手海岸", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "垣通海岸", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "雨稲ヶ丘", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "森果川", IsStopExpress: true, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "舟田", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "形利", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "午万台", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "早森野", IsStopExpress: false, IsStopSemiExpress: false, IsStopLocal: true},
+	&Station{Name: "桐氷野", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "条川", IsStopExpress: true, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "菊岡", IsStopExpress: false, IsStopSemiExpress: true, IsStopLocal: true},
+	&Station{Name: "大阪", IsStopExpress: true, IsStopSemiExpress: true, IsStopLocal: true},
+}
+
+func IsValidStations(gotStations []*Station) bool {
+	lgr := zap.S()
+	if len(stations) != len(gotStations) {
+		lgr.Warnf("駅一覧の数が不正: %d", len(gotStations))
+		return false
+	}
+	for i := 0; i < len(stations); i++ {
+		var (
+			station    = stations[i]
+			gotStation = gotStations[i]
+		)
+		// IDは見ない
+		gotStation.ID = station.ID
+
+		// NOTE: 駅一覧では距離を出さないので、距離も見ない
+
+		if *station != *gotStation {
+			lgr.Warnf("駅情報が不正: want=%+v, got=%+v", station, gotStation)
+			return false
+		}
+	}
+	return true
+}
 
 // 下りベースの駅
 var sectionMap = map[string]int{
