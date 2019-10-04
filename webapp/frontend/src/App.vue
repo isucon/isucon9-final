@@ -91,10 +91,10 @@ header div.welcome p.logo a{
   display:    block;
   margin:      0;
   padding:    50px 0 0 0;
-  width:      129px;
+  width:      300px;
   height:      0;
   overflow:    hidden;
-  background:    url(assets/logo.svg) no-repeat 22px 11px;
+  background:    url(assets/logo.svg) no-repeat 5px 5px;
 }
 
 
