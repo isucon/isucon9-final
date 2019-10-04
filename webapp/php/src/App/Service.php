@@ -929,8 +929,8 @@ class Service
                     return $response->withJson($this->errorResponse("invalid train_class"), StatusCode::HTTP_BAD_REQUEST);
                 }
 
-                // 座席リクエスト情報は空に
                 for ($carnum = 1; $carnum <= 16; $carnum++) {
+                    // 指定した車両内の座席のうち座席クラス等の条件に一致するもののみ抽出
                     $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? AND `seat_class`=? AND `is_smoking_seat`=? ORDER BY `seat_row`, `seat_column`");
                     $stmt->execute([
                         $payload['train_class'],
@@ -939,9 +939,14 @@ class Service
                         $payload['is_smoking_seat']
                     ]);
                     $seatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    if ($seatList === false || count($seatList) == 0) {
+                    if ($seatList === false) {
                         $this->dbh->rollBack();
                         return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
+                    }
+
+                    if (count($seatList) == 0) {
+                        // 条件を満たす座席がない車両だったので次へ
+                        continue;
                     }
 
                     foreach ($seatList as $seat) {
@@ -1024,10 +1029,10 @@ class Service
                     }
 
                     // シート分だけ回して予約できる席を検索
-                    $i =0;
+                    $i = 0;
                     $vagueSeat = [];
                     $candidateSeats = [];
-                    foreach ($seatReservationList as $seat) {
+                    foreach ($seatInformationList as $seat) {
                         if (($seat['column'] == $payload['Column']) && (! (bool) $seat['is_occupied']) && (! $reserved) && ($vargue)) {
                             $vagueSeat['row'] = $seat['row'];
                             $vagueSeat['column'] = $seat['column'];
