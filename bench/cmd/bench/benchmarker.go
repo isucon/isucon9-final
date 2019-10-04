@@ -57,14 +57,14 @@ func (b *benchmarker) load(ctx context.Context) error {
 	scenario.NormalVagueSearchScenario(ctx)
 
 	if config.IsGoldenweekStarted() {
-		scenario.SeasonGoldenWeekScenario(ctx, config.GoldenWeekStartDate)
+		scenario.SeasonGoldenWeekScenario(ctx, config.GoldenWeekStartDate, 5)
 	}
 	if config.IsGoldenweekEnded() {
-		scenario.SeasonGoldenWeekScenario(ctx, config.GoldenWeekEndDate)
+		scenario.SeasonGoldenWeekScenario(ctx, config.GoldenWeekEndDate, 5)
 	}
 
 	if config.IsOlympic() {
-		scenario.SeasonOlympicScenario(ctx)
+		scenario.SeasonOlympicScenario(ctx, 5)
 	}
 
 	return nil

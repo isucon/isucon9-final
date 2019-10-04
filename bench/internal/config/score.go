@@ -16,7 +16,7 @@ const (
 	// TrivialPenaltyWeight は netエラーに課せられるペナルティの重み
 	TrivialPenaltyWeight = 5
 	// TrivialPenaltyPerCount は netエラー幾つにつきペナルティが課せられるかの除数
-	TrivialPenaltyPerCount = 10
+	TrivialPenaltyPerCount = 1
 )
 
 const (

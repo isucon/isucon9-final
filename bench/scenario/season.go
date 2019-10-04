@@ -14,7 +14,7 @@ import (
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 )
 
-func SeasonGoldenWeekScenario(ctx context.Context, goldenweekDate time.Time) error {
+func SeasonGoldenWeekScenario(ctx context.Context, goldenweekDate time.Time, parallel int) error {
 	// zapロガー取得 (参考: https://qiita.com/emonuh/items/28dbee9bf2fe51d28153#sugaredlogger )
 	lgr := zap.S()
 
@@ -24,7 +24,7 @@ func SeasonGoldenWeekScenario(ctx context.Context, goldenweekDate time.Time) err
 	var wg sync.WaitGroup
 	var totalErr error
 
-	for i := 0; i < 2; i++ {
+	for i := 0; i < parallel; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
@@ -151,7 +151,7 @@ func vagueReserveForOlympic(ctx context.Context, scenarioIdx int, user *isutrain
 	return nil
 }
 
-func SeasonOlympicScenario(ctx context.Context) error {
+func SeasonOlympicScenario(ctx context.Context, parallel int) error {
 	// zapロガー取得 (参考: https://qiita.com/emonuh/items/28dbee9bf2fe51d28153#sugaredlogger )
 	lgr := zap.S()
 
@@ -161,7 +161,7 @@ func SeasonOlympicScenario(ctx context.Context) error {
 	eg := &errgroup.Group{}
 
 	// 東京に行きたい人
-	for i := 0; i < 3; i++ {
+	for i := 0; i < parallel; i++ {
 		var (
 			scenarioIdx       = i
 			tokyo, anyStation = xrandom.GetRandomSectionWithTokyo()
@@ -176,7 +176,7 @@ func SeasonOlympicScenario(ctx context.Context) error {
 	}
 
 	// 東京から離れたい人
-	for i := 3; i < 5; i++ {
+	for i := parallel; i < parallel*2; i++ {
 		var (
 			scenarioIdx       = i
 			tokyo, anyStation = xrandom.GetRandomSectionWithTokyo()
