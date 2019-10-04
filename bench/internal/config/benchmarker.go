@@ -5,8 +5,7 @@ import "time"
 const (
 	InitializeTimeout = 20 * time.Second
 	APITimeout        = 5 * time.Second
-	// BenchmarkTimeout  = 180 * time.Second
-	BenchmarkTimeout = 30 * time.Second
+	BenchmarkTimeout  = 60 * time.Second
 )
 
 const (

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/assets"
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
@@ -187,6 +188,7 @@ var run = cli.Command{
 		}
 
 		lgr.Info("===== Final check =====")
+		time.Sleep(5 * time.Second)
 		scenario.FinalCheck(ctx, testClient, paymentClient)
 		if bencherror.FinalCheckErrs.IsFailure() {
 			lgr.Warnf("webappへのfinalcheckで失格判定: %+v", bencherror.FinalCheckErrs.InternalMsgs)

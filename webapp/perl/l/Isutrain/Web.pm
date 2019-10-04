@@ -172,6 +172,7 @@ post '/initialize' => sub {
 
     $c->render_json({
         available_days => $AVAILABLE_DAYS,
+        language => "perl",
     });
 };
 

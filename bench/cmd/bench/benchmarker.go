@@ -32,6 +32,8 @@ func newBenchmarker() *benchmarker {
 func (b *benchmarker) load(ctx context.Context) error {
 	defer b.sem.Release(1)
 
+	month := int(config.ReservationEndDate.Month())
+
 	scenario.NormalScenario(ctx)
 
 	scenario.NormalCancelScenario(ctx)
@@ -44,9 +46,13 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.AbnormalReserveWrongSeat(ctx)
 
-	scenario.NormalManyAmbigiousSearchScenario(ctx, 5) // 負荷レベルに合わせて大きくする
+	if month > 3 {
+		scenario.NormalManyAmbigiousSearchScenario(ctx, month*3)
+	}
 
-	scenario.NormalManyCancelScenario(ctx, 2) // FIXME: 負荷レベルが上がってきたらあyる
+	if month > 3 {
+		scenario.NormalManyCancelScenario(ctx, month*3)
+	}
 
 	scenario.NormalVagueSearchScenario(ctx)
 
