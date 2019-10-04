@@ -853,7 +853,7 @@ __EOF
                     db.xquery(
                       'SELECT * FROM `station_master` WHERE `name` = ?',
                       reservation[:departure],
-                    )
+                    ).first
                   rescue Mysql2::Error => e
                     db.query('ROLLBACK')
                     puts e.message
@@ -869,7 +869,7 @@ __EOF
                     db.xquery(
                       'SELECT * FROM `station_master` WHERE `name` = ?',
                       reservation[:arrival],
-                    )
+                    ).first
                   rescue Mysql2::Error => e
                     db.query('ROLLBACK')
                     puts e.message
@@ -988,13 +988,17 @@ __EOF
                 z[:column],
                 z[:row],
                 body_params[:seat_class],
-              ).first
+              )
             rescue Mysql2::Error => e
               puts e.message
-              nil
+              db.query('ROLLBACK')
+              halt_with_error 400, e.message
             end
-            db.query('ROLLBACK')
-            halt_with_error 404, 'リクエストされた座席情報は存在しません。号車・喫煙席・座席クラスなど組み合わせを見直してください' if seat_list.nil?
+
+            if seat_list.to_a.empty?
+              db.query('ROLLBACK')
+              halt_with_error 404, 'リクエストされた座席情報は存在しません。号車・喫煙席・座席クラスなど組み合わせを見直してください'
+            end
           end
         end
 
@@ -1106,7 +1110,7 @@ __EOF
 
             seat_reservations.each do |v|
               body_params[:seats].each do |seat|
-                if v[:car_number] == seat[:car_number] && v[:seat_row] == seat[:row] && v[:seat_column] == seat[:column]
+                if v[:car_number] == body_params[:car_number] && v[:seat_row] == seat[:row] && v[:seat_column] == seat[:column]
                   db.query('ROLLBACK')
                   puts "Duplicated #{reservation}"
                   halt_with_error 400, 'リクエストに既に予約された席が含まれています'
@@ -1137,7 +1141,6 @@ __EOF
           when 'premium', 'reserved', 'non-reserved'
             fare_calc(date, from_station[:id], to_station[:id], body_params[:train_class], body_params[:seat_class])
           else
-            db.query('ROLLBACK')
             raise Error, 'リクエストされた座席クラスが不明です'
           end
         rescue Error, ErrorNoRows => e
@@ -1202,10 +1205,12 @@ __EOF
           halt_with_error 500, '座席予約の登録に失敗しました'
         end
 
-      rescue
+      rescue => e
+        puts e.message
         db.query('ROLLBACK')
-        halt_with_error 500, '不明なエラー'
+        halt_with_error 500, e.message
       end
+
       response = {
         reservation_id: id,
         amount: sum_fare,
