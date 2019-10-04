@@ -4,6 +4,7 @@
 namespace App;
 
 use DateTime;
+use DateTimeZone;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use PDO;
@@ -285,7 +286,7 @@ class Service
         ];
         $stmt = $this->dbh->prepare("SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
         $stmt->execute([
-            (new \DateTime($reservation['date']))->format(self::DATET_SQL_FORMAT),
+            (new \DateTime($reservation['date']))->format(self::DATE_SQL_FORMAT),
             $reservation['train_class'],
             $reservation['train_name'],
             $reservation['departure'],
@@ -294,22 +295,22 @@ class Service
         if ($departure === false) {
             throw new \DomainException();
         }
-        $rtn['departure_time'] = $departure;
+        $rtn['departure_time'] = $departure['departure'];
 
-        $stmt = $this->dbh->prepare("SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
+        $stmt = $this->dbh->prepare("SELECT `arrival` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
         $stmt->execute([
             (new \DateTime($reservation['date']))->format(self::DATE_SQL_FORMAT),
             $reservation['train_class'],
             $reservation['train_name'],
-            $reservation['departure'],
+            $reservation['arrival'],
         ]);
         $arrival = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($arrival === false) {
             throw new \DomainException();
         }
-        $rtn['arrival_time'] = $arrival;
+        $rtn['arrival_time'] = $arrival['arrival'];
 
-        $stmt = $this->dbh->query("SELECT * FROM `seat_reservations` WHERE `reservation_id`=?");
+        $stmt = $this->dbh->prepare("SELECT * FROM `seat_reservations` WHERE `reservation_id`=?");
         $stmt->execute([$reservation['reservation_id']]);
         $rtn['seats'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -360,6 +361,9 @@ class Service
         $station = [];
         foreach ($data as $elem) {
             unset($elem['distance']);
+            $elem['is_stop_express'] = (bool) $elem['is_stop_express'];
+            $elem['is_stop_semi_express'] = (bool) $elem['is_stop_semi_express'];
+            $elem['is_stop_local'] = (bool) $elem['is_stop_local'];
             $station[] = $elem;
         }
         return $response->withJson($station);
@@ -368,7 +372,11 @@ class Service
     public function trainSearchHandler(Request $request, Response $response, array  $args)
     {
         try {
-            $date = new DateTime($request->getParam("use_at", ""));
+            $date = DateTime::createFromFormat('Y-m-d\TH:i:s.vO', $request->getParam("use_at", ""));
+            if (! $date) {
+                $date = DateTime::createFromFormat('Y-m-d\TH:i:sO', $request->getParam("use_at", ""));
+            }
+            $date = $date->setTimezone(new DateTimeZone("Asia/Tokyo"));
         } catch (\Exception $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
         }
@@ -585,8 +593,8 @@ class Service
                         "last" => $train['last_station'],
                         "departure" => $fromStation['name'],
                         "arrival" => $toStation['name'],
-                        "departure_time"=> $departure,
-                        "arrival_time" => $arrival,
+                        "departure_time"=> $departure['departure'],
+                        "arrival_time" => $arrival['arrival'],
                         "seat_availability" => $seatAvailability,
                         "seat_fare" => $fareInformation,
                     ];
@@ -606,7 +614,11 @@ class Service
     public function trainSeatsHandler(Request $request, Response $response, array $args)
     {
         try {
-            $date = new DateTime($request->getParam("use_at", ""));
+            $date = DateTime::createFromFormat('Y-m-d\TH:i:s.vO', $request->getParam("date", ""));
+            if (! $date) {
+                $date = DateTime::createFromFormat('Y-m-d\TH:i:sO', $request->getParam("date", ""));
+            }
+            $date = $date->setTimezone(new DateTimeZone("Asia/Tokyo"));
         } catch (\Exception $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
         }
@@ -672,7 +684,7 @@ class Service
                 'row' => $seat['seat_row'],
                 'column' => $seat['seat_column'],
                 'class' => $seat['seat_class'],
-                'is_smoking_seat' => $seat['is_smoking_seat'],
+                'is_smoking_seat' => (bool) $seat['is_smoking_seat'],
                 'is_occupied' => false,
             ];
             $stmt = $this->dbh->prepare("SELECT `s`.* FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
@@ -692,7 +704,7 @@ class Service
                 $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id`=?");
                 $stmt->execute([$seatReservation['reservation_id']]);
                 $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($reservation) {
+                if ($reservation === false) {
                     return $response->withJson($this->errorResponse("failed to fetch seat_reservations"), StatusCode::HTTP_BAD_REQUEST);
                 }
 
@@ -735,7 +747,7 @@ class Service
         $simpleCarInformationList = [];
         $i = 1;
         while (true) {
-            $stmt = $this->dbh->query("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? ORDER BY `seat_row`, `seat_column` LIMIT 1");
+            $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? ORDER BY `seat_row`, `seat_column` LIMIT 1");
             $stmt->execute([
                 $trainClass,
                 $i,
@@ -755,7 +767,7 @@ class Service
             'date' => $date->format('Y/m/d'),
             'train_class' => $trainClass,
             'train_name' => $trainName,
-            'car_number' => $carNumber,
+            'car_number' => (int) $carNumber,
             'seats' => $seatInformationList,
             'cars' => $simpleCarInformationList,
         ];
@@ -793,6 +805,8 @@ class Service
         if (! $this->checkAvailableDate($date)) {
             return $response->withJson($this->errorResponse("予約可能期間外です"), StatusCode::HTTP_NOT_FOUND);
         }
+
+        $date = $date->setTimezone(new DateTimeZone("Asia/Tokyo"));
 
         $this->dbh->beginTransaction();
         // 止まらない駅の予約を取ろうとしていないかチェックする
@@ -915,9 +929,9 @@ class Service
                     return $response->withJson($this->errorResponse("invalid train_class"), StatusCode::HTTP_BAD_REQUEST);
                 }
 
-                // 座席リクエスト情報は空に
                 for ($carnum = 1; $carnum <= 16; $carnum++) {
-                    $stmt = $this->dbh->query("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? AND `seat_class`=? AND `is_smoking_seat`=? ORDER BY `seat_row`, `seat_column`");
+                    // 指定した車両内の座席のうち座席クラス等の条件に一致するもののみ抽出
+                    $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? AND `seat_class`=? AND `is_smoking_seat`=? ORDER BY `seat_row`, `seat_column`");
                     $stmt->execute([
                         $payload['train_class'],
                         $carnum,
@@ -930,12 +944,17 @@ class Service
                         return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
                     }
 
+                    if (count($seatList) == 0) {
+                        // 条件を満たす座席がない車両だったので次へ
+                        continue;
+                    }
+
                     foreach ($seatList as $seat) {
                         $s = [
                             'row' => $seat['seat_row'],
                             'column' => $seat['seat_column'],
                             'class' => $seat['seat_class'],
-                            'is_smoking_seat' => $seat['is_smoking_seat'],
+                            'is_smoking_seat' => (bool) $seat['is_smoking_seat'],
                             'is_occupied' => false,
                         ];
                         $stmt = $this->dbh->prepare("SELECT s.* FROM `seat_reservations` s, `reservations` r WHERE r.`date` =? AND r.`train_class` =? AND r.`train_name` =? AND `car_number` =? AND `seat_row` =? AND `seat_column` =? FOR UPDATE");
@@ -1010,10 +1029,10 @@ class Service
                     }
 
                     // シート分だけ回して予約できる席を検索
-                    $i =0;
+                    $i = 0;
                     $vagueSeat = [];
                     $candidateSeats = [];
-                    foreach ($seatReservationList as $seat) {
+                    foreach ($seatInformationList as $seat) {
                         if (($seat['column'] == $payload['Column']) && (! (bool) $seat['is_occupied']) && (! $reserved) && ($vargue)) {
                             $vagueSeat['row'] = $seat['row'];
                             $vagueSeat['column'] = $seat['column'];
@@ -1084,7 +1103,7 @@ class Service
         // 当該列車・列車名の予約一覧取得
         $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE date=? AND `train_class`=? AND `train_name`=? FOR UPDATE");
         $stmt->execute([
-            $date,
+            $date->format(self::DATE_SQL_FORMAT),
             $payload['train_class'],
             $payload['train_name'],
         ]);
@@ -1258,7 +1277,7 @@ class Service
         $this->dbh->commit();
 
         return $response->withJson([
-            'reservation_id' => $reservation_id,
+            'reservation_id' => (int) $reservation_id,
             'amount' => $sumFare,
             'is_ok' => true,
         ], StatusCode::HTTP_OK);
@@ -1321,9 +1340,11 @@ class Service
 
         // 決済する
         $payInfo = [
+            "payment_information" => [
             'card_token' => $payload['card_token'],
             'reservation_id' => $payload['reservation_id'],
             'amount' => $reservation['amount'],
+            ]
         ];
         $payment_api = Environment::get('PAYMENT_API', 'http://payment:5000');
         $http_client = new Client();
@@ -1345,7 +1366,7 @@ class Service
          * string `json:"payment_id"`
          * bool   `json:"is_ok"`
          */
-        $output = json_decode($r->getBody());
+        $output = json_decode($r->getBody(), true);
 
         // 予約情報の更新
         try {
@@ -1477,7 +1498,7 @@ class Service
         }
 
         try {
-            $stmt = $this->dbh->query("DELETE FROM `reservations` WHERE `reservation_id`=? AND `user_id`=?");
+            $stmt = $this->dbh->prepare("DELETE FROM `reservations` WHERE `reservation_id`=? AND `user_id`=?");
             $stmt->execute([
                 $id,
                 $user['id']
