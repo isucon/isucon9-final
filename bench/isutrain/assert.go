@@ -17,7 +17,7 @@ func assertSearchTrains(ctx context.Context, endpointPath string, resp SearchTra
 		return bencherror.NewSimpleCriticalError("GET %s: レスポンスが空です", endpointPath)
 	}
 
-	if len(resp) == 10 {
+	if len(resp) != 10 {
 		return bencherror.NewSimpleApplicationError("GET %s: 列車が１件もヒットしませんでした", endpointPath)
 	}
 
@@ -168,9 +168,6 @@ func assertCommitReservation(ctx context.Context, endpointPath string, resp *Com
 	if resp == nil {
 		return bencherror.NewSimpleCriticalError("POST %s: レスポンスが空です", endpointPath)
 	}
-	if !resp.IsOK {
-		return bencherror.NewSimpleCriticalError("POST %s: is_ok がfalseです", endpointPath)
-	}
 
 	return nil
 }
@@ -180,9 +177,6 @@ func assertCommitReservation(ctx context.Context, endpointPath string, resp *Com
 func assertCancelReservation(ctx context.Context, endpointPath string, client *Client, reservationID int, resp *CancelReservationResponse) error {
 	if resp == nil {
 		return bencherror.NewSimpleCriticalError("POST %s: レスポンスが空です", endpointPath)
-	}
-	if !resp.IsOK {
-		return bencherror.NewSimpleCriticalError("POST %s: is_ok がfalseです", endpointPath)
 	}
 	reservations, err := client.ListReservations(ctx)
 	if err != nil {
