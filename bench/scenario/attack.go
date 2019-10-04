@@ -59,7 +59,7 @@ func AttackSearchScenario(ctx context.Context) error {
 					var (
 						useAt        = xrandom.GetRandomUseAt()
 						from, to     = xrandom.GetRandomSection()
-						adult, child = 1, 1
+						adult, child = xrandom.GetRandomNumberOfPeople()
 					)
 					_, err := client.SearchTrains(searchTrainCtx, useAt, from, to, "", adult, child)
 					if err != nil {
@@ -107,7 +107,7 @@ func AttackSearchScenario(ctx context.Context) error {
 					var (
 						useAt              = xrandom.GetRandomUseAt()
 						departure, arrival = xrandom.GetRandomSection()
-						adult, child       = 1, 1
+						adult, child       = xrandom.GetRandomNumberOfPeople()
 					)
 					trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", adult, child)
 					if err != nil {
@@ -230,7 +230,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 
 	useAt := xrandom.GetRandomUseAt()
 	departure, arrival := xrandom.GetRandomSection()
-	adult, child := 1, 1
+	adult, child := xrandom.GetRandomNumberOfPeople()
 	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "遅いやつ", adult, child)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)

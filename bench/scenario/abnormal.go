@@ -70,7 +70,8 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 	}
 
 	useAt := xrandom.GetRandomUseAt()
-	trains, err := client.SearchTrains(ctx, useAt, "東京", "大阪", "最速", 1, 1)
+	adult, child := xrandom.GetRandomNumberOfPeople()
+	trains, err := client.SearchTrains(ctx, useAt, "東京", "大阪", "最速", adult, child)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -125,7 +126,7 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 
 	useAt := time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC)
 	departure, arrival := "東京", "大阪"
-	adult, child := 1, 1
+	adult, child := xrandom.GetRandomNumberOfPeople()
 	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "最速", adult, child)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
