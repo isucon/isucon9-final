@@ -103,7 +103,7 @@ func (c *Client) Initialize(ctx context.Context) {
 
 		config.Language = initializeResp.Language
 		if len(initializeResp.Language) == 0 {
-			bencherror.InitializeErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: languageが指定されていません"))
+			bencherror.InitializeErrs.AddError(bencherror.NewSimpleCriticalError("POST %s: languageが指定されていません", endpointPath))
 			return
 		}
 
@@ -502,26 +502,20 @@ func (c *Client) Reserve(
 			return nil, err
 		}
 	}
+	if resp.StatusCode == successCode {
+		if SeatAvailability(seatClass) != SaNonReserved {
+			endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
+		}
+
+		// 予約詳細から座席を取得し、曖昧予約ボーナスがあれば加点する
+		addBonusNeighborSeats(ctx, c, reserveResp.ReservationID)
+	}
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
 		return nil, bencherror.NewApplicationError(err, "POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode)
 	}
 
-	// FIXME: webappが座席を返してこないので、ボーナス付与は一旦保留
-	// if len(reserveReq.Seats) == 0 {
-	// 	// リクエストに席を指定しない曖昧予約の場合、予約できた座席で隣り合う数が多いほど加点される
-	// 	var (
-	// 		weight     = float64(endpoint.GetWeight(endpoint.ListTrainSeats))
-	// 		multiplier = reserveResp.Seats.GetNeighborSeatsMultiplier()
-	// 	)
-	// 	endpoint.AddExtraScore(endpoint.Reserve, int64(math.Round(weight*multiplier)))
-	// } else {
 	endpoint.IncPathCounter(endpoint.Reserve)
-	// }
-
-	if SeatAvailability(seatClass) != SaNonReserved {
-		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
-	}
 
 	return reserveResp, nil
 }

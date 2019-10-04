@@ -39,20 +39,20 @@ type (
 	ListReservationsResponse []*Reservation
 
 	Reservation struct {
-		ReservationID int                `json:"reservation_id"`
-		Date          string             `json:"date"`
-		TrainClass    string             `json:"train_class"`
-		TrainName     string             `json:"train_name"`
-		CarNumber     int                `json:"car_number"`
-		SeatClass     string             `json:"seat_class"`
-		Amount        int                `json:"amount"`
-		Adult         int                `json:"adult"`
-		Child         int                `json:"child"`
-		Departure     string             `json:"departure"`
-		Arrival       string             `json:"arrival"`
-		DepartureTime string             `json:"departure_time"`
-		ArrivalTime   string             `json:"arrival_time"`
-		Seats         []*ReservationSeat `json:"seats"`
+		ReservationID int              `json:"reservation_id"`
+		Date          string           `json:"date"`
+		TrainClass    string           `json:"train_class"`
+		TrainName     string           `json:"train_name"`
+		CarNumber     int              `json:"car_number"`
+		SeatClass     string           `json:"seat_class"`
+		Amount        int              `json:"amount"`
+		Adult         int              `json:"adult"`
+		Child         int              `json:"child"`
+		Departure     string           `json:"departure"`
+		Arrival       string           `json:"arrival"`
+		DepartureTime string           `json:"departure_time"`
+		ArrivalTime   string           `json:"arrival_time"`
+		Seats         ReservationSeats `json:"seats"`
 	}
 
 	ReservationSeat struct {
@@ -61,7 +61,70 @@ type (
 		SeatRow       int    `json:"seat_row" db:"seat_row"`
 		SeatColumn    string `json:"seat_column" db:"seat_column"`
 	}
+	ReservationSeats []*ReservationSeat
 )
+
+// 隣り合うパターンを見つけたら加算する
+func (seats ReservationSeats) GetNeighborSeatsBonus() int {
+	m := map[int]int{}
+	for _, seat := range seats {
+		if _, ok := m[seat.SeatRow]; !ok {
+			m[seat.SeatRow] = 0
+		}
+		if !IsValidTrainSeatColumn(seat.SeatColumn) {
+			return 0
+		}
+		column := TrainSeatColumn(seat.SeatColumn)
+
+		shiftCnt := uint64(column.Int())
+		m[seat.SeatRow] |= (1 << shiftCnt)
+	}
+
+	var score int
+	addScore := func(bits int) {
+		var (
+			five  = 25
+			four  = 20
+			three = 15
+			two   = 10
+		)
+		switch bits {
+		// 5つ
+		case 31:
+			score += five
+			return
+		// 4つ
+		case 30, 15:
+			score += four
+			return
+		// 3つ
+		case 28, // 11100
+			29, // 11101
+			14, // 01110
+			7,  // 00111
+			23: // 10111
+			score += three
+			return
+		}
+
+		// ２つの場合はずらしながら、見つけたら加点
+		check := 3 // 00011
+		for i := bits; i > 0; i >>= 1 {
+			if i&check == check {
+				// 隣り合う２つの席を見つけた
+				score += two
+				i &= ^check
+			}
+		}
+	}
+
+	// 加算処理
+	for _, bits := range m {
+		addScore(bits)
+	}
+
+	return score
+}
 
 // 予約確定API
 type (

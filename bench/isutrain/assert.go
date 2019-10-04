@@ -62,7 +62,7 @@ func assertSearchTrainSeats(ctx context.Context, endpointPath string, resp *Sear
 	dedup := map[TrainSeat]struct{}{}
 	for _, seat := range resp.Seats {
 		if _, ok := dedup[*seat]; ok {
-			return bencherror.NewSimpleCriticalError("GET %s: 同じ座席がレスポンスに含まれています")
+			return bencherror.NewSimpleCriticalError("GET %s: 同じ座席がレスポンスに含まれています", endpointPath)
 		}
 		dedup[*seat] = struct{}{}
 	}
@@ -114,7 +114,7 @@ func assertReserve(ctx context.Context, endpointPath string, client *Client, req
 			}
 		}
 
-		return bencherror.NewSimpleCriticalError("POST %d: 予約した内容を予約一覧画面で確認できませんでした", endpointPath)
+		return bencherror.NewSimpleCriticalError("POST %s: 予約した内容を予約一覧画面で確認できませんでした", endpointPath)
 	})
 	// 予約確認できるか
 	reserveGrp.Go(func() error {

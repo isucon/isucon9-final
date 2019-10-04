@@ -188,6 +188,7 @@ var run = cli.Command{
 		}
 
 		lgr.Info("===== Final check =====")
+		// NOTE: bulkリクエストの遅延処理考慮で、５秒待つ
 		time.Sleep(5 * time.Second)
 		scenario.FinalCheck(ctx, testClient, paymentClient)
 		if bencherror.FinalCheckErrs.IsFailure() {
