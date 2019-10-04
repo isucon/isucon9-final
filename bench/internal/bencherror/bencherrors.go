@@ -31,7 +31,8 @@ type BenchErrors struct {
 
 func NewBenchErrors() *BenchErrors {
 	return &BenchErrors{
-		Msgs: []string{},
+		Msgs:         []string{},
+		InternalMsgs: []string{},
 	}
 }
 
@@ -78,7 +79,7 @@ func (errs *BenchErrors) AddError(err error) error {
 	errs.mu.Lock()
 	defer errs.mu.Unlock()
 
-	if err == nil && !errs.isBenchmarkFinished {
+	if err == nil || errs.isBenchmarkFinished {
 		return nil
 	}
 

@@ -154,7 +154,7 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 		availSeats, departure, arrival, useAt,
 		carNum, 1, 1,
 		isutrain.StatusCodeOpt(http.StatusNotFound))
-	if err == nil {
+	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
