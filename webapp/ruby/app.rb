@@ -20,6 +20,7 @@ module Isutrain
       require 'sinatra/reloader'
 
       register Sinatra::Reloader
+      also_reload './utils.rb'
     end
 
     set :protection, false
@@ -243,9 +244,9 @@ module Isutrain
     end
 
     get '/api/stations' do
-      stations = db.query(
-        'SELECT * FROM `station_master` ORDER BY `id`',
-      ).to_a
+      stations = db.query('SELECT * FROM `station_master` ORDER BY `id`').map do |station|
+        station.slice(:id, :name, :is_stop_express, :is_stop_semi_express, :is_stop_local)
+      end
 
       content_type :json
       stations.to_json
@@ -395,7 +396,7 @@ module Isutrain
           reserved_avail = '○'
           if reserved_avail_seats.length.zero?
             reserved_avail = '×'
-          elsif reserved_avail.length < 10
+          elsif reserved_avail_seats.length < 10
             reserved_avail = '△'
           end
 
@@ -900,11 +901,11 @@ __EOF
 
             reserved = false
             vargue = true
-            seatnum = body_params[:adult] + body_params[:child] - 1 # 全体の人数からあいまい指定席分を引いておく
-            if !body_params[:column]                                # A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
-              seatnum = body_params[:adult] + body_params[:child]   # あいまい指定せず大人＋小人分の座席を取る
-              reserved = true                                       # dummy
-              vargue = false                                        # dummy
+            seatnum = body_params[:adult] + body_params[:child] - 1     # 全体の人数からあいまい指定席分を引いておく
+            if body_params[:column].nil? || body_params[:column].empty? # A/B/C/D/Eを指定しなければ、空いている適当な指定席を取るあいまいモード
+              seatnum = body_params[:adult] + body_params[:child]       # あいまい指定せず大人＋小人分の座席を取る
+              reserved = true                                           # dummy
+              vargue = false                                            # dummy
             end
 
             candidate_seats = []
