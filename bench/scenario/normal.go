@@ -47,7 +47,7 @@ func NormalScenario(ctx context.Context) error {
 
 	useAt := xrandom.GetRandomUseAt()
 	departure, arrival := xrandom.GetRandomSection()
-	adult, child := 1, 1
+	adult, child := xrandom.GetRandomNumberOfPeople()
 	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", adult, child)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
@@ -144,7 +144,7 @@ func NormalCancelScenario(ctx context.Context) error {
 	var (
 		useAt              = xrandom.GetRandomUseAt()
 		departure, arrival = xrandom.GetRandomSection()
-		adult, child       = 1, 1
+		adult, child       = xrandom.GetRandomNumberOfPeople()
 	)
 	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "", adult, child)
 	if err != nil {

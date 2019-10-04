@@ -67,6 +67,7 @@ func (seats TrainSeats) IsSame(gotSeats TrainSeats) bool {
 	return true
 }
 
+// 隣り合うパターンを見つけたら加算する
 func (seats TrainSeats) GetNeighborSeatsMultiplier() float64 {
 	m := map[int][]TrainSeatColumn{}
 	for _, seat := range seats {

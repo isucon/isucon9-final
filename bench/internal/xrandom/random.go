@@ -14,8 +14,8 @@ import (
 )
 
 func GetRandomNumberOfPeople() (adult, child int) {
-	adult = util.RandRangeIntn(1, 6)
-	child = util.RandRangeIntn(1, 6)
+	adult = util.RandRangeIntn(1, 4)
+	child = util.RandRangeIntn(1, 4)
 	return
 }
 
