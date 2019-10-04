@@ -507,21 +507,14 @@ func (c *Client) Reserve(
 		return nil, bencherror.NewApplicationError(err, "POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode)
 	}
 
-	// FIXME: webappが座席を返してこないので、ボーナス付与は一旦保留
-	// if len(reserveReq.Seats) == 0 {
-	// 	// リクエストに席を指定しない曖昧予約の場合、予約できた座席で隣り合う数が多いほど加点される
-	// 	var (
-	// 		weight     = float64(endpoint.GetWeight(endpoint.ListTrainSeats))
-	// 		multiplier = reserveResp.Seats.GetNeighborSeatsMultiplier()
-	// 	)
-	// 	endpoint.AddExtraScore(endpoint.Reserve, int64(math.Round(weight*multiplier)))
-	// } else {
 	endpoint.IncPathCounter(endpoint.Reserve)
-	// }
 
 	if SeatAvailability(seatClass) != SaNonReserved {
 		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
 	}
+
+	// 予約詳細から座席を取得し、曖昧予約ボーナスがあれば加点する
+	addBonusNeighborSeats(ctx, c, reserveResp.ReservationID)
 
 	return reserveResp, nil
 }

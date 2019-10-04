@@ -2,19 +2,23 @@ package isutrain
 
 import (
 	"context"
+
+	"github.com/chibiegg/isucon9-final/bench/internal/endpoint"
 )
 
-func bonusNeighborSeats(ctx context.Context, client *Client, reservationID int) error {
+func addBonusNeighborSeats(ctx context.Context, client *Client, reservationID int) error {
 	// 予約詳細を取得し、座席を列挙
-	_, err := client.ShowReservation(ctx, reservationID)
+	reservation, err := client.ShowReservation(ctx, reservationID)
 	if err != nil {
 		return err
 	}
 
 	// 座席のボーナス判定
-	// seats := resp.Seats
-	// score := seats.GetNeighborSeatsMultiplier()
-	// endpoint.AddExtraScore(endpoint.Reserve, score)
+	var (
+		seats = reservation.Seats
+		score = seats.GetNeighborSeatsBonus()
+	)
+	endpoint.AddExtraScore(endpoint.Reserve, int64(score))
 
 	return nil
 }

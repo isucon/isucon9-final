@@ -1,9 +1,7 @@
 package isutrain
 
 import (
-	"log"
 	"math"
-	"sort"
 )
 
 // /api/train/search のレスポンス形式
@@ -69,61 +67,6 @@ func (seats TrainSeats) IsSame(gotSeats TrainSeats) bool {
 	return true
 }
 
-// 隣り合うパターンを見つけたら加算する
-func (seats TrainSeats) GetNeighborSeatsBonus() int {
-	m := map[int][]TrainSeatColumn{}
-	for _, seat := range seats {
-		if _, ok := m[seat.Row]; !ok {
-			m[seat.Row] = []TrainSeatColumn{}
-		}
-		m[seat.Row] = append(m[seat.Row], TrainSeatColumn(seat.Column))
-	}
-
-	for row := range m {
-		sort.Slice(m[row], func(i, j int) bool {
-			return m[row][i] < m[row][j]
-		})
-	}
-
-	var score int
-	addScore := func(count int) {
-		count++
-		switch count {
-		case 2:
-			score += 200
-		case 3:
-			score += 300
-		case 4:
-			score += 400
-		case 5:
-			score += 500
-		}
-	}
-
-	// 隣合わなくなるまでカウントを足し、加算
-	// ケツに着くまでカウントを足し、加算
-	for row, columns := range m {
-		log.Printf("[column=%d]\n", row)
-		if len(columns) > 1 {
-			var bonusCnt int
-			for i := 0; i < len(columns)-1; i++ {
-				if columns[i].IsNeighbor(columns[i+1]) {
-					bonusCnt++
-					log.Println("count")
-				} else {
-					log.Printf("add loop bonusCnt=%d\n", bonusCnt)
-					addScore(bonusCnt)
-					bonusCnt = 1
-				}
-			}
-			log.Printf("add last bonusCnt=%d\n", bonusCnt)
-			addScore(bonusCnt)
-		}
-	}
-
-	return score
-}
-
 func (cars TrainCars) IsSame(gotCars TrainCars) bool {
 	if len(cars) != len(gotCars) {
 		return false
@@ -140,6 +83,15 @@ func (cars TrainCars) IsSame(gotCars TrainCars) bool {
 	}
 
 	return true
+}
+
+func IsValidTrainSeatColumn(seatColumn string) bool {
+	switch TrainSeatColumn(seatColumn) {
+	case ColumnA, ColumnB, ColumnC, ColumnD, ColumnE:
+		return true
+	default:
+		return false
+	}
 }
 
 type TrainSeatColumn string
