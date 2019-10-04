@@ -4,6 +4,7 @@
 namespace App;
 
 use DateTime;
+use DateTimeZone;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use PDO;
