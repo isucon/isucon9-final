@@ -56,3 +56,43 @@ export default {
   }
 }
 </script>
+
+
+<style scoped>
+section {
+  padding-top: 20px;
+}
+
+label {
+  display: block;
+  float: left;
+  width: 150px;
+  margin-left: 100px;
+  color: #003163;
+}
+input {
+  width: 200px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #003163;
+  font-size: 100%;
+}
+
+.form {
+  float: left;
+  width: 50%;
+}
+
+button {
+    width: 300px;
+    height: 65px;
+    border-width: 0px;
+    cursor: pointer;
+    background: #0066cc;
+    margin-top: 15px;
+    color: white;
+    font-size: 25px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+</style>

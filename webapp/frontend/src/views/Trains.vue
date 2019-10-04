@@ -49,7 +49,7 @@
           普通車
         </div>
         <div class="thead td green">
-          グリーン車
+          プレミアム車
         </div>
         <div class="th">
           <h3>指定席</h3>
@@ -96,17 +96,15 @@
         座席表を見る
       </div>
 
-      <hr>
-
       <div class="position">
-        <div>{{ position }}</div>
-        <select v-model="position">
-          <option value="">指定しない</option>
-          <option value="A">窓　側（普A／グA）</option>
-          <option value="B">中　央（普B）</option>
-          <option value="C">通路側（普C／グB）</option>
-          <option value="D">通路側（普D／グC）</option>
-          <option value="E">窓　側（普E／グD）</option>
+        <div>{{ position_display }}</div>
+        <select v-model="position" v-bind:class="{ disabled: !columnChoices }">
+          <option
+            v-for="(choice, index) in columnChoices"
+            v-bind:value="choice.value"
+          >
+            {{ choice.name }}
+          </option>
         </select>
       </div>
 
@@ -172,6 +170,54 @@ export default {
         return false
       }
       return true
+    },
+    columnChoices () {
+      if (this.seat_class == "premium") {
+        return [
+          {name: "指定しない", value:""},
+          {name: "窓　側 (A)", value:"A"},
+          {name: "通路側 (B)", value:"B"},
+          {name: "通路側 (C)", value:"C"},
+          {name: "窓　側 (D)", value:"D"},
+        ]
+      }
+      if (this.seat_class == "reserved") {
+        return [
+          {name: "指定しない", value:""},
+          {name: "窓　側 (A)", value:"A"},
+          {name: "中　央 (B)", value:"B"},
+          {name: "通路側 (C)", value:"C"},
+          {name: "通路側 (D)", value:"D"},
+          {name: "窓　側 (E)", value:"E"},
+        ]
+      }
+      return []
+    },
+    position_display () {
+      if (this.position == "") {
+        return "指定しない"
+      }
+
+      if (this.seat_class == "premium") {
+        var m = {
+          A: "窓　側 (A)",
+          B: "通路側 (B)",
+          C: "通路側 (C)",
+          D: "窓　側 (D)",
+        }
+        return m[this.position]
+      }
+      if (this.seat_class == "reserved") {
+        var m = {
+          A: "窓　側 (A)",
+          B: "中　央 (B)",
+          C: "通路側 (C)",
+          D: "通路側 (D)",
+          E: "窓　側 (E)",
+        }
+        return m[this.position]
+      }
+      return ""
     }
   },
   methods: {
@@ -187,8 +233,8 @@ export default {
         var items = []
 
         res.forEach(function(value){
-          value["departure"] = apiService.getStation(value["departure"])
-          value["arrival"] = apiService.getStation(value["arrival"])
+          value["departure"] = value["departure"]
+          value["arrival"] = value["arrival"]
           value["departure_time"] = new Date("2000-01-01 " + value["departure_time"])
           value["arrival_time"] = new Date("2000-01-01 " + value["arrival_time"])
           items.push(value)

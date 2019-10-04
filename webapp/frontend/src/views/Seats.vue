@@ -54,8 +54,9 @@
     </table>
 
   </div>
-
-  <button type="button" v-on:click="reserve()">送信</button>
+  <div class="button-area">
+    <button type="button" class="reserve" v-on:click="reserve()">予約に進む</button>
+  </div>
 </div>
 
 
@@ -139,7 +140,7 @@ export default {
       }
 
       if (seat.text != "○") {
-        // return
+        return
       }
 
       seat.selected = !seat.selected
@@ -308,6 +309,34 @@ export default {
 
 .seat-select table tr td.selected {
   background-color: #EB0000;
+}
+
+
+.reserve {
+  width: 300px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  color: red;
+  background: pink;
+  font-size: 20px;
+  border-width: 1px;
+  border-color: #999999;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  font-weight: bold;
+}
+
+
+.button-area {
+  text-align: center;
 }
 
 </style>
