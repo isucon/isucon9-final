@@ -27,11 +27,11 @@ var isutrainEndpoints = []*Endpoint{
 	&Endpoint{path: "/api/auth/signup", weight: 1},
 	&Endpoint{path: "/api/auth/login", weight: 1},
 	&Endpoint{path: "/api/auth/logout", weight: 1},
-	&Endpoint{path: "/api/train/reserve", weight: 1},
+	&Endpoint{path: "/api/train/reserve", weight: 5},
 	&Endpoint{path: "/api/train/reservation/commit", weight: 1},
 	&Endpoint{path: "/api/stations", weight: 1},
-	&Endpoint{path: "/api/train/search", weight: 1},
-	&Endpoint{path: "/api/train/seats", weight: 1},
+	&Endpoint{path: "/api/train/search", weight: 3},
+	&Endpoint{path: "/api/train/seats", weight: 3},
 	&Endpoint{path: "/api/user/reservations", weight: 1},
 }
 

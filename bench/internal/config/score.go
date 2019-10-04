@@ -21,5 +21,5 @@ const (
 
 const (
 	// ReservedSeatExtraScore は 指定席の予約成功に加えられるボーナス
-	ReservedSeatExtraScore = 100
+	ReservedSeatExtraScore = 10
 )
