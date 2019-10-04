@@ -90,7 +90,7 @@ func GetTokaiRandomSection() (string, string) {
 }
 
 func GetRandomUser() (*isutrain.User, error) {
-	emailRandomStr, err := util.SecureRandomStr(10)
+	emailRandomStr, err := util.SecureRandomStr(20)
 	if err != nil {
 		return nil, bencherror.NewCriticalError(err, "ユーザを作成できません. 運営に確認をお願いいたします")
 	}

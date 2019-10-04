@@ -17,8 +17,8 @@ func assertSearchTrains(ctx context.Context, endpointPath string, resp SearchTra
 		return bencherror.NewSimpleCriticalError("GET %s: レスポンスが空です", endpointPath)
 	}
 
-	if len(resp) != 10 {
-		return bencherror.NewSimpleApplicationError("GET %s: 列車が１件もヒットしませんでした", endpointPath)
+	if len(resp) == 0 {
+		return bencherror.NewSimpleApplicationError("GET %s: 列車が10件ヒットしませんでした: got=%d", endpointPath, len(resp))
 	}
 
 	for _, train := range resp {

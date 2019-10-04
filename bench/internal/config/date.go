@@ -63,5 +63,20 @@ var (
 
 func IsOlympic() bool {
 	t := ReservationStartDate.Add(time.Duration(AvailableDays*24) * time.Hour)
-	return t.Equal(OlympicStartDate) || t.After(OlympicStartDate)
+	return !t.Before(OlympicStartDate)
+}
+
+var (
+	GoldenWeekStartDate time.Time = time.Date(2020, 4, 29, 0, 0, 0, 0, time.Local)
+	GoldenWeekEndDate   time.Time = time.Date(2020, 5, 6, 15, 0, 0, 0, time.Local)
+)
+
+func IsGoldenweekStarted() bool {
+	t := ReservationStartDate.Add(time.Duration(AvailableDays*24) * time.Hour)
+	return !t.Before(GoldenWeekStartDate)
+}
+
+func IsGoldenweekEnded() bool {
+	t := ReservationStartDate.Add(time.Duration(AvailableDays*24) * time.Hour)
+	return !t.Before(GoldenWeekEndDate)
 }
