@@ -376,6 +376,7 @@ class Service
             if (! $date) {
                 $date = DateTime::createFromFormat('Y-m-d\TH:i:sO', $request->getParam("use_at", ""));
             }
+            $date = $date->setTimezone(new DateTimeZone("Asia/Tokyo"));
         } catch (\Exception $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
         }
@@ -613,10 +614,11 @@ class Service
     public function trainSeatsHandler(Request $request, Response $response, array $args)
     {
         try {
-            $date = DateTime::createFromFormat('Y-m-d\TH:i:s.vO', $request->getParam("date", ""), new DateTimeZone('UTC'));
+            $date = DateTime::createFromFormat('Y-m-d\TH:i:s.vO', $request->getParam("date", ""));
             if (! $date) {
                 $date = DateTime::createFromFormat('Y-m-d\TH:i:sO', $request->getParam("date", ""));
             }
+            $date = $date->setTimezone(new DateTimeZone("Asia/Tokyo"));
         } catch (\Exception $e) {
             return $response->withJson($this->errorResponse($e->getMessage()), StatusCode::HTTP_BAD_REQUEST);
         }
@@ -803,6 +805,8 @@ class Service
         if (! $this->checkAvailableDate($date)) {
             return $response->withJson($this->errorResponse("予約可能期間外です"), StatusCode::HTTP_NOT_FOUND);
         }
+
+        $date = $date->setTimezone(new DateTimeZone("Asia/Tokyo"));
 
         $this->dbh->beginTransaction();
         // 止まらない駅の予約を取ろうとしていないかチェックする
