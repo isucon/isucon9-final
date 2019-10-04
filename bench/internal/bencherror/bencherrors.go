@@ -25,6 +25,8 @@ type BenchErrors struct {
 	applicationCnt uint64
 	timeoutCnt     uint64
 	temporaryCnt   uint64
+
+	isBenchmarkFinished bool
 }
 
 func NewBenchErrors() *BenchErrors {
@@ -76,7 +78,7 @@ func (errs *BenchErrors) AddError(err error) error {
 	errs.mu.Lock()
 	defer errs.mu.Unlock()
 
-	if err == nil {
+	if err == nil && !errs.isBenchmarkFinished {
 		return nil
 	}
 
@@ -107,6 +109,11 @@ func (errs *BenchErrors) AddError(err error) error {
 }
 
 func (errs *BenchErrors) DumpCounters() {
+	errs.mu.Lock()
+	defer errs.mu.Unlock()
+
+	errs.isBenchmarkFinished = true
+
 	lgr := zap.S()
 	lgr.Infow("ベンチマーク完了時のエラーカウンタ",
 		"critical", errs.criticalCnt,
