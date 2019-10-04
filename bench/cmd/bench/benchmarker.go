@@ -50,8 +50,11 @@ func (b *benchmarker) load(ctx context.Context) error {
 
 	scenario.NormalVagueSearchScenario(ctx)
 
-	if config.AvailableDays > 200 { // FIXME: 値が適当
-		scenario.SeasonGoldenWeekScenario(ctx)
+	if config.IsGoldenweekStarted() {
+		scenario.SeasonGoldenWeekScenario(ctx, config.GoldenWeekStartDate)
+	}
+	if config.IsGoldenweekEnded() {
+		scenario.SeasonGoldenWeekScenario(ctx, config.GoldenWeekEndDate)
 	}
 
 	if config.IsOlympic() {
