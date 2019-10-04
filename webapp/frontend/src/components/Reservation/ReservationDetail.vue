@@ -22,7 +22,7 @@
 
             <div class="name">
               <span class="name">{{ reservation.train_class }} {{ reservation.train_name }} 号</span>
-              <span class="type">N700系/全席禁煙</span>
+              <span class="type">NEKO800系/全席禁煙</span>
             </div>
 
             <div class="arrival">

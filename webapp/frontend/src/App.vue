@@ -3,11 +3,10 @@
     <header>
       <div class="welcome">
         <p class="logo"><a></a></p>
-        <p class="welcome" v-if="user"><span>{{ user.email }}様</span><span style="color:#ff0000"></span></p>
+        <p class="welcome" v-if="user"><span>{{ user.email }} 様</span><span style="color:#ff0000"></span></p>
       </div>
 
       <div class="title">
-        <h1>メニュー</h1>
         <ul>
           <li class="b1"><router-link to="/"><a>メニュー</a></router-link></li>
           <li class="b2" v-if="!user"><a href="#" v-on:click="login()">ログイン</a></li>

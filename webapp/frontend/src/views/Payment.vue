@@ -2,63 +2,66 @@
 <div v-if="reservation">
 
   <div class="trains">
-  <section class="information">
-    <article style="text-align: center;">
-      <p style="font-size: 30px; color: red;">
-        ご予約はまだ完了していません
+    <section class="information">
+      <article style="text-align: center;">
+        <p style="font-size: 30px; color: red;">
+          ご予約はまだ完了していません
+        </p>
+      </article>
+    </section>
+
+    <ReservationDetail
+      v-bind:reservation="reservation"
+    />
+
+    <section class="information">
+      <article>
+        <h2>ご案内</h2>
+        <p style="font-size: 11px;">
+        ■ご利用条件は運送約款の規定によります。<br/>
+        </p>
+      </article>
+    </section>
+    </div>
+
+    <div class="card-form">
+      <p><label>スーパーセキュアなカードの番号 8桁の数字</label><input v-model="card_number" maxlength="8"/></p>
+      <p><label>CVV</label><input v-model="cvv" maxlength="3" size="5"/></p>
+      <p>
+      <label>有効期限</label>
+      <select v-model="expiry_date_month">
+        <option>01</option>
+        <option>02</option>
+        <option>03</option>
+        <option>04</option>
+        <option>05</option>
+        <option>06</option>
+        <option>07</option>
+        <option>08</option>
+        <option>09</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+      </select> /
+      <select v-model="expiry_date_year">
+        <option>20</option>
+        <option>21</option>
+        <option>22</option>
+        <option>23</option>
+        <option>24</option>
+        <option>25</option>
+        <option>26</option>
+        <option>27</option>
+        <option>28</option>
+        <option>29</option>
+        <option>30</option>
+      </select>
       </p>
-    </article>
-  </section>
+    </div>
 
-  <ReservationDetail
-    v-bind:reservation="reservation"
-  />
-
-  <section class="information">
-    <article>
-      <h2>ご案内</h2>
-      <p style="font-size: 11px;">
-      ■ご利用条件は運送約款の規定によります。<br/>
-      </p>
-    </article>
-  </section>
-  </div>
-
-  <div>
-  <p><label>スーパーセキュアなカードの番号 8桁の数字</label><input v-model="card_number"/></p>
-  <p><label>CVV</label><input v-model="cvv"/></p>
-  <p>
-  <label>有効期限</label>
-  <select v-model="expiry_date_month">
-    <option>01</option>
-    <option>02</option>
-    <option>03</option>
-    <option>04</option>
-    <option>05</option>
-    <option>06</option>
-    <option>07</option>
-    <option>08</option>
-    <option>09</option>
-    <option>10</option>
-    <option>11</option>
-    <option>12</option>
-  </select> /
-  <select v-model="expiry_date_year">
-    <option>20</option>
-    <option>21</option>
-    <option>22</option>
-    <option>23</option>
-    <option>24</option>
-    <option>25</option>
-    <option>26</option>
-    <option>27</option>
-    <option>28</option>
-    <option>29</option>
-    <option>30</option>
-  </select>
-  </p>
-
-    <div class="reserve" v-on:click="payment()">予約する</div>
+    <div class="button-area">
+      <button type="button" class="reserve" v-on:click="payment()">決済する</button>
+    </div>
   </div>
 </div>
 
@@ -188,19 +191,50 @@ div.trains .condition .station {
   font-size: 28px;
 }
 
+.card-form {
+
+}
+
+
+.card-form label {
+  display: block;
+  float: left;
+  width: 500px;
+  text-align: right;
+  margin-right: 30px;
+}
+
+
+.card-form input {
+  font-size: 100%;
+  text-align: center;
+}
+
 .reserve {
   width: 300px;
-  line-height: 40px;
+  height: 50px;
+  line-height: 50px;
   text-align: center;
   margin-left: auto;
   margin-right: auto;
   margin-top: 20px;
   margin-bottom: 20px;
+
   color: red;
-  padding: 40px;
-  cursor: pointer;
-  border: 4px solid red;
-  border-radius: 25px 25px 25px 25px / 25px 25px 25px 25px;
+  background: pink;
+  font-size: 20px;
+  border-width: 1px;
+  border-color: #999999;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  font-weight: bold;
+}
+
+
+.button-area {
+  text-align: center;
 }
 
 </style>
