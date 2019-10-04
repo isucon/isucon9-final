@@ -187,6 +187,13 @@ var run = cli.Command{
 			return nil
 		}
 
+		bgtester, err := newBgTester()
+		if err != nil {
+			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
+			return nil
+		}
+		go bgtester.run(ctx)
+
 		lgr.Info("===== Final check =====")
 		// NOTE: bulkリクエストの遅延処理考慮で、５秒待つ
 		time.Sleep(5 * time.Second)

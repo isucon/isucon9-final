@@ -272,7 +272,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		return bencherror.PreTestErrs.AddError(err)
 	}
 
-	availSeats := filterTrainSeats(searchTrainSeatsResp, 2)
+	availSeats := FilterTrainSeats(searchTrainSeatsResp, 2)
 
 	reserveResp, err := client.Reserve(ctx, trainClass, trainName, seatClass, availSeats, departure, arrival,
 		useAt,

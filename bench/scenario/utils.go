@@ -112,7 +112,7 @@ func createSpecifiedReservation(ctx context.Context, client *isutrain.Client, us
 		return nil, bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+	availSeats := FilterTrainSeats(listTrainSeatsResp, 2)
 
 	reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
@@ -137,7 +137,7 @@ func createSpecifiedReservation(ctx context.Context, client *isutrain.Client, us
 	return reserveResp, nil
 }
 
-func filterTrainSeats(resp *isutrain.SearchTrainSeatsResponse, count int) isutrain.TrainSeats {
+func FilterTrainSeats(resp *isutrain.SearchTrainSeatsResponse, count int) isutrain.TrainSeats {
 	availSeats := isutrain.TrainSeats{}
 	for _, seat := range resp.Seats {
 		if len(availSeats) == count {

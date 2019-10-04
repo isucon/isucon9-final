@@ -86,7 +86,7 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+	availSeats := FilterTrainSeats(listTrainSeatsResp, 2)
 
 	_, err = client.Reserve(ctx,
 		train.Class, train.Name,
@@ -142,7 +142,7 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+	availSeats := FilterTrainSeats(listTrainSeatsResp, 2)
 
 	// FIXME: seatが空になるケースがあるので、上の座席列挙で固定の条件で検索をかける必要がある
 	availSeats[0].Row = 30
