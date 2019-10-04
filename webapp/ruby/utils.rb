@@ -41,7 +41,7 @@ module Isutrain
 
       available_seat_map = {}
       seat_list.each do |seat|
-        key = "#{seat[:card_number]}_#{seat[:seat_row]}_#{seat[:seat_column]}"
+        key = "#{seat[:car_number]}_#{seat[:seat_row]}_#{seat[:seat_column]}"
         available_seat_map[key] = seat
       end
 
@@ -84,7 +84,7 @@ __EOF
       )
 
       seat_reservation_list.each do |seat_reservation|
-        key = "#{seat_reservation[:card_number]}_#{seat_reservation[:seat_row]}_#{seat_reservation[:seat_column]}"
+        key = "#{seat_reservation[:car_number]}_#{seat_reservation[:seat_row]}_#{seat_reservation[:seat_column]}"
         available_seat_map.delete(key)
       end
 
