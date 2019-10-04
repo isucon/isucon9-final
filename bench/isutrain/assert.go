@@ -16,6 +16,11 @@ func assertSearchTrains(ctx context.Context, endpointPath string, resp SearchTra
 	if resp == nil {
 		return bencherror.NewSimpleCriticalError("GET %s: レスポンスが空です", endpointPath)
 	}
+
+	if len(resp) == 10 {
+		return bencherror.NewSimpleApplicationError("GET %s: 列車が１件もヒットしませんでした", endpointPath)
+	}
+
 	for _, train := range resp {
 		if ok := IsValidTrainClass(train.Class); !ok {
 			return bencherror.NewSimpleCriticalError("GET %s: 列車種別が不正です: %s", endpointPath, train.Class)
