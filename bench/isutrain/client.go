@@ -502,19 +502,20 @@ func (c *Client) Reserve(
 			return nil, err
 		}
 	}
+	if resp.StatusCode == successCode {
+		if SeatAvailability(seatClass) != SaNonReserved {
+			endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
+		}
+
+		// 予約詳細から座席を取得し、曖昧予約ボーナスがあれば加点する
+		addBonusNeighborSeats(ctx, c, reserveResp.ReservationID)
+	}
 
 	if err := bencherror.NewHTTPStatusCodeError(req, resp, opts.wantStatusCode); err != nil {
 		return nil, bencherror.NewApplicationError(err, "POST %s: ステータスコードが不正です: got=%d, want=%d", endpointPath, resp.StatusCode, opts.wantStatusCode)
 	}
 
 	endpoint.IncPathCounter(endpoint.Reserve)
-
-	if SeatAvailability(seatClass) != SaNonReserved {
-		endpoint.AddExtraScore(endpoint.Reserve, config.ReservedSeatExtraScore)
-	}
-
-	// 予約詳細から座席を取得し、曖昧予約ボーナスがあれば加点する
-	addBonusNeighborSeats(ctx, c, reserveResp.ReservationID)
 
 	return reserveResp, nil
 }
