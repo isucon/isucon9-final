@@ -182,6 +182,7 @@ func assertCancelReservation(ctx context.Context, endpointPath string, client *C
 		return bencherror.NewSimpleCriticalError("POST %s: レスポンスが空です", endpointPath)
 	}
 	if !resp.IsOK {
+		return bencherror.NewSimpleCriticalError("POST %s: is_ok がfalseです", endpointPath)
 	}
 	reservations, err := client.ListReservations(ctx)
 	if err != nil {
