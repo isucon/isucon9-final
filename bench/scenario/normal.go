@@ -67,7 +67,7 @@ func NormalScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+	availSeats := FilterTrainSeats(listTrainSeatsResp, 2)
 
 	reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
@@ -166,7 +166,7 @@ func NormalCancelScenario(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+	availSeats := FilterTrainSeats(listTrainSeatsResp, 2)
 
 	reserveResp, err := client.Reserve(ctx,
 		train.Class, train.Name,
