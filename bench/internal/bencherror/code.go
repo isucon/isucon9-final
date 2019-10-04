@@ -15,6 +15,11 @@ var (
 	errTemporary   failure.StringCode = "error temporary"
 )
 
+// NewWrapError は、指定エラーのcodeを引き継いで、メッセージをラッピングします
+func NewWrapError(err error, msg string, args ...interface{}) error {
+	return failure.Wrap(err, failure.Messagef(msg, args...))
+}
+
 func NewSimpleCriticalError(msg string, args ...interface{}) error {
 	return failure.New(errCritical, failure.Messagef(msg, args...))
 }

@@ -14,7 +14,6 @@ import (
 	"golang.org/x/xerrors"
 )
 
-
 var (
 	ErrRedirect = errors.New("redirectが検出されました")
 )
@@ -68,7 +67,7 @@ func newSessionForInitialize() (*Session, error) {
 func (sess *Session) newRequest(ctx context.Context, method, uri string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, uri, body)
 	if err != nil {
-		return nil, bencherror.NewCriticalError(err, "HTTPリクエストの作成に失敗しました. 運営に確認をお願いいたします")
+		return nil, err
 	}
 
 	req.WithContext(ctx)
@@ -89,7 +88,7 @@ func (sess *Session) do(req *http.Request) (*http.Response, error) {
 			}
 		}
 
-		return nil, err
+		return nil, bencherror.NewApplicationError(err, "アプリケーションへのリクエストが失敗しました")
 	}
 
 	return resp, nil

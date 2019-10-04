@@ -5,11 +5,15 @@ import (
 	"context"
 	"crypto/sha256"
 	"errors"
+	"fmt"
 	"net/http"
+	"reflect"
 	"time"
 
 	"github.com/chibiegg/isucon9-final/bench/assets"
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
+	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/endpoint"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
 	"github.com/chibiegg/isucon9-final/bench/payment"
 	"golang.org/x/sync/errgroup"
@@ -33,6 +37,18 @@ func Pretest(ctx context.Context, client *isutrain.Client, paymentClient *paymen
 	// 正常系
 	pretestGrp.Go(func() error {
 		pretestNormalReservation(ctx, client, paymentClient)
+		return nil
+	})
+	pretestGrp.Go(func() error {
+		pretestListStations(ctx, client)
+		return nil
+	})
+	pretestGrp.Go(func() error {
+		pretestSearchTrains(ctx, client)
+		return nil
+	})
+	pretestGrp.Go(func() error {
+		pretestCheckAvailableDate(ctx, client)
 		return nil
 	})
 	// 異常系
@@ -106,7 +122,7 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 		seatClass          = "premium"
 		adult, child       = 1, 1
 	)
-	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "最速")
+	_, err = client.SearchTrains(ctx, useAt, departure, arrival, "最速", adult, child)
 	if err != nil {
 		bencherror.PreTestErrs.AddError(err)
 		return
@@ -148,29 +164,144 @@ func pretestNormalReservation(ctx context.Context, client *isutrain.Client, paym
 	}
 }
 
-func pretestSearchTrainsNotEmptyResult(ctx context.Context, client *isutrain.Client) {
-	// 初期状態で、いくつか試す
-	// 必ずこれは空にならないというパターンを試す
+// 駅一覧
+func pretestListStations(ctx context.Context, client *isutrain.Client) {
+	// 固定でちゃんと返せてるか
+	client, err := isutrain.NewClient()
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	err = registerUserAndLogin(ctx, client, &isutrain.User{
+		Email:    "puser1@example.com",
+		Password: "puser1",
+	})
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	gotStations, err := client.ListStations(ctx)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	if ok := isutrain.IsValidStations(gotStations); !ok {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("駅一覧が不正です"))
+		return
+	}
 }
 
-func pretestSearchTrainsTimeTable(ctx context.Context, client *isutrain.Client) {
-	// タイムテーブルをちゃんと返しているか試す
+// 列車検索
+
+func pretestSearchTrains(ctx context.Context, client *isutrain.Client) {
+	// 初期状態で、いくつか試す
+	// 必ずこれは空にならないというパターンを試す
+	endpointPath := endpoint.GetPath(endpoint.SearchTrains)
+
+	client, err := isutrain.NewClient()
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	err = registerUserAndLogin(ctx, client, &isutrain.User{
+		Email:    "puser2@example.com",
+		Password: "puser2",
+	})
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	// randIdx := rand.Intn(len(pretestSearchTrainsTests))
+	randTest := pretestSearchTrainsTests[2]
+
+	resp, err := client.SearchTrains(ctx, randTest.useAt, randTest.from, randTest.to, randTest.trainClass, randTest.adult, randTest.child)
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	if len(resp) == 0 {
+		bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: 検索結果を返すべき条件で返せておらず、空です", endpointPath))
+	}
+
+	for _, train := range resp {
+		wantSeatAvailability, ok := randTest.wantSeatAvailability[train.Name]
+		if !ok {
+			bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: 検索条件に対し、不正な列車名がレスポンスに含まれています: got=%s", train.Name))
+			return
+		}
+		if !reflect.DeepEqual(train.SeatAvailability, wantSeatAvailability) {
+			bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: seat_availabilityが不正です: want=%+v, got=%v", endpointPath, wantSeatAvailability, train.SeatAvailability))
+			return
+		}
+
+		wantFareInformation := randTest.wantFareInformation[train.Name]
+		if !reflect.DeepEqual(train.FareInformation, wantFareInformation) {
+			bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: fare_informationが不正です: want=%+v, got=%v", endpointPath, wantFareInformation, train.FareInformation))
+			return
+		}
+
+		wantDepartedAt := randTest.wantDepartedAt[train.Name]
+		if train.DepartedAt != wantDepartedAt {
+			bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: DepartedAtが不正です: want=%s, got=%s", endpointPath, wantDepartedAt, train.DepartedAt))
+			return
+		}
+
+		wantArrivedAt := randTest.wantArrivedAt[train.Name]
+		if train.ArrivedAt != wantArrivedAt {
+			bencherror.PreTestErrs.AddError(bencherror.NewSimpleCriticalError("GET %s: ArrivedAtが不正です: want=%s, got=%s", endpointPath, wantArrivedAt, train.ArrivedAt))
+			return
+		}
+	}
 }
+
+func pretestSearchTrainsEmptyTrainClass(ctx context.Context, client *isutrain.Client) {
+	// 空のtrain_classを設定してリクエストした場合にも検索ができるはず
+	// https://github.com/chibiegg/isucon9-final/blob/master/webapp/go/main.go#L507
+}
+
+// 座席検索
 
 func pretestSearchTrainSeats(ctx context.Context, client *isutrain.Client) {
 
 }
 
-func pretestSeatAvailability(ctx context.Context, client *isutrain.Client) {
+// 予約
 
-}
+// ユーティリティ
 
 func pretestCheckAvailableDate(ctx context.Context, client *isutrain.Client) {
-	// https://github.com/chibiegg/isucon9-final/blob/master/webapp/go/utils.go#L8
-}
+	var (
+		availDate = config.ReservationStartDate.AddDate(0, 0, config.AvailableDays)
+		d         = availDate.AddDate(0, 0, 1)
+	)
 
-func pretestListStations(ctx context.Context, client *isutrain.Client) {
-	// 固定でちゃんと返せてるか
+	client, err := isutrain.NewClient()
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	err = registerUserAndLogin(ctx, client, &isutrain.User{
+		Email:    "puser6@example.com",
+		Password: "puser6",
+	})
+	if err != nil {
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
+
+	_, err = client.SearchTrains(ctx, d, "東京", "大阪", "最速", 1, 1, isutrain.StatusCodeOpt(http.StatusNotFound))
+	if err != nil {
+		fmt.Println(err.Error())
+		bencherror.PreTestErrs.AddError(err)
+		return
+	}
 }
 
 // 異常系

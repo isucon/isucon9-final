@@ -70,7 +70,7 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 	}
 
 	useAt := xrandom.GetRandomUseAt()
-	trains, err := client.SearchTrains(ctx, useAt, "東京", "大阪", "最速")
+	trains, err := client.SearchTrains(ctx, useAt, "東京", "大阪", "最速", 1, 1)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -95,7 +95,6 @@ func AbnormalReserveWrongSection(ctx context.Context) error {
 		isutrain.StatusCodeOpt(http.StatusBadRequest))
 
 	if err != nil {
-		err = bencherror.NewSimpleCriticalError("予約できない区間が予約できました")
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
@@ -126,7 +125,8 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 
 	useAt := time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC)
 	departure, arrival := "東京", "大阪"
-	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "最速")
+	adult, child := 1, 1
+	trains, err := client.SearchTrains(ctx, useAt, departure, arrival, "最速", adult, child)
 	if err != nil {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
@@ -154,7 +154,7 @@ func AbnormalReserveWrongSeat(ctx context.Context) error {
 		carNum, 1, 1,
 		isutrain.StatusCodeOpt(http.StatusNotFound))
 	if err == nil {
-		return bencherror.BenchmarkErrs.AddError(bencherror.NewCriticalError(err, "予約できない座席が予約できました"))
+		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
 	return nil
