@@ -51,38 +51,38 @@
   - 予約確定のレスポンスに `予約ID` が含まれており、予約IDは支払いに必要となります。
 
 - サンプルリクエスト
-  - 中間183号、7号車、東京→名古屋、喫煙席付近ではなく、指定席で大人2人、子供1人の計3席をあいまい予約するリクエスト
+  - 遅いやつ10号、8号車、芋呉川→葉千、プレミアム座席で大人2人、子供1人の計3席をあいまい予約するリクエスト
   - ```
     {
-		"date": "2020-12-31T07:57:00+09:00",
-		"train_name": "183",
-		"train_class": "中間",
-		"car_number": 7,
-		"is_smoking_seat": false,
-		"seat_class": "reserved",
-		"departure": "東京",
-		"arrival": "名古屋",
-		"child": 2,
-		"adult": 1,
-		"column": "",
-		"seats": []
+        "date": "2020-01-06T10:33:57+09:00",
+        "train_name": "10",
+        "train_class": "遅いやつ",
+        "car_number": 8,
+        "is_smoking_seat": false,
+        "seat_class": "premium",
+        "departure": "芋呉川",
+        "arrival": "葉千",
+        "adult": 2,
+        "child": 1,
+        "column": "",
+        "seats": []
 		}
     ```
-  - 中間183号、7号車、東京→名古屋、喫煙席付近ではなく、指定席で大人2人、子供1人の計3席、窓側席(A)を必ず1席は含むあいまい予約するリクエスト
+  - 遅いやつ10号、8号車、芋呉川→葉千、プレミアム座席で大人2人、子供1人の計3席、窓側席(A)を必ず1席は含むあいまい予約するリクエスト
   - ```
     {
-		"date": "2020-12-31T07:57:00+09:00",
-		"train_name": "183",
-		"train_class": "中間",
-		"car_number": 7,
-		"is_smoking_seat": false,
-		"seat_class": "reserved",
-		"departure": "東京",
-		"arrival": "名古屋",
-		"child": 2,
-		"adult": 1,
-		"column": "A", // 窓側・真ん中・通路側希望により変わる
-		"seats": []
+        "date": "2020-01-06T10:33:57+09:00",
+        "train_name": "10",
+        "train_class": "遅いやつ",
+        "car_number": 8,
+        "is_smoking_seat": false,
+        "seat_class": "premium",
+        "departure": "芋呉川",
+        "arrival": "葉千",
+        "adult": 2,
+        "child": 1,
+        "column": "A", // 窓側・真ん中・通路側希望により変わる
+        "seats": []
 		}
     ```
   - 遅いやつ10号、8号車、芋呉川→葉千、プレミアム座席で大人、子供でそれぞれ2番A席と2番B席を予約するリクエスト
