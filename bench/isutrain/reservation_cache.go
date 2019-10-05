@@ -94,6 +94,11 @@ func newReservationCache() *reservationCache {
 	}
 }
 
+func (r *ReservationCacheEntry) SeatCount() int {
+	// webappは全ての座席が取れない場合エラーのステータスコードを返すので、前席が帰って来ることを期待
+	return r.Adult + r.Child
+}
+
 func (r *reservationCache) Len() int {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
