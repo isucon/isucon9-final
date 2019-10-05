@@ -178,7 +178,7 @@ var run = cli.Command{
 		benchCtx, cancel := context.WithTimeout(context.Background(), config.BenchmarkTimeout)
 		defer cancel()
 
-		bgCtx, bgCancel := context.WithTimeout(ctx, 3*time.Second)
+		bgCtx, bgCancel := context.WithCancel(ctx)
 		bgtester, err := newBgTester()
 		if err != nil {
 			dumpFailedResult(uniqueMsgs(bencherror.BenchmarkErrs.Msgs))
