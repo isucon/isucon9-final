@@ -33,6 +33,7 @@ func cliMain() int {
 	app.Commands = []cli.Command{
 		run,
 		pretest,
+		bgtest,
 	}
 
 	app.Action = func(cliCtx *cli.Context) error {

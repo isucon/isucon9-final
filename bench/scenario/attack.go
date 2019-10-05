@@ -11,6 +11,7 @@ import (
 
 	"github.com/chibiegg/isucon9-final/bench/internal/bencherror"
 	"github.com/chibiegg/isucon9-final/bench/internal/config"
+	"github.com/chibiegg/isucon9-final/bench/internal/endpoint"
 	"github.com/chibiegg/isucon9-final/bench/internal/isutraindb"
 	"github.com/chibiegg/isucon9-final/bench/internal/xrandom"
 	"github.com/chibiegg/isucon9-final/bench/isutrain"
@@ -237,7 +238,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 	}
 
 	if len(trains) == 0 {
-		err := bencherror.NewSimpleCriticalError("列車検索結果が空でした")
+		err := bencherror.NewSimpleCriticalError("GET %s: 列車が１件もヒットしませんでした", endpoint.GetPath(endpoint.SearchTrains))
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
@@ -251,7 +252,7 @@ func AttackReserveRaceCondition(ctx context.Context) error {
 		return bencherror.BenchmarkErrs.AddError(err)
 	}
 
-	availSeats := filterTrainSeats(listTrainSeatsResp, 2)
+	availSeats := FilterTrainSeats(listTrainSeatsResp, 2)
 
 	wg := new(sync.WaitGroup)
 	var successCount uint64

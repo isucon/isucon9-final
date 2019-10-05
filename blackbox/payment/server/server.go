@@ -29,6 +29,7 @@ type Server struct {
 	PayInfoMap  map[string]pb.PaymentInformation
 	CardInfoMap map[string]pb.CardInformation
 	mu          sync.RWMutex
+	cancelLock  sync.RWMutex
 }
 
 func NewNetworkServer() (*Server, error) {
@@ -132,6 +133,8 @@ func (s *Server) ExecutePayment(ctx context.Context, req *pb.ExecutePaymentReque
 func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest) (*pb.CancelPaymentResponse, error) {
 	done := make(chan struct{}, 1)
 	ec := make(chan error, 1)
+	s.cancelLock.Lock()
+	defer s.cancelLock.Unlock()
 	go func() {
 		s.mu.RLock()
 		paydata, ok := s.PayInfoMap[req.PaymentId]
@@ -161,6 +164,8 @@ func (s *Server) CancelPayment(ctx context.Context, req *pb.CancelPaymentRequest
 func (s *Server) BulkCancelPayment(ctx context.Context, req *pb.BulkCancelPaymentRequest) (*pb.BulkCancelPaymentResponse, error) {
 	done := make(chan int32, 1)
 	ec := make(chan int32, 1)
+	s.cancelLock.Lock()
+	defer s.cancelLock.Unlock()
 	go func() {
 		s.mu.Lock()
 		if len(req.PaymentId) < 1 {

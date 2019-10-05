@@ -102,7 +102,7 @@ func GetSeatClass(trainClass string, carNum int) string {
 	case trainClass == "遅いやつ" && carNum == 16:
 		return "reserved"
 	default:
-		bencherror.SystemErrs.AddError(bencherror.NewSimpleCriticalError("trainClass=%s, carNum=%d が指定され、seatClassが空で返りました", trainClass, carNum))
+		bencherror.SystemErrs.AddError(bencherror.NewSimpleCriticalError("不正なtrainClass=%s, carNum=%d が指定されました", trainClass, carNum))
 		return ""
 	}
 }
