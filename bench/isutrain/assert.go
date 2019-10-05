@@ -18,7 +18,7 @@ func assertSearchTrains(ctx context.Context, endpointPath string, resp SearchTra
 	}
 
 	if len(resp) == 0 {
-		return bencherror.NewSimpleApplicationError("GET %s: 列車が10件ヒットしませんでした: got=%d", endpointPath, len(resp))
+		return bencherror.NewSimpleCriticalError("GET %s: 列車が1件もヒットしませんでした", endpointPath)
 	}
 
 	for _, train := range resp {
@@ -93,7 +93,7 @@ func assertReserve(ctx context.Context, endpointPath string, client *Client, req
 	// レスポンスに含まれるamountは正しいか
 	if resp.Amount != amount {
 		lgr.Warnf("amountが不正になった!? reservationID=%d, want=%d, got=%d", resp.ReservationID, amount, resp.Amount)
-		return bencherror.NewSimpleApplicationError("POST %s: 予約 %dの amountが不正です: trainClass=%s,seatClass=%s,date=%s: want=%d, got=%d", endpointPath, resp.ReservationID, req.TrainClass, req.SeatClass, req.Date, amount, resp.Amount)
+		return bencherror.NewSimpleCriticalError("POST %s: 予約 %dの amountが不正です: trainClass=%s,seatClass=%s,date=%s: want=%d, got=%d", endpointPath, resp.ReservationID, req.TrainClass, req.SeatClass, req.Date, amount, resp.Amount)
 	}
 
 	reserveGrp := &errgroup.Group{}
@@ -107,7 +107,7 @@ func assertReserve(ctx context.Context, endpointPath string, client *Client, req
 		for _, reservation := range reservations {
 			if reservation.ReservationID == resp.ReservationID {
 				if amount != reservation.Amount {
-					return bencherror.NewSimpleApplicationError("POST %s: 予約 %dの amountが不正です: trainClass=%s,seatClass=%s,date=%s: want=%d, got=%d", endpointPath, reservation.ReservationID, req.TrainClass, req.SeatClass, req.Date, amount, reservation.Amount)
+					return bencherror.NewSimpleCriticalError("POST %s: 予約 %dの amountが不正です: trainClass=%s,seatClass=%s,date=%s: want=%d, got=%d", endpointPath, reservation.ReservationID, req.TrainClass, req.SeatClass, req.Date, amount, reservation.Amount)
 				}
 
 				return nil
@@ -185,13 +185,13 @@ func assertCancelReservation(ctx context.Context, endpointPath string, client *C
 
 	for _, reservation := range reservations {
 		if reservation.ReservationID == reservationID {
-			return bencherror.NewSimpleApplicationError("POST %s: キャンセルされた予約が、予約一覧に列挙されています: %d", endpointPath, reservationID)
+			return bencherror.NewSimpleCriticalError("POST %s: キャンセルされた予約が、予約一覧に列挙されています: %d", endpointPath, reservationID)
 		}
 	}
 
 	_, err = client.ShowReservation(ctx, reservationID, StatusCodeOpt(http.StatusNotFound))
 	if err != nil {
-		return bencherror.NewSimpleApplicationError("POST %s: キャンセルされた予約が取得可能です ReservationID=%d", endpointPath, reservationID)
+		return bencherror.NewSimpleCriticalError("POST %s: キャンセルされた予約が取得可能です ReservationID=%d", endpointPath, reservationID)
 	}
 
 	return nil
