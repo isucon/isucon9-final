@@ -123,6 +123,10 @@ func assertReserve(ctx context.Context, endpointPath string, client *Client, req
 			return bencherror.NewCriticalError(err, "POST %s: 予約した内容を予約確認画面で確認できませんでした", endpointPath)
 		}
 
+		if len(reservation.Seats) != cache.SeatCount() {
+			return bencherror.NewSimpleCriticalError("POST %s: 予約 %dの 座席が期待数確保できていません: want=%d, got=%d", cache.SeatCount(), len(reservation.Seats))
+		}
+
 		if amount != reservation.Amount {
 			return bencherror.NewSimpleCriticalError("POST %s: 予約 %dの amountが一致しません: want=%d, got=%d", endpointPath, reservation.ReservationID, amount, reservation.Amount)
 		}
