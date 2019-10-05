@@ -5,10 +5,10 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/gorilla/handlers"
 	"payment/config"
 	pb "payment/pb"
+
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 )
 
@@ -17,11 +17,6 @@ func newGateway(c config.Config, ctx context.Context, opts ...runtime.ServeMuxOp
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
 	}
 	mux := runtime.NewServeMux(opts...)
-	newMux := handlers.CORS(
-		handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}),
-		handlers.AllowedOrigins([]string{"*"}),
-		handlers.AllowedHeaders([]string{"*"}),
-	)(mux)
 	dialOpts := []grpc.DialOption{grpc.WithInsecure()}
 	conn, err := grpc.Dial(c.GrpcPort, dialOpts...)
 	if err != nil {
@@ -32,7 +27,7 @@ func newGateway(c config.Config, ctx context.Context, opts ...runtime.ServeMuxOp
 		return nil, err
 	}
 
-	return newMux, nil
+	return mux, nil
 }
 
 func StartGRPCGateway(c config.Config, opts ...runtime.ServeMuxOption) error {
