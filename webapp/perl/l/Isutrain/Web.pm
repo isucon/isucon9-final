@@ -592,6 +592,7 @@ get '/api/train/seats' => sub {
         SELECT s.*
         FROM seat_reservations s, reservations r
         WHERE
+          r.reservation_id = s.reservation_id AND
         	r.date=? AND r.train_class=? AND r.train_name=? AND car_number=? AND seat_row=? AND seat_column=?
 EOF
         my $seat_reservation_list = $self->dbh->select_all(

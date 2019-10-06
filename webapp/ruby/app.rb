@@ -523,6 +523,7 @@ module Isutrain
             `seat_reservations` `s`,
             `reservations` `r`
           WHERE
+            `r`.`reservation_id` = `s`.`reservation_id` AND
             `r`.`date` = ? AND
             `r`.`train_class` = ? AND
             `r`.`train_name` = ? AND

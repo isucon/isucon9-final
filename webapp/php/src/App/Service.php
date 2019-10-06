@@ -136,6 +136,8 @@ class Service
         $query = "SELECT `sr`.`reservation_id`, `sr`.`car_number`, `sr`.`seat_row`, `sr`.`seat_column` " .
             "FROM `seat_reservations` sr, `reservations` r, `seat_master` s, `station_master` std, `station_master` sta " .
             "WHERE " .
+            "r.date = ? AND r.train_class = ? AND r.train_name = ? AND " .
+            "s.seat_class = ? AND s.is_smoking_seat = ? AND " .
             "r.reservation_id=sr.reservation_id AND " .
             "s.train_class=r.train_class AND " .
             "s.car_number=sr.car_number AND " .
@@ -150,6 +152,11 @@ class Service
         }
         $stmt = $this->dbh->prepare($query);
         $stmt->execute([
+            $train['date']->format(self::DATE_SQL_FORMAT),
+            $train['train_class']
+            $train['train_name'],
+            $seatClass,
+            $isSmokingSeat,
             $fromStation['id'],
             $fromStation['id'],
             $toStation['id'],
@@ -687,7 +694,7 @@ class Service
                 'is_smoking_seat' => (bool) $seat['is_smoking_seat'],
                 'is_occupied' => false,
             ];
-            $stmt = $this->dbh->prepare("SELECT `s`.* FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
+            $stmt = $this->dbh->prepare("SELECT `s`.* FROM `seat_reservations` s, `reservations` r WHERE `r`.`reservation_id` = `s`.`reservation_id` AND `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
             $stmt->execute([
                 $date->format(self::DATE_SQL_FORMAT),
                 $seat['train_class'],

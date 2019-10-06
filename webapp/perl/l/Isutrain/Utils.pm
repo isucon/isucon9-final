@@ -83,6 +83,8 @@ sub getAvailableSeats {
     SELECT sr.reservation_id, sr.car_number, sr.seat_row, sr.seat_column
     FROM seat_reservations sr, reservations r, seat_master s, station_master std, station_master sta
     WHERE
+        r.date = ? AND r.train_class = ? AND r.train_name = ? AND
+        s.seat_class = ? AND s.is_smoking_seat = ? AND
         r.reservation_id=sr.reservation_id AND
         s.train_class=r.train_class AND
         s.car_number=sr.car_number AND
@@ -100,6 +102,11 @@ EOF
 
     my $seat_reservation_list = $dbh->select_all(
         $query,
+        $train->{date}->strftime("%F"),
+        $train->{train_class},
+        $train->{train_name},
+        $seat_class,
+        $is_smoking_seat,
         $from_station->{id},
         $from_station->{id},
         $to_station->{id},
