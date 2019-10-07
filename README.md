@@ -7,6 +7,19 @@
 * [移植作業用マニュアル](docs/IMPLEMENT.md)
 
 
+## スペシャルサンクス
+
+### 各言語移植
+
+時間の無い中、移植にご協力いただき、誠にありがとうございます。
+
+* @ykzts 氏 (Ruby)
+* @kazeburo 氏 (Perl)
+* @shoma 氏 (PHP)
+
+(GolangとPythonはさくらインターネット実装です。)
+
+
 ## 本番当日の動作環境
 
 TBD
@@ -77,3 +90,13 @@ make archive
 cd ansible
 ansible-playbook -i hosts -u root -s -c paramiko -D playbook.yml
 ```
+
+## 既知の問題
+
+コンテスト開催中にも残っており、準備中に発覚しなかった問題。
+
+* 座席情報が誤っている #209
+
+### 修正済み
+
+* Ruby実装で、データベースの環境変数参照が誤っていた #211
