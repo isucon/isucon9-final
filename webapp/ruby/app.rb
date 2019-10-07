@@ -33,8 +33,8 @@ module Isutrain
         Thread.current[:db] ||= Mysql2::Client.new(
           host: ENV['MYSQL_HOSTNAME'] || '127.0.0.1',
           port: ENV['MYSQL_PORT'] || '3306',
-          database: ENV['MYSQL_USER'] || 'isutrain',
-          username: ENV['MYSQL_DATABASE'] || 'isutrain',
+          username: ENV['MYSQL_USER'] || 'isutrain',
+          database: ENV['MYSQL_DATABASE'] || 'isutrain',
           password: ENV['MYSQL_PASSWORD'] || 'isutrain',
           charset: 'utf8mb4',
           database_timezone: :local,
