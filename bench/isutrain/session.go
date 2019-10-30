@@ -70,7 +70,7 @@ func (sess *Session) newRequest(ctx context.Context, method, uri string, body io
 		return nil, err
 	}
 
-	req.WithContext(ctx)
+	req = req.WithContext(ctx)
 	req.Header.Add("User-Agent", config.UserAgent)
 
 	return req, nil
