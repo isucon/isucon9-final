@@ -16,9 +16,9 @@
   tags: docker
   when: (docker_installed.rc != 0)
 
-- name: update docker if older than docker_min_version
-  apt: name=docker-engine state=latest
-  when: docker_installed.rc == 0 and docker_installed.stdout | version_compare(docker_min_version,  '<')
+#- name: update docker if older than docker_min_version
+#  apt: name=docker-engine state=latest
+#  when: docker_installed.rc == 0 and docker_installed.stdout | version(docker_min_version,  '<')
 
 - name: ubuntu add docker group
   user: name="{{ item }}" groups=docker append=yes
