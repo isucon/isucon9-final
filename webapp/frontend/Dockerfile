@@ -1,4 +1,4 @@
-FROM node:8.11.3
+FROM node:8.17.0
 
 RUN npm install -g npm @vue/cli @vue/cli-service-global
 
