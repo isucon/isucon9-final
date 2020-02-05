@@ -122,6 +122,8 @@ def get_available_seats_from_train(c, train, from_station, to_station, seat_clas
         sql = """SELECT sr.reservation_id, sr.car_number, sr.seat_row, sr.seat_column
         FROM seat_reservations sr, reservations r, seat_master s, station_master std, station_master sta
         WHERE
+            r.date = ? AND r.train_class = ? AND r.train_name = ? AND
+            s.seat_class = ? AND s.is_smoking_seat = ? AND
             r.reservation_id=sr.reservation_id AND
             s.train_class=r.train_class AND
             s.car_number=sr.car_number AND
@@ -136,7 +138,13 @@ def get_available_seats_from_train(c, train, from_station, to_station, seat_clas
         else:
             sql += " AND ((std.id <= %s AND %s < sta.id) OR (std.id <= %s AND %s < sta.id) OR (sta.id < %s AND %s < std.id))"
 
-        c.execute(sql, (from_station["id"], from_station["id"], to_station["id"], to_station["id"], from_station["id"], to_station["id"]))
+        c.execute(sql, (
+            train["date"],
+            train["train_class"],
+            train["train_name"],
+            seat_class, is_smoking_seat,
+            from_station["id"], from_station["id"], to_station["id"], to_station["id"], from_station["id"], to_station["id"]
+        ))
         seat_reservation_list = c.fetchall()
 
         for seat_reservation in seat_reservation_list:
@@ -534,6 +542,7 @@ def get_train_seats():
                 SELECT s.*
                 FROM seat_reservations s, reservations r
                 WHERE
+                    r.reservation_id = s.reservation_id AND
                     r.date=%s AND r.train_class=%s AND r.train_name=%s AND car_number=%s AND seat_row=%s AND seat_column=%s
                 """
 

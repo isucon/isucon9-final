@@ -72,6 +72,8 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 	SELECT sr.reservation_id, sr.car_number, sr.seat_row, sr.seat_column
 	FROM seat_reservations sr, reservations r, seat_master s, station_master std, station_master sta
 	WHERE
+	  r.date = ? AND r.train_class = ? AND r.train_name = ? AND
+		s.seat_class = ? AND s.is_smoking_seat = ? AND
 		r.reservation_id=sr.reservation_id AND
 		s.train_class=r.train_class AND
 		s.car_number=sr.car_number AND
@@ -88,7 +90,12 @@ func (train Train) getAvailableSeats(fromStation Station, toStation Station, sea
 	}
 
 	seatReservationList := []SeatReservation{}
-	err = dbx.Select(&seatReservationList, query, fromStation.ID, fromStation.ID, toStation.ID, toStation.ID, fromStation.ID, toStation.ID)
+	err = dbx.Select(
+		&seatReservationList, query,
+		train.Date.Format("2006/01/02"), train.TrainClass, train.TrainName,
+		seatClass, isSmokingSeat,
+		fromStation.ID, fromStation.ID, toStation.ID, toStation.ID, fromStation.ID, toStation.ID,
+	)
 	if err != nil {
 		return nil, err
 	}
